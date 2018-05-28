@@ -1,0 +1,3203 @@
+<!DOCTYPE html>
+<html>
+<head>	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/styles/zenburn.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js-bootstrap-css/1.2.1/typeaheadjs.min.css">
+	<link rel="stylesheet" type="text/css" data-href="common.css">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/highlight.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/3.1.1/bootstrap3-typeahead.min.js"></script>
+	<script data-src="common.js"></script>
+
+	<script>
+        (function () {
+            var cachekey;
+            try {
+                cachekey = window.parent.CACHEKEY;
+            }
+            catch (e) {
+                cachekey = 'nocache';
+            }
+            $('link[data-href]').attr('href', function () {
+                return this.dataset.href + '?' + cachekey;
+            });
+            $('script[data-src]').attr('src', function () {
+                return this.dataset.src + '?' + cachekey;
+            });
+
+            $(document).on('click', 'a[href]:not([target="_blank"]):not(.cachekey)', function () {
+                this.classList.add('cachekey');
+                this.href = this.href.replace('.html', '.html?' + cachekey);
+            });
+        })();
+	</script>
+    </head>
+<body>
+<a id="anchor" href="./" style="display: none"></a>
+<h1 class="ellipsis">
+	<span class="pull-left">
+	Structure
+	<small class="ellipsis-text">(Doctrine\DBAL\Schema\AbstractSchemaManager)</small>
+	</span>
+	<span class="pull-right">
+		<small class="frame-switch">
+		<a target="_parent">frame</a> | <a target="_parent">noframe</a>
+		</small>
+	</span>
+</h1>
+<div class="main-wrapper">
+	<div class="attribute">
+		<span class="label label-danger"></span>
+		<span class="label label-warning">abstract</span>
+		<span class="label label-info"></span>
+		<span class="label label-info"></span>
+		<span class="label label-deprecated"></span>
+        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/AbstractSchemaManager.php#L39-L1128" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                    	</div>
+
+	<h2>class <span class="category-name">Doctrine\DBAL\Schema\AbstractSchemaManager</span></h2>
+
+	<div class="description"><p>Base class for schema managers. Schema managers are used to inspect and/or<br />
+modify the database schema/structure.</p>
+</div>
+
+	<h3>Construction</h3>
+                
+	<h3>Hierarchy</h3>
+	<div class="hierarchy"></div>
+
+	<h3>Constants</h3>
+    
+	<h3>Properties</h3>
+    		<ul>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-primary"></span>
+						<span class="label label-protected">protected</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/AbstractSchemaManager.php#L52-L57" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Schema\AbstractSchemaManager::$_conn" tabindex="-1" class="structure-title">
+						<small><a href="Doctrine-DBAL-Connection$typespace.html#Doctrine\DBAL\Connection" class="fqsen "><small>Doctrine\DBAL\</small><wbr>Connection</a></small>
+						$_conn						<var> = null</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Holds instance of the Doctrine connection for this schema manager.</p>
+</div>
+                                                					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-primary"></span>
+						<span class="label label-protected">protected</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/AbstractSchemaManager.php#L59-L64" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Schema\AbstractSchemaManager::$_platform" tabindex="-1" class="structure-title">
+						<small><a href="Doctrine-DBAL-Platforms-AbstractPlatform$typespace.html#Doctrine\DBAL\Platforms\AbstractPlatform" class="fqsen "><small>Doctrine\DBAL\Platforms\</small><wbr>AbstractPlatform</a></small>
+						$_platform						<var> = null</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Holds instance of the database platform used for this schema manager.</p>
+</div>
+                                                					</div>
+				</li>
+            		</ul>
+    
+	<h3>Methods</h3>
+    		<ul>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/AbstractSchemaManager.php#L66-L76" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Schema\AbstractSchemaManager::__construct()" tabindex="-1" class="structure-title ">
+                        __construct						<small>($conn, $platform = null)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Constructor. Accepts the Connection instance to manage the schema for.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Connection$typespace.html#Doctrine\DBAL\Connection" class="fqsen "><small>Doctrine\DBAL\</small><wbr>Connection</a></td>
+				<td class="rest">$conn</td>
+				<td class="desc"></td>
+			</tr>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Platforms-AbstractPlatform$typespace.html#Doctrine\DBAL\Platforms\AbstractPlatform" class="fqsen "><small>Doctrine\DBAL\Platforms\</small><wbr>AbstractPlatform</a><span class="type-separator"></span><wbr>null</td>
+				<td class="rest">$platform = null</td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">void</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/AbstractSchemaManager.php#L78-L86" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Schema\AbstractSchemaManager::getDatabasePlatform()" tabindex="-1" class="structure-title ">
+                        getDatabasePlatform						<small>()</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Returns the associated platform.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="Doctrine-DBAL-Platforms-AbstractPlatform$typespace.html#Doctrine\DBAL\Platforms\AbstractPlatform" class="fqsen "><small>Doctrine\DBAL\Platforms\</small><wbr>AbstractPlatform</a></td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/AbstractSchemaManager.php#L88-L112" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Schema\AbstractSchemaManager::tryMethod()" tabindex="-1" class="structure-title ">
+                        tryMethod						<small>()</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Tries any method on the schema manager. Normally a method throws an<br />
+exception when your DBMS doesn't support it or if an error occurs.<br />
+This method allows you to try and method on your SchemaManager<br />
+instance and will return false if it does not work or is not supported.</p>
+<p><code><br />
+$result = $sm-&gt;tryMethod('dropView', 'view_name');<br />
+</code></p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">mixed</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/AbstractSchemaManager.php#L114-L126" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Schema\AbstractSchemaManager::listDatabases()" tabindex="-1" class="structure-title ">
+                        listDatabases						<small>()</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Lists the available databases for this connection.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">array</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/AbstractSchemaManager.php#L128-L140" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Schema\AbstractSchemaManager::listNamespaceNames()" tabindex="-1" class="structure-title ">
+                        listNamespaceNames						<small>()</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Returns a list of all namespaces in the current database.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">array</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/AbstractSchemaManager.php#L142-L159" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Schema\AbstractSchemaManager::listSequences()" tabindex="-1" class="structure-title ">
+                        listSequences						<small>($database = null)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Lists the available sequences for this connection.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">string<span class="type-separator"></span><wbr>null</td>
+				<td class="rest">$database = null</td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="Doctrine-DBAL-Schema-Sequence$typespace.html#Doctrine\DBAL\Schema\Sequence" class="fqsen "><small>Doctrine\DBAL\Schema\</small><wbr>Sequence</a>[]</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/AbstractSchemaManager.php#L161-L187" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Schema\AbstractSchemaManager::listTableColumns()" tabindex="-1" class="structure-title ">
+                        listTableColumns						<small>($table, $database = null)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Lists the columns for a given table.</p>
+<p>In contrast to other libraries and to the old version of Doctrine,<br />
+this column definition does try to contain the 'primary' field for<br />
+the reason that it is not portable across different RDBMS. Use<br />
+<tag_see data-kind='fqsen' data-type-category='type' data-type-fqsen='listTableIndexes($tableName)' data-type-array='0' data-description='listTableIndexes($tableName)'></tag_see> to retrieve the primary key<br />
+of a table. We're a RDBMS specifies more details these are held<br />
+in the platformDetails array.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">string</td>
+				<td class="rest">$table</td>
+				<td class="desc"><p>The name of the table.</p>
+</td>
+			</tr>
+        			<tr>
+				<td class="type">string<span class="type-separator"></span><wbr>null</td>
+				<td class="rest">$database = null</td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="Doctrine-DBAL-Schema-Column$typespace.html#Doctrine\DBAL\Schema\Column" class="fqsen "><small>Doctrine\DBAL\Schema\</small><wbr>Column</a>[]</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            	<table class="table">
+		<caption>See</caption>
+		<tbody>
+        			<tr>
+				<td class="type">
+                                            <a href="listTableIndexes($tableName)$typespace.html#listTableIndexes($tableName)" class="fqsen ">listTableIndexes($tableName)</a>                    				</td>
+				<td class="desc">listTableIndexes($tableName)</td>
+			</tr>
+        		</tbody>
+	</table>
+    					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/AbstractSchemaManager.php#L189-L205" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Schema\AbstractSchemaManager::listTableIndexes()" tabindex="-1" class="structure-title ">
+                        listTableIndexes						<small>($table)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Lists the indexes for a given table returning an array of Index instances.</p>
+<p>Keys of the portable indexes list are all lower-cased.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">string</td>
+				<td class="rest">$table</td>
+				<td class="desc"><p>The name of the table.</p>
+</td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="Doctrine-DBAL-Schema-Index$typespace.html#Doctrine\DBAL\Schema\Index" class="fqsen "><small>Doctrine\DBAL\Schema\</small><wbr>Index</a>[]</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/AbstractSchemaManager.php#L207-L219" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Schema\AbstractSchemaManager::tablesExist()" tabindex="-1" class="structure-title ">
+                        tablesExist						<small>($tableNames)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Returns true if all the given tables exist.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">array</td>
+				<td class="rest">$tableNames</td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">bool</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/AbstractSchemaManager.php#L221-L234" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Schema\AbstractSchemaManager::listTableNames()" tabindex="-1" class="structure-title ">
+                        listTableNames						<small>()</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Returns a list of all tables in the current database.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">array</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-protected">protected</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/AbstractSchemaManager.php#L236-L258" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Schema\AbstractSchemaManager::filterAssetNames()" tabindex="-1" class="structure-title ">
+                        filterAssetNames						<small>($assetNames)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Filters asset names if they are configured to return only a subset of all<br />
+the found elements.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">array</td>
+				<td class="rest">$assetNames</td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">array</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-protected">protected</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/AbstractSchemaManager.php#L260-L266" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Schema\AbstractSchemaManager::getFilterSchemaAssetsExpression()" tabindex="-1" class="structure-title ">
+                        getFilterSchemaAssetsExpression						<small>()</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">string<span class="type-separator"></span><wbr>null</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/AbstractSchemaManager.php#L268-L283" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Schema\AbstractSchemaManager::listTables()" tabindex="-1" class="structure-title ">
+                        listTables						<small>()</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Lists the tables for this connection.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="Doctrine-DBAL-Schema-Table$typespace.html#Doctrine\DBAL\Schema\Table" class="fqsen "><small>Doctrine\DBAL\Schema\</small><wbr>Table</a>[]</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/AbstractSchemaManager.php#L285-L300" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Schema\AbstractSchemaManager::listTableDetails()" tabindex="-1" class="structure-title ">
+                        listTableDetails						<small>($tableName)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">string</td>
+				<td class="rest">$tableName</td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="Doctrine-DBAL-Schema-Table$typespace.html#Doctrine\DBAL\Schema\Table" class="fqsen "><small>Doctrine\DBAL\Schema\</small><wbr>Table</a></td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/AbstractSchemaManager.php#L302-L314" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Schema\AbstractSchemaManager::listViews()" tabindex="-1" class="structure-title ">
+                        listViews						<small>()</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Lists the views this connection has.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="Doctrine-DBAL-Schema-View$typespace.html#Doctrine\DBAL\Schema\View" class="fqsen "><small>Doctrine\DBAL\Schema\</small><wbr>View</a>[]</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/AbstractSchemaManager.php#L316-L333" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Schema\AbstractSchemaManager::listTableForeignKeys()" tabindex="-1" class="structure-title ">
+                        listTableForeignKeys						<small>($table, $database = null)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Lists the foreign keys for the given table.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">string</td>
+				<td class="rest">$table</td>
+				<td class="desc"><p>The name of the table.</p>
+</td>
+			</tr>
+        			<tr>
+				<td class="type">string<span class="type-separator"></span><wbr>null</td>
+				<td class="rest">$database = null</td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="Doctrine-DBAL-Schema-ForeignKeyConstraint$typespace.html#Doctrine\DBAL\Schema\ForeignKeyConstraint" class="fqsen "><small>Doctrine\DBAL\Schema\</small><wbr>ForeignKeyConstraint</a>[]</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/AbstractSchemaManager.php#L337-L349" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Schema\AbstractSchemaManager::dropDatabase()" tabindex="-1" class="structure-title ">
+                        dropDatabase						<small>($database)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Drops a database.</p>
+<p>NOTE: You can not drop the database this SchemaManager is currently connected to.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">string</td>
+				<td class="rest">$database</td>
+				<td class="desc"><p>The name of the database to drop.</p>
+</td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">void</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/AbstractSchemaManager.php#L351-L361" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Schema\AbstractSchemaManager::dropTable()" tabindex="-1" class="structure-title ">
+                        dropTable						<small>($tableName)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Drops the given table.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">string</td>
+				<td class="rest">$tableName</td>
+				<td class="desc"><p>The name of the table to drop.</p>
+</td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">void</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/AbstractSchemaManager.php#L363-L378" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Schema\AbstractSchemaManager::dropIndex()" tabindex="-1" class="structure-title ">
+                        dropIndex						<small>($index, $table)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Drops the index from the given table.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Schema-Index$typespace.html#Doctrine\DBAL\Schema\Index" class="fqsen "><small>Doctrine\DBAL\Schema\</small><wbr>Index</a><span class="type-separator"></span><wbr>string</td>
+				<td class="rest">$index</td>
+				<td class="desc"><p>The name of the index.</p>
+</td>
+			</tr>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Schema-Table$typespace.html#Doctrine\DBAL\Schema\Table" class="fqsen "><small>Doctrine\DBAL\Schema\</small><wbr>Table</a><span class="type-separator"></span><wbr>string</td>
+				<td class="rest">$table</td>
+				<td class="desc"><p>The name of the table.</p>
+</td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">void</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/AbstractSchemaManager.php#L380-L391" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Schema\AbstractSchemaManager::dropConstraint()" tabindex="-1" class="structure-title ">
+                        dropConstraint						<small>($constraint, $table)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Drops the constraint from the given table.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Schema-Constraint$typespace.html#Doctrine\DBAL\Schema\Constraint" class="fqsen "><small>Doctrine\DBAL\Schema\</small><wbr>Constraint</a></td>
+				<td class="rest">$constraint</td>
+				<td class="desc"></td>
+			</tr>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Schema-Table$typespace.html#Doctrine\DBAL\Schema\Table" class="fqsen "><small>Doctrine\DBAL\Schema\</small><wbr>Table</a><span class="type-separator"></span><wbr>string</td>
+				<td class="rest">$table</td>
+				<td class="desc"><p>The name of the table.</p>
+</td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">void</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/AbstractSchemaManager.php#L393-L404" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Schema\AbstractSchemaManager::dropForeignKey()" tabindex="-1" class="structure-title ">
+                        dropForeignKey						<small>($foreignKey, $table)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Drops a foreign key from a table.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Schema-ForeignKeyConstraint$typespace.html#Doctrine\DBAL\Schema\ForeignKeyConstraint" class="fqsen "><small>Doctrine\DBAL\Schema\</small><wbr>ForeignKeyConstraint</a><span class="type-separator"></span><wbr>string</td>
+				<td class="rest">$foreignKey</td>
+				<td class="desc"><p>The name of the foreign key.</p>
+</td>
+			</tr>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Schema-Table$typespace.html#Doctrine\DBAL\Schema\Table" class="fqsen "><small>Doctrine\DBAL\Schema\</small><wbr>Table</a><span class="type-separator"></span><wbr>string</td>
+				<td class="rest">$table</td>
+				<td class="desc"><p>The name of the table with the foreign key.</p>
+</td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">void</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/AbstractSchemaManager.php#L406-L416" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Schema\AbstractSchemaManager::dropSequence()" tabindex="-1" class="structure-title ">
+                        dropSequence						<small>($name)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Drops a sequence with a given name.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">string</td>
+				<td class="rest">$name</td>
+				<td class="desc"><p>The name of the sequence to drop.</p>
+</td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">void</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/AbstractSchemaManager.php#L418-L428" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Schema\AbstractSchemaManager::dropView()" tabindex="-1" class="structure-title ">
+                        dropView						<small>($name)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Drops a view.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">string</td>
+				<td class="rest">$name</td>
+				<td class="desc"><p>The name of the view.</p>
+</td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">void</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/AbstractSchemaManager.php#L432-L442" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Schema\AbstractSchemaManager::createDatabase()" tabindex="-1" class="structure-title ">
+                        createDatabase						<small>($database)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Creates a new database.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">string</td>
+				<td class="rest">$database</td>
+				<td class="desc"><p>The name of the database to create.</p>
+</td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">void</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/AbstractSchemaManager.php#L444-L455" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Schema\AbstractSchemaManager::createTable()" tabindex="-1" class="structure-title ">
+                        createTable						<small>($table)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Creates a new table.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Schema-Table$typespace.html#Doctrine\DBAL\Schema\Table" class="fqsen "><small>Doctrine\DBAL\Schema\</small><wbr>Table</a></td>
+				<td class="rest">$table</td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">void</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/AbstractSchemaManager.php#L457-L469" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Schema\AbstractSchemaManager::createSequence()" tabindex="-1" class="structure-title ">
+                        createSequence						<small>($sequence)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Creates a new sequence.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Schema-Sequence$typespace.html#Doctrine\DBAL\Schema\Sequence" class="fqsen "><small>Doctrine\DBAL\Schema\</small><wbr>Sequence</a></td>
+				<td class="rest">$sequence</td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">void</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Throws</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-ConnectionException$typespace.html#Doctrine\DBAL\ConnectionException" class="fqsen "><small>Doctrine\DBAL\</small><wbr>ConnectionException</a></td>
+				<td class="desc">If something fails at database level.</td>
+			</tr>
+        		</tbody>
+	</table>
+                                                    					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/AbstractSchemaManager.php#L471-L482" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Schema\AbstractSchemaManager::createConstraint()" tabindex="-1" class="structure-title ">
+                        createConstraint						<small>($constraint, $table)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Creates a constraint on a table.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Schema-Constraint$typespace.html#Doctrine\DBAL\Schema\Constraint" class="fqsen "><small>Doctrine\DBAL\Schema\</small><wbr>Constraint</a></td>
+				<td class="rest">$constraint</td>
+				<td class="desc"></td>
+			</tr>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Schema-Table$typespace.html#Doctrine\DBAL\Schema\Table" class="fqsen "><small>Doctrine\DBAL\Schema\</small><wbr>Table</a><span class="type-separator"></span><wbr>string</td>
+				<td class="rest">$table</td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">void</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/AbstractSchemaManager.php#L484-L495" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Schema\AbstractSchemaManager::createIndex()" tabindex="-1" class="structure-title ">
+                        createIndex						<small>($index, $table)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Creates a new index on a table.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Schema-Index$typespace.html#Doctrine\DBAL\Schema\Index" class="fqsen "><small>Doctrine\DBAL\Schema\</small><wbr>Index</a></td>
+				<td class="rest">$index</td>
+				<td class="desc"></td>
+			</tr>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Schema-Table$typespace.html#Doctrine\DBAL\Schema\Table" class="fqsen "><small>Doctrine\DBAL\Schema\</small><wbr>Table</a><span class="type-separator"></span><wbr>string</td>
+				<td class="rest">$table</td>
+				<td class="desc"><p>The name of the table on which the index is to be created.</p>
+</td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">void</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/AbstractSchemaManager.php#L497-L508" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Schema\AbstractSchemaManager::createForeignKey()" tabindex="-1" class="structure-title ">
+                        createForeignKey						<small>($foreignKey, $table)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Creates a new foreign key.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Schema-ForeignKeyConstraint$typespace.html#Doctrine\DBAL\Schema\ForeignKeyConstraint" class="fqsen "><small>Doctrine\DBAL\Schema\</small><wbr>ForeignKeyConstraint</a></td>
+				<td class="rest">$foreignKey</td>
+				<td class="desc"><p>The ForeignKey instance.</p>
+</td>
+			</tr>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Schema-Table$typespace.html#Doctrine\DBAL\Schema\Table" class="fqsen "><small>Doctrine\DBAL\Schema\</small><wbr>Table</a><span class="type-separator"></span><wbr>string</td>
+				<td class="rest">$table</td>
+				<td class="desc"><p>The name of the table on which the foreign key is to be created.</p>
+</td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">void</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/AbstractSchemaManager.php#L510-L520" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Schema\AbstractSchemaManager::createView()" tabindex="-1" class="structure-title ">
+                        createView						<small>($view)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Creates a new view.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Schema-View$typespace.html#Doctrine\DBAL\Schema\View" class="fqsen "><small>Doctrine\DBAL\Schema\</small><wbr>View</a></td>
+				<td class="rest">$view</td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">void</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/AbstractSchemaManager.php#L524-L539" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Schema\AbstractSchemaManager::dropAndCreateConstraint()" tabindex="-1" class="structure-title ">
+                        dropAndCreateConstraint						<small>($constraint, $table)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Drops and creates a constraint.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Schema-Constraint$typespace.html#Doctrine\DBAL\Schema\Constraint" class="fqsen "><small>Doctrine\DBAL\Schema\</small><wbr>Constraint</a></td>
+				<td class="rest">$constraint</td>
+				<td class="desc"></td>
+			</tr>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Schema-Table$typespace.html#Doctrine\DBAL\Schema\Table" class="fqsen "><small>Doctrine\DBAL\Schema\</small><wbr>Table</a><span class="type-separator"></span><wbr>string</td>
+				<td class="rest">$table</td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">void</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            	<table class="table">
+		<caption>See</caption>
+		<tbody>
+        			<tr>
+				<td class="type">
+                                            <a href="Doctrine-DBAL-Schema-AbstractSchemaManager$typespace.html#Doctrine\DBAL\Schema\AbstractSchemaManager::dropConstraint()" class="fqsen "><small>Doctrine\DBAL\Schema\</small><wbr>AbstractSchemaManager::dropConstraint()</a>                    				</td>
+				<td class="desc"></td>
+			</tr>
+        			<tr>
+				<td class="type">
+                                            <a href="Doctrine-DBAL-Schema-AbstractSchemaManager$typespace.html#Doctrine\DBAL\Schema\AbstractSchemaManager::createConstraint()" class="fqsen "><small>Doctrine\DBAL\Schema\</small><wbr>AbstractSchemaManager::createConstraint()</a>                    				</td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+    					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/AbstractSchemaManager.php#L541-L553" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Schema\AbstractSchemaManager::dropAndCreateIndex()" tabindex="-1" class="structure-title ">
+                        dropAndCreateIndex						<small>($index, $table)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Drops and creates a new index on a table.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Schema-Index$typespace.html#Doctrine\DBAL\Schema\Index" class="fqsen "><small>Doctrine\DBAL\Schema\</small><wbr>Index</a></td>
+				<td class="rest">$index</td>
+				<td class="desc"></td>
+			</tr>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Schema-Table$typespace.html#Doctrine\DBAL\Schema\Table" class="fqsen "><small>Doctrine\DBAL\Schema\</small><wbr>Table</a><span class="type-separator"></span><wbr>string</td>
+				<td class="rest">$table</td>
+				<td class="desc"><p>The name of the table on which the index is to be created.</p>
+</td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">void</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/AbstractSchemaManager.php#L555-L567" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Schema\AbstractSchemaManager::dropAndCreateForeignKey()" tabindex="-1" class="structure-title ">
+                        dropAndCreateForeignKey						<small>($foreignKey, $table)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Drops and creates a new foreign key.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Schema-ForeignKeyConstraint$typespace.html#Doctrine\DBAL\Schema\ForeignKeyConstraint" class="fqsen "><small>Doctrine\DBAL\Schema\</small><wbr>ForeignKeyConstraint</a></td>
+				<td class="rest">$foreignKey</td>
+				<td class="desc"><p>An associative array that defines properties of the foreign key to be created.</p>
+</td>
+			</tr>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Schema-Table$typespace.html#Doctrine\DBAL\Schema\Table" class="fqsen "><small>Doctrine\DBAL\Schema\</small><wbr>Table</a><span class="type-separator"></span><wbr>string</td>
+				<td class="rest">$table</td>
+				<td class="desc"><p>The name of the table on which the foreign key is to be created.</p>
+</td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">void</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/AbstractSchemaManager.php#L569-L582" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Schema\AbstractSchemaManager::dropAndCreateSequence()" tabindex="-1" class="structure-title ">
+                        dropAndCreateSequence						<small>($sequence)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Drops and create a new sequence.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Schema-Sequence$typespace.html#Doctrine\DBAL\Schema\Sequence" class="fqsen "><small>Doctrine\DBAL\Schema\</small><wbr>Sequence</a></td>
+				<td class="rest">$sequence</td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">void</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Throws</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-ConnectionException$typespace.html#Doctrine\DBAL\ConnectionException" class="fqsen "><small>Doctrine\DBAL\</small><wbr>ConnectionException</a></td>
+				<td class="desc">If something fails at database level.</td>
+			</tr>
+        		</tbody>
+	</table>
+                                                    					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/AbstractSchemaManager.php#L584-L595" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Schema\AbstractSchemaManager::dropAndCreateTable()" tabindex="-1" class="structure-title ">
+                        dropAndCreateTable						<small>($table)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Drops and creates a new table.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Schema-Table$typespace.html#Doctrine\DBAL\Schema\Table" class="fqsen "><small>Doctrine\DBAL\Schema\</small><wbr>Table</a></td>
+				<td class="rest">$table</td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">void</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/AbstractSchemaManager.php#L597-L608" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Schema\AbstractSchemaManager::dropAndCreateDatabase()" tabindex="-1" class="structure-title ">
+                        dropAndCreateDatabase						<small>($database)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Drops and creates a new database.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">string</td>
+				<td class="rest">$database</td>
+				<td class="desc"><p>The name of the database to create.</p>
+</td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">void</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/AbstractSchemaManager.php#L610-L621" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Schema\AbstractSchemaManager::dropAndCreateView()" tabindex="-1" class="structure-title ">
+                        dropAndCreateView						<small>($view)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Drops and creates a new view.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Schema-View$typespace.html#Doctrine\DBAL\Schema\View" class="fqsen "><small>Doctrine\DBAL\Schema\</small><wbr>View</a></td>
+				<td class="rest">$view</td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">void</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/AbstractSchemaManager.php#L625-L640" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Schema\AbstractSchemaManager::alterTable()" tabindex="-1" class="structure-title ">
+                        alterTable						<small>($tableDiff)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Alters an existing tables schema.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Schema-TableDiff$typespace.html#Doctrine\DBAL\Schema\TableDiff" class="fqsen "><small>Doctrine\DBAL\Schema\</small><wbr>TableDiff</a></td>
+				<td class="rest">$tableDiff</td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">void</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/AbstractSchemaManager.php#L642-L655" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Schema\AbstractSchemaManager::renameTable()" tabindex="-1" class="structure-title ">
+                        renameTable						<small>($name, $newName)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Renames a given table to another name.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">string</td>
+				<td class="rest">$name</td>
+				<td class="desc"><p>The current name of the table.</p>
+</td>
+			</tr>
+        			<tr>
+				<td class="type">string</td>
+				<td class="rest">$newName</td>
+				<td class="desc"><p>The new name of the table.</p>
+</td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">void</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-protected">protected</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/AbstractSchemaManager.php#L662-L677" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Schema\AbstractSchemaManager::_getPortableDatabasesList()" tabindex="-1" class="structure-title ">
+                        _getPortableDatabasesList						<small>($databases)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">array</td>
+				<td class="rest">$databases</td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">array</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-protected">protected</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/AbstractSchemaManager.php#L679-L695" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Schema\AbstractSchemaManager::getPortableNamespacesList()" tabindex="-1" class="structure-title ">
+                        getPortableNamespacesList						<small>($namespaces)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Converts a list of namespace names from the native DBMS data definition to a portable Doctrine definition.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">array</td>
+				<td class="rest">$namespaces</td>
+				<td class="desc"><p>The list of namespace names in the native DBMS data definition.</p>
+</td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">array</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-protected">protected</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/AbstractSchemaManager.php#L697-L705" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Schema\AbstractSchemaManager::_getPortableDatabaseDefinition()" tabindex="-1" class="structure-title ">
+                        _getPortableDatabaseDefinition						<small>($database)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">array</td>
+				<td class="rest">$database</td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">mixed</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-protected">protected</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/AbstractSchemaManager.php#L707-L717" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Schema\AbstractSchemaManager::getPortableNamespaceDefinition()" tabindex="-1" class="structure-title ">
+                        getPortableNamespaceDefinition						<small>($namespace)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Converts a namespace definition from the native DBMS data definition to a portable Doctrine definition.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">array</td>
+				<td class="rest">$namespace</td>
+				<td class="desc"><p>The native DBMS namespace definition.</p>
+</td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">mixed</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-protected">protected</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/AbstractSchemaManager.php#L719-L734" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Schema\AbstractSchemaManager::_getPortableFunctionsList()" tabindex="-1" class="structure-title ">
+                        _getPortableFunctionsList						<small>($functions)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">array</td>
+				<td class="rest">$functions</td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">array</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-protected">protected</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/AbstractSchemaManager.php#L736-L744" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Schema\AbstractSchemaManager::_getPortableFunctionDefinition()" tabindex="-1" class="structure-title ">
+                        _getPortableFunctionDefinition						<small>($function)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">array</td>
+				<td class="rest">$function</td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">mixed</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-protected">protected</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/AbstractSchemaManager.php#L746-L761" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Schema\AbstractSchemaManager::_getPortableTriggersList()" tabindex="-1" class="structure-title ">
+                        _getPortableTriggersList						<small>($triggers)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">array</td>
+				<td class="rest">$triggers</td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">array</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-protected">protected</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/AbstractSchemaManager.php#L763-L771" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Schema\AbstractSchemaManager::_getPortableTriggerDefinition()" tabindex="-1" class="structure-title ">
+                        _getPortableTriggerDefinition						<small>($trigger)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">array</td>
+				<td class="rest">$trigger</td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">mixed</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-protected">protected</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/AbstractSchemaManager.php#L773-L788" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Schema\AbstractSchemaManager::_getPortableSequencesList()" tabindex="-1" class="structure-title ">
+                        _getPortableSequencesList						<small>($sequences)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">array</td>
+				<td class="rest">$sequences</td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">array</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-protected">protected</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/AbstractSchemaManager.php#L790-L800" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Schema\AbstractSchemaManager::_getPortableSequenceDefinition()" tabindex="-1" class="structure-title ">
+                        _getPortableSequenceDefinition						<small>($sequence)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">array</td>
+				<td class="rest">$sequence</td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="Doctrine-DBAL-Schema-Sequence$typespace.html#Doctrine\DBAL\Schema\Sequence" class="fqsen "><small>Doctrine\DBAL\Schema\</small><wbr>Sequence</a></td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Throws</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-DBALException$typespace.html#Doctrine\DBAL\DBALException" class="fqsen "><small>Doctrine\DBAL\</small><wbr>DBALException</a></td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                                                    					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-protected">protected</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/AbstractSchemaManager.php#L802-L841" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Schema\AbstractSchemaManager::_getPortableTableColumnList()" tabindex="-1" class="structure-title ">
+                        _getPortableTableColumnList						<small>($table, $database, $tableColumns)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Independent of the database the keys of the column list result are lowercased.</p>
+<p>The name of the created column instance however is kept in its case.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">string</td>
+				<td class="rest">$table</td>
+				<td class="desc"><p>The name of the table.</p>
+</td>
+			</tr>
+        			<tr>
+				<td class="type">string</td>
+				<td class="rest">$database</td>
+				<td class="desc"></td>
+			</tr>
+        			<tr>
+				<td class="type">array</td>
+				<td class="rest">$tableColumns</td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">array</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-protected">protected</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/AbstractSchemaManager.php#L843-L850" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Schema\AbstractSchemaManager::_getPortableTableColumnDefinition()" tabindex="-1" class="structure-title ">
+                        _getPortableTableColumnDefinition						<small>($tableColumn)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Gets Table Column Definition.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">array</td>
+				<td class="rest">$tableColumn</td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="Doctrine-DBAL-Schema-Column$typespace.html#Doctrine\DBAL\Schema\Column" class="fqsen "><small>Doctrine\DBAL\Schema\</small><wbr>Column</a></td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-protected">protected</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/AbstractSchemaManager.php#L852-L909" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Schema\AbstractSchemaManager::_getPortableTableIndexesList()" tabindex="-1" class="structure-title ">
+                        _getPortableTableIndexesList						<small>($tableIndexRows, $tableName = null)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Aggregates and groups the index results according to the required data result.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">array</td>
+				<td class="rest">$tableIndexRows</td>
+				<td class="desc"></td>
+			</tr>
+        			<tr>
+				<td class="type">string<span class="type-separator"></span><wbr>null</td>
+				<td class="rest">$tableName = null</td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">array</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-protected">protected</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/AbstractSchemaManager.php#L911-L926" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Schema\AbstractSchemaManager::_getPortableTablesList()" tabindex="-1" class="structure-title ">
+                        _getPortableTablesList						<small>($tables)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">array</td>
+				<td class="rest">$tables</td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">array</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-protected">protected</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/AbstractSchemaManager.php#L928-L936" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Schema\AbstractSchemaManager::_getPortableTableDefinition()" tabindex="-1" class="structure-title ">
+                        _getPortableTableDefinition						<small>($table)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">array</td>
+				<td class="rest">$table</td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">array</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-protected">protected</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/AbstractSchemaManager.php#L938-L953" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Schema\AbstractSchemaManager::_getPortableUsersList()" tabindex="-1" class="structure-title ">
+                        _getPortableUsersList						<small>($users)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">array</td>
+				<td class="rest">$users</td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">array</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-protected">protected</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/AbstractSchemaManager.php#L955-L963" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Schema\AbstractSchemaManager::_getPortableUserDefinition()" tabindex="-1" class="structure-title ">
+                        _getPortableUserDefinition						<small>($user)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">array</td>
+				<td class="rest">$user</td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">mixed</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-protected">protected</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/AbstractSchemaManager.php#L965-L981" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Schema\AbstractSchemaManager::_getPortableViewsList()" tabindex="-1" class="structure-title ">
+                        _getPortableViewsList						<small>($views)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">array</td>
+				<td class="rest">$views</td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">array</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-protected">protected</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/AbstractSchemaManager.php#L983-L991" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Schema\AbstractSchemaManager::_getPortableViewDefinition()" tabindex="-1" class="structure-title ">
+                        _getPortableViewDefinition						<small>($view)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">array</td>
+				<td class="rest">$view</td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">mixed</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-protected">protected</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/AbstractSchemaManager.php#L993-L1008" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Schema\AbstractSchemaManager::_getPortableTableForeignKeysList()" tabindex="-1" class="structure-title ">
+                        _getPortableTableForeignKeysList						<small>($tableForeignKeys)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">array</td>
+				<td class="rest">$tableForeignKeys</td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">array</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-protected">protected</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/AbstractSchemaManager.php#L1010-L1018" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Schema\AbstractSchemaManager::_getPortableTableForeignKeyDefinition()" tabindex="-1" class="structure-title ">
+                        _getPortableTableForeignKeyDefinition						<small>($tableForeignKey)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">array</td>
+				<td class="rest">$tableForeignKey</td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">mixed</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-protected">protected</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/AbstractSchemaManager.php#L1020-L1030" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Schema\AbstractSchemaManager::_execSql()" tabindex="-1" class="structure-title ">
+                        _execSql						<small>($sql)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">array<span class="type-separator"></span><wbr>string</td>
+				<td class="rest">$sql</td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">void</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/AbstractSchemaManager.php#L1032-L1054" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Schema\AbstractSchemaManager::createSchema()" tabindex="-1" class="structure-title ">
+                        createSchema						<small>()</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Creates a schema instance for the current database.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="Doctrine-DBAL-Schema-Schema$typespace.html#Doctrine\DBAL\Schema\Schema" class="fqsen "><small>Doctrine\DBAL\Schema\</small><wbr>Schema</a></td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/AbstractSchemaManager.php#L1056-L1081" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Schema\AbstractSchemaManager::createSchemaConfig()" tabindex="-1" class="structure-title ">
+                        createSchemaConfig						<small>()</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Creates the configuration for this schema.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="Doctrine-DBAL-Schema-SchemaConfig$typespace.html#Doctrine\DBAL\Schema\SchemaConfig" class="fqsen "><small>Doctrine\DBAL\Schema\</small><wbr>SchemaConfig</a></td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/AbstractSchemaManager.php#L1083-L1098" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Schema\AbstractSchemaManager::getSchemaSearchPaths()" tabindex="-1" class="structure-title ">
+                        getSchemaSearchPaths						<small>()</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>The search path for namespaces in the currently connected database.</p>
+<p>The first entry is usually the default namespace in the Schema. All<br />
+further namespaces contain tables/sequences which can also be addressed<br />
+with a short, not full-qualified name.</p>
+<p>For databases that don't support subschema/namespaces this method<br />
+returns the name of the currently connected database.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">array</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/AbstractSchemaManager.php#L1100-L1116" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Schema\AbstractSchemaManager::extractDoctrineTypeFromComment()" tabindex="-1" class="structure-title ">
+                        extractDoctrineTypeFromComment						<small>($comment, $currentType)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Given a table comment this method tries to extract a typehint for Doctrine Type, or returns<br />
+the type given as default.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">string</td>
+				<td class="rest">$comment</td>
+				<td class="desc"></td>
+			</tr>
+        			<tr>
+				<td class="type">string</td>
+				<td class="rest">$currentType</td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">string</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/AbstractSchemaManager.php#L1118-L1127" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Schema\AbstractSchemaManager::removeDoctrineTypeFromComment()" tabindex="-1" class="structure-title ">
+                        removeDoctrineTypeFromComment						<small>($comment, $type)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">string</td>
+				<td class="rest">$comment</td>
+				<td class="desc"></td>
+			</tr>
+        			<tr>
+				<td class="type">string</td>
+				<td class="rest">$type</td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">string</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            		</ul>
+    
+	<div class="attribute">
+		<span class="label label-default"></span>
+		<span class="label label-default">author Konsta Vesterinen</span>
+	</div>
+	<div class="clearfix"></div>
+</div>
+</body>
+</html>

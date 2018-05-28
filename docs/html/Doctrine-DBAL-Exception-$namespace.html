@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/styles/zenburn.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js-bootstrap-css/1.2.1/typeaheadjs.min.css">
+	<link rel="stylesheet" type="text/css" data-href="common.css">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/highlight.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/3.1.1/bootstrap3-typeahead.min.js"></script>
+	<script data-src="common.js"></script>
+
+	<script>
+        (function () {
+            var cachekey;
+            try {
+                cachekey = window.parent.CACHEKEY;
+            }
+            catch (e) {
+                cachekey = 'nocache';
+            }
+            $('link[data-href]').attr('href', function () {
+                return this.dataset.href + '?' + cachekey;
+            });
+            $('script[data-src]').attr('src', function () {
+                return this.dataset.src + '?' + cachekey;
+            });
+
+            $(document).on('click', 'a[href]:not([target="_blank"]):not(.cachekey)', function () {
+                this.classList.add('cachekey');
+                this.href = this.href.replace('.html', '.html?' + cachekey);
+            });
+        })();
+	</script>
+    </head>
+<body>
+<a id="anchor" href="./" style="display: none"></a>
+<h1 class="ellipsis">
+	Structure
+	<small class="ellipsis-text">(Doctrine\DBAL\Exception\)</small>
+	<span class="pull-right">
+		<small class="frame-switch">
+		<a target="_parent">frame</a> | <a target="_parent">noframe</a>
+		</small>
+	</span>
+</h1>
+<div class="main-wrapper">
+	<h2>namespace <span class="category-name">Doctrine\DBAL\Exception\</span></h2>
+	<div class="inner-item">
+		<div class="description"></div>
+	</div>
+
+    
+                                    			<h3>Classes</h3>
+			<ul>
+                					<li class="structure-item">
+						<div class="attribute">
+							<span class="label label-danger"></span>
+							<span class="label label-warning"></span>
+							<span class="label label-info"></span>
+							<span class="label label-info"></span>
+							<span class="label label-deprecated"></span>
+                            			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Exception/InvalidArgumentException.php#L24-L40" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+            						</div>
+						<h4 id="Doctrine\DBAL\Exception\InvalidArgumentException" tabindex="-1" class="structure-title ">
+							<a href="Doctrine-DBAL-Exception-InvalidArgumentException$typespace.html#Doctrine\DBAL\Exception\InvalidArgumentException">InvalidArgumentException</a>
+						</h4>
+						<div class="inner-item">
+							<div class="description"><p>Exception to be thrown when invalid arguments are passed to any DBAL API</p>
+</div>
+						</div>
+						<div class="attribute">
+							<span class="label label-default"></span>
+							<span class="label label-default">author Marco Pivetta</span>
+						</div>
+						<div class="clearfix"></div>
+					</li>
+                					<li class="structure-item">
+						<div class="attribute">
+							<span class="label label-danger"></span>
+							<span class="label label-warning"></span>
+							<span class="label label-info"></span>
+							<span class="label label-info"></span>
+							<span class="label label-deprecated"></span>
+                            			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Exception/DriverException.php#L24-L82" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+            						</div>
+						<h4 id="Doctrine\DBAL\Exception\DriverException" tabindex="-1" class="structure-title ">
+							<a href="Doctrine-DBAL-Exception-DriverException$typespace.html#Doctrine\DBAL\Exception\DriverException">DriverException</a>
+						</h4>
+						<div class="inner-item">
+							<div class="description"><p>Base class for all errors detected in the driver.</p>
+</div>
+						</div>
+						<div class="attribute">
+							<span class="label label-default"></span>
+							<span class="label label-default">author Steve Müller</span>
+						</div>
+						<div class="clearfix"></div>
+					</li>
+                			</ul>
+            
+    
+    	<div class="attribute">
+		<span class="label label-default"></span>
+		<span class="label label-default"></span>
+	</div>
+	<div class="clearfix"></div>
+</div>
+</body>
+</html>

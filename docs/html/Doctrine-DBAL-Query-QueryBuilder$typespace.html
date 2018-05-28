@@ -1,0 +1,2813 @@
+<!DOCTYPE html>
+<html>
+<head>	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/styles/zenburn.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js-bootstrap-css/1.2.1/typeaheadjs.min.css">
+	<link rel="stylesheet" type="text/css" data-href="common.css">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/highlight.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/3.1.1/bootstrap3-typeahead.min.js"></script>
+	<script data-src="common.js"></script>
+
+	<script>
+        (function () {
+            var cachekey;
+            try {
+                cachekey = window.parent.CACHEKEY;
+            }
+            catch (e) {
+                cachekey = 'nocache';
+            }
+            $('link[data-href]').attr('href', function () {
+                return this.dataset.href + '?' + cachekey;
+            });
+            $('script[data-src]').attr('src', function () {
+                return this.dataset.src + '?' + cachekey;
+            });
+
+            $(document).on('click', 'a[href]:not([target="_blank"]):not(.cachekey)', function () {
+                this.classList.add('cachekey');
+                this.href = this.href.replace('.html', '.html?' + cachekey);
+            });
+        })();
+	</script>
+    </head>
+<body>
+<a id="anchor" href="./" style="display: none"></a>
+<h1 class="ellipsis">
+	<span class="pull-left">
+	Structure
+	<small class="ellipsis-text">(Doctrine\DBAL\Query\QueryBuilder)</small>
+	</span>
+	<span class="pull-right">
+		<small class="frame-switch">
+		<a target="_parent">frame</a> | <a target="_parent">noframe</a>
+		</small>
+	</span>
+</h1>
+<div class="main-wrapper">
+	<div class="attribute">
+		<span class="label label-danger"></span>
+		<span class="label label-warning"></span>
+		<span class="label label-info"></span>
+		<span class="label label-info"></span>
+		<span class="label label-deprecated"></span>
+        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Query/QueryBuilder.php#L38-L1369" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                    	</div>
+
+	<h2>class <span class="category-name">Doctrine\DBAL\Query\QueryBuilder</span></h2>
+
+	<div class="description"><p>QueryBuilder class is responsible to dynamically create SQL queries.</p>
+<p>Important: Verify that every feature you use will work with your database vendor.<br />
+SQL Query Builder does not attempt to validate the generated SQL at all.</p>
+<p>The query builder does no validation whatsoever if certain features even work with the<br />
+underlying database vendor. Limit queries and joins are NOT applied to UPDATE and DELETE statements<br />
+even if some vendors such as MySQL support it.</p>
+</div>
+
+	<h3>Construction</h3>
+                
+	<h3>Hierarchy</h3>
+	<div class="hierarchy"></div>
+
+	<h3>Constants</h3>
+    		<ul>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Query/QueryBuilder.php#L58-L58" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Query\QueryBuilder::SELECT" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        SELECT						<var></var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                                                					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Query/QueryBuilder.php#L59-L59" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Query\QueryBuilder::DELETE" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        DELETE						<var> = 1</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                                                					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Query/QueryBuilder.php#L60-L60" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Query\QueryBuilder::UPDATE" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        UPDATE						<var> = 2</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                                                					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Query/QueryBuilder.php#L61-L61" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Query\QueryBuilder::INSERT" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        INSERT						<var> = 3</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                                                					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Query/QueryBuilder.php#L66-L66" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Query\QueryBuilder::STATE_DIRTY" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        STATE_DIRTY						<var></var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                                                					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Query/QueryBuilder.php#L67-L67" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Query\QueryBuilder::STATE_CLEAN" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        STATE_CLEAN						<var> = 1</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                                                					</div>
+				</li>
+            		</ul>
+    
+	<h3>Properties</h3>
+    
+	<h3>Methods</h3>
+    		<ul>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Query/QueryBuilder.php#L147-L155" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Query\QueryBuilder::__construct()" tabindex="-1" class="structure-title ">
+                        __construct						<small>($connection)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Initializes a new <tt>QueryBuilder</tt>.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Connection$typespace.html#Doctrine\DBAL\Connection" class="fqsen "><small>Doctrine\DBAL\</small><wbr>Connection</a></td>
+				<td class="rest">$connection</td>
+				<td class="desc"><p>The DBAL Connection.</p>
+</td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">void</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Query/QueryBuilder.php#L157-L176" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Query\QueryBuilder::expr()" tabindex="-1" class="structure-title ">
+                        expr						<small>()</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Gets an ExpressionBuilder used for object-oriented construction of query expressions.<br />
+This producer method is intended for convenient inline usage. Example:</p>
+<p><code></p>
+<pre><code>$qb = $conn-&gt;createQueryBuilder()
+    -&gt;select('u')
+    -&gt;from('users', 'u')
+    -&gt;where($qb-&gt;expr()-&gt;eq('u.id', 1));
+</code></pre>
+<p></code></p>
+<p>For more complex expression construction, consider storing the expression<br />
+builder object in a local variable.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="Doctrine-DBAL-Query-Expression-ExpressionBuilder$typespace.html#Doctrine\DBAL\Query\Expression\ExpressionBuilder" class="fqsen "><small>Doctrine\DBAL\Query\Expression\</small><wbr>ExpressionBuilder</a></td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Query/QueryBuilder.php#L178-L186" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Query\QueryBuilder::getType()" tabindex="-1" class="structure-title ">
+                        getType						<small>()</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Gets the type of the currently built query.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">int</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Query/QueryBuilder.php#L188-L196" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Query\QueryBuilder::getConnection()" tabindex="-1" class="structure-title ">
+                        getConnection						<small>()</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Gets the associated DBAL Connection for this query builder.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="Doctrine-DBAL-Connection$typespace.html#Doctrine\DBAL\Connection" class="fqsen "><small>Doctrine\DBAL\</small><wbr>Connection</a></td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Query/QueryBuilder.php#L198-L206" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Query\QueryBuilder::getState()" tabindex="-1" class="structure-title ">
+                        getState						<small>()</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Gets the state of this query builder instance.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">int</td>
+			<td class="desc"><p>Either QueryBuilder::STATE_DIRTY or QueryBuilder::STATE_CLEAN.</p>
+</td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Query/QueryBuilder.php#L208-L223" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Query\QueryBuilder::execute()" tabindex="-1" class="structure-title ">
+                        execute						<small>()</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Executes this query using the bound parameters and their types.</p>
+<p>Uses <tag_see data-kind='fqsen' data-type-category='method' data-type-fqsen='Doctrine\DBAL\Connection::executeQuery()' data-type-array='0' data-description='Connection::executeQuery'></tag_see> for select statements and <tag_see data-kind='fqsen' data-type-category='method' data-type-fqsen='Doctrine\DBAL\Connection::executeUpdate()' data-type-array='0' data-description='Connection::executeUpdate'></tag_see><br />
+for insert, update and delete statements.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="Doctrine-DBAL-Driver-Statement$typespace.html#Doctrine\DBAL\Driver\Statement" class="fqsen "><small>Doctrine\DBAL\Driver\</small><wbr>Statement</a><span class="type-separator"></span><wbr>int</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            	<table class="table">
+		<caption>See</caption>
+		<tbody>
+        			<tr>
+				<td class="type">
+                                            <a href="Doctrine-DBAL-Connection$typespace.html#Doctrine\DBAL\Connection::executeQuery()" class="fqsen "><small>Doctrine\DBAL\</small><wbr>Connection::executeQuery()</a>                    				</td>
+				<td class="desc">Connection::executeQuery</td>
+			</tr>
+        			<tr>
+				<td class="type">
+                                            <a href="Doctrine-DBAL-Connection$typespace.html#Doctrine\DBAL\Connection::executeUpdate()" class="fqsen "><small>Doctrine\DBAL\</small><wbr>Connection::executeUpdate()</a>                    				</td>
+				<td class="desc">Connection::executeUpdate</td>
+			</tr>
+        		</tbody>
+	</table>
+    					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Query/QueryBuilder.php#L225-L265" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Query\QueryBuilder::getSQL()" tabindex="-1" class="structure-title ">
+                        getSQL						<small>()</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Gets the complete SQL string formed by the current specifications of this QueryBuilder.</p>
+<p><code></p>
+<pre><code>$qb = $em-&gt;createQueryBuilder()
+    -&gt;select('u')
+    -&gt;from('User', 'u')
+echo $qb-&gt;getSQL(); // SELECT u FROM User u
+</code></pre>
+<p></code></p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">string</td>
+			<td class="desc"><p>The SQL query string.</p>
+</td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Query/QueryBuilder.php#L267-L293" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Query\QueryBuilder::setParameter()" tabindex="-1" class="structure-title ">
+                        setParameter						<small>($key, $value, $type = null)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Sets a query parameter for the query being constructed.</p>
+<p><code></p>
+<pre><code>$qb = $conn-&gt;createQueryBuilder()
+    -&gt;select('u')
+    -&gt;from('users', 'u')
+    -&gt;where('u.id = :user_id')
+    -&gt;setParameter(':user_id', 1);
+</code></pre>
+<p></code></p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">string<span class="type-separator"></span><wbr>int</td>
+				<td class="rest">$key</td>
+				<td class="desc"><p>The parameter position or name.</p>
+</td>
+			</tr>
+        			<tr>
+				<td class="type">mixed</td>
+				<td class="rest">$value</td>
+				<td class="desc"><p>The parameter value.</p>
+</td>
+			</tr>
+        			<tr>
+				<td class="type">string<span class="type-separator"></span><wbr>int<span class="type-separator"></span><wbr>null</td>
+				<td class="rest">$type = null</td>
+				<td class="desc"><p>One of the <tag_link data-kind='fqsen' data-type-category='class' data-type-fqsen='Doctrine\DBAL\ParameterType' data-type-array='0' data-description='\Doctrine\DBAL\ParameterType'>\Doctrine\DBAL\ParameterType</tag_link> constants.</p>
+</td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="Doctrine-DBAL-Query-QueryBuilder$typespace.html#Doctrine\DBAL\Query\QueryBuilder" class="fqsen "><small>Doctrine\DBAL\Query\</small><wbr>QueryBuilder</a></td>
+			<td class="desc"><p>This QueryBuilder instance.</p>
+</td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Query/QueryBuilder.php#L295-L320" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Query\QueryBuilder::setParameters()" tabindex="-1" class="structure-title ">
+                        setParameters						<small>($params, $types = [])</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Sets a collection of query parameters for the query being constructed.</p>
+<p><code></p>
+<pre><code>$qb = $conn-&gt;createQueryBuilder()
+    -&gt;select('u')
+    -&gt;from('users', 'u')
+    -&gt;where('u.id = :user_id1 OR u.id = :user_id2')
+    -&gt;setParameters(array(
+        ':user_id1' =&gt; 1,
+        ':user_id2' =&gt; 2
+    ));
+</code></pre>
+<p></code></p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">array</td>
+				<td class="rest">$params</td>
+				<td class="desc"><p>The query parameters to set.</p>
+</td>
+			</tr>
+        			<tr>
+				<td class="type">array</td>
+				<td class="rest">$types = []</td>
+				<td class="desc"><p>The query parameters types to set.</p>
+</td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="Doctrine-DBAL-Query-QueryBuilder$typespace.html#Doctrine\DBAL\Query\QueryBuilder" class="fqsen "><small>Doctrine\DBAL\Query\</small><wbr>QueryBuilder</a></td>
+			<td class="desc"><p>This QueryBuilder instance.</p>
+</td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Query/QueryBuilder.php#L322-L330" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Query\QueryBuilder::getParameters()" tabindex="-1" class="structure-title ">
+                        getParameters						<small>()</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Gets all defined query parameters for the query being constructed indexed by parameter index or name.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">array</td>
+			<td class="desc"><p>The currently defined query parameters indexed by parameter index or name.</p>
+</td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Query/QueryBuilder.php#L332-L342" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Query\QueryBuilder::getParameter()" tabindex="-1" class="structure-title ">
+                        getParameter						<small>($key)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Gets a (previously set) query parameter of the query being constructed.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">mixed</td>
+				<td class="rest">$key</td>
+				<td class="desc"><p>The key (index or name) of the bound parameter.</p>
+</td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">mixed</td>
+			<td class="desc"><p>The value of the bound parameter.</p>
+</td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Query/QueryBuilder.php#L344-L352" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Query\QueryBuilder::getParameterTypes()" tabindex="-1" class="structure-title ">
+                        getParameterTypes						<small>()</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Gets all defined query parameter types for the query being constructed indexed by parameter index or name.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">array</td>
+			<td class="desc"><p>The currently defined query parameter types indexed by parameter index or name.</p>
+</td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Query/QueryBuilder.php#L354-L364" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Query\QueryBuilder::getParameterType()" tabindex="-1" class="structure-title ">
+                        getParameterType						<small>($key)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Gets a (previously set) query parameter type of the query being constructed.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">mixed</td>
+				<td class="rest">$key</td>
+				<td class="desc"><p>The key (index or name) of the bound parameter type.</p>
+</td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">mixed</td>
+			<td class="desc"><p>The value of the bound parameter type.</p>
+</td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Query/QueryBuilder.php#L366-L379" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Query\QueryBuilder::setFirstResult()" tabindex="-1" class="structure-title ">
+                        setFirstResult						<small>($firstResult)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Sets the position of the first result to retrieve (the "offset").</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">int</td>
+				<td class="rest">$firstResult</td>
+				<td class="desc"><p>The first result to return.</p>
+</td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="Doctrine-DBAL-Query-QueryBuilder$typespace.html#Doctrine\DBAL\Query\QueryBuilder" class="fqsen "><small>Doctrine\DBAL\Query\</small><wbr>QueryBuilder</a></td>
+			<td class="desc"><p>This QueryBuilder instance.</p>
+</td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Query/QueryBuilder.php#L381-L390" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Query\QueryBuilder::getFirstResult()" tabindex="-1" class="structure-title ">
+                        getFirstResult						<small>()</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Gets the position of the first result the query object was set to retrieve (the "offset").<br />
+Returns NULL if <tag_link data-kind='fqsen' data-type-category='type' data-type-fqsen='setFirstResult' data-type-array='0' data-description='setFirstResult'>setFirstResult</tag_link> was not applied to this QueryBuilder.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">int</td>
+			<td class="desc"><p>The position of the first result.</p>
+</td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Query/QueryBuilder.php#L392-L405" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Query\QueryBuilder::setMaxResults()" tabindex="-1" class="structure-title ">
+                        setMaxResults						<small>($maxResults)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Sets the maximum number of results to retrieve (the "limit").</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">int</td>
+				<td class="rest">$maxResults</td>
+				<td class="desc"><p>The maximum number of results to retrieve.</p>
+</td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="Doctrine-DBAL-Query-QueryBuilder$typespace.html#Doctrine\DBAL\Query\QueryBuilder" class="fqsen "><small>Doctrine\DBAL\Query\</small><wbr>QueryBuilder</a></td>
+			<td class="desc"><p>This QueryBuilder instance.</p>
+</td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Query/QueryBuilder.php#L407-L416" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Query\QueryBuilder::getMaxResults()" tabindex="-1" class="structure-title ">
+                        getMaxResults						<small>()</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Gets the maximum number of results the query object was set to retrieve (the "limit").<br />
+Returns NULL if <tag_link data-kind='fqsen' data-type-category='type' data-type-fqsen='setMaxResults' data-type-array='0' data-description='setMaxResults'>setMaxResults</tag_link> was not applied to this query builder.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">int</td>
+			<td class="desc"><p>The maximum number of results.</p>
+</td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Query/QueryBuilder.php#L418-L461" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Query\QueryBuilder::add()" tabindex="-1" class="structure-title ">
+                        add						<small>($sqlPartName, $sqlPart, $append = false)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Either appends to or replaces a single, generic query part.</p>
+<p>The available parts are: 'select', 'from', 'set', 'where',<br />
+'groupBy', 'having' and 'orderBy'.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">string</td>
+				<td class="rest">$sqlPartName</td>
+				<td class="desc"></td>
+			</tr>
+        			<tr>
+				<td class="type">string</td>
+				<td class="rest">$sqlPart</td>
+				<td class="desc"></td>
+			</tr>
+        			<tr>
+				<td class="type">bool</td>
+				<td class="rest">$append = false</td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="Doctrine-DBAL-Query-QueryBuilder$typespace.html#Doctrine\DBAL\Query\QueryBuilder" class="fqsen "><small>Doctrine\DBAL\Query\</small><wbr>QueryBuilder</a></td>
+			<td class="desc"><p>This QueryBuilder instance.</p>
+</td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Query/QueryBuilder.php#L463-L489" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Query\QueryBuilder::select()" tabindex="-1" class="structure-title ">
+                        select						<small>($select = null)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Specifies an item that is to be returned in the query result.<br />
+Replaces any previously specified selections, if any.</p>
+<p><code></p>
+<pre><code>$qb = $conn-&gt;createQueryBuilder()
+    -&gt;select('u.id', 'p.id')
+    -&gt;from('users', 'u')
+    -&gt;leftJoin('u', 'phonenumbers', 'p', 'u.id = p.user_id');
+</code></pre>
+<p></code></p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">mixed</td>
+				<td class="rest">$select = null</td>
+				<td class="desc"><p>The selection expressions.</p>
+</td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="Doctrine-DBAL-Query-QueryBuilder$typespace.html#Doctrine\DBAL\Query\QueryBuilder" class="fqsen "><small>Doctrine\DBAL\Query\</small><wbr>QueryBuilder</a></td>
+			<td class="desc"><p>This QueryBuilder instance.</p>
+</td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Query/QueryBuilder.php#L491-L517" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Query\QueryBuilder::addSelect()" tabindex="-1" class="structure-title ">
+                        addSelect						<small>($select = null)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Adds an item that is to be returned in the query result.</p>
+<p><code></p>
+<pre><code>$qb = $conn-&gt;createQueryBuilder()
+    -&gt;select('u.id')
+    -&gt;addSelect('p.id')
+    -&gt;from('users', 'u')
+    -&gt;leftJoin('u', 'phonenumbers', 'u.id = p.user_id');
+</code></pre>
+<p></code></p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">mixed</td>
+				<td class="rest">$select = null</td>
+				<td class="desc"><p>The selection expression.</p>
+</td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="Doctrine-DBAL-Query-QueryBuilder$typespace.html#Doctrine\DBAL\Query\QueryBuilder" class="fqsen "><small>Doctrine\DBAL\Query\</small><wbr>QueryBuilder</a></td>
+			<td class="desc"><p>This QueryBuilder instance.</p>
+</td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Query/QueryBuilder.php#L519-L547" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Query\QueryBuilder::delete()" tabindex="-1" class="structure-title ">
+                        delete						<small>($delete = null, $alias = null)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Turns the query being built into a bulk delete query that ranges over<br />
+a certain table.</p>
+<p><code></p>
+<pre><code>$qb = $conn-&gt;createQueryBuilder()
+    -&gt;delete('users', 'u')
+    -&gt;where('u.id = :user_id');
+    -&gt;setParameter(':user_id', 1);
+</code></pre>
+<p></code></p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">string</td>
+				<td class="rest">$delete = null</td>
+				<td class="desc"><p>The table whose rows are subject to the deletion.</p>
+</td>
+			</tr>
+        			<tr>
+				<td class="type">string</td>
+				<td class="rest">$alias = null</td>
+				<td class="desc"><p>The table alias used in the constructed query.</p>
+</td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="Doctrine-DBAL-Query-QueryBuilder$typespace.html#Doctrine\DBAL\Query\QueryBuilder" class="fqsen "><small>Doctrine\DBAL\Query\</small><wbr>QueryBuilder</a></td>
+			<td class="desc"><p>This QueryBuilder instance.</p>
+</td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Query/QueryBuilder.php#L549-L577" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Query\QueryBuilder::update()" tabindex="-1" class="structure-title ">
+                        update						<small>($update = null, $alias = null)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Turns the query being built into a bulk update query that ranges over<br />
+a certain table</p>
+<p><code></p>
+<pre><code>$qb = $conn-&gt;createQueryBuilder()
+    -&gt;update('users', 'u')
+    -&gt;set('u.last_login', 'NOW()')
+    -&gt;where('u.id = ?');
+</code></pre>
+<p></code></p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">string</td>
+				<td class="rest">$update = null</td>
+				<td class="desc"><p>The table whose rows are subject to the update.</p>
+</td>
+			</tr>
+        			<tr>
+				<td class="type">string</td>
+				<td class="rest">$alias = null</td>
+				<td class="desc"><p>The table alias used in the constructed query.</p>
+</td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="Doctrine-DBAL-Query-QueryBuilder$typespace.html#Doctrine\DBAL\Query\QueryBuilder" class="fqsen "><small>Doctrine\DBAL\Query\</small><wbr>QueryBuilder</a></td>
+			<td class="desc"><p>This QueryBuilder instance.</p>
+</td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Query/QueryBuilder.php#L579-L609" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Query\QueryBuilder::insert()" tabindex="-1" class="structure-title ">
+                        insert						<small>($insert = null)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Turns the query being built into an insert query that inserts into<br />
+a certain table</p>
+<p><code></p>
+<pre><code>$qb = $conn-&gt;createQueryBuilder()
+    -&gt;insert('users')
+    -&gt;values(
+        array(
+            'name' =&gt; '?',
+            'password' =&gt; '?'
+        )
+    );
+</code></pre>
+<p></code></p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">string</td>
+				<td class="rest">$insert = null</td>
+				<td class="desc"><p>The table into which the rows should be inserted.</p>
+</td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="Doctrine-DBAL-Query-QueryBuilder$typespace.html#Doctrine\DBAL\Query\QueryBuilder" class="fqsen "><small>Doctrine\DBAL\Query\</small><wbr>QueryBuilder</a></td>
+			<td class="desc"><p>This QueryBuilder instance.</p>
+</td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Query/QueryBuilder.php#L611-L632" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Query\QueryBuilder::from()" tabindex="-1" class="structure-title ">
+                        from						<small>($from, $alias = null)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Creates and adds a query root corresponding to the table identified by the<br />
+given alias, forming a cartesian product with any existing query roots.</p>
+<p><code></p>
+<pre><code>$qb = $conn-&gt;createQueryBuilder()
+    -&gt;select('u.id')
+    -&gt;from('users', 'u')
+</code></pre>
+<p></code></p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">string</td>
+				<td class="rest">$from</td>
+				<td class="desc"><p>The table.</p>
+</td>
+			</tr>
+        			<tr>
+				<td class="type">string<span class="type-separator"></span><wbr>null</td>
+				<td class="rest">$alias = null</td>
+				<td class="desc"><p>The alias of the table.</p>
+</td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="Doctrine-DBAL-Query-QueryBuilder$typespace.html#Doctrine\DBAL\Query\QueryBuilder" class="fqsen "><small>Doctrine\DBAL\Query\</small><wbr>QueryBuilder</a></td>
+			<td class="desc"><p>This QueryBuilder instance.</p>
+</td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Query/QueryBuilder.php#L634-L654" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Query\QueryBuilder::join()" tabindex="-1" class="structure-title ">
+                        join						<small>($fromAlias, $join, $alias, $condition = null)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Creates and adds a join to the query.</p>
+<p><code></p>
+<pre><code>$qb = $conn-&gt;createQueryBuilder()
+    -&gt;select('u.name')
+    -&gt;from('users', 'u')
+    -&gt;join('u', 'phonenumbers', 'p', 'p.is_primary = 1');
+</code></pre>
+<p></code></p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">string</td>
+				<td class="rest">$fromAlias</td>
+				<td class="desc"><p>The alias that points to a from clause.</p>
+</td>
+			</tr>
+        			<tr>
+				<td class="type">string</td>
+				<td class="rest">$join</td>
+				<td class="desc"><p>The table name to join.</p>
+</td>
+			</tr>
+        			<tr>
+				<td class="type">string</td>
+				<td class="rest">$alias</td>
+				<td class="desc"><p>The alias of the join table.</p>
+</td>
+			</tr>
+        			<tr>
+				<td class="type">string</td>
+				<td class="rest">$condition = null</td>
+				<td class="desc"><p>The condition for the join.</p>
+</td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="Doctrine-DBAL-Query-QueryBuilder$typespace.html#Doctrine\DBAL\Query\QueryBuilder" class="fqsen "><small>Doctrine\DBAL\Query\</small><wbr>QueryBuilder</a></td>
+			<td class="desc"><p>This QueryBuilder instance.</p>
+</td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Query/QueryBuilder.php#L656-L683" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Query\QueryBuilder::innerJoin()" tabindex="-1" class="structure-title ">
+                        innerJoin						<small>($fromAlias, $join, $alias, $condition = null)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Creates and adds a join to the query.</p>
+<p><code></p>
+<pre><code>$qb = $conn-&gt;createQueryBuilder()
+    -&gt;select('u.name')
+    -&gt;from('users', 'u')
+    -&gt;innerJoin('u', 'phonenumbers', 'p', 'p.is_primary = 1');
+</code></pre>
+<p></code></p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">string</td>
+				<td class="rest">$fromAlias</td>
+				<td class="desc"><p>The alias that points to a from clause.</p>
+</td>
+			</tr>
+        			<tr>
+				<td class="type">string</td>
+				<td class="rest">$join</td>
+				<td class="desc"><p>The table name to join.</p>
+</td>
+			</tr>
+        			<tr>
+				<td class="type">string</td>
+				<td class="rest">$alias</td>
+				<td class="desc"><p>The alias of the join table.</p>
+</td>
+			</tr>
+        			<tr>
+				<td class="type">string</td>
+				<td class="rest">$condition = null</td>
+				<td class="desc"><p>The condition for the join.</p>
+</td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="Doctrine-DBAL-Query-QueryBuilder$typespace.html#Doctrine\DBAL\Query\QueryBuilder" class="fqsen "><small>Doctrine\DBAL\Query\</small><wbr>QueryBuilder</a></td>
+			<td class="desc"><p>This QueryBuilder instance.</p>
+</td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Query/QueryBuilder.php#L685-L712" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Query\QueryBuilder::leftJoin()" tabindex="-1" class="structure-title ">
+                        leftJoin						<small>($fromAlias, $join, $alias, $condition = null)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Creates and adds a left join to the query.</p>
+<p><code></p>
+<pre><code>$qb = $conn-&gt;createQueryBuilder()
+    -&gt;select('u.name')
+    -&gt;from('users', 'u')
+    -&gt;leftJoin('u', 'phonenumbers', 'p', 'p.is_primary = 1');
+</code></pre>
+<p></code></p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">string</td>
+				<td class="rest">$fromAlias</td>
+				<td class="desc"><p>The alias that points to a from clause.</p>
+</td>
+			</tr>
+        			<tr>
+				<td class="type">string</td>
+				<td class="rest">$join</td>
+				<td class="desc"><p>The table name to join.</p>
+</td>
+			</tr>
+        			<tr>
+				<td class="type">string</td>
+				<td class="rest">$alias</td>
+				<td class="desc"><p>The alias of the join table.</p>
+</td>
+			</tr>
+        			<tr>
+				<td class="type">string</td>
+				<td class="rest">$condition = null</td>
+				<td class="desc"><p>The condition for the join.</p>
+</td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="Doctrine-DBAL-Query-QueryBuilder$typespace.html#Doctrine\DBAL\Query\QueryBuilder" class="fqsen "><small>Doctrine\DBAL\Query\</small><wbr>QueryBuilder</a></td>
+			<td class="desc"><p>This QueryBuilder instance.</p>
+</td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Query/QueryBuilder.php#L714-L741" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Query\QueryBuilder::rightJoin()" tabindex="-1" class="structure-title ">
+                        rightJoin						<small>($fromAlias, $join, $alias, $condition = null)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Creates and adds a right join to the query.</p>
+<p><code></p>
+<pre><code>$qb = $conn-&gt;createQueryBuilder()
+    -&gt;select('u.name')
+    -&gt;from('users', 'u')
+    -&gt;rightJoin('u', 'phonenumbers', 'p', 'p.is_primary = 1');
+</code></pre>
+<p></code></p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">string</td>
+				<td class="rest">$fromAlias</td>
+				<td class="desc"><p>The alias that points to a from clause.</p>
+</td>
+			</tr>
+        			<tr>
+				<td class="type">string</td>
+				<td class="rest">$join</td>
+				<td class="desc"><p>The table name to join.</p>
+</td>
+			</tr>
+        			<tr>
+				<td class="type">string</td>
+				<td class="rest">$alias</td>
+				<td class="desc"><p>The alias of the join table.</p>
+</td>
+			</tr>
+        			<tr>
+				<td class="type">string</td>
+				<td class="rest">$condition = null</td>
+				<td class="desc"><p>The condition for the join.</p>
+</td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="Doctrine-DBAL-Query-QueryBuilder$typespace.html#Doctrine\DBAL\Query\QueryBuilder" class="fqsen "><small>Doctrine\DBAL\Query\</small><wbr>QueryBuilder</a></td>
+			<td class="desc"><p>This QueryBuilder instance.</p>
+</td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Query/QueryBuilder.php#L743-L761" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Query\QueryBuilder::set()" tabindex="-1" class="structure-title ">
+                        set						<small>($key, $value)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Sets a new value for a column in a bulk update query.</p>
+<p><code></p>
+<pre><code>$qb = $conn-&gt;createQueryBuilder()
+    -&gt;update('users', 'u')
+    -&gt;set('u.last_login', 'NOW()')
+    -&gt;where('u.id = ?');
+</code></pre>
+<p></code></p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">string</td>
+				<td class="rest">$key</td>
+				<td class="desc"><p>The column to set.</p>
+</td>
+			</tr>
+        			<tr>
+				<td class="type">string</td>
+				<td class="rest">$value</td>
+				<td class="desc"><p>The value, expression, placeholder, etc.</p>
+</td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="Doctrine-DBAL-Query-QueryBuilder$typespace.html#Doctrine\DBAL\Query\QueryBuilder" class="fqsen "><small>Doctrine\DBAL\Query\</small><wbr>QueryBuilder</a></td>
+			<td class="desc"><p>This QueryBuilder instance.</p>
+</td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Query/QueryBuilder.php#L763-L796" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Query\QueryBuilder::where()" tabindex="-1" class="structure-title ">
+                        where						<small>($predicates)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Specifies one or more restrictions to the query result.<br />
+Replaces any previously specified restrictions, if any.</p>
+<p><code></p>
+<pre><code>$qb = $conn-&gt;createQueryBuilder()
+    -&gt;select('u.name')
+    -&gt;from('users', 'u')
+    -&gt;where('u.id = ?');
+
+// You can optionally programatically build and/or expressions
+$qb = $conn-&gt;createQueryBuilder();
+
+$or = $qb-&gt;expr()-&gt;orx();
+$or-&gt;add($qb-&gt;expr()-&gt;eq('u.id', 1));
+$or-&gt;add($qb-&gt;expr()-&gt;eq('u.id', 2));
+
+$qb-&gt;update('users', 'u')
+    -&gt;set('u.last_login', 'NOW()')
+    -&gt;where($or);
+</code></pre>
+<p></code></p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">mixed</td>
+				<td class="rest">$predicates</td>
+				<td class="desc"><p>The restriction predicates.</p>
+</td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="Doctrine-DBAL-Query-QueryBuilder$typespace.html#Doctrine\DBAL\Query\QueryBuilder" class="fqsen "><small>Doctrine\DBAL\Query\</small><wbr>QueryBuilder</a></td>
+			<td class="desc"><p>This QueryBuilder instance.</p>
+</td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Query/QueryBuilder.php#L798-L829" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Query\QueryBuilder::andWhere()" tabindex="-1" class="structure-title ">
+                        andWhere						<small>($where)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Adds one or more restrictions to the query results, forming a logical<br />
+conjunction with any previously specified restrictions.</p>
+<p><code></p>
+<pre><code>$qb = $conn-&gt;createQueryBuilder()
+    -&gt;select('u')
+    -&gt;from('users', 'u')
+    -&gt;where('u.username LIKE ?')
+    -&gt;andWhere('u.is_active = 1');
+</code></pre>
+<p></code></p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">mixed</td>
+				<td class="rest">$where</td>
+				<td class="desc"><p>The query restrictions.</p>
+</td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="Doctrine-DBAL-Query-QueryBuilder$typespace.html#Doctrine\DBAL\Query\QueryBuilder" class="fqsen "><small>Doctrine\DBAL\Query\</small><wbr>QueryBuilder</a></td>
+			<td class="desc"><p>This QueryBuilder instance.</p>
+</td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            	<table class="table">
+		<caption>See</caption>
+		<tbody>
+        			<tr>
+				<td class="type">
+                                            <a href="Doctrine-DBAL-Query-QueryBuilder$typespace.html#Doctrine\DBAL\Query\QueryBuilder::where()" class="fqsen "><small>Doctrine\DBAL\Query\</small><wbr>QueryBuilder::where()</a>                    				</td>
+				<td class="desc">where()</td>
+			</tr>
+        		</tbody>
+	</table>
+    					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Query/QueryBuilder.php#L831-L862" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Query\QueryBuilder::orWhere()" tabindex="-1" class="structure-title ">
+                        orWhere						<small>($where)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Adds one or more restrictions to the query results, forming a logical<br />
+disjunction with any previously specified restrictions.</p>
+<p><code></p>
+<pre><code>$qb = $em-&gt;createQueryBuilder()
+    -&gt;select('u.name')
+    -&gt;from('users', 'u')
+    -&gt;where('u.id = 1')
+    -&gt;orWhere('u.id = 2');
+</code></pre>
+<p></code></p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">mixed</td>
+				<td class="rest">$where</td>
+				<td class="desc"><p>The WHERE statement.</p>
+</td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="Doctrine-DBAL-Query-QueryBuilder$typespace.html#Doctrine\DBAL\Query\QueryBuilder" class="fqsen "><small>Doctrine\DBAL\Query\</small><wbr>QueryBuilder</a></td>
+			<td class="desc"><p>This QueryBuilder instance.</p>
+</td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            	<table class="table">
+		<caption>See</caption>
+		<tbody>
+        			<tr>
+				<td class="type">
+                                            <a href="Doctrine-DBAL-Query-QueryBuilder$typespace.html#Doctrine\DBAL\Query\QueryBuilder::where()" class="fqsen "><small>Doctrine\DBAL\Query\</small><wbr>QueryBuilder::where()</a>                    				</td>
+				<td class="desc">where()</td>
+			</tr>
+        		</tbody>
+	</table>
+    					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Query/QueryBuilder.php#L864-L888" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Query\QueryBuilder::groupBy()" tabindex="-1" class="structure-title ">
+                        groupBy						<small>($groupBy)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Specifies a grouping over the results of the query.<br />
+Replaces any previously specified groupings, if any.</p>
+<p><code></p>
+<pre><code>$qb = $conn-&gt;createQueryBuilder()
+    -&gt;select('u.name')
+    -&gt;from('users', 'u')
+    -&gt;groupBy('u.id');
+</code></pre>
+<p></code></p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">mixed</td>
+				<td class="rest">$groupBy</td>
+				<td class="desc"><p>The grouping expression.</p>
+</td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="Doctrine-DBAL-Query-QueryBuilder$typespace.html#Doctrine\DBAL\Query\QueryBuilder" class="fqsen "><small>Doctrine\DBAL\Query\</small><wbr>QueryBuilder</a></td>
+			<td class="desc"><p>This QueryBuilder instance.</p>
+</td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Query/QueryBuilder.php#L891-L915" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Query\QueryBuilder::addGroupBy()" tabindex="-1" class="structure-title ">
+                        addGroupBy						<small>($groupBy)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Adds a grouping expression to the query.</p>
+<p><code></p>
+<pre><code>$qb = $conn-&gt;createQueryBuilder()
+    -&gt;select('u.name')
+    -&gt;from('users', 'u')
+    -&gt;groupBy('u.lastLogin');
+    -&gt;addGroupBy('u.createdAt')
+</code></pre>
+<p></code></p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">mixed</td>
+				<td class="rest">$groupBy</td>
+				<td class="desc"><p>The grouping expression.</p>
+</td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="Doctrine-DBAL-Query-QueryBuilder$typespace.html#Doctrine\DBAL\Query\QueryBuilder" class="fqsen "><small>Doctrine\DBAL\Query\</small><wbr>QueryBuilder</a></td>
+			<td class="desc"><p>This QueryBuilder instance.</p>
+</td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Query/QueryBuilder.php#L917-L941" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Query\QueryBuilder::setValue()" tabindex="-1" class="structure-title ">
+                        setValue						<small>($column, $value)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Sets a value for a column in an insert query.</p>
+<p><code></p>
+<pre><code>$qb = $conn-&gt;createQueryBuilder()
+    -&gt;insert('users')
+    -&gt;values(
+        array(
+            'name' =&gt; '?'
+        )
+    )
+    -&gt;setValue('password', '?');
+</code></pre>
+<p></code></p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">string</td>
+				<td class="rest">$column</td>
+				<td class="desc"><p>The column into which the value should be inserted.</p>
+</td>
+			</tr>
+        			<tr>
+				<td class="type">string</td>
+				<td class="rest">$value</td>
+				<td class="desc"><p>The value that should be inserted into the column.</p>
+</td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="Doctrine-DBAL-Query-QueryBuilder$typespace.html#Doctrine\DBAL\Query\QueryBuilder" class="fqsen "><small>Doctrine\DBAL\Query\</small><wbr>QueryBuilder</a></td>
+			<td class="desc"><p>This QueryBuilder instance.</p>
+</td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Query/QueryBuilder.php#L943-L965" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Query\QueryBuilder::values()" tabindex="-1" class="structure-title ">
+                        values						<small>($values)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Specifies values for an insert query indexed by column names.<br />
+Replaces any previous values, if any.</p>
+<p><code></p>
+<pre><code>$qb = $conn-&gt;createQueryBuilder()
+    -&gt;insert('users')
+    -&gt;values(
+        array(
+            'name' =&gt; '?',
+            'password' =&gt; '?'
+        )
+    );
+</code></pre>
+<p></code></p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">array</td>
+				<td class="rest">$values</td>
+				<td class="desc"><p>The values to specify for the insert query indexed by column names.</p>
+</td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="Doctrine-DBAL-Query-QueryBuilder$typespace.html#Doctrine\DBAL\Query\QueryBuilder" class="fqsen "><small>Doctrine\DBAL\Query\</small><wbr>QueryBuilder</a></td>
+			<td class="desc"><p>This QueryBuilder instance.</p>
+</td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Query/QueryBuilder.php#L967-L982" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Query\QueryBuilder::having()" tabindex="-1" class="structure-title ">
+                        having						<small>($having)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Specifies a restriction over the groups of the query.<br />
+Replaces any previous having restrictions, if any.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">mixed</td>
+				<td class="rest">$having</td>
+				<td class="desc"><p>The restriction over the groups.</p>
+</td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="Doctrine-DBAL-Query-QueryBuilder$typespace.html#Doctrine\DBAL\Query\QueryBuilder" class="fqsen "><small>Doctrine\DBAL\Query\</small><wbr>QueryBuilder</a></td>
+			<td class="desc"><p>This QueryBuilder instance.</p>
+</td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Query/QueryBuilder.php#L984-L1005" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Query\QueryBuilder::andHaving()" tabindex="-1" class="structure-title ">
+                        andHaving						<small>($having)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Adds a restriction over the groups of the query, forming a logical<br />
+conjunction with any existing having restrictions.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">mixed</td>
+				<td class="rest">$having</td>
+				<td class="desc"><p>The restriction to append.</p>
+</td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="Doctrine-DBAL-Query-QueryBuilder$typespace.html#Doctrine\DBAL\Query\QueryBuilder" class="fqsen "><small>Doctrine\DBAL\Query\</small><wbr>QueryBuilder</a></td>
+			<td class="desc"><p>This QueryBuilder instance.</p>
+</td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Query/QueryBuilder.php#L1007-L1028" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Query\QueryBuilder::orHaving()" tabindex="-1" class="structure-title ">
+                        orHaving						<small>($having)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Adds a restriction over the groups of the query, forming a logical<br />
+disjunction with any existing having restrictions.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">mixed</td>
+				<td class="rest">$having</td>
+				<td class="desc"><p>The restriction to add.</p>
+</td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="Doctrine-DBAL-Query-QueryBuilder$typespace.html#Doctrine\DBAL\Query\QueryBuilder" class="fqsen "><small>Doctrine\DBAL\Query\</small><wbr>QueryBuilder</a></td>
+			<td class="desc"><p>This QueryBuilder instance.</p>
+</td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Query/QueryBuilder.php#L1030-L1042" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Query\QueryBuilder::orderBy()" tabindex="-1" class="structure-title ">
+                        orderBy						<small>($sort, $order = null)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Specifies an ordering for the query results.<br />
+Replaces any previously specified orderings, if any.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">string</td>
+				<td class="rest">$sort</td>
+				<td class="desc"><p>The ordering expression.</p>
+</td>
+			</tr>
+        			<tr>
+				<td class="type">string</td>
+				<td class="rest">$order = null</td>
+				<td class="desc"><p>The ordering direction.</p>
+</td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="Doctrine-DBAL-Query-QueryBuilder$typespace.html#Doctrine\DBAL\Query\QueryBuilder" class="fqsen "><small>Doctrine\DBAL\Query\</small><wbr>QueryBuilder</a></td>
+			<td class="desc"><p>This QueryBuilder instance.</p>
+</td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Query/QueryBuilder.php#L1044-L1055" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Query\QueryBuilder::addOrderBy()" tabindex="-1" class="structure-title ">
+                        addOrderBy						<small>($sort, $order = null)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Adds an ordering to the query results.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">string</td>
+				<td class="rest">$sort</td>
+				<td class="desc"><p>The ordering expression.</p>
+</td>
+			</tr>
+        			<tr>
+				<td class="type">string</td>
+				<td class="rest">$order = null</td>
+				<td class="desc"><p>The ordering direction.</p>
+</td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="Doctrine-DBAL-Query-QueryBuilder$typespace.html#Doctrine\DBAL\Query\QueryBuilder" class="fqsen "><small>Doctrine\DBAL\Query\</small><wbr>QueryBuilder</a></td>
+			<td class="desc"><p>This QueryBuilder instance.</p>
+</td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Query/QueryBuilder.php#L1057-L1067" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Query\QueryBuilder::getQueryPart()" tabindex="-1" class="structure-title ">
+                        getQueryPart						<small>($queryPartName)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Gets a query part by its name.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">string</td>
+				<td class="rest">$queryPartName</td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">mixed</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Query/QueryBuilder.php#L1069-L1077" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Query\QueryBuilder::getQueryParts()" tabindex="-1" class="structure-title ">
+                        getQueryParts						<small>()</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Gets all query parts.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">array</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Query/QueryBuilder.php#L1079-L1097" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Query\QueryBuilder::resetQueryParts()" tabindex="-1" class="structure-title ">
+                        resetQueryParts						<small>($queryPartNames = null)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Resets SQL parts.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">array<span class="type-separator"></span><wbr>null</td>
+				<td class="rest">$queryPartNames = null</td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="Doctrine-DBAL-Query-QueryBuilder$typespace.html#Doctrine\DBAL\Query\QueryBuilder" class="fqsen "><small>Doctrine\DBAL\Query\</small><wbr>QueryBuilder</a></td>
+			<td class="desc"><p>This QueryBuilder instance.</p>
+</td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Query/QueryBuilder.php#L1099-L1114" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Query\QueryBuilder::resetQueryPart()" tabindex="-1" class="structure-title ">
+                        resetQueryPart						<small>($queryPartName)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Resets a single SQL part.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">string</td>
+				<td class="rest">$queryPartName</td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="Doctrine-DBAL-Query-QueryBuilder$typespace.html#Doctrine\DBAL\Query\QueryBuilder" class="fqsen "><small>Doctrine\DBAL\Query\</small><wbr>QueryBuilder</a></td>
+			<td class="desc"><p>This QueryBuilder instance.</p>
+</td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Query/QueryBuilder.php#L1232-L1241" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Query\QueryBuilder::__toString()" tabindex="-1" class="structure-title ">
+                        __toString						<small>()</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Gets a string representation of this QueryBuilder which corresponds to<br />
+the final SQL query being constructed.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">string</td>
+			<td class="desc"><p>The string representation of this QueryBuilder.</p>
+</td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Query/QueryBuilder.php#L1243-L1281" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Query\QueryBuilder::createNamedParameter()" tabindex="-1" class="structure-title ">
+                        createNamedParameter						<small>($value, $type = Doctrine\DBAL\ParameterType::STRING, $placeHolder = null)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Creates a new named parameter and bind the value $value to it.</p>
+<p>This method provides a shortcut for PDOStatement::bindValue<br />
+when using prepared statements.</p>
+<p>The parameter $value specifies the value that you want to bind. If<br />
+$placeholder is not provided bindValue() will automatically create a<br />
+placeholder for you. An automatic placeholder will be of the name<br />
+':dcValue1', ':dcValue2' etc.</p>
+<p>For more information see <tag_link data-kind='uri' data-type='http://php.net/pdostatement-bindparam' data-description='http://php.net/pdostatement-bindparam'><a href="http://php.net/pdostatement-bindparam">http://php.net/pdostatement-bindparam</a></tag_link></p>
+<p>Example:<br />
+<code><br />
+$value = 2;<br />
+$q-&gt;eq( 'id', $q-&gt;bindValue( $value ) );<br />
+$stmt = $q-&gt;executeQuery(); // executed with 'id = 2'<br />
+</code></p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">mixed</td>
+				<td class="rest">$value</td>
+				<td class="desc"></td>
+			</tr>
+        			<tr>
+				<td class="type">mixed</td>
+				<td class="rest">$type = Doctrine\DBAL\ParameterType::STRING</td>
+				<td class="desc"></td>
+			</tr>
+        			<tr>
+				<td class="type">string</td>
+				<td class="rest">$placeHolder = null</td>
+				<td class="desc"><p>The name to bind with. The string must start with a colon ':'.</p>
+</td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">string</td>
+			<td class="desc"><p>the placeholder name used.</p>
+</td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Query/QueryBuilder.php#L1283-L1311" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Query\QueryBuilder::createPositionalParameter()" tabindex="-1" class="structure-title ">
+                        createPositionalParameter						<small>($value, $type = Doctrine\DBAL\ParameterType::STRING)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Creates a new positional parameter and bind the given value to it.</p>
+<p>Attention: If you are using positional parameters with the query builder you have<br />
+to be very careful to bind all parameters in the order they appear in the SQL<br />
+statement , otherwise they get bound in the wrong order which can lead to serious<br />
+bugs in your code.</p>
+<p>Example:<br />
+<code><br />
+ $qb = $conn-&gt;createQueryBuilder();<br />
+ $qb-&gt;select('u.*')</p>
+<pre><code>-&gt;from('users', 'u')
+-&gt;where('u.username = ' . $qb-&gt;createPositionalParameter('Foo', ParameterType::STRING))
+-&gt;orWhere('u.username = ' . $qb-&gt;createPositionalParameter('Bar', ParameterType::STRING))
+</code></pre>
+<p></code></p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">mixed</td>
+				<td class="rest">$value</td>
+				<td class="desc"></td>
+			</tr>
+        			<tr>
+				<td class="type">int</td>
+				<td class="rest">$type = Doctrine\DBAL\ParameterType::STRING</td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">string</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Query/QueryBuilder.php#L1344-L1368" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Query\QueryBuilder::__clone()" tabindex="-1" class="structure-title ">
+                        __clone						<small>()</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Deep clone of all expression objects in the SQL parts.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">void</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            		</ul>
+    
+	<div class="attribute">
+		<span class="label label-default"></span>
+		<span class="label label-default">author Guilherme Blanco</span>
+	</div>
+	<div class="clearfix"></div>
+</div>
+</body>
+</html>

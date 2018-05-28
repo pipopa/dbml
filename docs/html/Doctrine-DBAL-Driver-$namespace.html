@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+<head>	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/styles/zenburn.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js-bootstrap-css/1.2.1/typeaheadjs.min.css">
+	<link rel="stylesheet" type="text/css" data-href="common.css">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/highlight.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/3.1.1/bootstrap3-typeahead.min.js"></script>
+	<script data-src="common.js"></script>
+
+	<script>
+        (function () {
+            var cachekey;
+            try {
+                cachekey = window.parent.CACHEKEY;
+            }
+            catch (e) {
+                cachekey = 'nocache';
+            }
+            $('link[data-href]').attr('href', function () {
+                return this.dataset.href + '?' + cachekey;
+            });
+            $('script[data-src]').attr('src', function () {
+                return this.dataset.src + '?' + cachekey;
+            });
+
+            $(document).on('click', 'a[href]:not([target="_blank"]):not(.cachekey)', function () {
+                this.classList.add('cachekey');
+                this.href = this.href.replace('.html', '.html?' + cachekey);
+            });
+        })();
+	</script>
+    </head>
+<body>
+<a id="anchor" href="./" style="display: none"></a>
+<h1 class="ellipsis">
+	Structure
+	<small class="ellipsis-text">(Doctrine\DBAL\Driver\)</small>
+	<span class="pull-right">
+		<small class="frame-switch">
+		<a target="_parent">frame</a> | <a target="_parent">noframe</a>
+		</small>
+	</span>
+</h1>
+<div class="main-wrapper">
+	<h2>namespace <span class="category-name">Doctrine\DBAL\Driver\</span></h2>
+	<div class="inner-item">
+		<div class="description"></div>
+	</div>
+
+    
+            			<h3>Interfaces</h3>
+			<ul>
+                					<li class="structure-item">
+						<div class="attribute">
+							<span class="label label-danger"></span>
+							<span class="label label-warning">abstract</span>
+							<span class="label label-info"></span>
+							<span class="label label-info"></span>
+							<span class="label label-deprecated"></span>
+                            			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Driver/Connection.php#L24-L112" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+            						</div>
+						<h4 id="Doctrine\DBAL\Driver\Connection" tabindex="-1" class="structure-title ">
+							<a href="Doctrine-DBAL-Driver-Connection$typespace.html#Doctrine\DBAL\Driver\Connection">Connection</a>
+						</h4>
+						<div class="inner-item">
+							<div class="description"><p>Connection interface.<br />
+Driver connections must implement this interface.</p>
+<p>This resembles (a subset of) the PDO interface.</p>
+</div>
+						</div>
+						<div class="attribute">
+							<span class="label label-default"></span>
+							<span class="label label-default"></span>
+						</div>
+						<div class="clearfix"></div>
+					</li>
+                					<li class="structure-item">
+						<div class="attribute">
+							<span class="label label-danger"></span>
+							<span class="label label-warning">abstract</span>
+							<span class="label label-info"></span>
+							<span class="label label-info"></span>
+							<span class="label label-deprecated"></span>
+                            			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Driver/ServerInfoAwareConnection.php#L22-L44" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+            						</div>
+						<h4 id="Doctrine\DBAL\Driver\ServerInfoAwareConnection" tabindex="-1" class="structure-title ">
+							<a href="Doctrine-DBAL-Driver-ServerInfoAwareConnection$typespace.html#Doctrine\DBAL\Driver\ServerInfoAwareConnection">ServerInfoAwareConnection</a>
+						</h4>
+						<div class="inner-item">
+							<div class="description"><p>Contract for a connection that is able to provide information about the server it is connected to.</p>
+</div>
+						</div>
+						<div class="attribute">
+							<span class="label label-default"></span>
+							<span class="label label-default">author Steve Müller</span>
+						</div>
+						<div class="clearfix"></div>
+					</li>
+                					<li class="structure-item">
+						<div class="attribute">
+							<span class="label label-danger"></span>
+							<span class="label label-warning">abstract</span>
+							<span class="label label-info"></span>
+							<span class="label label-info"></span>
+							<span class="label label-deprecated"></span>
+                            			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Driver/ExceptionConverterDriver.php#L22-L44" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+            						</div>
+						<h4 id="Doctrine\DBAL\Driver\ExceptionConverterDriver" tabindex="-1" class="structure-title ">
+							<a href="Doctrine-DBAL-Driver-ExceptionConverterDriver$typespace.html#Doctrine\DBAL\Driver\ExceptionConverterDriver">ExceptionConverterDriver</a>
+						</h4>
+						<div class="inner-item">
+							<div class="description"><p>Contract for a driver that is capable of converting DBAL driver exceptions into standardized DBAL driver exceptions.</p>
+</div>
+						</div>
+						<div class="attribute">
+							<span class="label label-default"></span>
+							<span class="label label-default">author Benjamin Eberlei</span>
+						</div>
+						<div class="clearfix"></div>
+					</li>
+                					<li class="structure-item">
+						<div class="attribute">
+							<span class="label label-danger"></span>
+							<span class="label label-warning">abstract</span>
+							<span class="label label-info"></span>
+							<span class="label label-info"></span>
+							<span class="label label-deprecated"></span>
+                            			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Driver/ResultStatement.php#L22-L115" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+            						</div>
+						<h4 id="Doctrine\DBAL\Driver\ResultStatement" tabindex="-1" class="structure-title ">
+							<a href="Doctrine-DBAL-Driver-ResultStatement$typespace.html#Doctrine\DBAL\Driver\ResultStatement">ResultStatement</a>
+						</h4>
+						<div class="inner-item">
+							<div class="description"><p>Interface for the reading part of a prepare statement only.</p>
+</div>
+						</div>
+						<div class="attribute">
+							<span class="label label-default"></span>
+							<span class="label label-default">author Benjamin Eberlei</span>
+						</div>
+						<div class="clearfix"></div>
+					</li>
+                					<li class="structure-item">
+						<div class="attribute">
+							<span class="label label-danger"></span>
+							<span class="label label-warning">abstract</span>
+							<span class="label label-info"></span>
+							<span class="label label-info"></span>
+							<span class="label label-deprecated"></span>
+                            			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Driver/Statement.php#L24-L130" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+            						</div>
+						<h4 id="Doctrine\DBAL\Driver\Statement" tabindex="-1" class="structure-title ">
+							<a href="Doctrine-DBAL-Driver-Statement$typespace.html#Doctrine\DBAL\Driver\Statement">Statement</a>
+						</h4>
+						<div class="inner-item">
+							<div class="description"><p>Statement interface.<br />
+Drivers must implement this interface.</p>
+<p>This resembles (a subset of) the PDOStatement interface.</p>
+</div>
+						</div>
+						<div class="attribute">
+							<span class="label label-default"></span>
+							<span class="label label-default">author Konsta Vesterinen</span>
+						</div>
+						<div class="clearfix"></div>
+					</li>
+                					<li class="structure-item">
+						<div class="attribute">
+							<span class="label label-danger"></span>
+							<span class="label label-warning">abstract</span>
+							<span class="label label-info"></span>
+							<span class="label label-info"></span>
+							<span class="label label-deprecated"></span>
+                            			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Driver/PingableConnection.php#L22-L39" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+            						</div>
+						<h4 id="Doctrine\DBAL\Driver\PingableConnection" tabindex="-1" class="structure-title ">
+							<a href="Doctrine-DBAL-Driver-PingableConnection$typespace.html#Doctrine\DBAL\Driver\PingableConnection">PingableConnection</a>
+						</h4>
+						<div class="inner-item">
+							<div class="description"><p>An interface for connections which support a "native" ping method.</p>
+</div>
+						</div>
+						<div class="attribute">
+							<span class="label label-default"></span>
+							<span class="label label-default">author Till Klampaeckel</span>
+						</div>
+						<div class="clearfix"></div>
+					</li>
+                					<li class="structure-item">
+						<div class="attribute">
+							<span class="label label-danger"></span>
+							<span class="label label-warning">abstract</span>
+							<span class="label label-info"></span>
+							<span class="label label-info"></span>
+							<span class="label label-deprecated"></span>
+                            			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Driver/DriverException.php#L22-L59" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+            						</div>
+						<h4 id="Doctrine\DBAL\Driver\DriverException" tabindex="-1" class="structure-title ">
+							<a href="Doctrine-DBAL-Driver-DriverException$typespace.html#Doctrine\DBAL\Driver\DriverException">DriverException</a>
+						</h4>
+						<div class="inner-item">
+							<div class="description"><p>Contract for a driver exception.</p>
+<p>Driver exceptions provide the SQLSTATE of the driver<br />
+and the driver specific error code at the time the error occurred.</p>
+</div>
+						</div>
+						<div class="attribute">
+							<span class="label label-default"></span>
+							<span class="label label-default">author Steve Müller</span>
+						</div>
+						<div class="clearfix"></div>
+					</li>
+                			</ul>
+                                			<h3>Classes</h3>
+			<ul>
+                					<li class="structure-item">
+						<div class="attribute">
+							<span class="label label-danger"></span>
+							<span class="label label-warning"></span>
+							<span class="label label-info"></span>
+							<span class="label label-info">iterateable</span>
+							<span class="label label-deprecated"></span>
+                            			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Driver/PDOStatement.php#L29-L255" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+            						</div>
+						<h4 id="Doctrine\DBAL\Driver\PDOStatement" tabindex="-1" class="structure-title ">
+							<a href="Doctrine-DBAL-Driver-PDOStatement$typespace.html#Doctrine\DBAL\Driver\PDOStatement">PDOStatement</a>
+						</h4>
+						<div class="inner-item">
+							<div class="description"><p>The PDO implementation of the Statement interface.<br />
+Used by all PDO-based drivers.</p>
+</div>
+						</div>
+						<div class="attribute">
+							<span class="label label-default"></span>
+							<span class="label label-default"></span>
+						</div>
+						<div class="clearfix"></div>
+					</li>
+                			</ul>
+            
+    
+    	<div class="attribute">
+		<span class="label label-default"></span>
+		<span class="label label-default"></span>
+	</div>
+	<div class="clearfix"></div>
+</div>
+</body>
+</html>

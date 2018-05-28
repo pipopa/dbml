@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+<head>	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/styles/zenburn.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js-bootstrap-css/1.2.1/typeaheadjs.min.css">
+	<link rel="stylesheet" type="text/css" data-href="common.css">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/highlight.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/3.1.1/bootstrap3-typeahead.min.js"></script>
+	<script data-src="common.js"></script>
+
+	<script>
+        (function () {
+            var cachekey;
+            try {
+                cachekey = window.parent.CACHEKEY;
+            }
+            catch (e) {
+                cachekey = 'nocache';
+            }
+            $('link[data-href]').attr('href', function () {
+                return this.dataset.href + '?' + cachekey;
+            });
+            $('script[data-src]').attr('src', function () {
+                return this.dataset.src + '?' + cachekey;
+            });
+
+            $(document).on('click', 'a[href]:not([target="_blank"]):not(.cachekey)', function () {
+                this.classList.add('cachekey');
+                this.href = this.href.replace('.html', '.html?' + cachekey);
+            });
+        })();
+	</script>
+    </head>
+<body>
+<a id="anchor" href="./" style="display: none"></a>
+<h1 class="ellipsis">
+	Structure
+	<small class="ellipsis-text">(ryunosuke\dbml\Query\)</small>
+	<span class="pull-right">
+		<small class="frame-switch">
+		<a target="_parent">frame</a> | <a target="_parent">noframe</a>
+		</small>
+	</span>
+</h1>
+<div class="main-wrapper">
+	<h2>namespace <span class="category-name">ryunosuke\dbml\Query\</span></h2>
+	<div class="inner-item">
+		<div class="description"></div>
+	</div>
+
+    		<h3>Namespaces</h3>
+		<ul>
+            				<li class="structure-item">
+					<h4 id="ryunosuke\dbml\Query\Expression\" tabindex="-1" class="structure-title ">
+						<a href="ryunosuke-dbml-Query-Expression-$namespace.html#ryunosuke\dbml\Query\Expression\">Expression</a>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<h4 id="ryunosuke\dbml\Query\Pagination\" tabindex="-1" class="structure-title ">
+						<a href="ryunosuke-dbml-Query-Pagination-$namespace.html#ryunosuke\dbml\Query\Pagination\">Pagination</a>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            		</ul>
+    
+            			<h3>Interfaces</h3>
+			<ul>
+                					<li class="structure-item">
+						<div class="attribute">
+							<span class="label label-danger"></span>
+							<span class="label label-warning">abstract</span>
+							<span class="label label-info"></span>
+							<span class="label label-info"></span>
+							<span class="label label-deprecated"></span>
+                            			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Queryable.php#L5-L33" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+            						</div>
+						<h4 id="ryunosuke\dbml\Query\Queryable" tabindex="-1" class="structure-title ">
+							<a href="ryunosuke-dbml-Query-Queryable$typespace.html#ryunosuke\dbml\Query\Queryable">Queryable</a>
+						</h4>
+						<div class="inner-item">
+							<div class="description"><p>クエリ文字列（完全性は問わない。部分クエリでも良い）とパラメータを持つインターフェース</p>
+</div>
+						</div>
+						<div class="attribute">
+							<span class="label label-default"></span>
+							<span class="label label-default"></span>
+						</div>
+						<div class="clearfix"></div>
+					</li>
+                			</ul>
+                                			<h3>Classes</h3>
+			<ul>
+                					<li class="structure-item">
+						<div class="attribute">
+							<span class="label label-danger"></span>
+							<span class="label label-warning"></span>
+							<span class="label label-info"></span>
+							<span class="label label-info">iterateable</span>
+							<span class="label label-deprecated"></span>
+                            			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/QueryBuilder.php#L44-L2984" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+            						</div>
+						<h4 id="ryunosuke\dbml\Query\QueryBuilder" tabindex="-1" class="structure-title ">
+							<a href="ryunosuke-dbml-Query-QueryBuilder$typespace.html#ryunosuke\dbml\Query\QueryBuilder">QueryBuilder</a>
+						</h4>
+						<div class="inner-item">
+							<div class="description"><p>クエリビルダークラス</p>
+<p>SELECT に特化していて、 AFFECT 系クエリをビルドすることはできない。</p>
+<h3>IteratorAggregate, Countable</h3>
+<p>IteratorAggregate, Countable を実装しているので、 foreach で回すことができるし、count($qb) で件数の取得もできる。<br />
+foreach の取得処理は array() であり、レコードの配列（≒連想配列）が渡ってくる。 count() はその件数である。</p>
+<pre><code class="language-php">$qb = $db-&gt;select('t_article');
+foreach ($qb as $row) {
+    // $row は ['id' =&gt; 1, 'title' =&gt; 'hoge title'] のような配列
+}
+echo count($qb); // t_article の件数を返す
+</code></pre>
+<h3>プリペアードステートメント</h3>
+<p>明示的に prepare のようなメソッドを呼ばない限り内部のプリペアードステートメントでは名前付きパラメータを一切使用しない（<tag_link data-kind='fqsen' data-type-category='class' data-type-fqsen='ryunosuke\dbml\Query\Statement' data-type-array='0' data-description='Statement'>Statement</tag_link> も参照）。<br />
+したがってメソッド呼び出し順によってはパラメータ順が「ズレ」ることがある。<br />
+基本的にはズレないようにはしてある（ズレるのはかなり特殊な条件）が、怖い場合は <code>queryInto</code> で文字列化してから結合したりサブクエリで使用したりした方が確実。</p>
+</div>
+						</div>
+						<div class="attribute">
+							<span class="label label-default"></span>
+							<span class="label label-default"></span>
+						</div>
+						<div class="clearfix"></div>
+					</li>
+                					<li class="structure-item">
+						<div class="attribute">
+							<span class="label label-danger"></span>
+							<span class="label label-warning"></span>
+							<span class="label label-info"></span>
+							<span class="label label-info">iterateable</span>
+							<span class="label label-deprecated"></span>
+                            			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/SubqueryBuilder.php#L16-L375" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+            						</div>
+						<h4 id="ryunosuke\dbml\Query\SubqueryBuilder" tabindex="-1" class="structure-title ">
+							<a href="ryunosuke-dbml-Query-SubqueryBuilder$typespace.html#ryunosuke\dbml\Query\SubqueryBuilder">SubqueryBuilder</a>
+						</h4>
+						<div class="inner-item">
+							<div class="description"><p>サブクエリビルダークラス</p>
+<p>直接 new する類のクラスではない。 Database や QueryBuilder が間接的に利用する。</p>
+</div>
+						</div>
+						<div class="attribute">
+							<span class="label label-default"></span>
+							<span class="label label-default"></span>
+						</div>
+						<div class="clearfix"></div>
+					</li>
+                					<li class="structure-item">
+						<div class="attribute">
+							<span class="label label-danger"></span>
+							<span class="label label-warning"></span>
+							<span class="label label-info"></span>
+							<span class="label label-info"></span>
+							<span class="label label-deprecated"></span>
+                            			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Statement.php#L9-L142" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+            						</div>
+						<h4 id="ryunosuke\dbml\Query\Statement" tabindex="-1" class="structure-title ">
+							<a href="ryunosuke-dbml-Query-Statement$typespace.html#ryunosuke\dbml\Query\Statement">Statement</a>
+						</h4>
+						<div class="inner-item">
+							<div class="description"><p>Statement をラップして扱いやすくしたクラス</p>
+<p>主にプリペアドステートメントのために存在する。よってエミュレーションモードがオンだとほとんど意味を為さない。</p>
+<p>クエリビルダは疑問符プレースホルダが大量に埋め込まれる可能性があるので、全部パラメータにするのが大変。<br />
+ので、「prepare した時点で固定し、残り（名前付き）のみ後から指定する」という仕様になっている。</p>
+<pre><code class="language-php">$qb = $db-&gt;select('t_table.*', ['id = :id', 'opt1' =&gt; 1, 'opt2' =&gt; 2])-&gt;prepare();
+// :id は解決していないため、パラメータで渡すことができる（下記はエミュレーションモードがオフなら『本当の』プリペアドステートメントで実行される）
+$qb-&gt;fetchArray([':id' =&gt; 100]); // SELECT t_table.* FROM t_table WHERE id = 100 AND opt1 = 1 AND opt2 = 2
+$qb-&gt;fetchArray([':id' =&gt; 101]); // SELECT t_table.* FROM t_table WHERE id = 101 AND opt1 = 1 AND opt2 = 2
+$qb-&gt;fetchArray([':id' =&gt; 102]); // SELECT t_table.* FROM t_table WHERE id = 102 AND opt1 = 1 AND opt2 = 2
+</code></pre>
+<p><code>['id' =&gt; ':id']</code> ではなく <code>['id = :id']</code> であることに注意。<br />
+「通常の値バインド」と区別する必要がある（<code>['id' =&gt; ':id']</code> だと <code>WHERE id = ":id"</code> というただの文字列の WHERE になってしまう）。</p>
+</div>
+						</div>
+						<div class="attribute">
+							<span class="label label-default"></span>
+							<span class="label label-default"></span>
+						</div>
+						<div class="clearfix"></div>
+					</li>
+                			</ul>
+            
+    
+    	<div class="attribute">
+		<span class="label label-default"></span>
+		<span class="label label-default"></span>
+	</div>
+	<div class="clearfix"></div>
+</div>
+</body>
+</html>

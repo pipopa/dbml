@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html>
+<head>	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/styles/zenburn.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js-bootstrap-css/1.2.1/typeaheadjs.min.css">
+	<link rel="stylesheet" type="text/css" data-href="common.css">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/highlight.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/3.1.1/bootstrap3-typeahead.min.js"></script>
+	<script data-src="common.js"></script>
+
+	<script>
+        (function () {
+            var cachekey;
+            try {
+                cachekey = window.parent.CACHEKEY;
+            }
+            catch (e) {
+                cachekey = 'nocache';
+            }
+            $('link[data-href]').attr('href', function () {
+                return this.dataset.href + '?' + cachekey;
+            });
+            $('script[data-src]').attr('src', function () {
+                return this.dataset.src + '?' + cachekey;
+            });
+
+            $(document).on('click', 'a[href]:not([target="_blank"]):not(.cachekey)', function () {
+                this.classList.add('cachekey');
+                this.href = this.href.replace('.html', '.html?' + cachekey);
+            });
+        })();
+	</script>
+    </head>
+<body>
+<a id="anchor" href="./" style="display: none"></a>
+<h1 class="ellipsis">
+	Structure
+	<small class="ellipsis-text">(Doctrine\DBAL\Schema\)</small>
+	<span class="pull-right">
+		<small class="frame-switch">
+		<a target="_parent">frame</a> | <a target="_parent">noframe</a>
+		</small>
+	</span>
+</h1>
+<div class="main-wrapper">
+	<h2>namespace <span class="category-name">Doctrine\DBAL\Schema\</span></h2>
+	<div class="inner-item">
+		<div class="description"></div>
+	</div>
+
+    		<h3>Namespaces</h3>
+		<ul>
+            				<li class="structure-item">
+					<h4 id="Doctrine\DBAL\Schema\Visitor\" tabindex="-1" class="structure-title ">
+						<a href="Doctrine-DBAL-Schema-Visitor-$namespace.html#Doctrine\DBAL\Schema\Visitor\">Visitor</a>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            		</ul>
+    
+            			<h3>Interfaces</h3>
+			<ul>
+                					<li class="structure-item">
+						<div class="attribute">
+							<span class="label label-danger"></span>
+							<span class="label label-warning">abstract</span>
+							<span class="label label-info"></span>
+							<span class="label label-info"></span>
+							<span class="label label-deprecated"></span>
+                            			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/Constraint.php#L24-L66" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+            						</div>
+						<h4 id="Doctrine\DBAL\Schema\Constraint" tabindex="-1" class="structure-title ">
+							<a href="Doctrine-DBAL-Schema-Constraint$typespace.html#Doctrine\DBAL\Schema\Constraint">Constraint</a>
+						</h4>
+						<div class="inner-item">
+							<div class="description"><p>Marker interface for constraints.</p>
+</div>
+						</div>
+						<div class="attribute">
+							<span class="label label-default"></span>
+							<span class="label label-default">author Benjamin Eberlei</span>
+						</div>
+						<div class="clearfix"></div>
+					</li>
+                			</ul>
+                                			<h3>Classes</h3>
+			<ul>
+                					<li class="structure-item">
+						<div class="attribute">
+							<span class="label label-danger"></span>
+							<span class="label label-warning">abstract</span>
+							<span class="label label-info"></span>
+							<span class="label label-info"></span>
+							<span class="label label-deprecated"></span>
+                            			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/AbstractAsset.php#L34-L237" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+            						</div>
+						<h4 id="Doctrine\DBAL\Schema\AbstractAsset" tabindex="-1" class="structure-title ">
+							<a href="Doctrine-DBAL-Schema-AbstractAsset$typespace.html#Doctrine\DBAL\Schema\AbstractAsset">AbstractAsset</a>
+						</h4>
+						<div class="inner-item">
+							<div class="description"><p>The abstract asset allows to reset the name of all assets without publishing this to the public userland.</p>
+<p>This encapsulation hack is necessary to keep a consistent state of the database schema. Say we have a list of tables<br />
+array($tableName =&gt; Table($tableName)); if you want to rename the table, you have to make sure</p>
+</div>
+						</div>
+						<div class="attribute">
+							<span class="label label-default"></span>
+							<span class="label label-default">author Benjamin Eberlei</span>
+						</div>
+						<div class="clearfix"></div>
+					</li>
+                					<li class="structure-item">
+						<div class="attribute">
+							<span class="label label-danger"></span>
+							<span class="label label-warning"></span>
+							<span class="label label-info"></span>
+							<span class="label label-info"></span>
+							<span class="label label-deprecated"></span>
+                            			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/Column.php#L30-L501" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+            						</div>
+						<h4 id="Doctrine\DBAL\Schema\Column" tabindex="-1" class="structure-title ">
+							<a href="Doctrine-DBAL-Schema-Column$typespace.html#Doctrine\DBAL\Schema\Column">Column</a>
+						</h4>
+						<div class="inner-item">
+							<div class="description"><p>Object representation of a database column.</p>
+</div>
+						</div>
+						<div class="attribute">
+							<span class="label label-default"></span>
+							<span class="label label-default">author Benjamin Eberlei</span>
+						</div>
+						<div class="clearfix"></div>
+					</li>
+                					<li class="structure-item">
+						<div class="attribute">
+							<span class="label label-danger"></span>
+							<span class="label label-warning"></span>
+							<span class="label label-info"></span>
+							<span class="label label-info"></span>
+							<span class="label label-deprecated"></span>
+                            			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/TableDiff.php#L24-L170" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+            						</div>
+						<h4 id="Doctrine\DBAL\Schema\TableDiff" tabindex="-1" class="structure-title ">
+							<a href="Doctrine-DBAL-Schema-TableDiff$typespace.html#Doctrine\DBAL\Schema\TableDiff">TableDiff</a>
+						</h4>
+						<div class="inner-item">
+							<div class="description"><p>Table Diff.</p>
+</div>
+						</div>
+						<div class="attribute">
+							<span class="label label-default"></span>
+							<span class="label label-default">author Benjamin Eberlei</span>
+						</div>
+						<div class="clearfix"></div>
+					</li>
+                					<li class="structure-item">
+						<div class="attribute">
+							<span class="label label-danger"></span>
+							<span class="label label-warning"></span>
+							<span class="label label-info"></span>
+							<span class="label label-info"></span>
+							<span class="label label-deprecated"></span>
+                            			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/ColumnDiff.php#L24-L86" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+            						</div>
+						<h4 id="Doctrine\DBAL\Schema\ColumnDiff" tabindex="-1" class="structure-title ">
+							<a href="Doctrine-DBAL-Schema-ColumnDiff$typespace.html#Doctrine\DBAL\Schema\ColumnDiff">ColumnDiff</a>
+						</h4>
+						<div class="inner-item">
+							<div class="description"><p>Represents the change of a column.</p>
+</div>
+						</div>
+						<div class="attribute">
+							<span class="label label-default"></span>
+							<span class="label label-default">author Benjamin Eberlei</span>
+						</div>
+						<div class="clearfix"></div>
+					</li>
+                					<li class="structure-item">
+						<div class="attribute">
+							<span class="label label-danger"></span>
+							<span class="label label-warning"></span>
+							<span class="label label-info"></span>
+							<span class="label label-info"></span>
+							<span class="label label-deprecated"></span>
+                            			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/Table.php#L35-L872" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+            						</div>
+						<h4 id="Doctrine\DBAL\Schema\Table" tabindex="-1" class="structure-title ">
+							<a href="Doctrine-DBAL-Schema-Table$typespace.html#Doctrine\DBAL\Schema\Table">Table</a>
+						</h4>
+						<div class="inner-item">
+							<div class="description"><p>Object Representation of a table.</p>
+</div>
+						</div>
+						<div class="attribute">
+							<span class="label label-default"></span>
+							<span class="label label-default">author Benjamin Eberlei</span>
+						</div>
+						<div class="clearfix"></div>
+					</li>
+                					<li class="structure-item">
+						<div class="attribute">
+							<span class="label label-danger"></span>
+							<span class="label label-warning"></span>
+							<span class="label label-info"></span>
+							<span class="label label-info"></span>
+							<span class="label label-deprecated"></span>
+                            			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/Schema.php#L31-L515" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+            						</div>
+						<h4 id="Doctrine\DBAL\Schema\Schema" tabindex="-1" class="structure-title ">
+							<a href="Doctrine-DBAL-Schema-Schema$typespace.html#Doctrine\DBAL\Schema\Schema">Schema</a>
+						</h4>
+						<div class="inner-item">
+							<div class="description"><p>Object representation of a database schema.</p>
+<p>Different vendors have very inconsistent naming with regard to the concept<br />
+of a "schema". Doctrine understands a schema as the entity that conceptually<br />
+wraps a set of database objects such as tables, sequences, indexes and<br />
+foreign keys that belong to each other into a namespace. A Doctrine Schema<br />
+has nothing to do with the "SCHEMA" defined as in PostgreSQL, it is more<br />
+related to the concept of "DATABASE" that exists in MySQL and PostgreSQL.</p>
+<p>Every asset in the doctrine schema has a name. A name consists of either a<br />
+namespace.local name pair or just a local unqualified name.</p>
+<p>The abstraction layer that covers a PostgreSQL schema is the namespace of an<br />
+database object (asset). A schema can have a name, which will be used as<br />
+default namespace for the unqualified database objects that are created in<br />
+the schema.</p>
+<p>In the case of MySQL where cross-database queries are allowed this leads to<br />
+databases being "misinterpreted" as namespaces. This is intentional, however<br />
+the CREATE/DROP SQL visitors will just filter this queries and do not<br />
+execute them. Only the queries for the currently connected database are<br />
+executed.</p>
+</div>
+						</div>
+						<div class="attribute">
+							<span class="label label-default"></span>
+							<span class="label label-default">author Benjamin Eberlei</span>
+						</div>
+						<div class="clearfix"></div>
+					</li>
+                					<li class="structure-item">
+						<div class="attribute">
+							<span class="label label-danger"></span>
+							<span class="label label-warning"></span>
+							<span class="label label-info"></span>
+							<span class="label label-info"></span>
+							<span class="label label-deprecated"></span>
+                            			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/ForeignKeyConstraint.php#L32-L397" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+            						</div>
+						<h4 id="Doctrine\DBAL\Schema\ForeignKeyConstraint" tabindex="-1" class="structure-title ">
+							<a href="Doctrine-DBAL-Schema-ForeignKeyConstraint$typespace.html#Doctrine\DBAL\Schema\ForeignKeyConstraint">ForeignKeyConstraint</a>
+						</h4>
+						<div class="inner-item">
+							<div class="description"><p>An abstraction class for a foreign key constraint.</p>
+</div>
+						</div>
+						<div class="attribute">
+							<span class="label label-default"></span>
+							<span class="label label-default">author Benjamin Eberlei</span>
+						</div>
+						<div class="clearfix"></div>
+					</li>
+                					<li class="structure-item">
+						<div class="attribute">
+							<span class="label label-danger"></span>
+							<span class="label label-warning"></span>
+							<span class="label label-info"></span>
+							<span class="label label-info"></span>
+							<span class="label label-deprecated"></span>
+                            			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/Sequence.php#L27-L169" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+            						</div>
+						<h4 id="Doctrine\DBAL\Schema\Sequence" tabindex="-1" class="structure-title ">
+							<a href="Doctrine-DBAL-Schema-Sequence$typespace.html#Doctrine\DBAL\Schema\Sequence">Sequence</a>
+						</h4>
+						<div class="inner-item">
+							<div class="description"><p>Sequence structure.</p>
+</div>
+						</div>
+						<div class="attribute">
+							<span class="label label-default"></span>
+							<span class="label label-default">author Benjamin Eberlei</span>
+						</div>
+						<div class="clearfix"></div>
+					</li>
+                					<li class="structure-item">
+						<div class="attribute">
+							<span class="label label-danger"></span>
+							<span class="label label-warning"></span>
+							<span class="label label-info"></span>
+							<span class="label label-info"></span>
+							<span class="label label-deprecated"></span>
+                            			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/SchemaException.php#L25-L184" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+            						</div>
+						<h4 id="Doctrine\DBAL\Schema\SchemaException" tabindex="-1" class="structure-title ">
+							<a href="Doctrine-DBAL-Schema-SchemaException$typespace.html#Doctrine\DBAL\Schema\SchemaException">SchemaException</a>
+						</h4>
+						<div class="inner-item">
+							<div class="description"></div>
+						</div>
+						<div class="attribute">
+							<span class="label label-default"></span>
+							<span class="label label-default"></span>
+						</div>
+						<div class="clearfix"></div>
+					</li>
+                					<li class="structure-item">
+						<div class="attribute">
+							<span class="label label-danger"></span>
+							<span class="label label-warning"></span>
+							<span class="label label-info"></span>
+							<span class="label label-info"></span>
+							<span class="label label-deprecated"></span>
+                            			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/Index.php#L30-L352" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+            						</div>
+						<h4 id="Doctrine\DBAL\Schema\Index" tabindex="-1" class="structure-title ">
+							<a href="Doctrine-DBAL-Schema-Index$typespace.html#Doctrine\DBAL\Schema\Index">Index</a>
+						</h4>
+						<div class="inner-item">
+							<div class="description"></div>
+						</div>
+						<div class="attribute">
+							<span class="label label-default"></span>
+							<span class="label label-default"></span>
+						</div>
+						<div class="clearfix"></div>
+					</li>
+                					<li class="structure-item">
+						<div class="attribute">
+							<span class="label label-danger"></span>
+							<span class="label label-warning"></span>
+							<span class="label label-info"></span>
+							<span class="label label-info"></span>
+							<span class="label label-deprecated"></span>
+                            			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/Identifier.php#L22-L48" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+            						</div>
+						<h4 id="Doctrine\DBAL\Schema\Identifier" tabindex="-1" class="structure-title ">
+							<a href="Doctrine-DBAL-Schema-Identifier$typespace.html#Doctrine\DBAL\Schema\Identifier">Identifier</a>
+						</h4>
+						<div class="inner-item">
+							<div class="description"><p>An abstraction class for an asset identifier.</p>
+<p>Wraps identifier names like column names in indexes / foreign keys<br />
+in an abstract class for proper quotation capabilities.</p>
+</div>
+						</div>
+						<div class="attribute">
+							<span class="label label-default"></span>
+							<span class="label label-default">author Steve Müller</span>
+						</div>
+						<div class="clearfix"></div>
+					</li>
+                					<li class="structure-item">
+						<div class="attribute">
+							<span class="label label-danger"></span>
+							<span class="label label-warning">abstract</span>
+							<span class="label label-info"></span>
+							<span class="label label-info"></span>
+							<span class="label label-deprecated"></span>
+                            			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/AbstractSchemaManager.php#L39-L1128" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+            						</div>
+						<h4 id="Doctrine\DBAL\Schema\AbstractSchemaManager" tabindex="-1" class="structure-title ">
+							<a href="Doctrine-DBAL-Schema-AbstractSchemaManager$typespace.html#Doctrine\DBAL\Schema\AbstractSchemaManager">AbstractSchemaManager</a>
+						</h4>
+						<div class="inner-item">
+							<div class="description"><p>Base class for schema managers. Schema managers are used to inspect and/or<br />
+modify the database schema/structure.</p>
+</div>
+						</div>
+						<div class="attribute">
+							<span class="label label-default"></span>
+							<span class="label label-default">author Konsta Vesterinen</span>
+						</div>
+						<div class="clearfix"></div>
+					</li>
+                					<li class="structure-item">
+						<div class="attribute">
+							<span class="label label-danger"></span>
+							<span class="label label-warning"></span>
+							<span class="label label-info"></span>
+							<span class="label label-info"></span>
+							<span class="label label-deprecated"></span>
+                            			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/View.php#L22-L53" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+            						</div>
+						<h4 id="Doctrine\DBAL\Schema\View" tabindex="-1" class="structure-title ">
+							<a href="Doctrine-DBAL-Schema-View$typespace.html#Doctrine\DBAL\Schema\View">View</a>
+						</h4>
+						<div class="inner-item">
+							<div class="description"><p>Representation of a Database View.</p>
+</div>
+						</div>
+						<div class="attribute">
+							<span class="label label-default"></span>
+							<span class="label label-default">author Benjamin Eberlei</span>
+						</div>
+						<div class="clearfix"></div>
+					</li>
+                					<li class="structure-item">
+						<div class="attribute">
+							<span class="label label-danger"></span>
+							<span class="label label-warning"></span>
+							<span class="label label-info"></span>
+							<span class="label label-info"></span>
+							<span class="label label-deprecated"></span>
+                            			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/SchemaConfig.php#L22-L129" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+            						</div>
+						<h4 id="Doctrine\DBAL\Schema\SchemaConfig" tabindex="-1" class="structure-title ">
+							<a href="Doctrine-DBAL-Schema-SchemaConfig$typespace.html#Doctrine\DBAL\Schema\SchemaConfig">SchemaConfig</a>
+						</h4>
+						<div class="inner-item">
+							<div class="description"><p>Configuration for a Schema.</p>
+</div>
+						</div>
+						<div class="attribute">
+							<span class="label label-default"></span>
+							<span class="label label-default">author Benjamin Eberlei</span>
+						</div>
+						<div class="clearfix"></div>
+					</li>
+                					<li class="structure-item">
+						<div class="attribute">
+							<span class="label label-danger"></span>
+							<span class="label label-warning"></span>
+							<span class="label label-info"></span>
+							<span class="label label-info"></span>
+							<span class="label label-deprecated"></span>
+                            			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/Comparator.php#L33-L540" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+            						</div>
+						<h4 id="Doctrine\DBAL\Schema\Comparator" tabindex="-1" class="structure-title ">
+							<a href="Doctrine-DBAL-Schema-Comparator$typespace.html#Doctrine\DBAL\Schema\Comparator">Comparator</a>
+						</h4>
+						<div class="inner-item">
+							<div class="description"><p>Compares two Schemas and return an instance of SchemaDiff.</p>
+</div>
+						</div>
+						<div class="attribute">
+							<span class="label label-default"></span>
+							<span class="label label-default">author Benjamin Eberlei</span>
+						</div>
+						<div class="clearfix"></div>
+					</li>
+                					<li class="structure-item">
+						<div class="attribute">
+							<span class="label label-danger"></span>
+							<span class="label label-warning"></span>
+							<span class="label label-info"></span>
+							<span class="label label-info"></span>
+							<span class="label label-deprecated"></span>
+                            			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Schema/SchemaDiff.php#L25-L205" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+            						</div>
+						<h4 id="Doctrine\DBAL\Schema\SchemaDiff" tabindex="-1" class="structure-title ">
+							<a href="Doctrine-DBAL-Schema-SchemaDiff$typespace.html#Doctrine\DBAL\Schema\SchemaDiff">SchemaDiff</a>
+						</h4>
+						<div class="inner-item">
+							<div class="description"><p>Schema Diff.</p>
+</div>
+						</div>
+						<div class="attribute">
+							<span class="label label-default">license http://ez.no/licenses/new_bsd</span>
+							<span class="label label-default">author Benjamin Eberlei</span>
+						</div>
+						<div class="clearfix"></div>
+					</li>
+                			</ul>
+            
+    
+    	<div class="attribute">
+		<span class="label label-default"></span>
+		<span class="label label-default"></span>
+	</div>
+	<div class="clearfix"></div>
+</div>
+</body>
+</html>

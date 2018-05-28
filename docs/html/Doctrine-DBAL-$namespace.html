@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html>
+<head>	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/styles/zenburn.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js-bootstrap-css/1.2.1/typeaheadjs.min.css">
+	<link rel="stylesheet" type="text/css" data-href="common.css">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/highlight.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/3.1.1/bootstrap3-typeahead.min.js"></script>
+	<script data-src="common.js"></script>
+
+	<script>
+        (function () {
+            var cachekey;
+            try {
+                cachekey = window.parent.CACHEKEY;
+            }
+            catch (e) {
+                cachekey = 'nocache';
+            }
+            $('link[data-href]').attr('href', function () {
+                return this.dataset.href + '?' + cachekey;
+            });
+            $('script[data-src]').attr('src', function () {
+                return this.dataset.src + '?' + cachekey;
+            });
+
+            $(document).on('click', 'a[href]:not([target="_blank"]):not(.cachekey)', function () {
+                this.classList.add('cachekey');
+                this.href = this.href.replace('.html', '.html?' + cachekey);
+            });
+        })();
+	</script>
+    </head>
+<body>
+<a id="anchor" href="./" style="display: none"></a>
+<h1 class="ellipsis">
+	Structure
+	<small class="ellipsis-text">(Doctrine\DBAL\)</small>
+	<span class="pull-right">
+		<small class="frame-switch">
+		<a target="_parent">frame</a> | <a target="_parent">noframe</a>
+		</small>
+	</span>
+</h1>
+<div class="main-wrapper">
+	<h2>namespace <span class="category-name">Doctrine\DBAL\</span></h2>
+	<div class="inner-item">
+		<div class="description"></div>
+	</div>
+
+    		<h3>Namespaces</h3>
+		<ul>
+            				<li class="structure-item">
+					<h4 id="Doctrine\DBAL\Cache\" tabindex="-1" class="structure-title ">
+						<a href="Doctrine-DBAL-Cache-$namespace.html#Doctrine\DBAL\Cache\">Cache</a>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<h4 id="Doctrine\DBAL\Driver\" tabindex="-1" class="structure-title ">
+						<a href="Doctrine-DBAL-Driver-$namespace.html#Doctrine\DBAL\Driver\">Driver</a>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<h4 id="Doctrine\DBAL\Event\" tabindex="-1" class="structure-title ">
+						<a href="Doctrine-DBAL-Event-$namespace.html#Doctrine\DBAL\Event\">Event</a>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<h4 id="Doctrine\DBAL\Exception\" tabindex="-1" class="structure-title ">
+						<a href="Doctrine-DBAL-Exception-$namespace.html#Doctrine\DBAL\Exception\">Exception</a>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<h4 id="Doctrine\DBAL\Logging\" tabindex="-1" class="structure-title ">
+						<a href="Doctrine-DBAL-Logging-$namespace.html#Doctrine\DBAL\Logging\">Logging</a>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<h4 id="Doctrine\DBAL\Platforms\" tabindex="-1" class="structure-title ">
+						<a href="Doctrine-DBAL-Platforms-$namespace.html#Doctrine\DBAL\Platforms\">Platforms</a>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<h4 id="Doctrine\DBAL\Query\" tabindex="-1" class="structure-title ">
+						<a href="Doctrine-DBAL-Query-$namespace.html#Doctrine\DBAL\Query\">Query</a>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<h4 id="Doctrine\DBAL\Schema\" tabindex="-1" class="structure-title ">
+						<a href="Doctrine-DBAL-Schema-$namespace.html#Doctrine\DBAL\Schema\">Schema</a>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<h4 id="Doctrine\DBAL\Types\" tabindex="-1" class="structure-title ">
+						<a href="Doctrine-DBAL-Types-$namespace.html#Doctrine\DBAL\Types\">Types</a>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            		</ul>
+    
+            			<h3>Interfaces</h3>
+			<ul>
+                					<li class="structure-item">
+						<div class="attribute">
+							<span class="label label-danger"></span>
+							<span class="label label-warning">abstract</span>
+							<span class="label label-info"></span>
+							<span class="label label-info"></span>
+							<span class="label label-deprecated"></span>
+                            			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Driver.php#L22-L75" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+            						</div>
+						<h4 id="Doctrine\DBAL\Driver" tabindex="-1" class="structure-title ">
+							<a href="Doctrine-DBAL-Driver$typespace.html#Doctrine\DBAL\Driver">Driver</a>
+						</h4>
+						<div class="inner-item">
+							<div class="description"><p>Driver interface.<br />
+Interface that all DBAL drivers must implement.</p>
+</div>
+						</div>
+						<div class="attribute">
+							<span class="label label-default"></span>
+							<span class="label label-default"></span>
+						</div>
+						<div class="clearfix"></div>
+					</li>
+                			</ul>
+                                			<h3>Classes</h3>
+			<ul>
+                					<li class="structure-item">
+						<div class="attribute">
+							<span class="label label-danger"></span>
+							<span class="label label-warning"></span>
+							<span class="label label-info"></span>
+							<span class="label label-info"></span>
+							<span class="label label-deprecated"></span>
+                            			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Connection.php#L43-L1701" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+            						</div>
+						<h4 id="Doctrine\DBAL\Connection" tabindex="-1" class="structure-title ">
+							<a href="Doctrine-DBAL-Connection$typespace.html#Doctrine\DBAL\Connection">Connection</a>
+						</h4>
+						<div class="inner-item">
+							<div class="description"><p>A wrapper around a Doctrine\DBAL\Driver\Connection that adds features like<br />
+events, transaction isolation levels, configuration, emulated transaction nesting,<br />
+lazy connecting and more.</p>
+</div>
+						</div>
+						<div class="attribute">
+							<span class="label label-default"></span>
+							<span class="label label-default">author Guilherme Blanco</span>
+						</div>
+						<div class="clearfix"></div>
+					</li>
+                					<li class="structure-item">
+						<div class="attribute">
+							<span class="label label-danger"></span>
+							<span class="label label-warning"></span>
+							<span class="label label-info"></span>
+							<span class="label label-info"></span>
+							<span class="label label-deprecated"></span>
+                            			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/DBALException.php#L35-L302" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+            						</div>
+						<h4 id="Doctrine\DBAL\DBALException" tabindex="-1" class="structure-title ">
+							<a href="Doctrine-DBAL-DBALException$typespace.html#Doctrine\DBAL\DBALException">DBALException</a>
+						</h4>
+						<div class="inner-item">
+							<div class="description"></div>
+						</div>
+						<div class="attribute">
+							<span class="label label-default"></span>
+							<span class="label label-default"></span>
+						</div>
+						<div class="clearfix"></div>
+					</li>
+                					<li class="structure-item">
+						<div class="attribute">
+							<span class="label label-danger">final</span>
+							<span class="label label-warning"></span>
+							<span class="label label-info"></span>
+							<span class="label label-info"></span>
+							<span class="label label-deprecated"></span>
+                            			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/ParameterType.php#L5-L51" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+            						</div>
+						<h4 id="Doctrine\DBAL\ParameterType" tabindex="-1" class="structure-title ">
+							<a href="Doctrine-DBAL-ParameterType$typespace.html#Doctrine\DBAL\ParameterType">ParameterType</a>
+						</h4>
+						<div class="inner-item">
+							<div class="description"><p>Contains statement parameter types.</p>
+</div>
+						</div>
+						<div class="attribute">
+							<span class="label label-default"></span>
+							<span class="label label-default"></span>
+						</div>
+						<div class="clearfix"></div>
+					</li>
+                					<li class="structure-item">
+						<div class="attribute">
+							<span class="label label-danger">final</span>
+							<span class="label label-warning"></span>
+							<span class="label label-info"></span>
+							<span class="label label-info"></span>
+							<span class="label label-deprecated"></span>
+                            			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Events.php#L22-L51" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+            						</div>
+						<h4 id="Doctrine\DBAL\Events" tabindex="-1" class="structure-title ">
+							<a href="Doctrine-DBAL-Events$typespace.html#Doctrine\DBAL\Events">Events</a>
+						</h4>
+						<div class="inner-item">
+							<div class="description"><p>Container for all DBAL events.</p>
+<p>This class cannot be instantiated.</p>
+</div>
+						</div>
+						<div class="attribute">
+							<span class="label label-default"></span>
+							<span class="label label-default">author Roman Borschel</span>
+						</div>
+						<div class="clearfix"></div>
+					</li>
+                					<li class="structure-item">
+						<div class="attribute">
+							<span class="label label-danger">final</span>
+							<span class="label label-warning"></span>
+							<span class="label label-info"></span>
+							<span class="label label-info"></span>
+							<span class="label label-deprecated"></span>
+                            			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/TransactionIsolationLevel.php#L7-L32" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+            						</div>
+						<h4 id="Doctrine\DBAL\TransactionIsolationLevel" tabindex="-1" class="structure-title ">
+							<a href="Doctrine-DBAL-TransactionIsolationLevel$typespace.html#Doctrine\DBAL\TransactionIsolationLevel">TransactionIsolationLevel</a>
+						</h4>
+						<div class="inner-item">
+							<div class="description"></div>
+						</div>
+						<div class="attribute">
+							<span class="label label-default"></span>
+							<span class="label label-default"></span>
+						</div>
+						<div class="clearfix"></div>
+					</li>
+                					<li class="structure-item">
+						<div class="attribute">
+							<span class="label label-danger">final</span>
+							<span class="label label-warning"></span>
+							<span class="label label-info"></span>
+							<span class="label label-info"></span>
+							<span class="label label-deprecated"></span>
+                            			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/FetchMode.php#L5-L69" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+            						</div>
+						<h4 id="Doctrine\DBAL\FetchMode" tabindex="-1" class="structure-title ">
+							<a href="Doctrine-DBAL-FetchMode$typespace.html#Doctrine\DBAL\FetchMode">FetchMode</a>
+						</h4>
+						<div class="inner-item">
+							<div class="description"><p>Contains statement fetch modes.</p>
+</div>
+						</div>
+						<div class="attribute">
+							<span class="label label-default"></span>
+							<span class="label label-default"></span>
+						</div>
+						<div class="clearfix"></div>
+					</li>
+                					<li class="structure-item">
+						<div class="attribute">
+							<span class="label label-danger">final</span>
+							<span class="label label-warning"></span>
+							<span class="label label-info"></span>
+							<span class="label label-info"></span>
+							<span class="label label-deprecated"></span>
+                            			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/DriverManager.php#L36-L425" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+            						</div>
+						<h4 id="Doctrine\DBAL\DriverManager" tabindex="-1" class="structure-title ">
+							<a href="Doctrine-DBAL-DriverManager$typespace.html#Doctrine\DBAL\DriverManager">DriverManager</a>
+						</h4>
+						<div class="inner-item">
+							<div class="description"><p>Factory for creating Doctrine\DBAL\Connection instances.</p>
+</div>
+						</div>
+						<div class="attribute">
+							<span class="label label-default"></span>
+							<span class="label label-default">author Roman Borschel</span>
+						</div>
+						<div class="clearfix"></div>
+					</li>
+                					<li class="structure-item">
+						<div class="attribute">
+							<span class="label label-danger"></span>
+							<span class="label label-warning"></span>
+							<span class="label label-info"></span>
+							<span class="label label-info"></span>
+							<span class="label label-deprecated"></span>
+                            			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/LockMode.php#L22-L43" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+            						</div>
+						<h4 id="Doctrine\DBAL\LockMode" tabindex="-1" class="structure-title ">
+							<a href="Doctrine-DBAL-LockMode$typespace.html#Doctrine\DBAL\LockMode">LockMode</a>
+						</h4>
+						<div class="inner-item">
+							<div class="description"><p>Contains all DBAL LockModes.</p>
+</div>
+						</div>
+						<div class="attribute">
+							<span class="label label-default"></span>
+							<span class="label label-default">author Benjamin Eberlei</span>
+						</div>
+						<div class="clearfix"></div>
+					</li>
+                					<li class="structure-item">
+						<div class="attribute">
+							<span class="label label-danger"></span>
+							<span class="label label-warning"></span>
+							<span class="label label-info"></span>
+							<span class="label label-info"></span>
+							<span class="label label-deprecated"></span>
+                            			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Configuration.php#L25-L142" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+            						</div>
+						<h4 id="Doctrine\DBAL\Configuration" tabindex="-1" class="structure-title ">
+							<a href="Doctrine-DBAL-Configuration$typespace.html#Doctrine\DBAL\Configuration">Configuration</a>
+						</h4>
+						<div class="inner-item">
+							<div class="description"><p>Configuration container for the Doctrine DBAL.</p>
+</div>
+						</div>
+						<div class="attribute">
+							<span class="label label-default"></span>
+							<span class="label label-default">author Guilherme Blanco</span>
+						</div>
+						<div class="clearfix"></div>
+					</li>
+                					<li class="structure-item">
+						<div class="attribute">
+							<span class="label label-danger"></span>
+							<span class="label label-warning"></span>
+							<span class="label label-info"></span>
+							<span class="label label-info">iterateable</span>
+							<span class="label label-deprecated"></span>
+                            			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Statement.php#L27-L306" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+            						</div>
+						<h4 id="Doctrine\DBAL\Statement" tabindex="-1" class="structure-title ">
+							<a href="Doctrine-DBAL-Statement$typespace.html#Doctrine\DBAL\Statement">Statement</a>
+						</h4>
+						<div class="inner-item">
+							<div class="description"><p>A thin wrapper around a Doctrine\DBAL\Driver\Statement that adds support<br />
+for logging, DBAL mapping types, etc.</p>
+</div>
+						</div>
+						<div class="attribute">
+							<span class="label label-default"></span>
+							<span class="label label-default">author Roman Borschel</span>
+						</div>
+						<div class="clearfix"></div>
+					</li>
+                					<li class="structure-item">
+						<div class="attribute">
+							<span class="label label-danger"></span>
+							<span class="label label-warning"></span>
+							<span class="label label-info"></span>
+							<span class="label label-info"></span>
+							<span class="label label-deprecated"></span>
+                            			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/ConnectionException.php#L22-L60" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+            						</div>
+						<h4 id="Doctrine\DBAL\ConnectionException" tabindex="-1" class="structure-title ">
+							<a href="Doctrine-DBAL-ConnectionException$typespace.html#Doctrine\DBAL\ConnectionException">ConnectionException</a>
+						</h4>
+						<div class="inner-item">
+							<div class="description"></div>
+						</div>
+						<div class="attribute">
+							<span class="label label-default"></span>
+							<span class="label label-default">author Jonathan H. Wage</span>
+						</div>
+						<div class="clearfix"></div>
+					</li>
+                			</ul>
+            
+    
+    	<div class="attribute">
+		<span class="label label-default"></span>
+		<span class="label label-default"></span>
+	</div>
+	<div class="clearfix"></div>
+</div>
+</body>
+</html>

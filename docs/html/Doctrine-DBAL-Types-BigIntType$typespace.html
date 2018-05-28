@@ -1,0 +1,1719 @@
+<!DOCTYPE html>
+<html>
+<head>	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/styles/zenburn.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js-bootstrap-css/1.2.1/typeaheadjs.min.css">
+	<link rel="stylesheet" type="text/css" data-href="common.css">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/highlight.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/3.1.1/bootstrap3-typeahead.min.js"></script>
+	<script data-src="common.js"></script>
+
+	<script>
+        (function () {
+            var cachekey;
+            try {
+                cachekey = window.parent.CACHEKEY;
+            }
+            catch (e) {
+                cachekey = 'nocache';
+            }
+            $('link[data-href]').attr('href', function () {
+                return this.dataset.href + '?' + cachekey;
+            });
+            $('script[data-src]').attr('src', function () {
+                return this.dataset.src + '?' + cachekey;
+            });
+
+            $(document).on('click', 'a[href]:not([target="_blank"]):not(.cachekey)', function () {
+                this.classList.add('cachekey');
+                this.href = this.href.replace('.html', '.html?' + cachekey);
+            });
+        })();
+	</script>
+    </head>
+<body>
+<a id="anchor" href="./" style="display: none"></a>
+<h1 class="ellipsis">
+	<span class="pull-left">
+	Structure
+	<small class="ellipsis-text">(Doctrine\DBAL\Types\BigIntType)</small>
+	</span>
+	<span class="pull-right">
+		<small class="frame-switch">
+		<a target="_parent">frame</a> | <a target="_parent">noframe</a>
+		</small>
+	</span>
+</h1>
+<div class="main-wrapper">
+	<div class="attribute">
+		<span class="label label-danger"></span>
+		<span class="label label-warning"></span>
+		<span class="label label-info"></span>
+		<span class="label label-info"></span>
+		<span class="label label-deprecated"></span>
+        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Types/BigIntType.php#L25-L64" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                    	</div>
+
+	<h2>class <span class="category-name">Doctrine\DBAL\Types\BigIntType</span></h2>
+
+	<div class="description"><p>Type that maps a database BIGINT to a PHP string.</p>
+</div>
+
+	<h3>Construction</h3>
+    	<table class="table">
+		<caption>Parents</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Types-Type$typespace.html#Doctrine\DBAL\Types\Type" class="fqsen "><small>Doctrine\DBAL\Types\</small><wbr>Type</a></td>
+				<td class="desc">The base class for so-called Doctrine mapping types.</td>
+			</tr>
+        		</tbody>
+	</table>
+        	<table class="table">
+		<caption>Implements</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Types-PhpIntegerMappingType$typespace.html#Doctrine\DBAL\Types\PhpIntegerMappingType" class="fqsen "><small>Doctrine\DBAL\Types\</small><wbr>PhpIntegerMappingType</a></td>
+				<td class="desc">Implementations should map a database type to a PHP integer.</td>
+			</tr>
+        		</tbody>
+	</table>
+            
+	<h3>Hierarchy</h3>
+	<div class="hierarchy">
+	<ul class="">
+        			<li class="">
+                <a href="Doctrine-DBAL-Types-Type$typespace.html#Doctrine\DBAL\Types\Type" class="fqsen "><small>Doctrine\DBAL\Types\</small><wbr>Type</a>                
+	<ul class="has-indent">
+        			<li class="indent">
+                <a href="Doctrine-DBAL-Types-BlobType$typespace.html#Doctrine\DBAL\Types\BlobType" class="fqsen "><small>Doctrine\DBAL\Types\</small><wbr>BlobType</a>                			</li>
+        			<li class="indent">
+                <a href="Doctrine-DBAL-Types-TextType$typespace.html#Doctrine\DBAL\Types\TextType" class="fqsen "><small>Doctrine\DBAL\Types\</small><wbr>TextType</a>                			</li>
+        			<li class="indent">
+                <a href="Doctrine-DBAL-Types-BinaryType$typespace.html#Doctrine\DBAL\Types\BinaryType" class="fqsen "><small>Doctrine\DBAL\Types\</small><wbr>BinaryType</a>                			</li>
+        			<li class="indent">
+                <a href="Doctrine-DBAL-Types-BigIntType$typespace.html#Doctrine\DBAL\Types\BigIntType" class="fqsen bold"><small>Doctrine\DBAL\Types\</small><wbr>BigIntType</a>                			</li>
+        			<li class="indent">
+                <a href="Doctrine-DBAL-Types-IntegerType$typespace.html#Doctrine\DBAL\Types\IntegerType" class="fqsen "><small>Doctrine\DBAL\Types\</small><wbr>IntegerType</a>                			</li>
+        	</ul>
+    			</li>
+        	</ul>
+    </div>
+
+	<h3>Constants</h3>
+    		<ul>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Types/Type.php#L41-L41" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Types\BigIntType::TARRAY" tabindex="-1" class="structure-title">
+						<small>string</small>
+                        TARRAY						<var> = &#039;array&#039;</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Types-Type$typespace.html#Doctrine\DBAL\Types\Type::TARRAY" class="fqsen "><small>Doctrine\DBAL\Types\</small><wbr>Type::TARRAY</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Types/Type.php#L42-L42" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Types\BigIntType::SIMPLE_ARRAY" tabindex="-1" class="structure-title">
+						<small>string</small>
+                        SIMPLE_ARRAY						<var> = &#039;simple_array&#039;</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Types-Type$typespace.html#Doctrine\DBAL\Types\Type::SIMPLE_ARRAY" class="fqsen "><small>Doctrine\DBAL\Types\</small><wbr>Type::SIMPLE_ARRAY</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Types/Type.php#L43-L43" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Types\BigIntType::JSON_ARRAY" tabindex="-1" class="structure-title">
+						<small>string</small>
+                        JSON_ARRAY						<var> = &#039;json_array&#039;</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Types-Type$typespace.html#Doctrine\DBAL\Types\Type::JSON_ARRAY" class="fqsen "><small>Doctrine\DBAL\Types\</small><wbr>Type::JSON_ARRAY</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Types/Type.php#L44-L44" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Types\BigIntType::JSON" tabindex="-1" class="structure-title">
+						<small>string</small>
+                        JSON						<var> = &#039;json&#039;</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Types-Type$typespace.html#Doctrine\DBAL\Types\Type::JSON" class="fqsen "><small>Doctrine\DBAL\Types\</small><wbr>Type::JSON</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Types/Type.php#L45-L45" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Types\BigIntType::BIGINT" tabindex="-1" class="structure-title">
+						<small>string</small>
+                        BIGINT						<var> = &#039;bigint&#039;</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Types-Type$typespace.html#Doctrine\DBAL\Types\Type::BIGINT" class="fqsen "><small>Doctrine\DBAL\Types\</small><wbr>Type::BIGINT</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Types/Type.php#L46-L46" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Types\BigIntType::BOOLEAN" tabindex="-1" class="structure-title">
+						<small>string</small>
+                        BOOLEAN						<var> = &#039;boolean&#039;</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Types-Type$typespace.html#Doctrine\DBAL\Types\Type::BOOLEAN" class="fqsen "><small>Doctrine\DBAL\Types\</small><wbr>Type::BOOLEAN</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Types/Type.php#L47-L47" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Types\BigIntType::DATETIME" tabindex="-1" class="structure-title">
+						<small>string</small>
+                        DATETIME						<var> = &#039;datetime&#039;</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Types-Type$typespace.html#Doctrine\DBAL\Types\Type::DATETIME" class="fqsen "><small>Doctrine\DBAL\Types\</small><wbr>Type::DATETIME</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Types/Type.php#L48-L48" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Types\BigIntType::DATETIME_IMMUTABLE" tabindex="-1" class="structure-title">
+						<small>string</small>
+                        DATETIME_IMMUTABLE						<var> = &#039;datetime_immutable&#039;</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Types-Type$typespace.html#Doctrine\DBAL\Types\Type::DATETIME_IMMUTABLE" class="fqsen "><small>Doctrine\DBAL\Types\</small><wbr>Type::DATETIME_IMMUTABLE</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Types/Type.php#L49-L49" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Types\BigIntType::DATETIMETZ" tabindex="-1" class="structure-title">
+						<small>string</small>
+                        DATETIMETZ						<var> = &#039;datetimetz&#039;</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Types-Type$typespace.html#Doctrine\DBAL\Types\Type::DATETIMETZ" class="fqsen "><small>Doctrine\DBAL\Types\</small><wbr>Type::DATETIMETZ</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Types/Type.php#L50-L50" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Types\BigIntType::DATETIMETZ_IMMUTABLE" tabindex="-1" class="structure-title">
+						<small>string</small>
+                        DATETIMETZ_IMMUTABLE						<var> = &#039;datetimetz_immutable&#039;</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Types-Type$typespace.html#Doctrine\DBAL\Types\Type::DATETIMETZ_IMMUTABLE" class="fqsen "><small>Doctrine\DBAL\Types\</small><wbr>Type::DATETIMETZ_IMMUTABLE</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Types/Type.php#L51-L51" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Types\BigIntType::DATE" tabindex="-1" class="structure-title">
+						<small>string</small>
+                        DATE						<var> = &#039;date&#039;</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Types-Type$typespace.html#Doctrine\DBAL\Types\Type::DATE" class="fqsen "><small>Doctrine\DBAL\Types\</small><wbr>Type::DATE</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Types/Type.php#L52-L52" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Types\BigIntType::DATE_IMMUTABLE" tabindex="-1" class="structure-title">
+						<small>string</small>
+                        DATE_IMMUTABLE						<var> = &#039;date_immutable&#039;</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Types-Type$typespace.html#Doctrine\DBAL\Types\Type::DATE_IMMUTABLE" class="fqsen "><small>Doctrine\DBAL\Types\</small><wbr>Type::DATE_IMMUTABLE</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Types/Type.php#L53-L53" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Types\BigIntType::TIME" tabindex="-1" class="structure-title">
+						<small>string</small>
+                        TIME						<var> = &#039;time&#039;</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Types-Type$typespace.html#Doctrine\DBAL\Types\Type::TIME" class="fqsen "><small>Doctrine\DBAL\Types\</small><wbr>Type::TIME</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Types/Type.php#L54-L54" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Types\BigIntType::TIME_IMMUTABLE" tabindex="-1" class="structure-title">
+						<small>string</small>
+                        TIME_IMMUTABLE						<var> = &#039;time_immutable&#039;</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Types-Type$typespace.html#Doctrine\DBAL\Types\Type::TIME_IMMUTABLE" class="fqsen "><small>Doctrine\DBAL\Types\</small><wbr>Type::TIME_IMMUTABLE</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Types/Type.php#L55-L55" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Types\BigIntType::DECIMAL" tabindex="-1" class="structure-title">
+						<small>string</small>
+                        DECIMAL						<var> = &#039;decimal&#039;</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Types-Type$typespace.html#Doctrine\DBAL\Types\Type::DECIMAL" class="fqsen "><small>Doctrine\DBAL\Types\</small><wbr>Type::DECIMAL</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Types/Type.php#L56-L56" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Types\BigIntType::INTEGER" tabindex="-1" class="structure-title">
+						<small>string</small>
+                        INTEGER						<var> = &#039;integer&#039;</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Types-Type$typespace.html#Doctrine\DBAL\Types\Type::INTEGER" class="fqsen "><small>Doctrine\DBAL\Types\</small><wbr>Type::INTEGER</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Types/Type.php#L57-L57" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Types\BigIntType::OBJECT" tabindex="-1" class="structure-title">
+						<small>string</small>
+                        OBJECT						<var> = &#039;object&#039;</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Types-Type$typespace.html#Doctrine\DBAL\Types\Type::OBJECT" class="fqsen "><small>Doctrine\DBAL\Types\</small><wbr>Type::OBJECT</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Types/Type.php#L58-L58" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Types\BigIntType::SMALLINT" tabindex="-1" class="structure-title">
+						<small>string</small>
+                        SMALLINT						<var> = &#039;smallint&#039;</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Types-Type$typespace.html#Doctrine\DBAL\Types\Type::SMALLINT" class="fqsen "><small>Doctrine\DBAL\Types\</small><wbr>Type::SMALLINT</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Types/Type.php#L59-L59" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Types\BigIntType::STRING" tabindex="-1" class="structure-title">
+						<small>string</small>
+                        STRING						<var> = &#039;string&#039;</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Types-Type$typespace.html#Doctrine\DBAL\Types\Type::STRING" class="fqsen "><small>Doctrine\DBAL\Types\</small><wbr>Type::STRING</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Types/Type.php#L60-L60" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Types\BigIntType::TEXT" tabindex="-1" class="structure-title">
+						<small>string</small>
+                        TEXT						<var> = &#039;text&#039;</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Types-Type$typespace.html#Doctrine\DBAL\Types\Type::TEXT" class="fqsen "><small>Doctrine\DBAL\Types\</small><wbr>Type::TEXT</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Types/Type.php#L61-L61" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Types\BigIntType::BINARY" tabindex="-1" class="structure-title">
+						<small>string</small>
+                        BINARY						<var> = &#039;binary&#039;</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Types-Type$typespace.html#Doctrine\DBAL\Types\Type::BINARY" class="fqsen "><small>Doctrine\DBAL\Types\</small><wbr>Type::BINARY</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Types/Type.php#L62-L62" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Types\BigIntType::BLOB" tabindex="-1" class="structure-title">
+						<small>string</small>
+                        BLOB						<var> = &#039;blob&#039;</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Types-Type$typespace.html#Doctrine\DBAL\Types\Type::BLOB" class="fqsen "><small>Doctrine\DBAL\Types\</small><wbr>Type::BLOB</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Types/Type.php#L63-L63" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Types\BigIntType::FLOAT" tabindex="-1" class="structure-title">
+						<small>string</small>
+                        FLOAT						<var> = &#039;float&#039;</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Types-Type$typespace.html#Doctrine\DBAL\Types\Type::FLOAT" class="fqsen "><small>Doctrine\DBAL\Types\</small><wbr>Type::FLOAT</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Types/Type.php#L64-L64" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Types\BigIntType::GUID" tabindex="-1" class="structure-title">
+						<small>string</small>
+                        GUID						<var> = &#039;guid&#039;</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Types-Type$typespace.html#Doctrine\DBAL\Types\Type::GUID" class="fqsen "><small>Doctrine\DBAL\Types\</small><wbr>Type::GUID</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Types/Type.php#L65-L65" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Types\BigIntType::DATEINTERVAL" tabindex="-1" class="structure-title">
+						<small>string</small>
+                        DATEINTERVAL						<var> = &#039;dateinterval&#039;</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Types-Type$typespace.html#Doctrine\DBAL\Types\Type::DATEINTERVAL" class="fqsen "><small>Doctrine\DBAL\Types\</small><wbr>Type::DATEINTERVAL</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            		</ul>
+    
+	<h3>Properties</h3>
+    
+	<h3>Methods</h3>
+    		<ul>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Types/BigIntType.php#L33-L39" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Types\BigIntType::getName()" tabindex="-1" class="structure-title ">
+                        getName						<small>()</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p><tag_inheritdoc data-type='' data-description=''>Gets the name of this type.</tag_inheritdoc></p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">string</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                    	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Types-Type$typespace.html#Doctrine\DBAL\Types\Type::getName()" class="fqsen "><small>Doctrine\DBAL\Types\</small><wbr>Type::getName()</a></td>
+				<td class="desc">Gets the name of this type.</td>
+				<td class="rest">override</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Types/BigIntType.php#L41-L47" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Types\BigIntType::getSQLDeclaration()" tabindex="-1" class="structure-title ">
+                        getSQLDeclaration						<small>($fieldDeclaration, $platform)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p><tag_inheritdoc data-type='' data-description=''>Gets the SQL declaration snippet for a field of this type.</tag_inheritdoc></p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">array</td>
+				<td class="rest">$fieldDeclaration</td>
+				<td class="desc"><p>The field declaration.</p>
+</td>
+			</tr>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Platforms-AbstractPlatform$typespace.html#Doctrine\DBAL\Platforms\AbstractPlatform" class="fqsen "><small>Doctrine\DBAL\Platforms\</small><wbr>AbstractPlatform</a></td>
+				<td class="rest">$platform</td>
+				<td class="desc"><p>The currently used database platform.</p>
+</td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">string</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                    	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Types-Type$typespace.html#Doctrine\DBAL\Types\Type::getSQLDeclaration()" class="fqsen "><small>Doctrine\DBAL\Types\</small><wbr>Type::getSQLDeclaration()</a></td>
+				<td class="desc">Gets the SQL declaration snippet for a field of this type.</td>
+				<td class="rest">override</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Types/BigIntType.php#L49-L55" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Types\BigIntType::getBindingType()" tabindex="-1" class="structure-title ">
+                        getBindingType						<small>()</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p><tag_inheritdoc data-type='' data-description=''>Gets the (preferred) binding type for values of this type that<br />
+can be used when binding parameters to prepared statements.</p>
+<p>This method should return one of the <tag_link data-kind='fqsen' data-type-category='class' data-type-fqsen='Doctrine\DBAL\ParameterType' data-type-array='0' data-description='\Doctrine\DBAL\ParameterType'>\Doctrine\DBAL\ParameterType</tag_link> constants.</tag_inheritdoc></p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">int</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                    	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Types-Type$typespace.html#Doctrine\DBAL\Types\Type::getBindingType()" class="fqsen "><small>Doctrine\DBAL\Types\</small><wbr>Type::getBindingType()</a></td>
+				<td class="desc">Gets the (preferred) binding type for values of this type that</td>
+				<td class="rest">override</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Types/BigIntType.php#L57-L63" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Types\BigIntType::convertToPHPValue()" tabindex="-1" class="structure-title ">
+                        convertToPHPValue						<small>($value, $platform)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p><tag_inheritdoc data-type='' data-description=''>Converts a value from its database representation to its PHP representation<br />
+of this type.</tag_inheritdoc></p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">mixed</td>
+				<td class="rest">$value</td>
+				<td class="desc"><p>The value to convert.</p>
+</td>
+			</tr>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Platforms-AbstractPlatform$typespace.html#Doctrine\DBAL\Platforms\AbstractPlatform" class="fqsen "><small>Doctrine\DBAL\Platforms\</small><wbr>AbstractPlatform</a></td>
+				<td class="rest">$platform</td>
+				<td class="desc"><p>The currently used database platform.</p>
+</td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">mixed</td>
+			<td class="desc"><p>The PHP representation of the value.</p>
+</td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                    	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Types-Type$typespace.html#Doctrine\DBAL\Types\Type::convertToPHPValue()" class="fqsen "><small>Doctrine\DBAL\Types\</small><wbr>Type::convertToPHPValue()</a></td>
+				<td class="desc">Converts a value from its database representation to its PHP representation</td>
+				<td class="rest">override</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Types/Type.php#L114-L126" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Types\BigIntType::convertToDatabaseValue()" tabindex="-1" class="structure-title ">
+                        convertToDatabaseValue						<small>($value, $platform)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Converts a value from its PHP representation to its database representation<br />
+of this type.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">mixed</td>
+				<td class="rest">$value</td>
+				<td class="desc"><p>The value to convert.</p>
+</td>
+			</tr>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Platforms-AbstractPlatform$typespace.html#Doctrine\DBAL\Platforms\AbstractPlatform" class="fqsen "><small>Doctrine\DBAL\Platforms\</small><wbr>AbstractPlatform</a></td>
+				<td class="rest">$platform</td>
+				<td class="desc"><p>The currently used database platform.</p>
+</td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">mixed</td>
+			<td class="desc"><p>The database representation of the value.</p>
+</td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                    	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Types-Type$typespace.html#Doctrine\DBAL\Types\Type::convertToDatabaseValue()" class="fqsen "><small>Doctrine\DBAL\Types\</small><wbr>Type::convertToDatabaseValue()</a></td>
+				<td class="desc">Converts a value from its PHP representation to its database representation</td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Types/Type.php#L142-L154" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Types\BigIntType::getDefaultLength()" tabindex="-1" class="structure-title ">
+                        getDefaultLength						<small>($platform)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Gets the default length of this type.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Platforms-AbstractPlatform$typespace.html#Doctrine\DBAL\Platforms\AbstractPlatform" class="fqsen "><small>Doctrine\DBAL\Platforms\</small><wbr>AbstractPlatform</a></td>
+				<td class="rest">$platform</td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">int<span class="type-separator"></span><wbr>null</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                    	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Types-Type$typespace.html#Doctrine\DBAL\Types\Type::getDefaultLength()" class="fqsen "><small>Doctrine\DBAL\Types\</small><wbr>Type::getDefaultLength()</a></td>
+				<td class="desc">Gets the default length of this type.</td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default">static</span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Types/Type.php#L175-L195" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Types\BigIntType::getType()" tabindex="-1" class="structure-title ">
+                        getType						<small>($name)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Factory method to create type instances.<br />
+Type instances are implemented as flyweights.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">string</td>
+				<td class="rest">$name</td>
+				<td class="desc"><p>The name of the type (as returned by getName()).</p>
+</td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="Doctrine-DBAL-Types-Type$typespace.html#Doctrine\DBAL\Types\Type" class="fqsen "><small>Doctrine\DBAL\Types\</small><wbr>Type</a></td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Throws</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-DBALException$typespace.html#Doctrine\DBAL\DBALException" class="fqsen "><small>Doctrine\DBAL\</small><wbr>DBALException</a></td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Types-Type$typespace.html#Doctrine\DBAL\Types\Type::getType()" class="fqsen "><small>Doctrine\DBAL\Types\</small><wbr>Type::getType()</a></td>
+				<td class="desc">Factory method to create type instances.</td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default">static</span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Types/Type.php#L197-L214" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Types\BigIntType::addType()" tabindex="-1" class="structure-title ">
+                        addType						<small>($name, $className)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Adds a custom type to the type map.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">string</td>
+				<td class="rest">$name</td>
+				<td class="desc"><p>The name of the type. This should correspond to what getName() returns.</p>
+</td>
+			</tr>
+        			<tr>
+				<td class="type">string</td>
+				<td class="rest">$className</td>
+				<td class="desc"><p>The class name of the custom type.</p>
+</td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">void</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Throws</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-DBALException$typespace.html#Doctrine\DBAL\DBALException" class="fqsen "><small>Doctrine\DBAL\</small><wbr>DBALException</a></td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Types-Type$typespace.html#Doctrine\DBAL\Types\Type::addType()" class="fqsen "><small>Doctrine\DBAL\Types\</small><wbr>Type::addType()</a></td>
+				<td class="desc">Adds a custom type to the type map.</td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default">static</span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Types/Type.php#L216-L226" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Types\BigIntType::hasType()" tabindex="-1" class="structure-title ">
+                        hasType						<small>($name)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Checks if exists support for a type.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">string</td>
+				<td class="rest">$name</td>
+				<td class="desc"><p>The name of the type.</p>
+</td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">bool</td>
+			<td class="desc"><p>TRUE if type is supported; FALSE otherwise.</p>
+</td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                    	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Types-Type$typespace.html#Doctrine\DBAL\Types\Type::hasType()" class="fqsen "><small>Doctrine\DBAL\Types\</small><wbr>Type::hasType()</a></td>
+				<td class="desc">Checks if exists support for a type.</td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default">static</span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Types/Type.php#L228-L249" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Types\BigIntType::overrideType()" tabindex="-1" class="structure-title ">
+                        overrideType						<small>($name, $className)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Overrides an already defined type to use a different implementation.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">string</td>
+				<td class="rest">$name</td>
+				<td class="desc"></td>
+			</tr>
+        			<tr>
+				<td class="type">string</td>
+				<td class="rest">$className</td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">void</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Throws</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-DBALException$typespace.html#Doctrine\DBAL\DBALException" class="fqsen "><small>Doctrine\DBAL\</small><wbr>DBALException</a></td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Types-Type$typespace.html#Doctrine\DBAL\Types\Type::overrideType()" class="fqsen "><small>Doctrine\DBAL\Types\</small><wbr>Type::overrideType()</a></td>
+				<td class="desc">Overrides an already defined type to use a different implementation.</td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default">static</span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Types/Type.php#L264-L273" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Types\BigIntType::getTypesMap()" tabindex="-1" class="structure-title ">
+                        getTypesMap						<small>()</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Gets the types array map which holds all registered types and the corresponding<br />
+type class</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">array</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                    	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Types-Type$typespace.html#Doctrine\DBAL\Types\Type::getTypesMap()" class="fqsen "><small>Doctrine\DBAL\Types\</small><wbr>Type::getTypesMap()</a></td>
+				<td class="desc">Gets the types array map which holds all registered types and the corresponding</td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Types/Type.php#L275-L283" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Types\BigIntType::__toString()" tabindex="-1" class="structure-title ">
+                        __toString						<small>()</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">string</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                    	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Types-Type$typespace.html#Doctrine\DBAL\Types\Type::__toString()" class="fqsen "><small>Doctrine\DBAL\Types\</small><wbr>Type::__toString()</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Types/Type.php#L285-L298" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Types\BigIntType::canRequireSQLConversion()" tabindex="-1" class="structure-title ">
+                        canRequireSQLConversion						<small>()</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Does working with this column require SQL conversion functions?</p>
+<p>This is a metadata function that is required for example in the ORM.<br />
+Usage of <tag_link data-kind='fqsen' data-type-category='type' data-type-fqsen='convertToDatabaseValueSQL' data-type-array='0' data-description='convertToDatabaseValueSQL'>convertToDatabaseValueSQL</tag_link> and<br />
+<tag_link data-kind='fqsen' data-type-category='type' data-type-fqsen='convertToPHPValueSQL' data-type-array='0' data-description='convertToPHPValueSQL'>convertToPHPValueSQL</tag_link> works for any type and mostly<br />
+does nothing. This method can additionally be used for optimization purposes.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">bool</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                    	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Types-Type$typespace.html#Doctrine\DBAL\Types\Type::canRequireSQLConversion()" class="fqsen "><small>Doctrine\DBAL\Types\</small><wbr>Type::canRequireSQLConversion()</a></td>
+				<td class="desc">Does working with this column require SQL conversion functions?</td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Types/Type.php#L300-L311" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Types\BigIntType::convertToDatabaseValueSQL()" tabindex="-1" class="structure-title ">
+                        convertToDatabaseValueSQL						<small>($sqlExpr, $platform)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Modifies the SQL expression (identifier, parameter) to convert to a database value.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">string</td>
+				<td class="rest">$sqlExpr</td>
+				<td class="desc"></td>
+			</tr>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Platforms-AbstractPlatform$typespace.html#Doctrine\DBAL\Platforms\AbstractPlatform" class="fqsen "><small>Doctrine\DBAL\Platforms\</small><wbr>AbstractPlatform</a></td>
+				<td class="rest">$platform</td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">string</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                    	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Types-Type$typespace.html#Doctrine\DBAL\Types\Type::convertToDatabaseValueSQL()" class="fqsen "><small>Doctrine\DBAL\Types\</small><wbr>Type::convertToDatabaseValueSQL()</a></td>
+				<td class="desc">Modifies the SQL expression (identifier, parameter) to convert to a database value.</td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Types/Type.php#L313-L324" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Types\BigIntType::convertToPHPValueSQL()" tabindex="-1" class="structure-title ">
+                        convertToPHPValueSQL						<small>($sqlExpr, $platform)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Modifies the SQL expression (identifier, parameter) to convert to a PHP value.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">string</td>
+				<td class="rest">$sqlExpr</td>
+				<td class="desc"></td>
+			</tr>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Platforms-AbstractPlatform$typespace.html#Doctrine\DBAL\Platforms\AbstractPlatform" class="fqsen "><small>Doctrine\DBAL\Platforms\</small><wbr>AbstractPlatform</a></td>
+				<td class="rest">$platform</td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">string</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                    	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Types-Type$typespace.html#Doctrine\DBAL\Types\Type::convertToPHPValueSQL()" class="fqsen "><small>Doctrine\DBAL\Types\</small><wbr>Type::convertToPHPValueSQL()</a></td>
+				<td class="desc">Modifies the SQL expression (identifier, parameter) to convert to a PHP value.</td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Types/Type.php#L326-L336" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Types\BigIntType::getMappedDatabaseTypes()" tabindex="-1" class="structure-title ">
+                        getMappedDatabaseTypes						<small>($platform)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Gets an array of database types that map to this Doctrine type.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Platforms-AbstractPlatform$typespace.html#Doctrine\DBAL\Platforms\AbstractPlatform" class="fqsen "><small>Doctrine\DBAL\Platforms\</small><wbr>AbstractPlatform</a></td>
+				<td class="rest">$platform</td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">array</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                    	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Types-Type$typespace.html#Doctrine\DBAL\Types\Type::getMappedDatabaseTypes()" class="fqsen "><small>Doctrine\DBAL\Types\</small><wbr>Type::getMappedDatabaseTypes()</a></td>
+				<td class="desc">Gets an array of database types that map to this Doctrine type.</td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Types/Type.php#L338-L351" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Types\BigIntType::requiresSQLCommentHint()" tabindex="-1" class="structure-title ">
+                        requiresSQLCommentHint						<small>($platform)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>If this Doctrine Type maps to an already mapped database type,<br />
+reverse schema engineering can't tell them apart. You need to mark<br />
+one of those types as commented, which will have Doctrine use an SQL<br />
+comment to typehint the actual Doctrine Type.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Platforms-AbstractPlatform$typespace.html#Doctrine\DBAL\Platforms\AbstractPlatform" class="fqsen "><small>Doctrine\DBAL\Platforms\</small><wbr>AbstractPlatform</a></td>
+				<td class="rest">$platform</td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">bool</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                    	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Types-Type$typespace.html#Doctrine\DBAL\Types\Type::requiresSQLCommentHint()" class="fqsen "><small>Doctrine\DBAL\Types\</small><wbr>Type::requiresSQLCommentHint()</a></td>
+				<td class="desc">If this Doctrine Type maps to an already mapped database type,</td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            		</ul>
+    
+	<div class="attribute">
+		<span class="label label-default"></span>
+		<span class="label label-default">author robo</span>
+	</div>
+	<div class="clearfix"></div>
+</div>
+</body>
+</html>

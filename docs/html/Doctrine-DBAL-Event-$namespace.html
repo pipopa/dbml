@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html>
+<head>	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/styles/zenburn.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js-bootstrap-css/1.2.1/typeaheadjs.min.css">
+	<link rel="stylesheet" type="text/css" data-href="common.css">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/highlight.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/3.1.1/bootstrap3-typeahead.min.js"></script>
+	<script data-src="common.js"></script>
+
+	<script>
+        (function () {
+            var cachekey;
+            try {
+                cachekey = window.parent.CACHEKEY;
+            }
+            catch (e) {
+                cachekey = 'nocache';
+            }
+            $('link[data-href]').attr('href', function () {
+                return this.dataset.href + '?' + cachekey;
+            });
+            $('script[data-src]').attr('src', function () {
+                return this.dataset.src + '?' + cachekey;
+            });
+
+            $(document).on('click', 'a[href]:not([target="_blank"]):not(.cachekey)', function () {
+                this.classList.add('cachekey');
+                this.href = this.href.replace('.html', '.html?' + cachekey);
+            });
+        })();
+	</script>
+    </head>
+<body>
+<a id="anchor" href="./" style="display: none"></a>
+<h1 class="ellipsis">
+	Structure
+	<small class="ellipsis-text">(Doctrine\DBAL\Event\)</small>
+	<span class="pull-right">
+		<small class="frame-switch">
+		<a target="_parent">frame</a> | <a target="_parent">noframe</a>
+		</small>
+	</span>
+</h1>
+<div class="main-wrapper">
+	<h2>namespace <span class="category-name">Doctrine\DBAL\Event\</span></h2>
+	<div class="inner-item">
+		<div class="description"></div>
+	</div>
+
+    		<h3>Namespaces</h3>
+		<ul>
+            				<li class="structure-item">
+					<h4 id="Doctrine\DBAL\Event\Listeners\" tabindex="-1" class="structure-title ">
+						<a href="Doctrine-DBAL-Event-Listeners-$namespace.html#Doctrine\DBAL\Event\Listeners\">Listeners</a>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            		</ul>
+    
+                                    			<h3>Classes</h3>
+			<ul>
+                					<li class="structure-item">
+						<div class="attribute">
+							<span class="label label-danger"></span>
+							<span class="label label-warning"></span>
+							<span class="label label-info"></span>
+							<span class="label label-info"></span>
+							<span class="label label-deprecated"></span>
+                            			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Event/SchemaEventArgs.php#L24-L55" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+            						</div>
+						<h4 id="Doctrine\DBAL\Event\SchemaEventArgs" tabindex="-1" class="structure-title ">
+							<a href="Doctrine-DBAL-Event-SchemaEventArgs$typespace.html#Doctrine\DBAL\Event\SchemaEventArgs">SchemaEventArgs</a>
+						</h4>
+						<div class="inner-item">
+							<div class="description"><p>Base class for schema related events.</p>
+</div>
+						</div>
+						<div class="attribute">
+							<span class="label label-default"></span>
+							<span class="label label-default">author Jan Sorgalla</span>
+						</div>
+						<div class="clearfix"></div>
+					</li>
+                					<li class="structure-item">
+						<div class="attribute">
+							<span class="label label-danger"></span>
+							<span class="label label-warning"></span>
+							<span class="label label-info"></span>
+							<span class="label label-info"></span>
+							<span class="label label-deprecated"></span>
+                            			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Event/SchemaAlterTableAddColumnEventArgs.php#L28-L116" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+            						</div>
+						<h4 id="Doctrine\DBAL\Event\SchemaAlterTableAddColumnEventArgs" tabindex="-1" class="structure-title ">
+							<a href="Doctrine-DBAL-Event-SchemaAlterTableAddColumnEventArgs$typespace.html#Doctrine\DBAL\Event\SchemaAlterTableAddColumnEventArgs">SchemaAlterTableAddColumnEventArgs</a>
+						</h4>
+						<div class="inner-item">
+							<div class="description"><p>Event Arguments used when SQL queries for adding table columns are generated inside Doctrine\DBAL\Platform*Platform.</p>
+</div>
+						</div>
+						<div class="attribute">
+							<span class="label label-default"></span>
+							<span class="label label-default">author Jan Sorgalla</span>
+						</div>
+						<div class="clearfix"></div>
+					</li>
+                					<li class="structure-item">
+						<div class="attribute">
+							<span class="label label-danger"></span>
+							<span class="label label-warning"></span>
+							<span class="label label-info"></span>
+							<span class="label label-info"></span>
+							<span class="label label-deprecated"></span>
+                            			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Event/SchemaAlterTableChangeColumnEventArgs.php#L28-L116" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+            						</div>
+						<h4 id="Doctrine\DBAL\Event\SchemaAlterTableChangeColumnEventArgs" tabindex="-1" class="structure-title ">
+							<a href="Doctrine-DBAL-Event-SchemaAlterTableChangeColumnEventArgs$typespace.html#Doctrine\DBAL\Event\SchemaAlterTableChangeColumnEventArgs">SchemaAlterTableChangeColumnEventArgs</a>
+						</h4>
+						<div class="inner-item">
+							<div class="description"><p>Event Arguments used when SQL queries for changing table columns are generated inside Doctrine\DBAL\Platform*Platform.</p>
+</div>
+						</div>
+						<div class="attribute">
+							<span class="label label-default"></span>
+							<span class="label label-default">author Jan Sorgalla</span>
+						</div>
+						<div class="clearfix"></div>
+					</li>
+                					<li class="structure-item">
+						<div class="attribute">
+							<span class="label label-danger"></span>
+							<span class="label label-warning"></span>
+							<span class="label label-info"></span>
+							<span class="label label-info"></span>
+							<span class="label label-deprecated"></span>
+                            			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Event/SchemaAlterTableEventArgs.php#L27-L100" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+            						</div>
+						<h4 id="Doctrine\DBAL\Event\SchemaAlterTableEventArgs" tabindex="-1" class="structure-title ">
+							<a href="Doctrine-DBAL-Event-SchemaAlterTableEventArgs$typespace.html#Doctrine\DBAL\Event\SchemaAlterTableEventArgs">SchemaAlterTableEventArgs</a>
+						</h4>
+						<div class="inner-item">
+							<div class="description"><p>Event Arguments used when SQL queries for creating tables are generated inside Doctrine\DBAL\Platform*Platform.</p>
+</div>
+						</div>
+						<div class="attribute">
+							<span class="label label-default"></span>
+							<span class="label label-default">author Jan Sorgalla</span>
+						</div>
+						<div class="clearfix"></div>
+					</li>
+                					<li class="structure-item">
+						<div class="attribute">
+							<span class="label label-danger"></span>
+							<span class="label label-warning"></span>
+							<span class="label label-info"></span>
+							<span class="label label-info"></span>
+							<span class="label label-deprecated"></span>
+                            			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Event/SchemaAlterTableRemoveColumnEventArgs.php#L28-L116" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+            						</div>
+						<h4 id="Doctrine\DBAL\Event\SchemaAlterTableRemoveColumnEventArgs" tabindex="-1" class="structure-title ">
+							<a href="Doctrine-DBAL-Event-SchemaAlterTableRemoveColumnEventArgs$typespace.html#Doctrine\DBAL\Event\SchemaAlterTableRemoveColumnEventArgs">SchemaAlterTableRemoveColumnEventArgs</a>
+						</h4>
+						<div class="inner-item">
+							<div class="description"><p>Event Arguments used when SQL queries for removing table columns are generated inside Doctrine\DBAL\Platform*Platform.</p>
+</div>
+						</div>
+						<div class="attribute">
+							<span class="label label-default"></span>
+							<span class="label label-default">author Jan Sorgalla</span>
+						</div>
+						<div class="clearfix"></div>
+					</li>
+                					<li class="structure-item">
+						<div class="attribute">
+							<span class="label label-danger"></span>
+							<span class="label label-warning"></span>
+							<span class="label label-info"></span>
+							<span class="label label-info"></span>
+							<span class="label label-deprecated"></span>
+                            			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Event/SchemaAlterTableRenameColumnEventArgs.php#L28-L131" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+            						</div>
+						<h4 id="Doctrine\DBAL\Event\SchemaAlterTableRenameColumnEventArgs" tabindex="-1" class="structure-title ">
+							<a href="Doctrine-DBAL-Event-SchemaAlterTableRenameColumnEventArgs$typespace.html#Doctrine\DBAL\Event\SchemaAlterTableRenameColumnEventArgs">SchemaAlterTableRenameColumnEventArgs</a>
+						</h4>
+						<div class="inner-item">
+							<div class="description"><p>Event Arguments used when SQL queries for renaming table columns are generated inside Doctrine\DBAL\Platform*Platform.</p>
+</div>
+						</div>
+						<div class="attribute">
+							<span class="label label-default"></span>
+							<span class="label label-default">author Jan Sorgalla</span>
+						</div>
+						<div class="clearfix"></div>
+					</li>
+                					<li class="structure-item">
+						<div class="attribute">
+							<span class="label label-danger"></span>
+							<span class="label label-warning"></span>
+							<span class="label label-info"></span>
+							<span class="label label-info"></span>
+							<span class="label label-deprecated"></span>
+                            			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Event/SchemaCreateTableColumnEventArgs.php#L28-L116" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+            						</div>
+						<h4 id="Doctrine\DBAL\Event\SchemaCreateTableColumnEventArgs" tabindex="-1" class="structure-title ">
+							<a href="Doctrine-DBAL-Event-SchemaCreateTableColumnEventArgs$typespace.html#Doctrine\DBAL\Event\SchemaCreateTableColumnEventArgs">SchemaCreateTableColumnEventArgs</a>
+						</h4>
+						<div class="inner-item">
+							<div class="description"><p>Event Arguments used when SQL queries for creating table columns are generated inside Doctrine\DBAL\Platform\AbstractPlatform.</p>
+</div>
+						</div>
+						<div class="attribute">
+							<span class="label label-default"></span>
+							<span class="label label-default">author Jan Sorgalla</span>
+						</div>
+						<div class="clearfix"></div>
+					</li>
+                					<li class="structure-item">
+						<div class="attribute">
+							<span class="label label-danger"></span>
+							<span class="label label-warning"></span>
+							<span class="label label-info"></span>
+							<span class="label label-info"></span>
+							<span class="label label-deprecated"></span>
+                            			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Event/SchemaCreateTableEventArgs.php#L27-L130" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+            						</div>
+						<h4 id="Doctrine\DBAL\Event\SchemaCreateTableEventArgs" tabindex="-1" class="structure-title ">
+							<a href="Doctrine-DBAL-Event-SchemaCreateTableEventArgs$typespace.html#Doctrine\DBAL\Event\SchemaCreateTableEventArgs">SchemaCreateTableEventArgs</a>
+						</h4>
+						<div class="inner-item">
+							<div class="description"><p>Event Arguments used when SQL queries for creating tables are generated inside Doctrine\DBAL\Platform\AbstractPlatform.</p>
+</div>
+						</div>
+						<div class="attribute">
+							<span class="label label-default"></span>
+							<span class="label label-default">author Jan Sorgalla</span>
+						</div>
+						<div class="clearfix"></div>
+					</li>
+                					<li class="structure-item">
+						<div class="attribute">
+							<span class="label label-danger"></span>
+							<span class="label label-warning"></span>
+							<span class="label label-info"></span>
+							<span class="label label-info"></span>
+							<span class="label label-deprecated"></span>
+                            			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Event/SchemaDropTableEventArgs.php#L26-L101" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+            						</div>
+						<h4 id="Doctrine\DBAL\Event\SchemaDropTableEventArgs" tabindex="-1" class="structure-title ">
+							<a href="Doctrine-DBAL-Event-SchemaDropTableEventArgs$typespace.html#Doctrine\DBAL\Event\SchemaDropTableEventArgs">SchemaDropTableEventArgs</a>
+						</h4>
+						<div class="inner-item">
+							<div class="description"><p>Event Arguments used when the SQL query for dropping tables are generated inside Doctrine\DBAL\Platform\AbstractPlatform.</p>
+</div>
+						</div>
+						<div class="attribute">
+							<span class="label label-default"></span>
+							<span class="label label-default">author Jan Sorgalla</span>
+						</div>
+						<div class="clearfix"></div>
+					</li>
+                					<li class="structure-item">
+						<div class="attribute">
+							<span class="label label-danger"></span>
+							<span class="label label-warning"></span>
+							<span class="label label-info"></span>
+							<span class="label label-info"></span>
+							<span class="label label-deprecated"></span>
+                            			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Event/ConnectionEventArgs.php#L25-L78" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+            						</div>
+						<h4 id="Doctrine\DBAL\Event\ConnectionEventArgs" tabindex="-1" class="structure-title ">
+							<a href="Doctrine-DBAL-Event-ConnectionEventArgs$typespace.html#Doctrine\DBAL\Event\ConnectionEventArgs">ConnectionEventArgs</a>
+						</h4>
+						<div class="inner-item">
+							<div class="description"><p>Event Arguments used when a Driver connection is established inside Doctrine\DBAL\Connection.</p>
+</div>
+						</div>
+						<div class="attribute">
+							<span class="label label-default"></span>
+							<span class="label label-default">author Benjamin Eberlei</span>
+						</div>
+						<div class="clearfix"></div>
+					</li>
+                					<li class="structure-item">
+						<div class="attribute">
+							<span class="label label-danger"></span>
+							<span class="label label-warning"></span>
+							<span class="label label-info"></span>
+							<span class="label label-info"></span>
+							<span class="label label-deprecated"></span>
+                            			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Event/SchemaColumnDefinitionEventArgs.php#L25-L137" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+            						</div>
+						<h4 id="Doctrine\DBAL\Event\SchemaColumnDefinitionEventArgs" tabindex="-1" class="structure-title ">
+							<a href="Doctrine-DBAL-Event-SchemaColumnDefinitionEventArgs$typespace.html#Doctrine\DBAL\Event\SchemaColumnDefinitionEventArgs">SchemaColumnDefinitionEventArgs</a>
+						</h4>
+						<div class="inner-item">
+							<div class="description"><p>Event Arguments used when the portable column definition is generated inside Doctrine\DBAL\Schema\AbstractSchemaManager.</p>
+</div>
+						</div>
+						<div class="attribute">
+							<span class="label label-default"></span>
+							<span class="label label-default">author Jan Sorgalla</span>
+						</div>
+						<div class="clearfix"></div>
+					</li>
+                					<li class="structure-item">
+						<div class="attribute">
+							<span class="label label-danger"></span>
+							<span class="label label-warning"></span>
+							<span class="label label-info"></span>
+							<span class="label label-info"></span>
+							<span class="label label-deprecated"></span>
+                            			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Event/SchemaIndexDefinitionEventArgs.php#L25-L121" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+            						</div>
+						<h4 id="Doctrine\DBAL\Event\SchemaIndexDefinitionEventArgs" tabindex="-1" class="structure-title ">
+							<a href="Doctrine-DBAL-Event-SchemaIndexDefinitionEventArgs$typespace.html#Doctrine\DBAL\Event\SchemaIndexDefinitionEventArgs">SchemaIndexDefinitionEventArgs</a>
+						</h4>
+						<div class="inner-item">
+							<div class="description"><p>Event Arguments used when the portable index definition is generated inside Doctrine\DBAL\Schema\AbstractSchemaManager.</p>
+</div>
+						</div>
+						<div class="attribute">
+							<span class="label label-default"></span>
+							<span class="label label-default">author Jan Sorgalla</span>
+						</div>
+						<div class="clearfix"></div>
+					</li>
+                			</ul>
+            
+    
+    	<div class="attribute">
+		<span class="label label-default"></span>
+		<span class="label label-default"></span>
+	</div>
+	<div class="clearfix"></div>
+</div>
+</body>
+</html>

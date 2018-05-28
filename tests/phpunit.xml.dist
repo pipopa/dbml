@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://raw.github.com/sebastianbergmann/phpunit/master/phpunit.xsd" bootstrap="bootstrap.php">
+    <testsuites>
+        <testsuite name="tests">
+            <directory>./Test/</directory>
+        </testsuite>
+    </testsuites>
+
+    <php>
+        <!--> specify test target dbms <-->
+        <!--> <const name="RDBMS" value="sqlite,mysql,pgsql,mssql"/> <-->
+        <const name="RDBMS" value="sqlite"/>
+
+        <const name="SQLITE_URL" value="sqlite://user:pass@localhost:1234/:memory:"/>
+        <const name="SQLITE_INITCOMMAND" value="PRAGMA foreign_keys = ON"/>
+
+        <const name="MYSQL_URL" value="mysql://user:pass@localhost:3306/test_dbml?charset=utf8"/>
+        <const name="MYSQL_INITCOMMAND" value=""/>
+
+        <const name="PGSQL_URL" value="pgsql://user:pass@localhost:5432/test_dbml?charset=utf8"/>
+        <const name="PGSQL_INITCOMMAND" value=""/>
+
+        <const name="MSSQL_URL" value="mssql://user:pass@localhost:1433/test_dbml?charset=utf8"/>
+        <const name="MSSQL_INITCOMMAND" value=""/>
+    </php>
+
+    <filter>
+        <whitelist>
+            <directory suffix=".php">../src/dbml</directory>
+        </whitelist>
+    </filter>
+</phpunit>

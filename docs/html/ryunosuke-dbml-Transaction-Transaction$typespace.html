@@ -1,0 +1,2746 @@
+<!DOCTYPE html>
+<html>
+<head>	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/styles/zenburn.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js-bootstrap-css/1.2.1/typeaheadjs.min.css">
+	<link rel="stylesheet" type="text/css" data-href="common.css">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/highlight.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/3.1.1/bootstrap3-typeahead.min.js"></script>
+	<script data-src="common.js"></script>
+
+	<script>
+        (function () {
+            var cachekey;
+            try {
+                cachekey = window.parent.CACHEKEY;
+            }
+            catch (e) {
+                cachekey = 'nocache';
+            }
+            $('link[data-href]').attr('href', function () {
+                return this.dataset.href + '?' + cachekey;
+            });
+            $('script[data-src]').attr('src', function () {
+                return this.dataset.src + '?' + cachekey;
+            });
+
+            $(document).on('click', 'a[href]:not([target="_blank"]):not(.cachekey)', function () {
+                this.classList.add('cachekey');
+                this.href = this.href.replace('.html', '.html?' + cachekey);
+            });
+        })();
+	</script>
+    </head>
+<body>
+<a id="anchor" href="./" style="display: none"></a>
+<h1 class="ellipsis">
+	<span class="pull-left">
+	Structure
+	<small class="ellipsis-text">(ryunosuke\dbml\Transaction\Transaction)</small>
+	</span>
+	<span class="pull-right">
+		<small class="frame-switch">
+		<a target="_parent">frame</a> | <a target="_parent">noframe</a>
+		</small>
+	</span>
+</h1>
+<div class="main-wrapper">
+	<div class="attribute">
+		<span class="label label-danger"></span>
+		<span class="label label-warning"></span>
+		<span class="label label-info"></span>
+		<span class="label label-info"></span>
+		<span class="label label-deprecated"></span>
+        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction.php#L14-L569" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                    	</div>
+
+	<h2>class <span class="category-name">ryunosuke\dbml\Transaction\Transaction</span></h2>
+
+	<div class="description"><p>トランザクションを表すクラス</p>
+<p>メイン処理に加えて、</p>
+<ul>
+<li>リトライを設定できる</li>
+<li>各種イベント（begin, commit 等）を設定できる</li>
+<li>分離レベルを指定できる</li>
+</ul>
+<p>などの特徴がある。</p>
+<h3>リトライ</h3>
+<p>$retries を設定するとリトライ回数・間隔を指定することができる。<br />
+例えば <code>retries([5000, 10000])</code> は「1回目のリトライは5秒後、2回めのリトライは10秒後」を意味する（つまりこの場合、最悪15秒かかる）。<br />
+指定形式の都合上、「無限リトライ」をすることはできない（実装を検討中。Generator を返すクロージャを与えるのが無難か？）</p>
+<p>「リトライするか？」の判定は $retryable に「例外オブジェクトを受け取り真偽値を返す」クロージャを設定する。<br />
+例外発生時にそのクロージャが呼び出され、 true を返って来たらリトライ処理を行う。</p>
+<h3>イベント</h3>
+<p>イベント系メソッドは内部的には配列で保持され、保持している分が全て実行される。<br />
+例えば <code>main(function(){})</code> はイベントの<strong>設定ではなく追加</strong>となる。<br />
+完全に置換するには <code>main([function(){}])</code> のように配列で与える必要がある。</p>
+<p>イベントはキーを持つ。このキーは追加/上書きの判定に使用したり、実行順を制御する。<br />
+main だけは特例で第2引数に前の返り値が渡ってチェーンされる（チェーンの最初は渡ってこない。つまり func_num_args などで判定可能）。</p>
+<pre><code class="language-php">$tx = new Transaction($db);
+$tx-&gt;main(function($db, $prev) {return $prev + 1;}, 2);     // A
+$tx-&gt;main(function($db, $prev = 0) {return $prev + 1;}, 1); // B
+$tx-&gt;main(function($db, $prev) {return $prev + 1;}, 3);     // C
+$tx-&gt;perform(); // =3
+</code></pre>
+<p>上記はイベント名を指定して追加しているので、実行順は B -&gt; A -&gt; C となる。<br />
+かつチェーンを利用しているので、A , C にはその前段階の結果が第2引数で渡ってくる。<br />
+なお、イベント名は文字列でも良い。その場合の順番は SORT_REGULAR に従う。</p>
+<p>イベントの種類は下記。</p>
+<ul>
+<li>begin(\Closure(Connection $c))</li>
+<li>commit(\Closure(Connection $c))</li>
+<li>rollback(\Closure(Connection $c))<ul>
+<li>トランザクションのそれぞれのイベント</li>
+</ul>
+</li>
+<li>main(\Closure(Database $db, $prev_return))<ul>
+<li>トランザクションのメイン処理</li>
+</ul>
+</li>
+<li>fail(\Closure(Expcetion $exception))<ul>
+<li>トランザクション失敗時のイベント</li>
+<li>リトライ時はトランザクションのたびに実行される</li>
+</ul>
+</li>
+<li>done(\Closure(mixed $return))<ul>
+<li>トランザクション完了時のイベント</li>
+</ul>
+</li>
+<li>retry(\Closure(int $retryCount))<ul>
+<li>トランザクションリトライ時のイベント</li>
+</ul>
+</li>
+<li>finish()<ul>
+<li>処理完了時のイベント (リトライに依らず常に1回のみコール)</li>
+</ul>
+</li>
+</ul>
+<p>いくつかよくありそうなケースの呼び出しフローを下記に例として挙げる（ネストはトランザクションを表す）。</p>
+<ul>
+<li><p><strong>main が例外を投げなく、リトライもされない最もシンプルな例</strong></p>
+<ul>
+<li>begin<ul>
+<li>main</li>
+</ul>
+</li>
+<li>commit</li>
+<li>done</li>
+<li>finish</li>
+</ul>
+</li>
+<li><p><strong>main が例外を投げるが、リトライはされない例</strong></p>
+<ul>
+<li>begin<ul>
+<li>main(throw)</li>
+</ul>
+</li>
+<li>rollback</li>
+<li>fail</li>
+<li>finish</li>
+</ul>
+</li>
+<li><p><strong>main が例外を投げるが、リトライで成功する例</strong></p>
+<ul>
+<li>begin<ul>
+<li>main(throw)</li>
+</ul>
+</li>
+<li>rollback</li>
+<li>fail</li>
+<li>retry</li>
+<li>begin<ul>
+<li>main</li>
+</ul>
+</li>
+<li>commit</li>
+<li>done</li>
+<li>finish</li>
+</ul>
+</li>
+<li><p><strong>main が例外を投げて、リトライでも失敗する例</strong></p>
+<ul>
+<li>begin<ul>
+<li>main(throw)</li>
+</ul>
+</li>
+<li>rollback</li>
+<li>fail</li>
+<li>retry</li>
+<li>begin<ul>
+<li>main(throw)</li>
+</ul>
+</li>
+<li>rollback</li>
+<li>fail</li>
+<li>finish</li>
+</ul>
+</li>
+</ul>
+</div>
+
+	<h3>Construction</h3>
+            	<table class="table">
+		<caption>Uses</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="ryunosuke-dbml-Mixin-OptionTrait$typespace.html#ryunosuke\dbml\Mixin\OptionTrait" class="fqsen "><small>ryunosuke\dbml\Mixin\</small><wbr>OptionTrait</a></td>
+				<td class="desc">オプションを保持し、get/set できるようにする trait</td>
+			</tr>
+        			<tr>
+				<td class="type"><a href="ryunosuke-dbml-Mixin-DebugInfoTrait$typespace.html#ryunosuke\dbml\Mixin\DebugInfoTrait" class="fqsen "><small>ryunosuke\dbml\Mixin\</small><wbr>DebugInfoTrait</a></td>
+				<td class="desc">var_dump で不必要なプロパティを伏せる trait</td>
+			</tr>
+        		</tbody>
+	</table>
+        
+	<h3>Hierarchy</h3>
+	<div class="hierarchy"></div>
+
+	<h3>Constants</h3>
+    		<ul>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction.php#L165-L165" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="ryunosuke\dbml\Transaction\Transaction::READ_UNCOMMITTED" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        READ_UNCOMMITTED						<var> = 1</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                                                					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction.php#L166-L166" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="ryunosuke\dbml\Transaction\Transaction::READ_COMMITTED" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        READ_COMMITTED						<var> = 2</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                                                					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction.php#L167-L167" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="ryunosuke\dbml\Transaction\Transaction::REPEATABLE_READ" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        REPEATABLE_READ						<var> = 3</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                                                					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction.php#L168-L168" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="ryunosuke\dbml\Transaction\Transaction::SERIALIZABLE" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        SERIALIZABLE						<var> = 4</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                                                					</div>
+				</li>
+            		</ul>
+    
+	<h3>Properties</h3>
+    		<ul>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-primary">magic</span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction.php#L113-L113" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="ryunosuke\dbml\Transaction\Transaction::$isolationLevel" tabindex="-1" class="structure-title">
+						<small>int</small>
+						$isolationLevel						<var></var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>トランザクション分離レベル</p>
+</div>
+                                                					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-primary">magic</span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction.php#L114-L114" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="ryunosuke\dbml\Transaction\Transaction::$logger" tabindex="-1" class="structure-title">
+						<small><a href="Doctrine-DBAL-Logging-SQLLogger$typespace.html#Doctrine\DBAL\Logging\SQLLogger" class="fqsen "><small>Doctrine\DBAL\Logging\</small><wbr>SQLLogger</a></small>
+						$logger						<var></var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>ロガーインスタンス</p>
+</div>
+                                                					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-primary">magic</span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction.php#L115-L115" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="ryunosuke\dbml\Transaction\Transaction::$begin" tabindex="-1" class="structure-title">
+						<small><a href="http://php.net/manual/ja/class.closure.php" class="fqsen" target="_blank">\Closure</a>[]</small>
+						$begin						<var></var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>begin イベント配列</p>
+</div>
+                                                					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-primary">magic</span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction.php#L116-L116" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="ryunosuke\dbml\Transaction\Transaction::$commit" tabindex="-1" class="structure-title">
+						<small><a href="http://php.net/manual/ja/class.closure.php" class="fqsen" target="_blank">\Closure</a>[]</small>
+						$commit						<var></var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>commit イベント配列</p>
+</div>
+                                                					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-primary">magic</span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction.php#L117-L117" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="ryunosuke\dbml\Transaction\Transaction::$rollback" tabindex="-1" class="structure-title">
+						<small><a href="http://php.net/manual/ja/class.closure.php" class="fqsen" target="_blank">\Closure</a>[]</small>
+						$rollback						<var></var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>rollback イベント配列</p>
+</div>
+                                                					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-primary">magic</span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction.php#L118-L118" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="ryunosuke\dbml\Transaction\Transaction::$main" tabindex="-1" class="structure-title">
+						<small><a href="http://php.net/manual/ja/class.closure.php" class="fqsen" target="_blank">\Closure</a>[]</small>
+						$main						<var></var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>main イベント配列</p>
+</div>
+                                                					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-primary">magic</span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction.php#L119-L119" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="ryunosuke\dbml\Transaction\Transaction::$done" tabindex="-1" class="structure-title">
+						<small><a href="http://php.net/manual/ja/class.closure.php" class="fqsen" target="_blank">\Closure</a>[]</small>
+						$done						<var></var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>done イベント配列</p>
+</div>
+                                                					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-primary">magic</span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction.php#L120-L120" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="ryunosuke\dbml\Transaction\Transaction::$fail" tabindex="-1" class="structure-title">
+						<small><a href="http://php.net/manual/ja/class.closure.php" class="fqsen" target="_blank">\Closure</a>[]</small>
+						$fail						<var></var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>fail イベント配列</p>
+</div>
+                                                					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-primary">magic</span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction.php#L121-L121" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="ryunosuke\dbml\Transaction\Transaction::$retry" tabindex="-1" class="structure-title">
+						<small><a href="http://php.net/manual/ja/class.closure.php" class="fqsen" target="_blank">\Closure</a>[]</small>
+						$retry						<var></var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>retry イベント配列</p>
+</div>
+                                                					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-primary">magic</span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction.php#L122-L122" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="ryunosuke\dbml\Transaction\Transaction::$finish" tabindex="-1" class="structure-title">
+						<small><a href="http://php.net/manual/ja/class.closure.php" class="fqsen" target="_blank">\Closure</a>[]</small>
+						$finish						<var></var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>finish イベント配列</p>
+</div>
+                                                					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-primary">magic</span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction.php#L123-L123" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="ryunosuke\dbml\Transaction\Transaction::$retries" tabindex="-1" class="structure-title">
+						<small>int[]</small>
+						$retries						<var></var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>リトライ間隔</p>
+</div>
+                                                					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-primary">magic</span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction.php#L124-L124" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="ryunosuke\dbml\Transaction\Transaction::$retryable" tabindex="-1" class="structure-title">
+						<small><a href="http://php.net/manual/ja/class.closure.php" class="fqsen" target="_blank">\Closure</a></small>
+						$retryable						<var></var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>リトライ判定処理</p>
+</div>
+                                                					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-primary">magic</span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction.php#L125-L125" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="ryunosuke\dbml\Transaction\Transaction::$savepointable" tabindex="-1" class="structure-title">
+						<small>bool</small>
+						$savepointable						<var></var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>savepoint 有効/無効フラグ</p>
+</div>
+                                                					</div>
+				</li>
+            		</ul>
+    
+	<h3>Methods</h3>
+    		<ul>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default">static</span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction.php#L179-L209" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="ryunosuke\dbml\Transaction\Transaction::getDefaultOptions()" tabindex="-1" class="structure-title ">
+                        getDefaultOptions						<small>()</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>オプションのデフォルト値を返す static メソッド</p>
+<p>このメソッドの返り値が構成要素とデフォルト値を担っていて、その配列以外のキーは基本的に保持できない。</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">array</td>
+			<td class="desc"><p>デフォルトオプション配列</p>
+</td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                    	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="ryunosuke-dbml-Mixin-OptionTrait$typespace.html#ryunosuke\dbml\Mixin\OptionTrait::getDefaultOptions()" class="fqsen "><small>ryunosuke\dbml\Mixin\</small><wbr>OptionTrait::getDefaultOptions()</a></td>
+				<td class="desc">オプションのデフォルト値を返す static メソッド</td>
+				<td class="rest">override</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction.php#L211-L233" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="ryunosuke\dbml\Transaction\Transaction::__construct()" tabindex="-1" class="structure-title ">
+                        __construct						<small>($database, $options = [])</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>コンストラクタ</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="ryunosuke-dbml-Database$typespace.html#ryunosuke\dbml\Database" class="fqsen "><small>ryunosuke\dbml\</small><wbr>Database</a></td>
+				<td class="rest">$database</td>
+				<td class="desc"><p>データベース</p>
+</td>
+			</tr>
+        			<tr>
+				<td class="type">array</td>
+				<td class="rest">$options = []</td>
+				<td class="desc"><p>オプション</p>
+</td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">void</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction.php#L235-L238" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="ryunosuke\dbml\Transaction\Transaction::__get()" tabindex="-1" class="structure-title ">
+                        __get						<small>($name)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type"></td>
+				<td class="rest">$name</td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">void</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction.php#L240-L243" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="ryunosuke\dbml\Transaction\Transaction::__set()" tabindex="-1" class="structure-title ">
+                        __set						<small>($name, $value)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type"></td>
+				<td class="rest">$name</td>
+				<td class="desc"></td>
+			</tr>
+        			<tr>
+				<td class="type"></td>
+				<td class="rest">$value</td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">void</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction.php#L245-L248" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="ryunosuke\dbml\Transaction\Transaction::__call()" tabindex="-1" class="structure-title ">
+                        __call						<small>($name, $arguments)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type"></td>
+				<td class="rest">$name</td>
+				<td class="desc"></td>
+			</tr>
+        			<tr>
+				<td class="type"></td>
+				<td class="rest">$arguments</td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">void</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction.php#L250-L253" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="ryunosuke\dbml\Transaction\Transaction::__invoke()" tabindex="-1" class="structure-title ">
+                        __invoke						<small>($throwable)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type"></td>
+				<td class="rest">$throwable</td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">void</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction.php#L395-L405" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="ryunosuke\dbml\Transaction\Transaction::begin()" tabindex="-1" class="structure-title ">
+                        begin						<small>($callback, $key = null)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>begin イベントを設定する</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.closure.php" class="fqsen" target="_blank">\Closure</a></td>
+				<td class="rest">$callback</td>
+				<td class="desc"><p>begin イベント</p>
+</td>
+			</tr>
+        			<tr>
+				<td class="type">null</td>
+				<td class="rest">$key = null</td>
+				<td class="desc"><p>イベント名。数値や文字列なら既存を上書き（無いなら追加）、未指定時は常に追加</p>
+</td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="ryunosuke-dbml-Transaction-Transaction$typespace.html#ryunosuke\dbml\Transaction\Transaction" class="fqsen "><small>ryunosuke\dbml\Transaction\</small><wbr>Transaction</a></td>
+			<td class="desc"><p>自分自身</p>
+</td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic">magic</span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction.php#L134-L134" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="ryunosuke\dbml\Transaction\Transaction::setBegin()" tabindex="-1" class="structure-title ">
+                        setBegin						<small>($closure)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>begin イベント配列を設定する</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">array</td>
+				<td class="rest">$closure</td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="ryunosuke-dbml-Transaction-Transaction$typespace.html#ryunosuke\dbml\Transaction\Transaction" class="fqsen "><small>ryunosuke\dbml\Transaction\</small><wbr>Transaction</a></td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic">magic</span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction.php#L133-L133" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="ryunosuke\dbml\Transaction\Transaction::getBegin()" tabindex="-1" class="structure-title ">
+                        getBegin						<small>()</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>begin イベント配列を取得する</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="http://php.net/manual/ja/class.closure.php" class="fqsen" target="_blank">\Closure</a>[]</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction.php#L407-L417" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="ryunosuke\dbml\Transaction\Transaction::commit()" tabindex="-1" class="structure-title ">
+                        commit						<small>($callback, $key = null)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>commit イベントを設定する</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.closure.php" class="fqsen" target="_blank">\Closure</a></td>
+				<td class="rest">$callback</td>
+				<td class="desc"><p>commit イベント</p>
+</td>
+			</tr>
+        			<tr>
+				<td class="type">null</td>
+				<td class="rest">$key = null</td>
+				<td class="desc"><p>イベント名。数値や文字列なら既存を上書き（無いなら追加）、未指定時は常に追加</p>
+</td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="ryunosuke-dbml-Transaction-Transaction$typespace.html#ryunosuke\dbml\Transaction\Transaction" class="fqsen "><small>ryunosuke\dbml\Transaction\</small><wbr>Transaction</a></td>
+			<td class="desc"><p>自分自身</p>
+</td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic">magic</span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction.php#L136-L136" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="ryunosuke\dbml\Transaction\Transaction::setCommit()" tabindex="-1" class="structure-title ">
+                        setCommit						<small>($closure)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>commit イベント配列を設定する</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">array</td>
+				<td class="rest">$closure</td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="ryunosuke-dbml-Transaction-Transaction$typespace.html#ryunosuke\dbml\Transaction\Transaction" class="fqsen "><small>ryunosuke\dbml\Transaction\</small><wbr>Transaction</a></td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic">magic</span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction.php#L135-L135" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="ryunosuke\dbml\Transaction\Transaction::getCommit()" tabindex="-1" class="structure-title ">
+                        getCommit						<small>()</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>commit イベント配列を取得する</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="http://php.net/manual/ja/class.closure.php" class="fqsen" target="_blank">\Closure</a>[]</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction.php#L419-L429" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="ryunosuke\dbml\Transaction\Transaction::rollback()" tabindex="-1" class="structure-title ">
+                        rollback						<small>($callback, $key = null)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>rollback イベントを設定する</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.closure.php" class="fqsen" target="_blank">\Closure</a></td>
+				<td class="rest">$callback</td>
+				<td class="desc"><p>rollback イベント</p>
+</td>
+			</tr>
+        			<tr>
+				<td class="type">null</td>
+				<td class="rest">$key = null</td>
+				<td class="desc"><p>イベント名。数値や文字列なら既存を上書き（無いなら追加）、未指定時は常に追加</p>
+</td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="ryunosuke-dbml-Transaction-Transaction$typespace.html#ryunosuke\dbml\Transaction\Transaction" class="fqsen "><small>ryunosuke\dbml\Transaction\</small><wbr>Transaction</a></td>
+			<td class="desc"><p>自分自身</p>
+</td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic">magic</span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction.php#L138-L138" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="ryunosuke\dbml\Transaction\Transaction::setRollback()" tabindex="-1" class="structure-title ">
+                        setRollback						<small>($closure)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>rollback イベント配列を設定する</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">array</td>
+				<td class="rest">$closure</td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="ryunosuke-dbml-Transaction-Transaction$typespace.html#ryunosuke\dbml\Transaction\Transaction" class="fqsen "><small>ryunosuke\dbml\Transaction\</small><wbr>Transaction</a></td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic">magic</span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction.php#L137-L137" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="ryunosuke\dbml\Transaction\Transaction::getRollback()" tabindex="-1" class="structure-title ">
+                        getRollback						<small>()</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>rollback イベント配列を取得する</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="http://php.net/manual/ja/class.closure.php" class="fqsen" target="_blank">\Closure</a>[]</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction.php#L431-L441" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="ryunosuke\dbml\Transaction\Transaction::main()" tabindex="-1" class="structure-title ">
+                        main						<small>($callback, $key = null)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>main イベントを設定する</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.closure.php" class="fqsen" target="_blank">\Closure</a><span class="type-separator"></span><wbr><a href="http://php.net/manual/ja/class.closure.php" class="fqsen" target="_blank">\Closure</a>[]</td>
+				<td class="rest">$callback</td>
+				<td class="desc"><p>main イベント</p>
+</td>
+			</tr>
+        			<tr>
+				<td class="type">null</td>
+				<td class="rest">$key = null</td>
+				<td class="desc"><p>イベント名。数値や文字列なら既存を上書き（無いなら追加）、未指定時は常に追加</p>
+</td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="ryunosuke-dbml-Transaction-Transaction$typespace.html#ryunosuke\dbml\Transaction\Transaction" class="fqsen "><small>ryunosuke\dbml\Transaction\</small><wbr>Transaction</a></td>
+			<td class="desc"><p>自分自身</p>
+</td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic">magic</span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction.php#L140-L140" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="ryunosuke\dbml\Transaction\Transaction::setMain()" tabindex="-1" class="structure-title ">
+                        setMain						<small>($closure)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>main イベント配列を設定する</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">array</td>
+				<td class="rest">$closure</td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="ryunosuke-dbml-Transaction-Transaction$typespace.html#ryunosuke\dbml\Transaction\Transaction" class="fqsen "><small>ryunosuke\dbml\Transaction\</small><wbr>Transaction</a></td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic">magic</span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction.php#L139-L139" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="ryunosuke\dbml\Transaction\Transaction::getMain()" tabindex="-1" class="structure-title ">
+                        getMain						<small>()</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>main イベント配列を取得する</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="http://php.net/manual/ja/class.closure.php" class="fqsen" target="_blank">\Closure</a>[]</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction.php#L443-L453" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="ryunosuke\dbml\Transaction\Transaction::done()" tabindex="-1" class="structure-title ">
+                        done						<small>($callback, $key = null)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>done イベントを設定する</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.closure.php" class="fqsen" target="_blank">\Closure</a></td>
+				<td class="rest">$callback</td>
+				<td class="desc"><p>done イベント</p>
+</td>
+			</tr>
+        			<tr>
+				<td class="type">null</td>
+				<td class="rest">$key = null</td>
+				<td class="desc"><p>イベント名。数値や文字列なら既存を上書き（無いなら追加）、未指定時は常に追加</p>
+</td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="ryunosuke-dbml-Transaction-Transaction$typespace.html#ryunosuke\dbml\Transaction\Transaction" class="fqsen "><small>ryunosuke\dbml\Transaction\</small><wbr>Transaction</a></td>
+			<td class="desc"><p>自分自身</p>
+</td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic">magic</span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction.php#L142-L142" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="ryunosuke\dbml\Transaction\Transaction::setDone()" tabindex="-1" class="structure-title ">
+                        setDone						<small>($closure)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>done イベント配列を設定する</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">array</td>
+				<td class="rest">$closure</td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="ryunosuke-dbml-Transaction-Transaction$typespace.html#ryunosuke\dbml\Transaction\Transaction" class="fqsen "><small>ryunosuke\dbml\Transaction\</small><wbr>Transaction</a></td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic">magic</span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction.php#L141-L141" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="ryunosuke\dbml\Transaction\Transaction::getDone()" tabindex="-1" class="structure-title ">
+                        getDone						<small>()</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>done イベント配列を取得する</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="http://php.net/manual/ja/class.closure.php" class="fqsen" target="_blank">\Closure</a>[]</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction.php#L455-L465" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="ryunosuke\dbml\Transaction\Transaction::fail()" tabindex="-1" class="structure-title ">
+                        fail						<small>($callback, $key = null)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>fail イベントを設定する</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.closure.php" class="fqsen" target="_blank">\Closure</a></td>
+				<td class="rest">$callback</td>
+				<td class="desc"><p>fail イベント</p>
+</td>
+			</tr>
+        			<tr>
+				<td class="type">null</td>
+				<td class="rest">$key = null</td>
+				<td class="desc"><p>イベント名。数値や文字列なら既存を上書き（無いなら追加）、未指定時は常に追加</p>
+</td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="ryunosuke-dbml-Transaction-Transaction$typespace.html#ryunosuke\dbml\Transaction\Transaction" class="fqsen "><small>ryunosuke\dbml\Transaction\</small><wbr>Transaction</a></td>
+			<td class="desc"><p>自分自身</p>
+</td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic">magic</span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction.php#L144-L144" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="ryunosuke\dbml\Transaction\Transaction::setFail()" tabindex="-1" class="structure-title ">
+                        setFail						<small>($closure)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>fail イベント配列を設定する</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">array</td>
+				<td class="rest">$closure</td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="ryunosuke-dbml-Transaction-Transaction$typespace.html#ryunosuke\dbml\Transaction\Transaction" class="fqsen "><small>ryunosuke\dbml\Transaction\</small><wbr>Transaction</a></td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic">magic</span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction.php#L143-L143" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="ryunosuke\dbml\Transaction\Transaction::getFail()" tabindex="-1" class="structure-title ">
+                        getFail						<small>()</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>fail イベント配列を取得する</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="http://php.net/manual/ja/class.closure.php" class="fqsen" target="_blank">\Closure</a>[]</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction.php#L467-L477" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="ryunosuke\dbml\Transaction\Transaction::retry()" tabindex="-1" class="structure-title ">
+                        retry						<small>($callback, $key = null)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>retry イベントを設定する</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.closure.php" class="fqsen" target="_blank">\Closure</a></td>
+				<td class="rest">$callback</td>
+				<td class="desc"><p>retry イベント</p>
+</td>
+			</tr>
+        			<tr>
+				<td class="type">null</td>
+				<td class="rest">$key = null</td>
+				<td class="desc"><p>イベント名。数値や文字列なら既存を上書き（無いなら追加）、未指定時は常に追加</p>
+</td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="ryunosuke-dbml-Transaction-Transaction$typespace.html#ryunosuke\dbml\Transaction\Transaction" class="fqsen "><small>ryunosuke\dbml\Transaction\</small><wbr>Transaction</a></td>
+			<td class="desc"><p>自分自身</p>
+</td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic">magic</span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction.php#L146-L146" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="ryunosuke\dbml\Transaction\Transaction::setRetry()" tabindex="-1" class="structure-title ">
+                        setRetry						<small>($closure)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>retry イベント配列を設定する</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">array</td>
+				<td class="rest">$closure</td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="ryunosuke-dbml-Transaction-Transaction$typespace.html#ryunosuke\dbml\Transaction\Transaction" class="fqsen "><small>ryunosuke\dbml\Transaction\</small><wbr>Transaction</a></td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic">magic</span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction.php#L145-L145" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="ryunosuke\dbml\Transaction\Transaction::getRetry()" tabindex="-1" class="structure-title ">
+                        getRetry						<small>()</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>retry イベント配列を取得する</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="http://php.net/manual/ja/class.closure.php" class="fqsen" target="_blank">\Closure</a>[]</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction.php#L479-L489" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="ryunosuke\dbml\Transaction\Transaction::finish()" tabindex="-1" class="structure-title ">
+                        finish						<small>($callback, $key = null)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>finish イベントを設定する</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.closure.php" class="fqsen" target="_blank">\Closure</a></td>
+				<td class="rest">$callback</td>
+				<td class="desc"><p>finish イベント</p>
+</td>
+			</tr>
+        			<tr>
+				<td class="type">null</td>
+				<td class="rest">$key = null</td>
+				<td class="desc"><p>イベント名。数値や文字列なら既存を上書き（無いなら追加）、未指定時は常に追加</p>
+</td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="ryunosuke-dbml-Transaction-Transaction$typespace.html#ryunosuke\dbml\Transaction\Transaction" class="fqsen "><small>ryunosuke\dbml\Transaction\</small><wbr>Transaction</a></td>
+			<td class="desc"><p>自分自身</p>
+</td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic">magic</span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction.php#L148-L148" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="ryunosuke\dbml\Transaction\Transaction::setFinish()" tabindex="-1" class="structure-title ">
+                        setFinish						<small>($closure)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>finish イベント配列を設定する</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">array</td>
+				<td class="rest">$closure</td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="ryunosuke-dbml-Transaction-Transaction$typespace.html#ryunosuke\dbml\Transaction\Transaction" class="fqsen "><small>ryunosuke\dbml\Transaction\</small><wbr>Transaction</a></td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic">magic</span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction.php#L147-L147" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="ryunosuke\dbml\Transaction\Transaction::getFinish()" tabindex="-1" class="structure-title ">
+                        getFinish						<small>()</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>finish イベント配列を取得する</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="http://php.net/manual/ja/class.closure.php" class="fqsen" target="_blank">\Closure</a>[]</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction.php#L491-L496" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="ryunosuke\dbml\Transaction\Transaction::master()" tabindex="-1" class="structure-title ">
+                        master						<small>()</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>トランザクションをマスター接続で実行するようにする</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="ryunosuke-dbml-Transaction-Transaction$typespace.html#ryunosuke\dbml\Transaction\Transaction" class="fqsen "><small>ryunosuke\dbml\Transaction\</small><wbr>Transaction</a></td>
+			<td class="desc"><p>自分自身</p>
+</td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction.php#L498-L503" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="ryunosuke\dbml\Transaction\Transaction::slave()" tabindex="-1" class="structure-title ">
+                        slave						<small>()</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>トランザクションをスレーブ接続で実行するようにする</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="ryunosuke-dbml-Transaction-Transaction$typespace.html#ryunosuke\dbml\Transaction\Transaction" class="fqsen "><small>ryunosuke\dbml\Transaction\</small><wbr>Transaction</a></td>
+			<td class="desc"><p>自分自身</p>
+</td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction.php#L505-L527" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="ryunosuke\dbml\Transaction\Transaction::perform()" tabindex="-1" class="structure-title ">
+                        perform						<small>($throwable = true)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>トランザクションとして実行する</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">bool</td>
+				<td class="rest">$throwable = true</td>
+				<td class="desc"><p>true を指定すると例外発生時に例外が飛ぶ。 false にすると返り値で返す</p>
+</td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">mixed</td>
+			<td class="desc"><p>トランザクションコールバックの返り値</p>
+</td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction.php#L529-L554" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="ryunosuke\dbml\Transaction\Transaction::preview()" tabindex="-1" class="structure-title ">
+                        preview						<small>(&amp;$queries = [])</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>トランザクションとして実行後、強制的に rollback する</p>
+<p>一連の実行クエリが得られるが、あくまでDBレイヤーのトランザクションなので、 php的にファイルを変更したり、何かを送信したりしてもそれは戻らない。</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">array</td>
+				<td class="rest">&amp;$queries = []</td>
+				<td class="desc"><p>一連の実行クエリが格納される</p>
+</td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">mixed</td>
+			<td class="desc"><p>トランザクションコールバックの返り値</p>
+</td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction.php#L556-L568" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="ryunosuke\dbml\Transaction\Transaction::getLog()" tabindex="-1" class="structure-title ">
+                        getLog						<small>()</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>トランザクションログを返す</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">array</td>
+			<td class="desc"><p>トランザクションログ</p>
+</td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic">magic</span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction.php#L127-L127" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="ryunosuke\dbml\Transaction\Transaction::isolationLevel()" tabindex="-1" class="structure-title ">
+                        isolationLevel						<small>($int = null)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>トランザクション分離レベルを設定・取得する</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">mixed</td>
+				<td class="rest">$int = null</td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="ryunosuke-dbml-Transaction-Transaction$typespace.html#ryunosuke\dbml\Transaction\Transaction" class="fqsen "><small>ryunosuke\dbml\Transaction\</small><wbr>Transaction</a><span class="type-separator"></span><wbr>int</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic">magic</span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction.php#L128-L128" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="ryunosuke\dbml\Transaction\Transaction::getIsolationLevel()" tabindex="-1" class="structure-title ">
+                        getIsolationLevel						<small>()</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>トランザクション分離レベルを取得する</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">int</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic">magic</span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction.php#L129-L129" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="ryunosuke\dbml\Transaction\Transaction::setIsolationLevel()" tabindex="-1" class="structure-title ">
+                        setIsolationLevel						<small>($int)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>トランザクション分離レベルを設定する</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">mixed</td>
+				<td class="rest">$int</td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="ryunosuke-dbml-Transaction-Transaction$typespace.html#ryunosuke\dbml\Transaction\Transaction" class="fqsen "><small>ryunosuke\dbml\Transaction\</small><wbr>Transaction</a></td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic">magic</span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction.php#L130-L130" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="ryunosuke\dbml\Transaction\Transaction::logger()" tabindex="-1" class="structure-title ">
+                        logger						<small>($logger = null)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>ロガーインスタンスを設定・取得する</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Logging-SQLLogger$typespace.html#Doctrine\DBAL\Logging\SQLLogger" class="fqsen "><small>Doctrine\DBAL\Logging\</small><wbr>SQLLogger</a></td>
+				<td class="rest">$logger = null</td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="ryunosuke-dbml-Transaction-Transaction$typespace.html#ryunosuke\dbml\Transaction\Transaction" class="fqsen "><small>ryunosuke\dbml\Transaction\</small><wbr>Transaction</a><span class="type-separator"></span><wbr>int</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic">magic</span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction.php#L131-L131" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="ryunosuke\dbml\Transaction\Transaction::getLogger()" tabindex="-1" class="structure-title ">
+                        getLogger						<small>()</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>ロガーインスタンスを取得する</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="Doctrine-DBAL-Logging-SQLLogger$typespace.html#Doctrine\DBAL\Logging\SQLLogger" class="fqsen "><small>Doctrine\DBAL\Logging\</small><wbr>SQLLogger</a></td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic">magic</span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction.php#L132-L132" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="ryunosuke\dbml\Transaction\Transaction::setLogger()" tabindex="-1" class="structure-title ">
+                        setLogger						<small>($logger)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>ロガーインスタンスを設定する</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Logging-SQLLogger$typespace.html#Doctrine\DBAL\Logging\SQLLogger" class="fqsen "><small>Doctrine\DBAL\Logging\</small><wbr>SQLLogger</a></td>
+				<td class="rest">$logger</td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="ryunosuke-dbml-Transaction-Transaction$typespace.html#ryunosuke\dbml\Transaction\Transaction" class="fqsen "><small>ryunosuke\dbml\Transaction\</small><wbr>Transaction</a></td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic">magic</span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction.php#L149-L149" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="ryunosuke\dbml\Transaction\Transaction::retries()" tabindex="-1" class="structure-title ">
+                        retries						<small>($ints = null)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>リトライ間隔を設定・取得する</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">mixed</td>
+				<td class="rest">$ints = null</td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="ryunosuke-dbml-Transaction-Transaction$typespace.html#ryunosuke\dbml\Transaction\Transaction" class="fqsen "><small>ryunosuke\dbml\Transaction\</small><wbr>Transaction</a><span class="type-separator"></span><wbr>int[]</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic">magic</span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction.php#L150-L150" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="ryunosuke\dbml\Transaction\Transaction::getRetries()" tabindex="-1" class="structure-title ">
+                        getRetries						<small>()</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>リトライ間隔を取得する</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">int[]</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic">magic</span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction.php#L151-L151" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="ryunosuke\dbml\Transaction\Transaction::setRetries()" tabindex="-1" class="structure-title ">
+                        setRetries						<small>($ints)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>リトライ間隔を設定する</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">mixed</td>
+				<td class="rest">$ints</td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="ryunosuke-dbml-Transaction-Transaction$typespace.html#ryunosuke\dbml\Transaction\Transaction" class="fqsen "><small>ryunosuke\dbml\Transaction\</small><wbr>Transaction</a></td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic">magic</span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction.php#L152-L152" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="ryunosuke\dbml\Transaction\Transaction::retryable()" tabindex="-1" class="structure-title ">
+                        retryable						<small>($closure = null)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>リトライ判定処理を設定・取得する</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">mixed</td>
+				<td class="rest">$closure = null</td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="ryunosuke-dbml-Transaction-Transaction$typespace.html#ryunosuke\dbml\Transaction\Transaction" class="fqsen "><small>ryunosuke\dbml\Transaction\</small><wbr>Transaction</a><span class="type-separator"></span><wbr><a href="http://php.net/manual/ja/class.closure.php" class="fqsen" target="_blank">\Closure</a></td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic">magic</span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction.php#L153-L153" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="ryunosuke\dbml\Transaction\Transaction::getRetryable()" tabindex="-1" class="structure-title ">
+                        getRetryable						<small>()</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>リトライ判定処理を取得する</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="http://php.net/manual/ja/class.closure.php" class="fqsen" target="_blank">\Closure</a></td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic">magic</span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction.php#L154-L154" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="ryunosuke\dbml\Transaction\Transaction::setRetryable()" tabindex="-1" class="structure-title ">
+                        setRetryable						<small>($closure)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>リトライ判定処理を設定する</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.closure.php" class="fqsen" target="_blank">\Closure</a></td>
+				<td class="rest">$closure</td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="ryunosuke-dbml-Transaction-Transaction$typespace.html#ryunosuke\dbml\Transaction\Transaction" class="fqsen "><small>ryunosuke\dbml\Transaction\</small><wbr>Transaction</a></td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic">magic</span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction.php#L155-L155" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="ryunosuke\dbml\Transaction\Transaction::savepointable()" tabindex="-1" class="structure-title ">
+                        savepointable						<small>($bool = null)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>savepoint 有効/無効フラグを設定・取得する</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">mixed</td>
+				<td class="rest">$bool = null</td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="ryunosuke-dbml-Transaction-Transaction$typespace.html#ryunosuke\dbml\Transaction\Transaction" class="fqsen "><small>ryunosuke\dbml\Transaction\</small><wbr>Transaction</a><span class="type-separator"></span><wbr>bool</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic">magic</span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction.php#L156-L156" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="ryunosuke\dbml\Transaction\Transaction::getSavepointable()" tabindex="-1" class="structure-title ">
+                        getSavepointable						<small>()</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>savepoint 有効/無効フラグを取得する</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">bool</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic">magic</span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction.php#L157-L157" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="ryunosuke\dbml\Transaction\Transaction::setSavepointable()" tabindex="-1" class="structure-title ">
+                        setSavepointable						<small>($bool)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>savepoint 有効/無効フラグを設定する</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">mixed</td>
+				<td class="rest">$bool</td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="ryunosuke-dbml-Transaction-Transaction$typespace.html#ryunosuke\dbml\Transaction\Transaction" class="fqsen "><small>ryunosuke\dbml\Transaction\</small><wbr>Transaction</a></td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            		</ul>
+    
+	<div class="attribute">
+		<span class="label label-default"></span>
+		<span class="label label-default"></span>
+	</div>
+	<div class="clearfix"></div>
+</div>
+</body>
+</html>

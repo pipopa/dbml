@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+<head>	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/styles/zenburn.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js-bootstrap-css/1.2.1/typeaheadjs.min.css">
+	<link rel="stylesheet" type="text/css" data-href="common.css">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/highlight.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/3.1.1/bootstrap3-typeahead.min.js"></script>
+	<script data-src="common.js"></script>
+
+	<script>
+        (function () {
+            var cachekey;
+            try {
+                cachekey = window.parent.CACHEKEY;
+            }
+            catch (e) {
+                cachekey = 'nocache';
+            }
+            $('link[data-href]').attr('href', function () {
+                return this.dataset.href + '?' + cachekey;
+            });
+            $('script[data-src]').attr('src', function () {
+                return this.dataset.src + '?' + cachekey;
+            });
+
+            $(document).on('click', 'a[href]:not([target="_blank"]):not(.cachekey)', function () {
+                this.classList.add('cachekey');
+                this.href = this.href.replace('.html', '.html?' + cachekey);
+            });
+        })();
+	</script>
+    </head>
+<body>
+<a id="anchor" href="./" style="display: none"></a>
+<h1 class="ellipsis">
+	Structure
+	<small class="ellipsis-text">(Doctrine\DBAL\Platforms\)</small>
+	<span class="pull-right">
+		<small class="frame-switch">
+		<a target="_parent">frame</a> | <a target="_parent">noframe</a>
+		</small>
+	</span>
+</h1>
+<div class="main-wrapper">
+	<h2>namespace <span class="category-name">Doctrine\DBAL\Platforms\</span></h2>
+	<div class="inner-item">
+		<div class="description"></div>
+	</div>
+
+    		<h3>Namespaces</h3>
+		<ul>
+            				<li class="structure-item">
+					<h4 id="Doctrine\DBAL\Platforms\Keywords\" tabindex="-1" class="structure-title ">
+						<a href="Doctrine-DBAL-Platforms-Keywords-$namespace.html#Doctrine\DBAL\Platforms\Keywords\">Keywords</a>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            		</ul>
+    
+                                    			<h3>Classes</h3>
+			<ul>
+                					<li class="structure-item">
+						<div class="attribute">
+							<span class="label label-danger"></span>
+							<span class="label label-warning">abstract</span>
+							<span class="label label-info"></span>
+							<span class="label label-info"></span>
+							<span class="label label-deprecated"></span>
+                            			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Platforms/AbstractPlatform.php#L70-L3627" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+            						</div>
+						<h4 id="Doctrine\DBAL\Platforms\AbstractPlatform" tabindex="-1" class="structure-title ">
+							<a href="Doctrine-DBAL-Platforms-AbstractPlatform$typespace.html#Doctrine\DBAL\Platforms\AbstractPlatform">AbstractPlatform</a>
+						</h4>
+						<div class="inner-item">
+							<div class="description"><p>Base class for all DatabasePlatforms. The DatabasePlatforms are the central<br />
+point of abstraction of platform-specific behaviors, features and SQL dialects.<br />
+They are a passive source of information.</p>
+</div>
+						</div>
+						<div class="attribute">
+							<span class="label label-default"></span>
+							<span class="label label-default">author Guilherme Blanco</span>
+						</div>
+						<div class="clearfix"></div>
+					</li>
+                					<li class="structure-item">
+						<div class="attribute">
+							<span class="label label-danger"></span>
+							<span class="label label-warning"></span>
+							<span class="label label-info"></span>
+							<span class="label label-info"></span>
+							<span class="label label-deprecated"></span>
+                            			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Platforms/MySqlPlatform.php#L45-L1156" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+            						</div>
+						<h4 id="Doctrine\DBAL\Platforms\MySqlPlatform" tabindex="-1" class="structure-title ">
+							<a href="Doctrine-DBAL-Platforms-MySqlPlatform$typespace.html#Doctrine\DBAL\Platforms\MySqlPlatform">MySqlPlatform</a>
+						</h4>
+						<div class="inner-item">
+							<div class="description"><p>The MySqlPlatform provides the behavior, features and SQL dialect of the<br />
+MySQL database platform. This platform represents a MySQL 5.0 or greater platform that<br />
+uses the InnoDB storage engine.</p>
+</div>
+						</div>
+						<div class="attribute">
+							<span class="label label-default"></span>
+							<span class="label label-default">author Roman Borschel</span>
+						</div>
+						<div class="clearfix"></div>
+					</li>
+                					<li class="structure-item">
+						<div class="attribute">
+							<span class="label label-danger"></span>
+							<span class="label label-warning"></span>
+							<span class="label label-info"></span>
+							<span class="label label-info"></span>
+							<span class="label label-deprecated"></span>
+                            			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Platforms/PostgreSqlPlatform.php#L50-L1255" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+            						</div>
+						<h4 id="Doctrine\DBAL\Platforms\PostgreSqlPlatform" tabindex="-1" class="structure-title ">
+							<a href="Doctrine-DBAL-Platforms-PostgreSqlPlatform$typespace.html#Doctrine\DBAL\Platforms\PostgreSqlPlatform">PostgreSqlPlatform</a>
+						</h4>
+						<div class="inner-item">
+							<div class="description"><p>PostgreSqlPlatform.</p>
+</div>
+						</div>
+						<div class="attribute">
+							<span class="label label-default"></span>
+							<span class="label label-default">author Roman Borschel</span>
+						</div>
+						<div class="clearfix"></div>
+					</li>
+                					<li class="structure-item">
+						<div class="attribute">
+							<span class="label label-danger"></span>
+							<span class="label label-warning"></span>
+							<span class="label label-info"></span>
+							<span class="label label-info"></span>
+							<span class="label label-deprecated"></span>
+                            			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Platforms/SqlitePlatform.php#L44-L1153" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+            						</div>
+						<h4 id="Doctrine\DBAL\Platforms\SqlitePlatform" tabindex="-1" class="structure-title ">
+							<a href="Doctrine-DBAL-Platforms-SqlitePlatform$typespace.html#Doctrine\DBAL\Platforms\SqlitePlatform">SqlitePlatform</a>
+						</h4>
+						<div class="inner-item">
+							<div class="description"><p>The SqlitePlatform class describes the specifics and dialects of the SQLite<br />
+database platform.</p>
+</div>
+						</div>
+						<div class="attribute">
+							<span class="label label-default"></span>
+							<span class="label label-default">author Roman Borschel</span>
+						</div>
+						<div class="clearfix"></div>
+					</li>
+                					<li class="structure-item">
+						<div class="attribute">
+							<span class="label label-danger"></span>
+							<span class="label label-warning"></span>
+							<span class="label label-info"></span>
+							<span class="label label-info"></span>
+							<span class="label label-deprecated"></span>
+                            			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Platforms/SQLServerPlatform.php#L57-L1683" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+            						</div>
+						<h4 id="Doctrine\DBAL\Platforms\SQLServerPlatform" tabindex="-1" class="structure-title ">
+							<a href="Doctrine-DBAL-Platforms-SQLServerPlatform$typespace.html#Doctrine\DBAL\Platforms\SQLServerPlatform">SQLServerPlatform</a>
+						</h4>
+						<div class="inner-item">
+							<div class="description"><p>The SQLServerPlatform provides the behavior, features and SQL dialect of the<br />
+Microsoft SQL Server database platform.</p>
+</div>
+						</div>
+						<div class="attribute">
+							<span class="label label-default"></span>
+							<span class="label label-default">author Roman Borschel</span>
+						</div>
+						<div class="clearfix"></div>
+					</li>
+                					<li class="structure-item">
+						<div class="attribute">
+							<span class="label label-danger">final</span>
+							<span class="label label-warning"></span>
+							<span class="label label-info"></span>
+							<span class="label label-info"></span>
+							<span class="label label-deprecated"></span>
+                            			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Platforms/DateIntervalUnit.php#L7-L28" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+            						</div>
+						<h4 id="Doctrine\DBAL\Platforms\DateIntervalUnit" tabindex="-1" class="structure-title ">
+							<a href="Doctrine-DBAL-Platforms-DateIntervalUnit$typespace.html#Doctrine\DBAL\Platforms\DateIntervalUnit">DateIntervalUnit</a>
+						</h4>
+						<div class="inner-item">
+							<div class="description"></div>
+						</div>
+						<div class="attribute">
+							<span class="label label-default"></span>
+							<span class="label label-default"></span>
+						</div>
+						<div class="clearfix"></div>
+					</li>
+                					<li class="structure-item">
+						<div class="attribute">
+							<span class="label label-danger">final</span>
+							<span class="label label-warning"></span>
+							<span class="label label-info"></span>
+							<span class="label label-info"></span>
+							<span class="label label-deprecated"></span>
+                            			<a href="https://github.com/doctrine/dbal/blob/v2.7.1/lib/Doctrine/DBAL/Platforms/TrimMode.php#L7-L20" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+            						</div>
+						<h4 id="Doctrine\DBAL\Platforms\TrimMode" tabindex="-1" class="structure-title ">
+							<a href="Doctrine-DBAL-Platforms-TrimMode$typespace.html#Doctrine\DBAL\Platforms\TrimMode">TrimMode</a>
+						</h4>
+						<div class="inner-item">
+							<div class="description"></div>
+						</div>
+						<div class="attribute">
+							<span class="label label-default"></span>
+							<span class="label label-default"></span>
+						</div>
+						<div class="clearfix"></div>
+					</li>
+                			</ul>
+            
+    
+    	<div class="attribute">
+		<span class="label label-default"></span>
+		<span class="label label-default"></span>
+	</div>
+	<div class="clearfix"></div>
+</div>
+</body>
+</html>
