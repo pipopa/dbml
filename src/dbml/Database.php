@@ -1097,6 +1097,10 @@ class Database
         // これはメソッド冒頭に記述し、決して場所を移動しないこと
         $columns = $this->getSchema()->getTableColumns($table);
 
+        if ($row instanceof Entityable) {
+            $row = $row->arrayize();
+        }
+
         if ($this->getUnsafeOption('preparing')) {
             $row = Adhoc::to_hash($row, function ($v) { return $this->raw(':' . $v); });
         }

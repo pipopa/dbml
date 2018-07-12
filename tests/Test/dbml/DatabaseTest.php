@@ -237,6 +237,28 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
         $this->assertException(new \InvalidArgumentException('too short'), L($database)->insertOrThrow('test'));
     }
 
+    /**
+     * @dataProvider provideDatabase
+     * @param Database $database
+     */
+    function test__normalize($database)
+    {
+        $_normalize = self::forcedCallize($database, '_normalize');
+        $row = $database->Article->pk(1)->tuple();
+        $this->assertSame($row->arrayize(), $_normalize('t_article', $row));
+
+        $row->article_id = 99;
+        $database->insert('t_article', $row);
+        $this->assertTrue($database->exists('t_article(99)'));
+
+        $row->title = 'newest';
+        $database->update('t_article', $row, ['article_id' => $row->article_id]);
+        $this->assertEquals('newest', $database->selectValue('t_article(99).title'));
+
+        $database->delete('t_article', ['article_id' => $row->article_id]);
+        $this->assertFalse($database->exists('t_article(99)'));
+    }
+
     function test_masterslave()
     {
         $master = DriverManager::getConnection(['url' => 'sqlite:///:memory:']);
