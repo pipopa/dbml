@@ -708,7 +708,7 @@ class Database
 
         if (!isset($this->cache['gateway'][$name])) {
             $gatewayMapper = $this->getUnsafeOption('gatewayMapper');
-            $classname = $gatewayMapper ? $gatewayMapper($name) : null ?: TableGateway::class;
+            $classname = $gatewayMapper ? $gatewayMapper($tablename) : null ?: TableGateway::class;
             $this->cache['gateway'][$name] = new $classname($this, $tablename, $tablename === $name ? null : $name);
         }
         return $this->cache['gateway'][$name];

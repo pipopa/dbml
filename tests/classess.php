@@ -139,12 +139,12 @@ namespace ryunosuke\Test {
      * @method   \ryunosuke\Test\Gateway\TableGateway paging($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
      * @property \ryunosuke\Test\Gateway\Article      $t_article
      * @method   \ryunosuke\Test\Gateway\Article      t_article($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
-     * @property \ryunosuke\Test\Gateway\TableGateway $Article
-     * @method   \ryunosuke\Test\Gateway\TableGateway Article($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
+     * @property \ryunosuke\Test\Gateway\Article      $Article
+     * @method   \ryunosuke\Test\Gateway\Article      Article($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
      * @property \ryunosuke\Test\Gateway\Comment      $t_comment
      * @method   \ryunosuke\Test\Gateway\Comment      t_comment($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
-     * @property \ryunosuke\Test\Gateway\TableGateway $Comment
-     * @method   \ryunosuke\Test\Gateway\TableGateway Comment($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
+     * @property \ryunosuke\Test\Gateway\Comment      $Comment
+     * @method   \ryunosuke\Test\Gateway\Comment      Comment($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
      * @property \ryunosuke\Test\Gateway\TableGateway $test
      * @method   \ryunosuke\Test\Gateway\TableGateway test($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
      * @property \ryunosuke\Test\Gateway\TableGateway $test1
@@ -271,12 +271,12 @@ namespace ryunosuke\Test\Gateway {
      * @method   \ryunosuke\Test\Gateway\TableGateway paging($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
      * @property \ryunosuke\Test\Gateway\Article      $t_article
      * @method   \ryunosuke\Test\Gateway\Article      t_article($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
-     * @property \ryunosuke\Test\Gateway\TableGateway $Article
-     * @method   \ryunosuke\Test\Gateway\TableGateway Article($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
+     * @property \ryunosuke\Test\Gateway\Article      $Article
+     * @method   \ryunosuke\Test\Gateway\Article      Article($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
      * @property \ryunosuke\Test\Gateway\Comment      $t_comment
      * @method   \ryunosuke\Test\Gateway\Comment      t_comment($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
-     * @property \ryunosuke\Test\Gateway\TableGateway $Comment
-     * @method   \ryunosuke\Test\Gateway\TableGateway Comment($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
+     * @property \ryunosuke\Test\Gateway\Comment      $Comment
+     * @method   \ryunosuke\Test\Gateway\Comment      Comment($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
      * @property \ryunosuke\Test\Gateway\TableGateway $test
      * @method   \ryunosuke\Test\Gateway\TableGateway test($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
      * @property \ryunosuke\Test\Gateway\TableGateway $test1
@@ -295,9 +295,9 @@ namespace ryunosuke\Test\Gateway {
         protected $defaultIteration  = 'assoc';
         protected $defaultJoinMethod = 'left';
 
-        public function __construct(Database $database, $table_name)
+        public function __construct(Database $database, $table_name, $entity_name)
         {
-            parent::__construct($database, $table_name);
+            parent::__construct($database, $table_name, $entity_name);
 
             $this->addScope('scope1', 'NOW()');
             $this->addScope('scope2', function ($id) {
