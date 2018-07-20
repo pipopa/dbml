@@ -1419,6 +1419,43 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
      * @dataProvider provideDatabase
      * @param Database $database
      */
+    function test_whereInto_not($database)
+    {
+
+        $params = [];
+        $where = $database->whereInto([
+            'cond1' => 1,
+            // NOT はコンテキストを変えないのでこれは AND
+            'NOT'   => [
+                'cond2' => 2,
+                'cond3' => 3,
+                // NOT はコンテキストを変えないのでこれは OR
+                [
+                    'cond4' => 4,
+                    'cond5' => 5,
+                ],
+                // NOT はコンテキストを変えないのでこれは AND
+                'NOT'   => [
+                    'cond6' => 6,
+                    // NOT はコンテキストを変えないのでこれは OR
+                    [
+                        'cond7' => 7,
+                        'cond8' => 8,
+                    ],
+                ],
+            ]
+        ], $params);
+        $this->assertEquals([
+            'cond1 = ?',
+            'NOT ((cond2 = ?) AND (cond3 = ?) AND ((cond4 = ?) OR (cond5 = ?)) AND (NOT ((cond6 = ?) AND ((cond7 = ?) OR (cond8 = ?)))))',
+        ], $where);
+        $this->assertEquals([1, 2, 3, 4, 5, 6, 7, 8], $params);
+    }
+
+    /**
+     * @dataProvider provideDatabase
+     * @param Database $database
+     */
     function test_whereInto_notallohashwhere($database)
     {
         $params = [];

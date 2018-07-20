@@ -2146,12 +2146,13 @@ class Database
      * | 21 | `['(hoge, fuga)'] => [[1, 2], [3, 4]]`         | `(hoge, fuga) IN ((1, 2), (3, 4))` | 行値式のようなキーは `IN` に展開される
      * | 22 | `['!hoge' => '']`                              | -                                  | キーが "!" で始まるかつ bind 値が(phpで)空判定される場合、その条件文自体が抹消される（記号は同じだが前述の `:!演算子` とは全く別個）
      * | 23 | `['AND/OR' => ['hoge' => 1, 'fuga' => 2]]`     | `hoge = 1 OR fuga = 2`             | キーが "AND/OR" の場合は特別扱いされ、AND/OR コンテキストの切り替えが行わる
-     * | 24 | `[QueryBuilder]`                               | 略                                 | QueryBuilder の文字列表現をそのまま埋め込む。EXISTS などでよく使用されるが、使い方を誤ると「Operand should contain 1 column(s)」とか「Subquery returns more than 1 row」とか言われるので注意
-     * | 25 | `['hoge' => QueryBuilder]`                     | 略                                 | キー付きで QueryBuilder を渡すとサブクエリで条件演算される。左記の場合は `hoge IN (QueryBuilder)` となる
-     * | 26 | `[Operator]`                                   | 略                                 | 条件式の代わりに `Operator` インスタンスを渡すことができるが、難解なので説明は省略
-     * | 27 | `['hoge' => function () {}]`                   | 略                                 | クロージャを渡すとクロージャの実行結果が「あたかもそこにあるかのように」振る舞う
+     * | 24 | `['NOT' => ['hoge' => 1, 'fuga' => 2]]`        | `NOT(hoge = 1 AND fuga = 2)`       | キーが "NOT" の場合も特別扱いされ、その要素を NOT で反転する
+     * | 25 | `[QueryBuilder]`                               | 略                                 | QueryBuilder の文字列表現をそのまま埋め込む。EXISTS などでよく使用されるが、使い方を誤ると「Operand should contain 1 column(s)」とか「Subquery returns more than 1 row」とか言われるので注意
+     * | 26 | `['hoge' => QueryBuilder]`                     | 略                                 | キー付きで QueryBuilder を渡すとサブクエリで条件演算される。左記の場合は `hoge IN (QueryBuilder)` となる
+     * | 27 | `[Operator]`                                   | 略                                 | 条件式の代わりに `Operator` インスタンスを渡すことができるが、難解なので説明は省略
+     * | 28 | `['hoge' => function () {}]`                   | 略                                 | クロージャを渡すとクロージャの実行結果が「あたかもそこにあるかのように」振る舞う
      *
-     * No, 9,10 の演算子は `LIKE` や `BETWEEN` 、 `IS NULL` 、範囲指定できる独自の `[~]` 演算子などがある。
+     * No.9,10 の演算子は `LIKE` や `BETWEEN` 、 `IS NULL` 、範囲指定できる独自の `[~]` 演算子などがある。
      * 組み込みの演算子は {@link Operator} を参照。
      *
      * このメソッドは内部で頻繁に使用される。
@@ -2211,7 +2212,17 @@ class Database
      * ]);
      * // WHERE delete_flg = 0 AND ((sei LIKE "%hoge%") OR (mei LIKE "%hoge%"))
      *
-     * # No.24,25（クエリビルダを渡すとそれらしく埋め込まれる）
+     * # No.24（NOT キーで要素が NOT で囲まれる）
+     * $wheres = [
+     *     'delete_flg' => 0,
+     *     'NOT' => [
+     *         'sei:%LIKE%' => 'hoge',
+     *         'mei:%LIKE%' => 'hoge',
+     *     ],
+     * ];
+     * // WHERE (delete_flg = '0') AND (NOT ((sei LIKE '%hoge%') AND (mei LIKE '%hoge%')))
+     *
+     * # No.25,26（クエリビルダを渡すとそれらしく埋め込まれる）
      * $wheres = [
      *     // ただの EXSISTS クエリになる
      *     $db->select('subtable')->exists(),
@@ -2222,7 +2233,7 @@ class Database
      * ];
      * // WHERE EXISTS(SELECT * FROM subtable) AND (subid1 IN (SELECT subid FROM subtable)) AND (subid2 = (SELECT subid FROM subtable))
      *
-     * # No.27（クロージャを使うと三項演算子を駆使する必要はない上、スコープを閉じ込めることができる）
+     * # No.28（クロージャを使うと三項演算子を駆使する必要はない上、スコープを閉じ込めることができる）
      * $wheres = [
      *     // $condition 次第で EXISTS したい（この程度なら三項演算子で十分だが、もっと複雑だと三項演算子で救いきれない）
      *     function ($db) use ($condition) {
@@ -2296,6 +2307,12 @@ class Database
                 if ($CANDOR === 'AND' || $CANDOR === 'OR') {
                     $ors = $this->whereInto(arrayize($value), $params, $CANDOR === 'AND' ? 'OR' : 'AND', $filterd);
                     Adhoc::array_push($criteria, implode(" $CANDOR ", Adhoc::wrapParentheses($ors)));
+                    continue;
+                }
+                // 同じく、NOT も特別扱い
+                if ($CANDOR === 'NOT') {
+                    $nots = $this->whereInto(arrayize($value), $params, $andor, $filterd);
+                    Adhoc::array_push($criteria, 'NOT (' . implode(" $orand ", Adhoc::wrapParentheses($nots)) . ')');
                     continue;
                 }
                 // Queryable はマージしたものを
