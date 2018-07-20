@@ -20,6 +20,15 @@
 
 - Entity 消したい。使わない…
 
+## 1.0.1
+
+- [fixbug][Database] エンティティ名でアクセスしてもエンティティゲートウェイが返らない不具合を修正
+- [fixbug][Database] エンティティを作用系に投げるとエラーが出る不具合を修正
+- [fixbug][Database] sqlite の truncate で自動採番列がリセットされない不具合を修正
+- [feature][Database] NOT ブロックの実装
+- [feature][Database] echoAnnotation を実装
+- [feature][TableGateway] 主キー指定の配列アクセスを実装
+
 ## 1.0.0
 
 - 公開
