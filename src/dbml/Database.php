@@ -4989,7 +4989,11 @@ class Database
     {
         $tableName = $this->convertTableName($tableName);
         $sql = $this->getCompatiblePlatform()->getTruncateTableSQL($tableName, $cascade);
-        return $this->executeUpdate($sql);
+        $affected = $this->executeUpdate($sql);
+        if (!$this->getCompatiblePlatform()->supportsResetAutoIncrementOnTruncate() && $this->getSchema()->getTableAutoIncrement($tableName)) {
+            $this->resetAutoIncrement($tableName);
+        }
+        return $affected;
     }
 
     /**

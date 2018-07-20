@@ -178,6 +178,21 @@ class CompatiblePlatform /*extends AbstractPlatform*/
     }
 
     /**
+     * TRUNCATE 文で自動採番列がリセットされるか否かを返す
+     *
+     * @return bool TRUNCATE で自動採番列がリセットされるなら true
+     */
+    public function supportsResetAutoIncrementOnTruncate()
+    {
+        // Sqlite のみリセットされない
+        if ($this->platform instanceof SqlitePlatform) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * \PDO::ATTR_FETCH_TABLE_NAMES が有効か否かを返す
      *
      * @return bool \PDO::ATTR_FETCH_TABLE_NAMES が有効なら true
