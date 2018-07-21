@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/styles/zenburn.min.css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js-bootstrap-css/1.2.1/typeaheadjs.min.css">
@@ -688,23 +689,6 @@ Driver connections must implement this interface.</p>
     	<h2>method<a href="Doctrine-DBAL-Driver-Connection$typespace.html#Doctrine\DBAL\Driver\Connection::errorInfo()"> Doctrine\DBAL\Driver\Connection::errorInfo()</a></h2>
 	<div class="description"><p>Returns extended error information associated with the last operation on the database handle.</p>
 </div>
-            	<h2>interface<a href="Doctrine-DBAL-Driver-ServerInfoAwareConnection$typespace.html#Doctrine\DBAL\Driver\ServerInfoAwareConnection"> Doctrine\DBAL\Driver\ServerInfoAwareConnection</a></h2>
-	<div class="description"><p>Contract for a connection that is able to provide information about the server it is connected to.</p>
-</div>
-                	<h2>method<a href="Doctrine-DBAL-Driver-ServerInfoAwareConnection$typespace.html#Doctrine\DBAL\Driver\ServerInfoAwareConnection::getServerVersion()"> Doctrine\DBAL\Driver\ServerInfoAwareConnection::getServerVersion()</a></h2>
-	<div class="description"><p>Returns the version number of the database server connected to.</p>
-</div>
-    	<h2>method<a href="Doctrine-DBAL-Driver-ServerInfoAwareConnection$typespace.html#Doctrine\DBAL\Driver\ServerInfoAwareConnection::requiresQueryForServerVersion()"> Doctrine\DBAL\Driver\ServerInfoAwareConnection::requiresQueryForServerVersion()</a></h2>
-	<div class="description"><p>Checks whether a query is required to retrieve the database server version.</p>
-</div>
-            	<h2>interface<a href="Doctrine-DBAL-Driver-ExceptionConverterDriver$typespace.html#Doctrine\DBAL\Driver\ExceptionConverterDriver"> Doctrine\DBAL\Driver\ExceptionConverterDriver</a></h2>
-	<div class="description"><p>Contract for a driver that is capable of converting DBAL driver exceptions into standardized DBAL driver exceptions.</p>
-</div>
-                	<h2>method<a href="Doctrine-DBAL-Driver-ExceptionConverterDriver$typespace.html#Doctrine\DBAL\Driver\ExceptionConverterDriver::convertException()"> Doctrine\DBAL\Driver\ExceptionConverterDriver::convertException()</a></h2>
-	<div class="description"><p>Converts a given DBAL driver exception into a standardized DBAL driver exception.</p>
-<p>It evaluates the vendor specific error code and SQLSTATE and transforms<br />
-it into a unified <tag_link data-kind='fqsen' data-type-category='class' data-type-fqsen='Doctrine\DBAL\Exception\DriverException' data-type-array='0' data-description='Doctrine\DBAL\Exception\DriverException'>Doctrine\DBAL\Exception\DriverException</tag_link> subclass.</p>
-</div>
             	<h2>interface<a href="Doctrine-DBAL-Driver-ResultStatement$typespace.html#Doctrine\DBAL\Driver\ResultStatement"> Doctrine\DBAL\Driver\ResultStatement</a></h2>
 	<div class="description"><p>Interface for the reading part of a prepare statement only.</p>
 </div>
@@ -725,6 +709,23 @@ it into a unified <tag_link data-kind='fqsen' data-type-category='class' data-ty
 </div>
     	<h2>method<a href="Doctrine-DBAL-Driver-ResultStatement$typespace.html#Doctrine\DBAL\Driver\ResultStatement::fetchColumn()"> Doctrine\DBAL\Driver\ResultStatement::fetchColumn()</a></h2>
 	<div class="description"><p>Returns a single column from the next row of a result set or FALSE if there are no more rows.</p>
+</div>
+            	<h2>interface<a href="Doctrine-DBAL-Driver-ServerInfoAwareConnection$typespace.html#Doctrine\DBAL\Driver\ServerInfoAwareConnection"> Doctrine\DBAL\Driver\ServerInfoAwareConnection</a></h2>
+	<div class="description"><p>Contract for a connection that is able to provide information about the server it is connected to.</p>
+</div>
+                	<h2>method<a href="Doctrine-DBAL-Driver-ServerInfoAwareConnection$typespace.html#Doctrine\DBAL\Driver\ServerInfoAwareConnection::getServerVersion()"> Doctrine\DBAL\Driver\ServerInfoAwareConnection::getServerVersion()</a></h2>
+	<div class="description"><p>Returns the version number of the database server connected to.</p>
+</div>
+    	<h2>method<a href="Doctrine-DBAL-Driver-ServerInfoAwareConnection$typespace.html#Doctrine\DBAL\Driver\ServerInfoAwareConnection::requiresQueryForServerVersion()"> Doctrine\DBAL\Driver\ServerInfoAwareConnection::requiresQueryForServerVersion()</a></h2>
+	<div class="description"><p>Checks whether a query is required to retrieve the database server version.</p>
+</div>
+            	<h2>interface<a href="Doctrine-DBAL-Driver-ExceptionConverterDriver$typespace.html#Doctrine\DBAL\Driver\ExceptionConverterDriver"> Doctrine\DBAL\Driver\ExceptionConverterDriver</a></h2>
+	<div class="description"><p>Contract for a driver that is capable of converting DBAL driver exceptions into standardized DBAL driver exceptions.</p>
+</div>
+                	<h2>method<a href="Doctrine-DBAL-Driver-ExceptionConverterDriver$typespace.html#Doctrine\DBAL\Driver\ExceptionConverterDriver::convertException()"> Doctrine\DBAL\Driver\ExceptionConverterDriver::convertException()</a></h2>
+	<div class="description"><p>Converts a given DBAL driver exception into a standardized DBAL driver exception.</p>
+<p>It evaluates the vendor specific error code and SQLSTATE and transforms<br />
+it into a unified <tag_link data-kind='fqsen' data-type-category='class' data-type-fqsen='Doctrine\DBAL\Exception\DriverException' data-type-array='0' data-description='Doctrine\DBAL\Exception\DriverException'>Doctrine\DBAL\Exception\DriverException</tag_link> subclass.</p>
 </div>
             	<h2>interface<a href="Doctrine-DBAL-Driver-Statement$typespace.html#Doctrine\DBAL\Driver\Statement"> Doctrine\DBAL\Driver\Statement</a></h2>
 	<div class="description"><p>Statement interface.<br />
@@ -1478,6 +1479,9 @@ special datatypes when the underlying databases support this datatype.</p>
     	<h2>method<a href="Doctrine-DBAL-Platforms-AbstractPlatform$typespace.html#Doctrine\DBAL\Platforms\AbstractPlatform::getSqlCommentEndString()"> Doctrine\DBAL\Platforms\AbstractPlatform::getSqlCommentEndString()</a></h2>
 	<div class="description"><p>Gets the string portion that ends an SQL comment.</p>
 </div>
+    	<h2>method<a href="Doctrine-DBAL-Platforms-AbstractPlatform$typespace.html#Doctrine\DBAL\Platforms\AbstractPlatform::getCharMaxLength()"> Doctrine\DBAL\Platforms\AbstractPlatform::getCharMaxLength()</a></h2>
+	<div class="description"><p>Gets the maximum length of a char field.</p>
+</div>
     	<h2>method<a href="Doctrine-DBAL-Platforms-AbstractPlatform$typespace.html#Doctrine\DBAL\Platforms\AbstractPlatform::getVarcharMaxLength()"> Doctrine\DBAL\Platforms\AbstractPlatform::getVarcharMaxLength()</a></h2>
 	<div class="description"><p>Gets the maximum length of a varchar field.</p>
 </div>
@@ -2044,7 +2048,7 @@ the format of a stored time value of this platform.</p>
 	<div class="description"><p>Adds an driver-specific LIMIT clause to the query.</p>
 </div>
     	<h2>method<a href="Doctrine-DBAL-Platforms-AbstractPlatform$typespace.html#Doctrine\DBAL\Platforms\AbstractPlatform::doModifyLimitQuery()"> Doctrine\DBAL\Platforms\AbstractPlatform::doModifyLimitQuery()</a></h2>
-	<div class="description"><p>Adds an driver-specific LIMIT clause to the query.</p>
+	<div class="description"><p>Adds an platform-specific LIMIT clause to the query.</p>
 </div>
     	<h2>method<a href="Doctrine-DBAL-Platforms-AbstractPlatform$typespace.html#Doctrine\DBAL\Platforms\AbstractPlatform::supportsLimitOffset()"> Doctrine\DBAL\Platforms\AbstractPlatform::supportsLimitOffset()</a></h2>
 	<div class="description"><p>Whether the database platform support offsets in modify limit clauses.</p>
@@ -2157,8 +2161,7 @@ in reverse engineering scenarios.</p>
 	<div class="description"><p>Holds the KeywordList instance for the current platform.</p>
 </div>
         	<h2>method<a href="Doctrine-DBAL-Platforms-MySqlPlatform$typespace.html#Doctrine\DBAL\Platforms\MySqlPlatform::doModifyLimitQuery()"> Doctrine\DBAL\Platforms\MySqlPlatform::doModifyLimitQuery()</a></h2>
-	<div class="description"><p>Adds MySQL-specific LIMIT clause to the query<br />
-18446744073709551615 is 2^64-1 maximum of unsigned BIGINT the biggest limit possible</p>
+	<div class="description"><p><tag_inheritdoc data-type='' data-description=''>Adds an platform-specific LIMIT clause to the query.</tag_inheritdoc></p>
 </div>
     	<h2>method<a href="Doctrine-DBAL-Platforms-MySqlPlatform$typespace.html#Doctrine\DBAL\Platforms\MySqlPlatform::getIdentifierQuoteCharacter()"> Doctrine\DBAL\Platforms\MySqlPlatform::getIdentifierQuoteCharacter()</a></h2>
 	<div class="description"><p><tag_inheritdoc data-type='' data-description=''>Gets the character used for identifier quoting.</tag_inheritdoc></p>
@@ -2424,6 +2427,9 @@ special datatypes when the underlying databases support this datatype.</p>
 </div>
     	<h2>method<a href="Doctrine-DBAL-Platforms-MySqlPlatform$typespace.html#Doctrine\DBAL\Platforms\MySqlPlatform::getSqlCommentEndString()"> Doctrine\DBAL\Platforms\MySqlPlatform::getSqlCommentEndString()</a></h2>
 	<div class="description"><p>Gets the string portion that ends an SQL comment.</p>
+</div>
+    	<h2>method<a href="Doctrine-DBAL-Platforms-MySqlPlatform$typespace.html#Doctrine\DBAL\Platforms\MySqlPlatform::getCharMaxLength()"> Doctrine\DBAL\Platforms\MySqlPlatform::getCharMaxLength()</a></h2>
+	<div class="description"><p>Gets the maximum length of a char field.</p>
 </div>
     	<h2>method<a href="Doctrine-DBAL-Platforms-MySqlPlatform$typespace.html#Doctrine\DBAL\Platforms\MySqlPlatform::getVarcharDefaultLength()"> Doctrine\DBAL\Platforms\MySqlPlatform::getVarcharDefaultLength()</a></h2>
 	<div class="description"><p>Gets the default length of a varchar field.</p>
@@ -3267,6 +3273,9 @@ special datatypes when the underlying databases support this datatype.</p>
     	<h2>method<a href="Doctrine-DBAL-Platforms-PostgreSqlPlatform$typespace.html#Doctrine\DBAL\Platforms\PostgreSqlPlatform::getSqlCommentEndString()"> Doctrine\DBAL\Platforms\PostgreSqlPlatform::getSqlCommentEndString()</a></h2>
 	<div class="description"><p>Gets the string portion that ends an SQL comment.</p>
 </div>
+    	<h2>method<a href="Doctrine-DBAL-Platforms-PostgreSqlPlatform$typespace.html#Doctrine\DBAL\Platforms\PostgreSqlPlatform::getCharMaxLength()"> Doctrine\DBAL\Platforms\PostgreSqlPlatform::getCharMaxLength()</a></h2>
+	<div class="description"><p>Gets the maximum length of a char field.</p>
+</div>
     	<h2>method<a href="Doctrine-DBAL-Platforms-PostgreSqlPlatform$typespace.html#Doctrine\DBAL\Platforms\PostgreSqlPlatform::getVarcharDefaultLength()"> Doctrine\DBAL\Platforms\PostgreSqlPlatform::getVarcharDefaultLength()</a></h2>
 	<div class="description"><p>Gets the default length of a varchar field.</p>
 </div>
@@ -3651,7 +3660,7 @@ the format of a stored time value of this platform.</p>
 	<div class="description"><p>Adds an driver-specific LIMIT clause to the query.</p>
 </div>
     	<h2>method<a href="Doctrine-DBAL-Platforms-PostgreSqlPlatform$typespace.html#Doctrine\DBAL\Platforms\PostgreSqlPlatform::doModifyLimitQuery()"> Doctrine\DBAL\Platforms\PostgreSqlPlatform::doModifyLimitQuery()</a></h2>
-	<div class="description"><p>Adds an driver-specific LIMIT clause to the query.</p>
+	<div class="description"><p>Adds an platform-specific LIMIT clause to the query.</p>
 </div>
     	<h2>method<a href="Doctrine-DBAL-Platforms-PostgreSqlPlatform$typespace.html#Doctrine\DBAL\Platforms\PostgreSqlPlatform::supportsLimitOffset()"> Doctrine\DBAL\Platforms\PostgreSqlPlatform::supportsLimitOffset()</a></h2>
 	<div class="description"><p>Whether the database platform support offsets in modify limit clauses.</p>
@@ -3899,7 +3908,7 @@ following the foreign keys.</tag_inheritdoc></p>
 	<div class="description"><p><tag_inheritdoc data-type='' data-description=''></tag_inheritdoc></p>
 </div>
     	<h2>method<a href="Doctrine-DBAL-Platforms-SqlitePlatform$typespace.html#Doctrine\DBAL\Platforms\SqlitePlatform::doModifyLimitQuery()"> Doctrine\DBAL\Platforms\SqlitePlatform::doModifyLimitQuery()</a></h2>
-	<div class="description"><p><tag_inheritdoc data-type='' data-description=''>Adds an driver-specific LIMIT clause to the query.</tag_inheritdoc></p>
+	<div class="description"><p><tag_inheritdoc data-type='' data-description=''>Adds an platform-specific LIMIT clause to the query.</tag_inheritdoc></p>
 </div>
     	<h2>method<a href="Doctrine-DBAL-Platforms-SqlitePlatform$typespace.html#Doctrine\DBAL\Platforms\SqlitePlatform::getBlobTypeDeclarationSQL()"> Doctrine\DBAL\Platforms\SqlitePlatform::getBlobTypeDeclarationSQL()</a></h2>
 	<div class="description"><p><tag_inheritdoc data-type='' data-description=''>Returns the SQL Snippet used to declare a BLOB column type.</tag_inheritdoc></p>
@@ -4000,6 +4009,9 @@ special datatypes when the underlying databases support this datatype.</p>
 </div>
     	<h2>method<a href="Doctrine-DBAL-Platforms-SqlitePlatform$typespace.html#Doctrine\DBAL\Platforms\SqlitePlatform::getSqlCommentEndString()"> Doctrine\DBAL\Platforms\SqlitePlatform::getSqlCommentEndString()</a></h2>
 	<div class="description"><p>Gets the string portion that ends an SQL comment.</p>
+</div>
+    	<h2>method<a href="Doctrine-DBAL-Platforms-SqlitePlatform$typespace.html#Doctrine\DBAL\Platforms\SqlitePlatform::getCharMaxLength()"> Doctrine\DBAL\Platforms\SqlitePlatform::getCharMaxLength()</a></h2>
+	<div class="description"><p>Gets the maximum length of a char field.</p>
 </div>
     	<h2>method<a href="Doctrine-DBAL-Platforms-SqlitePlatform$typespace.html#Doctrine\DBAL\Platforms\SqlitePlatform::getVarcharMaxLength()"> Doctrine\DBAL\Platforms\SqlitePlatform::getVarcharMaxLength()</a></h2>
 	<div class="description"><p>Gets the maximum length of a varchar field.</p>
@@ -4744,7 +4756,7 @@ like CREATE TABLE.</tag_inheritdoc></p>
 	<div class="description"><p><tag_inheritdoc data-type='' data-description=''>Returns the SQL snippet that declares a boolean column.</tag_inheritdoc></p>
 </div>
     	<h2>method<a href="Doctrine-DBAL-Platforms-SQLServerPlatform$typespace.html#Doctrine\DBAL\Platforms\SQLServerPlatform::doModifyLimitQuery()"> Doctrine\DBAL\Platforms\SQLServerPlatform::doModifyLimitQuery()</a></h2>
-	<div class="description"><p><tag_inheritdoc data-type='' data-description=''>Adds an driver-specific LIMIT clause to the query.</tag_inheritdoc></p>
+	<div class="description"><p><tag_inheritdoc data-type='' data-description=''>Adds an platform-specific LIMIT clause to the query.</tag_inheritdoc></p>
 </div>
     	<h2>method<a href="Doctrine-DBAL-Platforms-SQLServerPlatform$typespace.html#Doctrine\DBAL\Platforms\SQLServerPlatform::supportsLimitOffset()"> Doctrine\DBAL\Platforms\SQLServerPlatform::supportsLimitOffset()</a></h2>
 	<div class="description"><p><tag_inheritdoc data-type='' data-description=''>Whether the database platform support offsets in modify limit clauses.</tag_inheritdoc></p>
@@ -4877,6 +4889,9 @@ special datatypes when the underlying databases support this datatype.</p>
 </div>
     	<h2>method<a href="Doctrine-DBAL-Platforms-SQLServerPlatform$typespace.html#Doctrine\DBAL\Platforms\SQLServerPlatform::getSqlCommentEndString()"> Doctrine\DBAL\Platforms\SQLServerPlatform::getSqlCommentEndString()</a></h2>
 	<div class="description"><p>Gets the string portion that ends an SQL comment.</p>
+</div>
+    	<h2>method<a href="Doctrine-DBAL-Platforms-SQLServerPlatform$typespace.html#Doctrine\DBAL\Platforms\SQLServerPlatform::getCharMaxLength()"> Doctrine\DBAL\Platforms\SQLServerPlatform::getCharMaxLength()</a></h2>
+	<div class="description"><p>Gets the maximum length of a char field.</p>
 </div>
     	<h2>method<a href="Doctrine-DBAL-Platforms-SQLServerPlatform$typespace.html#Doctrine\DBAL\Platforms\SQLServerPlatform::getVarcharMaxLength()"> Doctrine\DBAL\Platforms\SQLServerPlatform::getVarcharMaxLength()</a></h2>
 	<div class="description"><p>Gets the maximum length of a varchar field.</p>
@@ -8579,6 +8594,9 @@ and abort the request or reconnect manually:</p>
     	<h2>classconstant<a href="Doctrine-DBAL-ParameterType$typespace.html#Doctrine\DBAL\ParameterType::BOOLEAN"> Doctrine\DBAL\ParameterType::BOOLEAN</a></h2>
 	<div class="description"><p>Represents a boolean data type.</p>
 </div>
+    	<h2>classconstant<a href="Doctrine-DBAL-ParameterType$typespace.html#Doctrine\DBAL\ParameterType::BINARY"> Doctrine\DBAL\ParameterType::BINARY</a></h2>
+	<div class="description"><p>Represents a binary string data type.</p>
+</div>
                     	<h2>class<a href="Doctrine-DBAL-Events$typespace.html#Doctrine\DBAL\Events"> Doctrine\DBAL\Events</a></h2>
 	<div class="description"><p>Container for all DBAL events.</p>
 <p>This class cannot be instantiated.</p>
@@ -8742,79 +8760,6 @@ the method commit or the method rollback. By default, new connections are in aut
     	<h2>method<a href="Doctrine-DBAL-Configuration$typespace.html#Doctrine\DBAL\Configuration::getAutoCommit()"> Doctrine\DBAL\Configuration::getAutoCommit()</a></h2>
 	<div class="description"><p>Returns the default auto-commit mode for connections.</p>
 </div>
-            	<h2>class<a href="Doctrine-DBAL-Statement$typespace.html#Doctrine\DBAL\Statement"> Doctrine\DBAL\Statement</a></h2>
-	<div class="description"><p>A thin wrapper around a Doctrine\DBAL\Driver\Statement that adds support<br />
-for logging, DBAL mapping types, etc.</p>
-</div>
-            	<h2>property<a href="Doctrine-DBAL-Statement$typespace.html#Doctrine\DBAL\Statement::$sql"> Doctrine\DBAL\Statement::$sql</a></h2>
-	<div class="description"><p>The SQL statement.</p>
-</div>
-    	<h2>property<a href="Doctrine-DBAL-Statement$typespace.html#Doctrine\DBAL\Statement::$params"> Doctrine\DBAL\Statement::$params</a></h2>
-	<div class="description"><p>The bound parameters.</p>
-</div>
-    	<h2>property<a href="Doctrine-DBAL-Statement$typespace.html#Doctrine\DBAL\Statement::$types"> Doctrine\DBAL\Statement::$types</a></h2>
-	<div class="description"><p>The parameter types.</p>
-</div>
-    	<h2>property<a href="Doctrine-DBAL-Statement$typespace.html#Doctrine\DBAL\Statement::$stmt"> Doctrine\DBAL\Statement::$stmt</a></h2>
-	<div class="description"><p>The underlying driver statement.</p>
-</div>
-    	<h2>property<a href="Doctrine-DBAL-Statement$typespace.html#Doctrine\DBAL\Statement::$platform"> Doctrine\DBAL\Statement::$platform</a></h2>
-	<div class="description"><p>The underlying database platform.</p>
-</div>
-    	<h2>property<a href="Doctrine-DBAL-Statement$typespace.html#Doctrine\DBAL\Statement::$conn"> Doctrine\DBAL\Statement::$conn</a></h2>
-	<div class="description"><p>The connection this statement is bound to and executed on.</p>
-</div>
-        	<h2>method<a href="Doctrine-DBAL-Statement$typespace.html#Doctrine\DBAL\Statement::__construct()"> Doctrine\DBAL\Statement::__construct()</a></h2>
-	<div class="description"><p>Creates a new <tt>Statement</tt> for the given SQL and <tt>Connection</tt>.</p>
-</div>
-    	<h2>method<a href="Doctrine-DBAL-Statement$typespace.html#Doctrine\DBAL\Statement::bindValue()"> Doctrine\DBAL\Statement::bindValue()</a></h2>
-	<div class="description"><p>Binds a parameter value to the statement.</p>
-<p>The value can optionally be bound with a PDO binding type or a DBAL mapping type.<br />
-If bound with a DBAL mapping type, the binding type is derived from the mapping<br />
-type and the value undergoes the conversion routines of the mapping type before<br />
-being bound.</p>
-</div>
-    	<h2>method<a href="Doctrine-DBAL-Statement$typespace.html#Doctrine\DBAL\Statement::bindParam()"> Doctrine\DBAL\Statement::bindParam()</a></h2>
-	<div class="description"><p>Binds a parameter to a value by reference.</p>
-<p>Binding a parameter by reference does not support DBAL mapping types.</p>
-</div>
-    	<h2>method<a href="Doctrine-DBAL-Statement$typespace.html#Doctrine\DBAL\Statement::execute()"> Doctrine\DBAL\Statement::execute()</a></h2>
-	<div class="description"><p>Executes the statement with the currently bound parameters.</p>
-</div>
-    	<h2>method<a href="Doctrine-DBAL-Statement$typespace.html#Doctrine\DBAL\Statement::closeCursor()"> Doctrine\DBAL\Statement::closeCursor()</a></h2>
-	<div class="description"><p>Closes the cursor, freeing the database resources used by this statement.</p>
-</div>
-    	<h2>method<a href="Doctrine-DBAL-Statement$typespace.html#Doctrine\DBAL\Statement::columnCount()"> Doctrine\DBAL\Statement::columnCount()</a></h2>
-	<div class="description"><p>Returns the number of columns in the result set.</p>
-</div>
-    	<h2>method<a href="Doctrine-DBAL-Statement$typespace.html#Doctrine\DBAL\Statement::errorCode()"> Doctrine\DBAL\Statement::errorCode()</a></h2>
-	<div class="description"><p>Fetches the SQLSTATE associated with the last operation on the statement.</p>
-</div>
-    	<h2>method<a href="Doctrine-DBAL-Statement$typespace.html#Doctrine\DBAL\Statement::errorInfo()"> Doctrine\DBAL\Statement::errorInfo()</a></h2>
-	<div class="description"><p>Fetches extended error information associated with the last operation on the statement.</p>
-</div>
-    	<h2>method<a href="Doctrine-DBAL-Statement$typespace.html#Doctrine\DBAL\Statement::setFetchMode()"> Doctrine\DBAL\Statement::setFetchMode()</a></h2>
-	<div class="description"><p><tag_inheritdoc data-type='' data-description=''>Sets the fetch mode to use while iterating this statement.</tag_inheritdoc></p>
-</div>
-    	<h2>method<a href="Doctrine-DBAL-Statement$typespace.html#Doctrine\DBAL\Statement::getIterator()"> Doctrine\DBAL\Statement::getIterator()</a></h2>
-	<div class="description"><p>Required by interface IteratorAggregate.</p>
-<p><tag_inheritdoc data-type='' data-description=''></tag_inheritdoc></p>
-</div>
-    	<h2>method<a href="Doctrine-DBAL-Statement$typespace.html#Doctrine\DBAL\Statement::fetch()"> Doctrine\DBAL\Statement::fetch()</a></h2>
-	<div class="description"><p><tag_inheritdoc data-type='' data-description=''>Returns the next row of a result set.</tag_inheritdoc></p>
-</div>
-    	<h2>method<a href="Doctrine-DBAL-Statement$typespace.html#Doctrine\DBAL\Statement::fetchAll()"> Doctrine\DBAL\Statement::fetchAll()</a></h2>
-	<div class="description"><p><tag_inheritdoc data-type='' data-description=''>Returns an array containing all of the result set rows.</tag_inheritdoc></p>
-</div>
-    	<h2>method<a href="Doctrine-DBAL-Statement$typespace.html#Doctrine\DBAL\Statement::fetchColumn()"> Doctrine\DBAL\Statement::fetchColumn()</a></h2>
-	<div class="description"><p>Returns a single column from the next row of a result set.</p>
-</div>
-    	<h2>method<a href="Doctrine-DBAL-Statement$typespace.html#Doctrine\DBAL\Statement::rowCount()"> Doctrine\DBAL\Statement::rowCount()</a></h2>
-	<div class="description"><p>Returns the number of rows affected by the last execution of this statement.</p>
-</div>
-    	<h2>method<a href="Doctrine-DBAL-Statement$typespace.html#Doctrine\DBAL\Statement::getWrappedStatement()"> Doctrine\DBAL\Statement::getWrappedStatement()</a></h2>
-	<div class="description"><p>Gets the wrapped driver statement.</p>
-</div>
             	<h2>class<a href="Doctrine-DBAL-ConnectionException$typespace.html#Doctrine\DBAL\ConnectionException"> Doctrine\DBAL\ConnectionException</a></h2>
 	<div class="description"></div>
             	<h2>property<a href="Doctrine-DBAL-ConnectionException$typespace.html#Doctrine\DBAL\ConnectionException::$message"> Doctrine\DBAL\ConnectionException::$message</a></h2>
@@ -8888,6 +8833,79 @@ being bound.</p>
 	<div class="description"></div>
     	<h2>method<a href="Doctrine-DBAL-ConnectionException$typespace.html#Doctrine\DBAL\ConnectionException::__toString()"> Doctrine\DBAL\ConnectionException::__toString()</a></h2>
 	<div class="description"></div>
+            	<h2>class<a href="Doctrine-DBAL-Statement$typespace.html#Doctrine\DBAL\Statement"> Doctrine\DBAL\Statement</a></h2>
+	<div class="description"><p>A thin wrapper around a Doctrine\DBAL\Driver\Statement that adds support<br />
+for logging, DBAL mapping types, etc.</p>
+</div>
+            	<h2>property<a href="Doctrine-DBAL-Statement$typespace.html#Doctrine\DBAL\Statement::$sql"> Doctrine\DBAL\Statement::$sql</a></h2>
+	<div class="description"><p>The SQL statement.</p>
+</div>
+    	<h2>property<a href="Doctrine-DBAL-Statement$typespace.html#Doctrine\DBAL\Statement::$params"> Doctrine\DBAL\Statement::$params</a></h2>
+	<div class="description"><p>The bound parameters.</p>
+</div>
+    	<h2>property<a href="Doctrine-DBAL-Statement$typespace.html#Doctrine\DBAL\Statement::$types"> Doctrine\DBAL\Statement::$types</a></h2>
+	<div class="description"><p>The parameter types.</p>
+</div>
+    	<h2>property<a href="Doctrine-DBAL-Statement$typespace.html#Doctrine\DBAL\Statement::$stmt"> Doctrine\DBAL\Statement::$stmt</a></h2>
+	<div class="description"><p>The underlying driver statement.</p>
+</div>
+    	<h2>property<a href="Doctrine-DBAL-Statement$typespace.html#Doctrine\DBAL\Statement::$platform"> Doctrine\DBAL\Statement::$platform</a></h2>
+	<div class="description"><p>The underlying database platform.</p>
+</div>
+    	<h2>property<a href="Doctrine-DBAL-Statement$typespace.html#Doctrine\DBAL\Statement::$conn"> Doctrine\DBAL\Statement::$conn</a></h2>
+	<div class="description"><p>The connection this statement is bound to and executed on.</p>
+</div>
+        	<h2>method<a href="Doctrine-DBAL-Statement$typespace.html#Doctrine\DBAL\Statement::__construct()"> Doctrine\DBAL\Statement::__construct()</a></h2>
+	<div class="description"><p>Creates a new <tt>Statement</tt> for the given SQL and <tt>Connection</tt>.</p>
+</div>
+    	<h2>method<a href="Doctrine-DBAL-Statement$typespace.html#Doctrine\DBAL\Statement::bindValue()"> Doctrine\DBAL\Statement::bindValue()</a></h2>
+	<div class="description"><p>Binds a parameter value to the statement.</p>
+<p>The value can optionally be bound with a PDO binding type or a DBAL mapping type.<br />
+If bound with a DBAL mapping type, the binding type is derived from the mapping<br />
+type and the value undergoes the conversion routines of the mapping type before<br />
+being bound.</p>
+</div>
+    	<h2>method<a href="Doctrine-DBAL-Statement$typespace.html#Doctrine\DBAL\Statement::bindParam()"> Doctrine\DBAL\Statement::bindParam()</a></h2>
+	<div class="description"><p>Binds a parameter to a value by reference.</p>
+<p>Binding a parameter by reference does not support DBAL mapping types.</p>
+</div>
+    	<h2>method<a href="Doctrine-DBAL-Statement$typespace.html#Doctrine\DBAL\Statement::execute()"> Doctrine\DBAL\Statement::execute()</a></h2>
+	<div class="description"><p>Executes the statement with the currently bound parameters.</p>
+</div>
+    	<h2>method<a href="Doctrine-DBAL-Statement$typespace.html#Doctrine\DBAL\Statement::closeCursor()"> Doctrine\DBAL\Statement::closeCursor()</a></h2>
+	<div class="description"><p>Closes the cursor, freeing the database resources used by this statement.</p>
+</div>
+    	<h2>method<a href="Doctrine-DBAL-Statement$typespace.html#Doctrine\DBAL\Statement::columnCount()"> Doctrine\DBAL\Statement::columnCount()</a></h2>
+	<div class="description"><p>Returns the number of columns in the result set.</p>
+</div>
+    	<h2>method<a href="Doctrine-DBAL-Statement$typespace.html#Doctrine\DBAL\Statement::errorCode()"> Doctrine\DBAL\Statement::errorCode()</a></h2>
+	<div class="description"><p>Fetches the SQLSTATE associated with the last operation on the statement.</p>
+</div>
+    	<h2>method<a href="Doctrine-DBAL-Statement$typespace.html#Doctrine\DBAL\Statement::errorInfo()"> Doctrine\DBAL\Statement::errorInfo()</a></h2>
+	<div class="description"><p>Fetches extended error information associated with the last operation on the statement.</p>
+</div>
+    	<h2>method<a href="Doctrine-DBAL-Statement$typespace.html#Doctrine\DBAL\Statement::setFetchMode()"> Doctrine\DBAL\Statement::setFetchMode()</a></h2>
+	<div class="description"><p><tag_inheritdoc data-type='' data-description=''>Sets the fetch mode to use while iterating this statement.</tag_inheritdoc></p>
+</div>
+    	<h2>method<a href="Doctrine-DBAL-Statement$typespace.html#Doctrine\DBAL\Statement::getIterator()"> Doctrine\DBAL\Statement::getIterator()</a></h2>
+	<div class="description"><p>Required by interface IteratorAggregate.</p>
+<p><tag_inheritdoc data-type='' data-description=''></tag_inheritdoc></p>
+</div>
+    	<h2>method<a href="Doctrine-DBAL-Statement$typespace.html#Doctrine\DBAL\Statement::fetch()"> Doctrine\DBAL\Statement::fetch()</a></h2>
+	<div class="description"><p><tag_inheritdoc data-type='' data-description=''>Returns the next row of a result set.</tag_inheritdoc></p>
+</div>
+    	<h2>method<a href="Doctrine-DBAL-Statement$typespace.html#Doctrine\DBAL\Statement::fetchAll()"> Doctrine\DBAL\Statement::fetchAll()</a></h2>
+	<div class="description"><p><tag_inheritdoc data-type='' data-description=''>Returns an array containing all of the result set rows.</tag_inheritdoc></p>
+</div>
+    	<h2>method<a href="Doctrine-DBAL-Statement$typespace.html#Doctrine\DBAL\Statement::fetchColumn()"> Doctrine\DBAL\Statement::fetchColumn()</a></h2>
+	<div class="description"><p>Returns a single column from the next row of a result set.</p>
+</div>
+    	<h2>method<a href="Doctrine-DBAL-Statement$typespace.html#Doctrine\DBAL\Statement::rowCount()"> Doctrine\DBAL\Statement::rowCount()</a></h2>
+	<div class="description"><p>Returns the number of rows affected by the last execution of this statement.</p>
+</div>
+    	<h2>method<a href="Doctrine-DBAL-Statement$typespace.html#Doctrine\DBAL\Statement::getWrappedStatement()"> Doctrine\DBAL\Statement::getWrappedStatement()</a></h2>
+	<div class="description"><p>Gets the wrapped driver statement.</p>
+</div>
                     	<h2>interface<a href="Doctrine-DBAL-Driver$typespace.html#Doctrine\DBAL\Driver"> Doctrine\DBAL\Driver</a></h2>
 	<div class="description"><p>Driver interface.<br />
 Interface that all DBAL drivers must implement.</p>
@@ -9677,57 +9695,81 @@ echo $gw-&gt;pk(1);
 echo $gw-&gt;as('T')-&gt;column(['id', 'title'])-&gt;where(['create_at' =&gt; '2014-03-31'])-&gt;limit(1);
 </code></pre>
 </div>
-    	<h2>method<a href="ryunosuke-dbml-Gateway-TableGateway$typespace.html#ryunosuke\dbml\Gateway\TableGateway::offsetUnset()"> ryunosuke\dbml\Gateway\TableGateway::offsetUnset()</a></h2>
-	<div class="description"><p>サポートされない</p>
-<p>将来のために予約されており、呼ぶと無条件で例外を投げる。</p>
-</div>
     	<h2>method<a href="ryunosuke-dbml-Gateway-TableGateway$typespace.html#ryunosuke\dbml\Gateway\TableGateway::offsetExists()"> ryunosuke\dbml\Gateway\TableGateway::offsetExists()</a></h2>
-	<div class="description"><p>ゲートウェイのカラムが存在するか返す</p>
-<pre><code class="language-php">// カラムの存在を確認する
+	<div class="description"><p>なにがしかの存在を返す</p>
+<p>$offset が数値・配列なら主キーとみなして行の存在を返す。<br />
+$offset がそれ以外ならカラムの存在を返す。</p>
+<pre><code class="language-php"># 行の存在を確認する
+$exists1 = isset($gw[1]);      // 単一主キー値1のレコードがあるなら true
+$exists2 = isset($gw[[1, 2]]); // 複合主キー値[1, 2]のレコードがあるなら true
+
+# カラムの存在を確認する
 $exists1 = isset($gw['article_title']);    // true
 $exists2 = isset($gw['undefined_column']); // false
 </code></pre>
 </div>
     	<h2>method<a href="ryunosuke-dbml-Gateway-TableGateway$typespace.html#ryunosuke\dbml\Gateway\TableGateway::offsetGet()"> ryunosuke\dbml\Gateway\TableGateway::offsetGet()</a></h2>
-	<div class="description"><p>ゲートウェイのカラム値を取得する</p>
-<pre><code class="language-php">// 記事のタイトルを取得する
+	<div class="description"><p>なにがしかの値を取得する</p>
+<p>$offset が数値・配列なら主キーとみなして行自体を返す。<br />
+$offset が半角英数字ならカラムとみなしてカラム値を返す。<br />
+$offset がテーブル記法ならその記法が適用された自分自身を返す。<br />
+テーブル記法のうち、 [condition] だけであれば <code>[]</code> が省略可能となる。</p>
+<pre><code class="language-php"># 行自体を返す
+$row = $gw[1];         // 単一主キー値1のレコードを返す
+$row = $gw[[1, 2]];    // 複合主キー値[1, 2]のレコードを返す
+$row = $gw-&gt;find($pk); // 上2つは実質的にこれの糖衣構文
+
+# カラム値を返す
 $title = $gw['article_title'];
 // ただし、WHERE を指定しないとほぼ意味がないので通常はこのように使用する
 $title = $gw-&gt;pk(1)['article_title'];
 $title = $gw-&gt;scope('scopename')['article_title'];
-</code></pre>
-<p>ただし、深遠な理由により<tag_link data-kind='fqsen' data-type-category='class' data-type-fqsen='ryunosuke\dbml\Query\Expression\TableDescriptor' data-type-array='0' data-description='テーブル記法'>テーブル記法</tag_link>を記述することで「その記法が適用された自分自身」を返す。<br />
-さらにテーブル記法の [condition] だけであれば <code>[]</code> が省略可能となる。</p>
-<pre><code class="language-php">// スコープとエイリアスが適用された自分自身を返す
-$gw = $gw['@scope1@scope2 AS GW'];
-// 上記は実質的に下記と同じ
-$gw = $gw-&gt;scope('scope1')-&gt;scope('scope2')-&gt;as('GW');
 
-// エイリアスやカラムも指定できるのでこういった面白い指定も可能
+# スコープとエイリアスが適用された自分自身を返す
+$gw = $gw['@scope1@scope2 AS GW'];
+$gw = $gw-&gt;scope('scope1')-&gt;scope('scope2')-&gt;as('GW'); // 上記は実質的にこれと同じ
+
+# エイリアスやカラムも指定できるのでこういった面白い指定も可能
 $gw['G.id']-&gt;array();
 // SELECT G.id FROM t_table G
 
-// [condition] だけであれば [] は不要。下記はすべて同じ意味になる
+# [condition] だけであれば [] は不要。下記はすべて同じ意味になる
 $gw = $gw['[id: 123]']; // 本来であればこのように指定すべきだが・・・
 $gw = $gw['id: 123'];   // [] は省略可能（[] がネストしないのでシンタックス的に美しくなる）
 $gw = $gw['id=123'];    // 素の文字列が許容されるならこのようにすると属性アクセスしてるように見えてさらに美しい
 $gw = $gw-&gt;where(['id' =&gt; 123]); // あえてメソッドモードで指定するとしたらこのようになる
 
-// invoke と組み合わせると下記のようなことが可能になる
+# invoke と組み合わせると下記のようなことが可能になる
 $db-&gt;t_article-&gt;t_comment['@scope1@scope2 AS C']($column, $where);
 </code></pre>
-<p>上記の「カラム値を返す/記法を適用して返す」の分岐は正規表現で行っている。<br />
-具体的には半角英数字以外が含まれていれば記法モード、半角英数字だけであればカラムモードである。<br />
-※ この機能は実験的なもので、（無くなりはしないが）分岐処理は変更される可能性がある。</p>
 </div>
     	<h2>method<a href="ryunosuke-dbml-Gateway-TableGateway$typespace.html#ryunosuke\dbml\Gateway\TableGateway::offsetSet()"> ryunosuke\dbml\Gateway\TableGateway::offsetSet()</a></h2>
-	<div class="description"><p>ゲートウェイのカラム値を設定する</p>
-<pre><code class="language-php">// 記事のタイトルを設定する
+	<div class="description"><p>なにがしかの値を設定する</p>
+<p>$offset が null なら <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Gateway\TableGateway::insert()' data-type-array='0' data-description='insert()'>insert()</tag_link> になる。<br />
+$offset が数値・配列なら <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Gateway\TableGateway::modify()' data-type-array='0' data-description='modify()'>modify()</tag_link> になる。<br />
+$offset が半角英数字ならカラムの <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Gateway\TableGateway::update()' data-type-array='0' data-description='update()'>update()</tag_link> になる。</p>
+<pre><code class="language-php"># 1行 insert
+$gw[] = [$dataarray]; // $dataarray が insert される
+
+# 1行 modify
+$gw[1] = [$dataarray];      // $gw-&gt;modify([$dataarray] + [pcol =&gt; 1])
+$gw[[1, 2]] = [$dataarray]; // $gw-&gt;modify([$dataarray] + [pcol1 =&gt; 1, pcol2 =&gt; 2])
+
+# 記事のタイトルを設定する
 $gw['article_title'] = 'タイトル';
 // ただし、WHERE を指定しないと全行更新され大事故になるので通常はこのように何らかで縛って使用する
 $gw-&gt;scope('scopename')['article_title'] = 'タイトル';
 $gw['id: 1']['article_title'] = 'タイトル';
 $gw-&gt;pk(1)['article_title'] = 'タイトル';
+</code></pre>
+</div>
+    	<h2>method<a href="ryunosuke-dbml-Gateway-TableGateway$typespace.html#ryunosuke\dbml\Gateway\TableGateway::offsetUnset()"> ryunosuke\dbml\Gateway\TableGateway::offsetUnset()</a></h2>
+	<div class="description"><p>なにがしかの値を削除する</p>
+<p>$offset が数値・配列なら主キー指定の <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Gateway\TableGateway::delete()' data-type-array='0' data-description='delete()'>delete()</tag_link> になる。<br />
+それ以外は例外を投げる。</p>
+<pre><code class="language-php"># 主キーで削除
+unset($gw[1]);      // 単一主キー値1のレコードを削除する
+unset($gw[[1, 2]]); // 複合主キー値[1, 2]のレコードを削除する
 </code></pre>
 </div>
     	<h2>method<a href="ryunosuke-dbml-Gateway-TableGateway$typespace.html#ryunosuke\dbml\Gateway\TableGateway::clone()"> ryunosuke\dbml\Gateway\TableGateway::clone()</a></h2>
@@ -10613,6 +10655,9 @@ $row = $gw-&gt;find([1, 2], ['column1', 'column2']);
 </div>
     	<h2>method<a href="ryunosuke-dbml-Metadata-CompatiblePlatform$typespace.html#ryunosuke\dbml\Metadata\CompatiblePlatform::supportsDeleteLimit()"> ryunosuke\dbml\Metadata\CompatiblePlatform::supportsDeleteLimit()</a></h2>
 	<div class="description"><p>DELETE + ORDER BY,LIMIT をサポートするか否かを返す</p>
+</div>
+    	<h2>method<a href="ryunosuke-dbml-Metadata-CompatiblePlatform$typespace.html#ryunosuke\dbml\Metadata\CompatiblePlatform::supportsResetAutoIncrementOnTruncate()"> ryunosuke\dbml\Metadata\CompatiblePlatform::supportsResetAutoIncrementOnTruncate()</a></h2>
+	<div class="description"><p>TRUNCATE 文で自動採番列がリセットされるか否かを返す</p>
 </div>
     	<h2>method<a href="ryunosuke-dbml-Metadata-CompatiblePlatform$typespace.html#ryunosuke\dbml\Metadata\CompatiblePlatform::supportsTableNameAttribute()"> ryunosuke\dbml\Metadata\CompatiblePlatform::supportsTableNameAttribute()</a></h2>
 	<div class="description"><p>\PDO::ATTR_FETCH_TABLE_NAMES が有効か否かを返す</p>
@@ -13192,6 +13237,11 @@ $index = $db-&gt;describe('tablename.indexname'); // テーブル名.インデ�
 <p>存在するテーブル名や entityMapper、gatewayMapper などを利用してアノテーションコメントを作成する。<br />
 このメソッドで得られたコメントを基底クラスなどに貼り付ければ補完が効くようになる。</p>
 </div>
+    	<h2>method<a href="ryunosuke-dbml-Database$typespace.html#ryunosuke\dbml\Database::echoAnnotation()"> ryunosuke\dbml\Database::echoAnnotation()</a></h2>
+	<div class="description"><p>コード補完用のアノテーショントレイトを取得する</p>
+<p>存在するテーブル名や entityMapper、gatewayMapper などを利用して mixin 用のトレイトを作成する。<br />
+このメソッドが吐き出したトレイトを <code>@ mixin Hogera</code> などとすると補完が効くようになる。</p>
+</div>
     	<h2>method<a href="ryunosuke-dbml-Database$typespace.html#ryunosuke\dbml\Database::setAutoCastType()"> ryunosuke\dbml\Database::setAutoCastType()</a></h2>
 	<div class="description"><p>カラムの型に応じた自動変換処理を登録する</p>
 <p>自動変換がなにかは <tag_link data-kind='fqsen' data-type-category='type' data-type-fqsen='ryunosuke\dbml\' data-type-array='0' data-description='dbml'>dbml</tag_link> を参照。</p>
@@ -13436,13 +13486,14 @@ $db-&gt;whereInto([
 <tr><td align="right">21</td><td align="left"><code>['(hoge, fuga)'] =&gt; [[1, 2], [3, 4]]</code></td><td align="left"><code>(hoge, fuga) IN ((1, 2), (3, 4))</code></td><td align="left">行値式のようなキーは <code>IN</code> に展開される</td></tr>
 <tr><td align="right">22</td><td align="left"><code>['!hoge' =&gt; '']</code></td><td align="left">-</td><td align="left">キーが "!" で始まるかつ bind 値が(phpで)空判定される場合、その条件文自体が抹消される（記号は同じだが前述の <code>:!演算子</code> とは全く別個）</td></tr>
 <tr><td align="right">23</td><td align="left"><code>['AND/OR' =&gt; ['hoge' =&gt; 1, 'fuga' =&gt; 2]]</code></td><td align="left"><code>hoge = 1 OR fuga = 2</code></td><td align="left">キーが "AND/OR" の場合は特別扱いされ、AND/OR コンテキストの切り替えが行わる</td></tr>
-<tr><td align="right">24</td><td align="left"><code>[QueryBuilder]</code></td><td align="left">略</td><td align="left">QueryBuilder の文字列表現をそのまま埋め込む。EXISTS などでよく使用されるが、使い方を誤ると「Operand should contain 1 column(s)」とか「Subquery returns more than 1 row」とか言われるので注意</td></tr>
-<tr><td align="right">25</td><td align="left"><code>['hoge' =&gt; QueryBuilder]</code></td><td align="left">略</td><td align="left">キー付きで QueryBuilder を渡すとサブクエリで条件演算される。左記の場合は <code>hoge IN (QueryBuilder)</code> となる</td></tr>
-<tr><td align="right">26</td><td align="left"><code>[Operator]</code></td><td align="left">略</td><td align="left">条件式の代わりに <code>Operator</code> インスタンスを渡すことができるが、難解なので説明は省略</td></tr>
-<tr><td align="right">27</td><td align="left"><code>['hoge' =&gt; function () {}]</code></td><td align="left">略</td><td align="left">クロージャを渡すとクロージャの実行結果が「あたかもそこにあるかのように」振る舞う</td></tr>
+<tr><td align="right">24</td><td align="left"><code>['NOT' =&gt; ['hoge' =&gt; 1, 'fuga' =&gt; 2]]</code></td><td align="left"><code>NOT(hoge = 1 AND fuga = 2)</code></td><td align="left">キーが "NOT" の場合も特別扱いされ、その要素を NOT で反転する</td></tr>
+<tr><td align="right">25</td><td align="left"><code>[QueryBuilder]</code></td><td align="left">略</td><td align="left">QueryBuilder の文字列表現をそのまま埋め込む。EXISTS などでよく使用されるが、使い方を誤ると「Operand should contain 1 column(s)」とか「Subquery returns more than 1 row」とか言われるので注意</td></tr>
+<tr><td align="right">26</td><td align="left"><code>['hoge' =&gt; QueryBuilder]</code></td><td align="left">略</td><td align="left">キー付きで QueryBuilder を渡すとサブクエリで条件演算される。左記の場合は <code>hoge IN (QueryBuilder)</code> となる</td></tr>
+<tr><td align="right">27</td><td align="left"><code>[Operator]</code></td><td align="left">略</td><td align="left">条件式の代わりに <code>Operator</code> インスタンスを渡すことができるが、難解なので説明は省略</td></tr>
+<tr><td align="right">28</td><td align="left"><code>['hoge' =&gt; function () {}]</code></td><td align="left">略</td><td align="left">クロージャを渡すとクロージャの実行結果が「あたかもそこにあるかのように」振る舞う</td></tr>
 </tbody>
 </table>
-<p>No, 9,10 の演算子は <code>LIKE</code> や <code>BETWEEN</code> 、 <code>IS NULL</code> 、範囲指定できる独自の <code>[~]</code> 演算子などがある。<br />
+<p>No.9,10 の演算子は <code>LIKE</code> や <code>BETWEEN</code> 、 <code>IS NULL</code> 、範囲指定できる独自の <code>[~]</code> 演算子などがある。<br />
 組み込みの演算子は <tag_link data-kind='fqsen' data-type-category='class' data-type-fqsen='ryunosuke\dbml\Query\Expression\Operator' data-type-array='0' data-description='Operator'>Operator</tag_link> を参照。</p>
 <p>このメソッドは内部で頻繁に使用される。<br />
 具体的には QueryBuilder::select の第2引数、 JOIN の ON 指定、 update/delete などの WHERE 条件など。<br />
@@ -13499,7 +13550,17 @@ $wheres = [
 ]);
 // WHERE delete_flg = 0 AND ((sei LIKE "%hoge%") OR (mei LIKE "%hoge%"))
 
-# No.24,25（クエリビルダを渡すとそれらしく埋め込まれる）
+# No.24（NOT キーで要素が NOT で囲まれる）
+$wheres = [
+    'delete_flg' =&gt; 0,
+    'NOT' =&gt; [
+        'sei:%LIKE%' =&gt; 'hoge',
+        'mei:%LIKE%' =&gt; 'hoge',
+    ],
+];
+// WHERE (delete_flg = '0') AND (NOT ((sei LIKE '%hoge%') AND (mei LIKE '%hoge%')))
+
+# No.25,26（クエリビルダを渡すとそれらしく埋め込まれる）
 $wheres = [
     // ただの EXSISTS クエリになる
     $db-&gt;select('subtable')-&gt;exists(),
@@ -13510,7 +13571,7 @@ $wheres = [
 ];
 // WHERE EXISTS(SELECT * FROM subtable) AND (subid1 IN (SELECT subid FROM subtable)) AND (subid2 = (SELECT subid FROM subtable))
 
-# No.27（クロージャを使うと三項演算子を駆使する必要はない上、スコープを閉じ込めることができる）
+# No.28（クロージャを使うと三項演算子を駆使する必要はない上、スコープを閉じ込めることができる）
 $wheres = [
     // $condition 次第で EXISTS したい（この程度なら三項演算子で十分だが、もっと複雑だと三項演算子で救いきれない）
     function ($db) use ($condition) {
