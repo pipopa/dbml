@@ -1575,8 +1575,9 @@ class Database
      */
     public function getPdo()
     {
-        /** @noinspection PhpIncompatibleReturnTypeInspection */
-        return $this->getConnection()->getWrappedConnection();
+        /** @var \PDO $pdo */
+        $pdo = $this->getConnection()->getWrappedConnection();
+        return $pdo;
     }
 
     /**
@@ -1586,8 +1587,9 @@ class Database
      */
     public function getMasterPdo()
     {
-        /** @noinspection PhpIncompatibleReturnTypeInspection */
-        return $this->getMasterConnection()->getWrappedConnection();
+        /** @var \PDO $pdo */
+        $pdo = $this->getMasterConnection()->getWrappedConnection();
+        return $pdo;
     }
 
     /**
@@ -1597,8 +1599,9 @@ class Database
      */
     public function getSlavePdo()
     {
-        /** @noinspection PhpIncompatibleReturnTypeInspection */
-        return $this->getSlaveConnection()->getWrappedConnection();
+        /** @var \PDO $pdo */
+        $pdo = $this->getSlaveConnection()->getWrappedConnection();
+        return $pdo;
     }
 
     /**

@@ -11,9 +11,13 @@ use Doctrine\DBAL\Schema\Index;
 use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Schema\View;
 use Doctrine\DBAL\Types\Type;
+use PHPUnit\Framework\Error\Error;
+use PHPUnit\Framework\Exception;
+use PHPUnit\Framework\SkippedTestError;
+use PHPUnit\Framework\TestCase;
 use function ryunosuke\dbml\class_shorten;
 
-abstract class AbstractUnitTestCase extends \PHPUnit_Framework_TestCase
+abstract class AbstractUnitTestCase extends TestCase
 {
     /** @var Connection[] */
     private static $connections = [];
@@ -25,7 +29,7 @@ abstract class AbstractUnitTestCase extends \PHPUnit_Framework_TestCase
     {
         $getconst = function ($cname) {
             if (!defined($cname)) {
-                throw new \PHPUnit_Framework_SkippedTestError("$cname is not defined.");
+                throw new SkippedTestError("$cname is not defined.");
             }
             return constant($cname);
         };
@@ -62,7 +66,7 @@ abstract class AbstractUnitTestCase extends \PHPUnit_Framework_TestCase
     {
         $getconst = function ($cname) {
             if (!defined($cname)) {
-                throw new \PHPUnit_Framework_SkippedTestError("$cname is not defined.");
+                throw new SkippedTestError("$cname is not defined.");
             }
             return constant($cname);
         };
@@ -559,10 +563,10 @@ abstract class AbstractUnitTestCase extends \PHPUnit_Framework_TestCase
         try {
             $callback(...array_slice(func_get_args(), 2));
         }
-        catch (\PHPUnit_Framework_Error $ex) {
+        catch (Error $ex) {
             throw $ex;
         }
-        catch (\PHPUnit_Framework_Exception $ex) {
+        catch (Exception $ex) {
             throw $ex;
         }
         catch (\Exception $ex) {
