@@ -1943,6 +1943,23 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
      * @dataProvider provideDatabase
      * @param Database $database
      */
+    function test_echoAnnotation($database)
+    {
+        $annotation = $database->echoAnnotation('Annotation', __DIR__ . '/../../annotation.php');
+        $this->assertContains('namespace Annotation;', $annotation);
+        $this->assertContains('trait Database{}', $annotation);
+        $this->assertContains('trait TableGateway{}', $annotation);
+        $this->assertContains('trait ArticleTableGateway{}', $annotation);
+        $this->assertContains('trait CommentTableGateway{}', $annotation);
+        $this->assertContains('trait ArticleEntity{}', $annotation);
+        $this->assertContains('trait CommentEntity{}', $annotation);
+        $this->assertContains('$tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []', $annotation);
+    }
+
+    /**
+     * @dataProvider provideDatabase
+     * @param Database $database
+     */
     function test_getEmptyRecord($database)
     {
         // テーブル指定は配列で返るはず

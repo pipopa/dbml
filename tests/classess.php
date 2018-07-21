@@ -91,68 +91,9 @@ namespace ryunosuke\Test {
     /**
      * テスト用 Database
      *
-     * 諸アノテーションと SQLServer 用の小細工オーバーライド
+     * SQLServer 用の小細工オーバーライド
      *
-     * @property \ryunosuke\Test\Gateway\TableGateway $aggregate
-     * @method   \ryunosuke\Test\Gateway\TableGateway aggregate($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
-     * @property \ryunosuke\Test\Gateway\TableGateway $auto
-     * @method   \ryunosuke\Test\Gateway\TableGateway auto($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
-     * @property \ryunosuke\Test\Gateway\TableGateway $foreign_c1
-     * @method   \ryunosuke\Test\Gateway\TableGateway foreign_c1($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
-     * @property \ryunosuke\Test\Gateway\TableGateway $foreign_c2
-     * @method   \ryunosuke\Test\Gateway\TableGateway foreign_c2($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
-     * @property \ryunosuke\Test\Gateway\TableGateway $foreign_d1
-     * @method   \ryunosuke\Test\Gateway\TableGateway foreign_d1($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
-     * @property \ryunosuke\Test\Gateway\TableGateway $foreign_d2
-     * @method   \ryunosuke\Test\Gateway\TableGateway foreign_d2($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
-     * @property \ryunosuke\Test\Gateway\TableGateway $foreign_p
-     * @method   \ryunosuke\Test\Gateway\TableGateway foreign_p($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
-     * @property \ryunosuke\Test\Gateway\TableGateway $foreign_s
-     * @method   \ryunosuke\Test\Gateway\TableGateway foreign_s($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
-     * @property \ryunosuke\Test\Gateway\TableGateway $foreign_sc
-     * @method   \ryunosuke\Test\Gateway\TableGateway foreign_sc($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
-     * @property \ryunosuke\Test\Gateway\TableGateway $g_ancestor
-     * @method   \ryunosuke\Test\Gateway\TableGateway g_ancestor($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
-     * @property \ryunosuke\Test\Gateway\TableGateway $g_child
-     * @method   \ryunosuke\Test\Gateway\TableGateway g_child($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
-     * @property \ryunosuke\Test\Gateway\TableGateway $g_parent
-     * @method   \ryunosuke\Test\Gateway\TableGateway g_parent($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
-     * @property \ryunosuke\Test\Gateway\TableGateway $horizontal1
-     * @method   \ryunosuke\Test\Gateway\TableGateway horizontal1($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
-     * @property \ryunosuke\Test\Gateway\TableGateway $horizontal2
-     * @method   \ryunosuke\Test\Gateway\TableGateway horizontal2($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
-     * @property \ryunosuke\Test\Gateway\TableGateway $misctype
-     * @method   \ryunosuke\Test\Gateway\TableGateway misctype($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
-     * @property \ryunosuke\Test\Gateway\TableGateway $misctype_child
-     * @method   \ryunosuke\Test\Gateway\TableGateway misctype_child($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
-     * @property \ryunosuke\Test\Gateway\TableGateway $multiprimary
-     * @method   \ryunosuke\Test\Gateway\TableGateway multiprimary($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
-     * @property \ryunosuke\Test\Gateway\TableGateway $multiunique
-     * @method   \ryunosuke\Test\Gateway\TableGateway multiunique($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
-     * @property \ryunosuke\Test\Gateway\TableGateway $noauto
-     * @method   \ryunosuke\Test\Gateway\TableGateway noauto($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
-     * @property \ryunosuke\Test\Gateway\TableGateway $noprimary
-     * @method   \ryunosuke\Test\Gateway\TableGateway noprimary($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
-     * @property \ryunosuke\Test\Gateway\TableGateway $nullable
-     * @method   \ryunosuke\Test\Gateway\TableGateway nullable($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
-     * @property \ryunosuke\Test\Gateway\TableGateway $paging
-     * @method   \ryunosuke\Test\Gateway\TableGateway paging($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
-     * @property \ryunosuke\Test\Gateway\Article      $t_article
-     * @method   \ryunosuke\Test\Gateway\Article      t_article($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
-     * @property \ryunosuke\Test\Gateway\Article      $Article
-     * @method   \ryunosuke\Test\Gateway\Article      Article($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
-     * @property \ryunosuke\Test\Gateway\Comment      $t_comment
-     * @method   \ryunosuke\Test\Gateway\Comment      t_comment($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
-     * @property \ryunosuke\Test\Gateway\Comment      $Comment
-     * @method   \ryunosuke\Test\Gateway\Comment      Comment($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
-     * @property \ryunosuke\Test\Gateway\TableGateway $test
-     * @method   \ryunosuke\Test\Gateway\TableGateway test($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
-     * @property \ryunosuke\Test\Gateway\TableGateway $test1
-     * @method   \ryunosuke\Test\Gateway\TableGateway test1($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
-     * @property \ryunosuke\Test\Gateway\TableGateway $test2
-     * @method   \ryunosuke\Test\Gateway\TableGateway test2($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
-     * @property \ryunosuke\Test\Gateway\TableGateway $v_blog
-     * @method   \ryunosuke\Test\Gateway\TableGateway v_blog($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
+     * @mixin \Annotation\Database
      */
     class Database extends \ryunosuke\dbml\Database
     {
@@ -225,66 +166,7 @@ namespace ryunosuke\Test\Gateway {
     use ryunosuke\dbml\Database;
 
     /**
-     * @property \ryunosuke\Test\Gateway\TableGateway $aggregate
-     * @method   \ryunosuke\Test\Gateway\TableGateway aggregate($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
-     * @property \ryunosuke\Test\Gateway\TableGateway $auto
-     * @method   \ryunosuke\Test\Gateway\TableGateway auto($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
-     * @property \ryunosuke\Test\Gateway\TableGateway $foreign_c1
-     * @method   \ryunosuke\Test\Gateway\TableGateway foreign_c1($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
-     * @property \ryunosuke\Test\Gateway\TableGateway $foreign_c2
-     * @method   \ryunosuke\Test\Gateway\TableGateway foreign_c2($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
-     * @property \ryunosuke\Test\Gateway\TableGateway $foreign_d1
-     * @method   \ryunosuke\Test\Gateway\TableGateway foreign_d1($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
-     * @property \ryunosuke\Test\Gateway\TableGateway $foreign_d2
-     * @method   \ryunosuke\Test\Gateway\TableGateway foreign_d2($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
-     * @property \ryunosuke\Test\Gateway\TableGateway $foreign_p
-     * @method   \ryunosuke\Test\Gateway\TableGateway foreign_p($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
-     * @property \ryunosuke\Test\Gateway\TableGateway $foreign_s
-     * @method   \ryunosuke\Test\Gateway\TableGateway foreign_s($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
-     * @property \ryunosuke\Test\Gateway\TableGateway $foreign_sc
-     * @method   \ryunosuke\Test\Gateway\TableGateway foreign_sc($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
-     * @property \ryunosuke\Test\Gateway\TableGateway $g_ancestor
-     * @method   \ryunosuke\Test\Gateway\TableGateway g_ancestor($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
-     * @property \ryunosuke\Test\Gateway\TableGateway $g_child
-     * @method   \ryunosuke\Test\Gateway\TableGateway g_child($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
-     * @property \ryunosuke\Test\Gateway\TableGateway $g_parent
-     * @method   \ryunosuke\Test\Gateway\TableGateway g_parent($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
-     * @property \ryunosuke\Test\Gateway\TableGateway $horizontal1
-     * @method   \ryunosuke\Test\Gateway\TableGateway horizontal1($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
-     * @property \ryunosuke\Test\Gateway\TableGateway $horizontal2
-     * @method   \ryunosuke\Test\Gateway\TableGateway horizontal2($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
-     * @property \ryunosuke\Test\Gateway\TableGateway $misctype
-     * @method   \ryunosuke\Test\Gateway\TableGateway misctype($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
-     * @property \ryunosuke\Test\Gateway\TableGateway $misctype_child
-     * @method   \ryunosuke\Test\Gateway\TableGateway misctype_child($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
-     * @property \ryunosuke\Test\Gateway\TableGateway $multiprimary
-     * @method   \ryunosuke\Test\Gateway\TableGateway multiprimary($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
-     * @property \ryunosuke\Test\Gateway\TableGateway $multiunique
-     * @method   \ryunosuke\Test\Gateway\TableGateway multiunique($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
-     * @property \ryunosuke\Test\Gateway\TableGateway $noauto
-     * @method   \ryunosuke\Test\Gateway\TableGateway noauto($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
-     * @property \ryunosuke\Test\Gateway\TableGateway $noprimary
-     * @method   \ryunosuke\Test\Gateway\TableGateway noprimary($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
-     * @property \ryunosuke\Test\Gateway\TableGateway $nullable
-     * @method   \ryunosuke\Test\Gateway\TableGateway nullable($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
-     * @property \ryunosuke\Test\Gateway\TableGateway $paging
-     * @method   \ryunosuke\Test\Gateway\TableGateway paging($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
-     * @property \ryunosuke\Test\Gateway\Article      $t_article
-     * @method   \ryunosuke\Test\Gateway\Article      t_article($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
-     * @property \ryunosuke\Test\Gateway\Article      $Article
-     * @method   \ryunosuke\Test\Gateway\Article      Article($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
-     * @property \ryunosuke\Test\Gateway\Comment      $t_comment
-     * @method   \ryunosuke\Test\Gateway\Comment      t_comment($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
-     * @property \ryunosuke\Test\Gateway\Comment      $Comment
-     * @method   \ryunosuke\Test\Gateway\Comment      Comment($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
-     * @property \ryunosuke\Test\Gateway\TableGateway $test
-     * @method   \ryunosuke\Test\Gateway\TableGateway test($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
-     * @property \ryunosuke\Test\Gateway\TableGateway $test1
-     * @method   \ryunosuke\Test\Gateway\TableGateway test1($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
-     * @property \ryunosuke\Test\Gateway\TableGateway $test2
-     * @method   \ryunosuke\Test\Gateway\TableGateway test2($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
-     * @property \ryunosuke\Test\Gateway\TableGateway $v_blog
-     * @method   \ryunosuke\Test\Gateway\TableGateway v_blog($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
+     * @mixin \Annotation\TableGateway
      */
     class TableGateway extends \ryunosuke\dbml\Gateway\TableGateway
     {
@@ -292,6 +174,8 @@ namespace ryunosuke\Test\Gateway {
 
     class Article extends TableGateway
     {
+        use \Annotation\ArticleTableGateway;
+
         protected $defaultIteration  = 'assoc';
         protected $defaultJoinMethod = 'left';
 
@@ -331,12 +215,10 @@ namespace ryunosuke\Test\Gateway {
         }
     }
 
-    /**
-     * @method Article t_article($column = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
-     * @method Article Article($column = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
-     */
-    class Comment extends \ryunosuke\dbml\Gateway\TableGateway
+    class Comment extends TableGateway
     {
+        use \Annotation\CommentTableGateway;
+
         public function __construct(Database $database, $table_name)
         {
             parent::__construct($database, $table_name);
@@ -356,17 +238,18 @@ namespace ryunosuke\Test\Gateway {
 namespace ryunosuke\Test\Entity {
 
     /**
-     * @property string $title
+     * @mixin \Annotation\ArticleEntity
      * @property Comment $comment
+     * @property Comment $Comment
      * @property Comment[] $comments
-     * @property Comment[] $Comment
      */
     class Article extends \ryunosuke\dbml\Entity\Entity
     {
     }
 
     /**
-     * @property Article $article
+     * @mixin \Annotation\CommentEntity
+     * @property Article $Article
      */
     class Comment extends \ryunosuke\dbml\Entity\Entity
     {

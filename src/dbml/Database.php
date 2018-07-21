@@ -10,6 +10,7 @@ use Doctrine\DBAL\Event\Listeners\SQLSessionInit;
 use Doctrine\DBAL\Events;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Schema\AbstractAsset;
+use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\ForeignKeyConstraint;
 use Doctrine\DBAL\Types\Type;
 use ryunosuke\dbml\Entity\Entity;
@@ -1319,6 +1320,111 @@ class Database
             $result[] = sprintf("* @method   %-{$maxlen}s %s", $class, $name) . '($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])';
         }
         return implode("\n", $result) . "\n";
+    }
+
+    /**
+     * コード補完用のアノテーショントレイトを取得する
+     *
+     * 存在するテーブル名や entityMapper、gatewayMapper などを利用して mixin 用のトレイトを作成する。
+     * このメソッドが吐き出したトレイトを `@ mixin Hogera` などとすると補完が効くようになる。
+     *
+     * @param string $namespace トレイト群の名前空間。未指定だとグローバル
+     * @param string $filename ファイルとして吐き出す先
+     * @return string アノテーションコメント
+     */
+    public function echoAnnotation($namespace = null, $filename = null)
+    {
+        $args1 = '$tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []';
+        $args2 = '$variadic_primary, $tableDescriptor = []';
+
+        $typeMap = [
+            Type::TARRAY               => 'array|string',
+            Type::SIMPLE_ARRAY         => 'array|string',
+            Type::JSON_ARRAY           => 'array|string',
+            Type::JSON                 => 'array|string',
+            Type::OBJECT               => 'object|string',
+            Type::BOOLEAN              => 'bool',
+            Type::INTEGER              => 'int',
+            Type::SMALLINT             => 'int',
+            Type::BIGINT               => 'int|string',
+            Type::DECIMAL              => 'float',
+            Type::FLOAT                => 'float',
+            Type::STRING               => 'string',
+            Type::TEXT                 => 'string',
+            Type::BINARY               => 'string',
+            Type::BLOB                 => 'string',
+            Type::GUID                 => 'string',
+            Type::DATETIME             => '\\DateTime|string',
+            Type::DATETIME_IMMUTABLE   => '\\DateTimeImmutable|string',
+            Type::DATETIMETZ           => '\\DateTime|string',
+            Type::DATETIMETZ_IMMUTABLE => '\\DateTimeImmutable|string',
+            Type::DATE                 => '\\DateTime|string',
+            Type::DATE_IMMUTABLE       => '\\DateTimeImmutable|string',
+            Type::TIME                 => '\\DateTime|string',
+            Type::TIME_IMMUTABLE       => '\\DateTimeImmutable|string',
+            Type::DATEINTERVAL         => '\\DateInterval|string',
+        ];
+
+        $database = [];
+        $gateway = [];
+        $gateways = [];
+        $entities = [];
+        foreach ($this->getSchema()->getTableNames() as $tname) {
+            $ename = $this->convertEntityName($tname);
+            $eclass = ltrim($this->getEntityClass($tname), '\\');
+            $classess = [
+                $tname => '\\' . get_class($this->$tname),
+                $ename => '\\' . get_class($this->$ename),
+            ];
+            foreach ($classess as $name => $class) {
+                $database[] = sprintf(" * @property %s \$%s", $class, $name);
+                $database[] = sprintf(" * @method   %s %s", $class, $name) . "($args1)";
+
+                $gateway[] = sprintf(" * @property %s \$%s", $class, $name);
+                $gateway[] = sprintf(" * @method   %s %s", '$this', $name) . "($args1)";
+            }
+            if ($ename !== $tname) {
+                $gateways["{$ename}TableGateway"] = [
+                    " * @mixin TableGateway
+ * @method array|\\{$eclass}[]     array($args1)
+ * @method array|\\{$eclass}[]     assoc($args1)
+ * @method array|\\{$eclass}|false tuple($args1)
+ * @method array|\\{$eclass}|false find($args2)
+ * @method array|\\{$eclass}[]     arrayInShare($args1)
+ * @method array|\\{$eclass}[]     assocInShare($args1)
+ * @method array|\\{$eclass}|false tupleInShare($args1)
+ * @method array|\\{$eclass}|false findInShare($args2)
+ * @method array|\\{$eclass}[]     arrayForUpdate($args1)
+ * @method array|\\{$eclass}[]     assocForUpdate($args1)
+ * @method array|\\{$eclass}|false tupleForUpdate($args1)
+ * @method array|\\{$eclass}|false findForUpdate($args2)
+ * @method array|\\{$eclass}[]     arrayOrThrow($args1)
+ * @method array|\\{$eclass}[]     assocOrThrow($args1)
+ * @method array|\\{$eclass}       tupleOrThrow($args1)
+ * @method array|\\{$eclass}       findOrThrow($args2)",
+                ];
+                $entities["{$ename}Entity"] = array_map(function (Column $column) use ($typeMap) {
+                    $typename = $column->getType()->getName();
+                    return sprintf(" * @property %s \$%s", $typeMap[$typename] ?? $typename, $column->getName());
+                }, $this->getSchema()->getTableColumns($tname));
+            }
+        }
+
+        $gen = function ($comments, $name) {
+            $comments = implode("\n", $comments);
+            return "/**\n$comments\n */\ntrait $name{}\n";
+        };
+        $namespace = $namespace ? "\nnamespace $namespace;\n" : '';
+        $result = "<?php\n$namespace\n// this code auto generated.\n\n// @formatter:off\n\n";
+        $result .= $gen($database, "Database") . "\n";
+        $result .= $gen($gateway, "TableGateway") . "\n";
+        $result .= array_sprintf($gateways, $gen, "\n") . "\n";
+        $result .= array_sprintf($entities, $gen, "\n");
+
+        if ($filename) {
+            file_set_contents($filename, $result);
+        }
+        return $result;
     }
 
     /**
