@@ -794,6 +794,13 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
         return $this->select([])->queryInto();
     }
 
+    private function _primary($pkval)
+    {
+        $pcols = $this->database->getSchema()->getTablePrimaryKey($this->tableName)->getColumns();
+        $pvals = array_values((array) $pkval);
+        return array_combine(array_slice($pcols, 0, count($pvals)), $pvals) ?: throws(new \InvalidArgumentException("argument's length is not match primary columns."));
+    }
+
     private function _accessor($name, $value)
     {
         // 引数なしの場合は getter として振る舞う
@@ -807,19 +814,17 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
     }
 
     /**
-     * サポートされない
+     * なにがしかの存在を返す
      *
-     * 将来のために予約されており、呼ぶと無条件で例外を投げる。
-     *
-     * @param mixed $offset
-     */
-    public function offsetUnset($offset) { throw new \DomainException(__METHOD__ . ' is not supported.'); }
-
-    /**
-     * ゲートウェイのカラムが存在するか返す
+     * $offset が数値・配列なら主キーとみなして行の存在を返す。
+     * $offset がそれ以外ならカラムの存在を返す。
      *
      * ```php
-     * // カラムの存在を確認する
+     * # 行の存在を確認する
+     * $exists1 = isset($gw[1]);      // 単一主キー値1のレコードがあるなら true
+     * $exists2 = isset($gw[[1, 2]]); // 複合主キー値[1, 2]のレコードがあるなら true
+     *
+     * # カラムの存在を確認する
      * $exists1 = isset($gw['article_title']);    // true
      * $exists2 = isset($gw['undefined_column']); // false
      * ```
@@ -829,52 +834,58 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
      */
     public function offsetExists($offset)
     {
+        if (is_array($offset) || filter_var($offset, \FILTER_VALIDATE_INT) !== false) {
+            return $this->exists($this->_primary($offset));
+        }
         return $this->describe()->hasColumn($offset);
     }
 
     /**
-     * ゲートウェイのカラム値を取得する
+     * なにがしかの値を取得する
+     *
+     * $offset が数値・配列なら主キーとみなして行自体を返す。
+     * $offset が半角英数字ならカラムとみなしてカラム値を返す。
+     * $offset がテーブル記法ならその記法が適用された自分自身を返す。
+     * テーブル記法のうち、 [condition] だけであれば `[]` が省略可能となる。
      *
      * ```php
-     * // 記事のタイトルを取得する
+     * # 行自体を返す
+     * $row = $gw[1];         // 単一主キー値1のレコードを返す
+     * $row = $gw[[1, 2]];    // 複合主キー値[1, 2]のレコードを返す
+     * $row = $gw->find($pk); // 上2つは実質的にこれの糖衣構文
+     *
+     * # カラム値を返す
      * $title = $gw['article_title'];
      * // ただし、WHERE を指定しないとほぼ意味がないので通常はこのように使用する
      * $title = $gw->pk(1)['article_title'];
      * $title = $gw->scope('scopename')['article_title'];
-     * ```
      *
-     * ただし、深遠な理由により{@link TableDescriptor テーブル記法}を記述することで「その記法が適用された自分自身」を返す。
-     * さらにテーブル記法の [condition] だけであれば `[]` が省略可能となる。
-     *
-     * ```php
-     * // スコープとエイリアスが適用された自分自身を返す
+     * # スコープとエイリアスが適用された自分自身を返す
      * $gw = $gw['@scope1@scope2 AS GW'];
-     * // 上記は実質的に下記と同じ
-     * $gw = $gw->scope('scope1')->scope('scope2')->as('GW');
+     * $gw = $gw->scope('scope1')->scope('scope2')->as('GW'); // 上記は実質的にこれと同じ
      *
-     * // エイリアスやカラムも指定できるのでこういった面白い指定も可能
+     * # エイリアスやカラムも指定できるのでこういった面白い指定も可能
      * $gw['G.id']->array();
      * // SELECT G.id FROM t_table G
      *
-     * // [condition] だけであれば [] は不要。下記はすべて同じ意味になる
+     * # [condition] だけであれば [] は不要。下記はすべて同じ意味になる
      * $gw = $gw['[id: 123]']; // 本来であればこのように指定すべきだが・・・
      * $gw = $gw['id: 123'];   // [] は省略可能（[] がネストしないのでシンタックス的に美しくなる）
      * $gw = $gw['id=123'];    // 素の文字列が許容されるならこのようにすると属性アクセスしてるように見えてさらに美しい
      * $gw = $gw->where(['id' => 123]); // あえてメソッドモードで指定するとしたらこのようになる
      *
-     * // invoke と組み合わせると下記のようなことが可能になる
+     * # invoke と組み合わせると下記のようなことが可能になる
      * $db->t_article->t_comment['@scope1@scope2 AS C']($column, $where);
      * ```
      *
-     * 上記の「カラム値を返す/記法を適用して返す」の分岐は正規表現で行っている。
-     * 具体的には半角英数字以外が含まれていれば記法モード、半角英数字だけであればカラムモードである。
-     * ※ この機能は実験的なもので、（無くなりはしないが）分岐処理は変更される可能性がある。
-     *
      * @param string $offset カラム名あるいはテーブル記法
-     * @return $this|mixed カラム値あるいは自分自身
+     * @return $this|array|Entityable|mixed レコード・カラム値・自分自身
      */
     public function offsetGet($offset)
     {
+        if (is_array($offset) || filter_var($offset, \FILTER_VALIDATE_INT) !== false) {
+            return $this->find($offset);
+        }
         if (preg_match('#^[_a-z0-9]+$#i', $offset)) {
             return $this->value($offset);
         }
@@ -907,10 +918,21 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
     }
 
     /**
-     * ゲートウェイのカラム値を設定する
+     * なにがしかの値を設定する
+     *
+     * $offset が null なら {@link insert()} になる。
+     * $offset が数値・配列なら {@link modify()} になる。
+     * $offset が半角英数字ならカラムの {@link update()} になる。
      *
      * ```php
-     * // 記事のタイトルを設定する
+     * # 1行 insert
+     * $gw[] = [$dataarray]; // $dataarray が insert される
+     *
+     * # 1行 modify
+     * $gw[1] = [$dataarray];      // $gw->modify([$dataarray] + [pcol => 1])
+     * $gw[[1, 2]] = [$dataarray]; // $gw->modify([$dataarray] + [pcol1 => 1, pcol2 => 2])
+     *
+     * # 記事のタイトルを設定する
      * $gw['article_title'] = 'タイトル';
      * // ただし、WHERE を指定しないと全行更新され大事故になるので通常はこのように何らかで縛って使用する
      * $gw->scope('scopename')['article_title'] = 'タイトル';
@@ -920,11 +942,40 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
      *
      * @param string $offset カラム名
      * @param mixed $value カラム値
-     * @return int 作用行
+     * @return int|array 作用行
      */
     public function offsetSet($offset, $value)
     {
+        if ($offset === null) {
+            return $this->insert($value);
+        }
+        if (is_array($offset) || filter_var($offset, \FILTER_VALIDATE_INT) !== false) {
+            return $this->modify($value + $this->_primary($offset));
+        }
         return $this->update([$offset => $value]);
+    }
+
+    /**
+     * なにがしかの値を削除する
+     *
+     * $offset が数値・配列なら主キー指定の {@link delete()} になる。
+     * それ以外は例外を投げる。
+     *
+     * ```php
+     * # 主キーで削除
+     * unset($gw[1]);      // 単一主キー値1のレコードを削除する
+     * unset($gw[[1, 2]]); // 複合主キー値[1, 2]のレコードを削除する
+     * ```
+     *
+     * @param mixed $offset
+     * @return int|array 作用行
+     */
+    public function offsetUnset($offset)
+    {
+        if (is_array($offset) || filter_var($offset, \FILTER_VALIDATE_INT) !== false) {
+            return $this->delete($this->_primary($offset));
+        }
+        throw new \DomainException(__METHOD__ . ' is not supported.');
     }
 
     /**
@@ -1646,13 +1697,7 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
      */
     public function pk(...$variadic)
     {
-        $pkey = $this->database->getSchema()->getTablePrimaryKey($this->tableName);
-        $pcols = $pkey->getColumns();
-        $where = array_each($variadic, function (&$carry, $pvals) use ($pcols) {
-            $pvals = array_values((array) $pvals);
-            $carry[] = array_combine(array_slice($pcols, 0, count($pvals)), $pvals) ?: throws(new \InvalidArgumentException("argument's length is not match primary columns."));
-        }, []);
-        return $this->where([$where]);
+        return $this->where([array_map([$this, '_primary'], $variadic)]);
     }
 
     /**

@@ -32,20 +32,6 @@ class TableGatewayTest extends \ryunosuke\Test\AbstractUnitTestCase
      * @param TableGateway $gateway
      * @param Database $database
      */
-    function test___issetunset($gateway, $database)
-    {
-        $this->assertTrue(isset($gateway['id']));
-        $this->assertFalse(isset($gateway['undefined']));
-        $this->assertException('not supported', function () use ($gateway) {
-            unset($gateway['undefined']);
-        });
-    }
-
-    /**
-     * @dataProvider provideGateway
-     * @param TableGateway $gateway
-     * @param Database $database
-     */
     function test___getset($gateway, $database)
     {
         $gateway->where(['id' => 2])['name'] = "hogera";
@@ -63,9 +49,101 @@ class TableGatewayTest extends \ryunosuke\Test\AbstractUnitTestCase
     /**
      * @dataProvider provideGateway
      * @param TableGateway $gateway
+     */
+    function test___toString($gateway)
+    {
+        $this->assertEquals("SELECT test.* FROM test WHERE test.id = '2'", (string) $gateway->column('*')->where(['id' => 2]));
+    }
+
+    /**
+     * @dataProvider provideGateway
+     * @param TableGateway $gateway
+     */
+    function test_offsetExists($gateway)
+    {
+        $this->assertTrue(isset($gateway['id']));
+        $this->assertFalse(isset($gateway['undefined']));
+
+        $this->assertTrue(isset($gateway[1]));
+        $this->assertFalse(isset($gateway[999]));
+    }
+
+    /**
+     * @dataProvider provideGateway
+     * @param TableGateway $gateway
+     */
+    function test_offsetGet($gateway)
+    {
+        $this->assertEquals('a', $gateway->pk(1)['name']);
+
+        $this->assertEquals([
+            'id'   => '1',
+            'name' => 'a',
+            'data' => '',
+        ], $gateway[1]);
+    }
+
+    /**
+     * @dataProvider provideGateway
+     * @param TableGateway $gateway
      * @param Database $database
      */
-    function test___get_desccriptor($gateway, $database)
+    function test_offsetSet($gateway, $database)
+    {
+        $gateway->pk(1)['name'] = 'change!';
+        $this->assertEquals('change!', $gateway->pk(1)['name']);
+
+        $gateway[] = [
+            'name' => 'new',
+            'data' => '',
+        ];
+        $this->assertEquals([
+            'id'   => '11',
+            'name' => 'new',
+            'data' => '',
+        ], $gateway[$database->getLastInsertId('test', 'id')]);
+
+        $gateway[99] = [
+            'name' => 'new',
+            'data' => '',
+        ];
+        $this->assertEquals([
+            'id'   => '99',
+            'name' => 'new',
+            'data' => '',
+        ], $gateway[99]);
+
+        $gateway[99] = [
+            'name' => 'newnew',
+            'data' => '',
+        ];
+        $this->assertEquals([
+            'id'   => '99',
+            'name' => 'newnew',
+            'data' => '',
+        ], $gateway[99]);
+    }
+
+    /**
+     * @dataProvider provideGateway
+     * @param TableGateway $gateway
+     */
+    function test_offsetUnset($gateway)
+    {
+        unset($gateway[1]);
+        $this->assertFalse($gateway[1]);
+
+        $this->assertException('not supported', function () use ($gateway) {
+            unset($gateway['undefined']);
+        });
+    }
+
+    /**
+     * @dataProvider provideGateway
+     * @param TableGateway $gateway
+     * @param Database $database
+     */
+    function test_offsetGet_desccriptor($gateway, $database)
     {
         $gw = $database->t_comment['(1)@scope1@scope2(9)[flag1 = 1, flag2: 2]-comment_id AS C.comment_id']('comment');
         $this->assertStringIgnoreBreak("SELECT NOW(), C.comment_id, C.comment
@@ -91,15 +169,6 @@ AND ((flag=1))", "$gw");
         $this->assertEquals(['b', 'c'], $database->test['#1-3']->lists('name'));
         $this->assertEquals(['a', 'b'], $database->test['#-2']->lists('name'));
         $this->assertEquals(['c'], $database->test['#2']->lists('name'));
-    }
-
-    /**
-     * @dataProvider provideGateway
-     * @param TableGateway $gateway
-     */
-    function test___toString($gateway)
-    {
-        $this->assertEquals("SELECT test.* FROM test WHERE test.id = '2'", (string) $gateway->column('*')->where(['id' => 2]));
     }
 
     /**
