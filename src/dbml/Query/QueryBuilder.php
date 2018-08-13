@@ -1402,7 +1402,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
                     $this->from($jointable, $join->accessor, $join->jointype, $jcondition, $join->fkeyname, $parent);
                 }
                 else {
-                    $this->addColumn([$join->key => $jointable], $descriptor->alias);
+                    $this->addColumn([$join->key => $jointable], $descriptor->accessor);
                 }
             }
         }
