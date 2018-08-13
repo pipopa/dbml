@@ -4062,6 +4062,69 @@ ORDER BY T.id DESC, name ASC
      * @dataProvider provideDatabase
      * @param Database $database
      */
+    function test_selectExists($database)
+    {
+        $builder = $database->selectExists('test', ['id' => 1]);
+        $this->assertEquals('EXISTS (SELECT * FROM test WHERE id = ?)', "$builder");
+        $this->assertEquals([1], $builder->getParams());
+
+        $builder = $database->selectNotExists('test', ['id' => 1]);
+        $this->assertEquals('NOT EXISTS (SELECT * FROM test WHERE id = ?)', "$builder");
+        $this->assertEquals([1], $builder->getParams());
+
+        $forWrite = $database->getPlatform()->getWriteLockSQL();
+        if (trim($forWrite)) {
+            $builder = $database->selectExists('test', ['id' => 1], true);
+            $this->assertEquals("EXISTS (SELECT * FROM test WHERE id = ? $forWrite)", "$builder");
+            $this->assertEquals([1], $builder->getParams());
+
+            $builder = $database->selectNotExists('test', ['id' => 1], true);
+            $this->assertEquals("NOT EXISTS (SELECT * FROM test WHERE id = ? $forWrite)", "$builder");
+            $this->assertEquals([1], $builder->getParams());
+        }
+    }
+
+    /**
+     * @dataProvider provideDatabase
+     * @param Database $database
+     */
+    function test_selectAggregate($database)
+    {
+        $qi = function ($str) use ($database) {
+            return $database->getPlatform()->quoteSingleIdentifier($str);
+        };
+
+        $builder = $database->selectCount('aggregate.id');
+        $this->assertEquals("SELECT COUNT(aggregate.id) AS {$qi('aggregate.id@Count')} FROM aggregate", "$builder");
+        $this->assertEquals([], $builder->getParams());
+        $this->assertEquals(10, $builder->value());
+
+        $builder = $database->selectMax('aggregate.id');
+        $this->assertEquals("SELECT MAX(aggregate.id) AS {$qi('aggregate.id@Max')} FROM aggregate", "$builder");
+        $this->assertEquals([], $builder->getParams());
+        $this->assertEquals(10, $builder->value());
+
+        $builder = $database->selectCount('aggregate.id', [], ['group_id2']);
+        $this->assertEquals("SELECT group_id2, COUNT(aggregate.id) AS {$qi('aggregate.id@Count')} FROM aggregate GROUP BY group_id2", "$builder");
+        $this->assertEquals([], $builder->getParams());
+        $this->assertEquals([
+            10 => 5,
+            20 => 5,
+        ], $builder->pairs());
+
+        $builder = $database->selectMin('aggregate.id', [], ['group_id2']);
+        $this->assertEquals("SELECT group_id2, MIN(aggregate.id) AS {$qi('aggregate.id@Min')} FROM aggregate GROUP BY group_id2", "$builder");
+        $this->assertEquals([], $builder->getParams());
+        $this->assertEquals([
+            10 => 1,
+            20 => 6,
+        ], $builder->pairs());
+    }
+
+    /**
+     * @dataProvider provideDatabase
+     * @param Database $database
+     */
     function test_exists($database)
     {
         $this->assertTrue($database->exists('test', ['id' => 1]));

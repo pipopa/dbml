@@ -619,6 +619,60 @@ AND ((flag=1))", "$gw");
      * @dataProvider provideGateway
      * @param TableGateway $gateway
      */
+    function test_selectExists($gateway)
+    {
+        $builder = $gateway->selectExists(['id' => 1]);
+        $this->assertEquals('EXISTS (SELECT * FROM test WHERE test.id = ?)', "$builder");
+        $this->assertEquals([1], $builder->getParams());
+
+        $builder = $gateway->selectNotExists(['id' => 1]);
+        $this->assertEquals('NOT EXISTS (SELECT * FROM test WHERE test.id = ?)', "$builder");
+        $this->assertEquals([1], $builder->getParams());
+    }
+
+    /**
+     * @dataProvider provideGateway
+     * @param TableGateway $gateway
+     * @param Database $database
+     */
+    function test_selectAggregate($gateway, $database)
+    {
+        $gateway = $database->aggregate;
+        $qi = function ($str) use ($database) {
+            return $database->getPlatform()->quoteSingleIdentifier($str);
+        };
+
+        $builder = $gateway->selectCount('id');
+        $this->assertEquals("SELECT COUNT(aggregate.id) AS {$qi('aggregate.id@Count')} FROM aggregate", "$builder");
+        $this->assertEquals([], $builder->getParams());
+        $this->assertEquals(10, $builder->value());
+
+        $builder = $gateway->selectMax('id');
+        $this->assertEquals("SELECT MAX(aggregate.id) AS {$qi('aggregate.id@Max')} FROM aggregate", "$builder");
+        $this->assertEquals([], $builder->getParams());
+        $this->assertEquals(10, $builder->value());
+
+        $builder = $gateway->selectCount('id', [], ['group_id2']);
+        $this->assertEquals("SELECT group_id2, COUNT(aggregate.id) AS {$qi('aggregate.id@Count')} FROM aggregate GROUP BY group_id2", "$builder");
+        $this->assertEquals([], $builder->getParams());
+        $this->assertEquals([
+            10 => 5,
+            20 => 5,
+        ], $builder->pairs());
+
+        $builder = $gateway->selectMin('id', [], ['group_id2']);
+        $this->assertEquals("SELECT group_id2, MIN(aggregate.id) AS {$qi('aggregate.id@Min')} FROM aggregate GROUP BY group_id2", "$builder");
+        $this->assertEquals([], $builder->getParams());
+        $this->assertEquals([
+            10 => 1,
+            20 => 6,
+        ], $builder->pairs());
+    }
+
+    /**
+     * @dataProvider provideGateway
+     * @param TableGateway $gateway
+     */
     function test_find($gateway)
     {
         $this->assertEquals([

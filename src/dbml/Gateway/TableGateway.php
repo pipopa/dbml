@@ -433,10 +433,19 @@ use function ryunosuke\dbml\throws;
  * @method QueryBuilder           subsum($column = [], $where = []) {駆動表を省略できる {@link Database::subsum()}@inheritdoc Database::subsum()}
  * @method QueryBuilder           subavg($column = [], $where = []) {駆動表を省略できる {@link Database::subavg()}@inheritdoc Database::subavg()}
  *
+ * @method int|float              exists($where = [], $for_update = false) {駆動表を省略できる {@link Database::exists()}@inheritdoc Database::exists()}
  * @method int|float              min($column, $where = [], $groupBy = [], $having = []) {駆動表を省略できる {@link Database::min()}@inheritdoc Database::min()}
  * @method int|float              max($column, $where = [], $groupBy = [], $having = []) {駆動表を省略できる {@link Database::max()}@inheritdoc Database::max()}
  * @method int|float              sum($column, $where = [], $groupBy = [], $having = []) {駆動表を省略できる {@link Database::sum()}@inheritdoc Database::sum()}
  * @method int|float              avg($column, $where = [], $groupBy = [], $having = []) {駆動表を省略できる {@link Database::avg()}@inheritdoc Database::avg()}
+ *
+ * @method QueryBuilder           selectExists($where = [], $for_update = false) {駆動表を省略できる {@link Database::selectExists()}@inheritdoc Database::selectExists()}
+ * @method QueryBuilder           selectNotExists($where = [], $for_update = false) {駆動表を省略できる {@link Database::selectNotExists()}@inheritdoc Database::selectNotExists()}
+ * @method QueryBuilder           selectCount($column = [], $where = [], $groupBy = [], $having = []) {駆動表を省略できる {@link Database::selectCount()}@inheritdoc Database::selectCount()}
+ * @method QueryBuilder           selectMin($column, $where = [], $groupBy = [], $having = []) {駆動表を省略できる {@link Database::selectMin()}@inheritdoc Database::selectMin()}
+ * @method QueryBuilder           selectMax($column, $where = [], $groupBy = [], $having = []) {駆動表を省略できる {@link Database::selectMax()}@inheritdoc Database::selectMax()}
+ * @method QueryBuilder           selectSum($column, $where = [], $groupBy = [], $having = []) {駆動表を省略できる {@link Database::selectSum()}@inheritdoc Database::selectSum()}
+ * @method QueryBuilder           selectAvg($column, $where = [], $groupBy = [], $having = []) {駆動表を省略できる {@link Database::selectAvg()}@inheritdoc Database::selectAvg()}
  *
  * @method array                  insertSelect($sql, $columns = [], array $params = []) {駆動表を省略できる {@link Database::insertSelect()}@inheritdoc Database::insertSelect()}
  * @method array                  insertArray($data, $chunk = 0) {駆動表を省略できる {@link Database::insertArray()}@inheritdoc Database::insertArray()}
@@ -688,7 +697,8 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
         }
 
         // スコープを当てた後に Database への移譲で済むもの系
-        if (preg_match('#^((prepare)?select|subexists|notsubexists|subcount|submin|submax|subsum|subavg|_count|min|max|sum|avg)$#ui', $name)) {
+        $methods = implode('|', array_keys(Database::METHODS));
+        if (preg_match("#^((prepare)?select|select(count|min|max|sum|avg)|sub($methods)|(not)?subexists|sub(count|min|max|sum|avg)|_count|min|max|sum|avg)$#ui", $name)) {
             // Countable のために別メソッドにしているので読み替え
             if (strcasecmp($name, '_count') === 0) {
                 $name = 'count';
@@ -709,9 +719,9 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
         }
 
         // ↑と同じだが、引数体系が違うもの系
-        if (preg_match('/^sub(select)?(.+?)$/i', $name, $matches)) {
-            $sp = $this->getScopeParams(...$arguments);
-            return $this->database->$name(...array_values($sp));
+        if (preg_match('/^(exists|select(Not)?Exists)$/i', $name, $matches)) {
+            $sp = $this->getScopeParams([], array_get($arguments, 0, []));
+            return $this->database->$name($sp['column'], $sp['where'], array_get($arguments, 1, false));
         }
 
         // subselect 系
@@ -1798,19 +1808,6 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
 
         // ここまでたどり着くということは一致する一意キーがない
         throw new \InvalidArgumentException("argument's length is not match unique index.");
-    }
-
-    /**
-     * レコードが存在するか返す
-     *
-     * Gateway 版の {@link Database::exists()} 。
-     *
-     * @inheritdoc Database::exists()
-     */
-    public function exists($where = [], $for_update = false)
-    {
-        $sp = $this->getScopeParams([], $where);
-        return $this->database->exists($sp['column'], $sp['where'], $for_update);
     }
 
     /**

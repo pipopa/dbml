@@ -357,6 +357,12 @@ use ryunosuke\dbml\Utility\Adhoc;
  * @method int|float              sum($column, $where = [], $groupBy = [], $having = []) {SUM クエリを実行する（{@link aggregate()} を参照）@inheritdoc aggregate()}
  * @method int|float              avg($column, $where = [], $groupBy = [], $having = []) {AVG クエリを実行する（{@link aggregate()} を参照）@inheritdoc aggregate()}
  *
+ * @method QueryBuilder           selectCount($column, $where = [], $groupBy = [], $having = []) {COUNT クエリを返す（{@link selectAggregate()} を参照）@inheritdoc selectAggregate()}
+ * @method QueryBuilder           selectMin($column, $where = [], $groupBy = [], $having = []) {MIN クエリを返す（{@link selectAggregate()} を参照）@inheritdoc selectAggregate()}
+ * @method QueryBuilder           selectMax($column, $where = [], $groupBy = [], $having = []) {MAX クエリを返す（{@link selectAggregate()} を参照）@inheritdoc selectAggregate()}
+ * @method QueryBuilder           selectSum($column, $where = [], $groupBy = [], $having = []) {SUM クエリを返す（{@link selectAggregate()} を参照）@inheritdoc selectAggregate()}
+ * @method QueryBuilder           selectAvg($column, $where = [], $groupBy = [], $having = []) {AVG クエリを返す（{@link selectAggregate()} を参照）@inheritdoc selectAggregate()}
+ *
  * @method array                  insertOrThrow($tableName, $data) {{@link insert()} の例外送出版@inheritdoc insert()}
  * @method array                  updateOrThrow($tableName, $data, array $identifier = []) {{@link update()} の例外送出版@inheritdoc update()}
  * @method array                  deleteOrThrow($tableName, array $identifier = []) {{@link delete()} の例外送出版@inheritdoc delete()}
@@ -751,6 +757,10 @@ class Database
         // subaggregate 系
         if (in_array(strtolower($name), ['subcount', 'submin', 'submax', 'subsum', 'subavg'], true)) {
             return $this->subaggregate(preg_replace('#^sub#i', '', $name), ...$arguments);
+        }
+        // selectAggregate 系
+        if (preg_match('/^select(count|min|max|sum|avg)$/i', $name, $matches)) {
+            return $this->selectAggregate($matches[1], ...$arguments);
         }
         // prepare 系
         if (preg_match('/^prepare(.+)$/i', $name, $matches)) {
@@ -3319,14 +3329,84 @@ class Database
      */
     public function exists($tableDescriptor, $where = [], $for_update = false)
     {
+        $builder = $this->selectExists($tableDescriptor, $where, $for_update);
+        $exists = $this->getCompatiblePlatform()->convertSelectExistsQuery($builder);
+        return !!$this->fetchValue("SELECT $exists", $exists->getParams());
+    }
+
+    /**
+     * EXISTS クエリビルダを返す
+     *
+     * ```php
+     * // EXISTS (SELECT * FROM t_table)
+     * $db->selectExists('t_table');
+     *
+     * // NOT EXISTS (SELECT * FROM t_table WHERE delete_flg = 0)
+     * $db->selectNotExists('t_table', ['delete_flg' => 0]);
+     * ```
+     *
+     * @inheritdoc exists()
+     *
+     * @return QueryBuilder EXISTS クエリビルダ
+     */
+    public function selectExists($tableDescriptor, $where = [], $for_update = false)
+    {
         $builder = $this->select($tableDescriptor, $where)->exists();
 
         if ($for_update) {
             $builder->lockForUpdate();
         }
 
-        $exists = $this->getCompatiblePlatform()->convertSelectExistsQuery($builder);
-        return !!$this->fetchValue("SELECT $exists", $exists->getParams());
+        return $builder;
+    }
+
+    /**
+     * {@link selectExists()} の NOT 版
+     *
+     * @inheritdoc exists()
+     *
+     * @return QueryBuilder NOT EXISTS クエリビルダ
+     */
+    public function selectNotExists($tableDescriptor, $where = [], $for_update = false)
+    {
+        $builder = $this->select($tableDescriptor, $where)->notExists();
+
+        if ($for_update) {
+            $builder->lockForUpdate();
+        }
+
+        return $builder;
+    }
+
+    /**
+     * 集約クエリビルダを返す
+     *
+     * {@link selectCount()} などのために存在し、明示的に呼ぶことはほとんど無い。
+     *
+     * ```php
+     * // SELECT COUNT(group_id) FROM t_table
+     * $db->selectCount('t_table.group_id');
+     *
+     * // SELECT MAX(id) FROM t_table WHERE delete_flg = 0 GROUP BY group_id
+     * $db->selectMax('t_table.id', ['delete_flg' => 0], 'group_id');
+     * ```
+     *
+     * @used-by selectCount()
+     * @used-by selectMin()
+     * @used-by selectMax()
+     * @used-by selectSum()
+     * @used-by selectAvg()
+     *
+     * @param string|array $aggregation 集約関数名
+     * @param array|string $column 取得テーブルとカラム
+     * @param array|string $where 条件
+     * @param array|string $groupBy カラム名かその配列
+     * @param array|string $having 条件
+     * @return QueryBuilder 集約クエリビルダ
+     */
+    public function selectAggregate($aggregation, $column, $where = [], $groupBy = [], $having = [])
+    {
+        return $this->select($column, $where, [], [], $groupBy, $having)->aggregate($aggregation);
     }
 
     /**
@@ -3379,7 +3459,7 @@ class Database
      */
     public function aggregate($aggregation, $column, $where = [], $groupBy = [], $having = [])
     {
-        $builder = $this->select($column, $where, [], [], $groupBy, $having)->aggregate($aggregation);
+        $builder = $this->selectAggregate($aggregation, $column, $where, $groupBy, $having);
 
         $stmt = $this->executeQuery($builder, $builder->getParams());
 
