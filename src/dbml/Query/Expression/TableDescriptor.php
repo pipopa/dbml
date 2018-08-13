@@ -127,7 +127,7 @@ use function ryunosuke\dbml\throws;
  * #### AS Alias
  *
  * テーブルにエイリアスをつける。
- * `AS` は省略して `tablename T` でも良い
+ * `AS` は省略して `tablename T` でも良い。
  *
  * #### .col1, col2 AS C2
  *

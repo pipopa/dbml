@@ -699,7 +699,7 @@ class Database
     /**
      * ゲートウェイオブジェクトを返す
      *
-     * テーブル名 or （設定されているなら）エンティティ名で {@link TableGataway} を取得する。
+     * テーブル名 or （設定されているなら）エンティティ名で {@link TableGateway} を取得する。
      *
      * ```php
      * # t_article の全レコードを取得する

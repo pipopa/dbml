@@ -4347,6 +4347,8 @@ ORDER BY T.id DESC, name ASC
         $this->assertEquals([3, 2, 1], $database->union(["select 1 id", "select 2 id", $sub], [], [], ['id' => 'desc'])->lists());
         $this->assertEquals([3, 2], $database->union(["select 1 id", "select 2 id", $sub], [], [], ['id' => 'desc'], 2)->lists());
 
+        $ordkey = 'name' . ($database->getConnection()->getDatabasePlatform() instanceof MySqlPlatform ? ' COLLATE utf8_bin;' : '');
+
         // qb
         $test1 = $database->select('test1(1,2,3).id, name1 name');
         $test2 = $database->select([
@@ -4356,9 +4358,9 @@ ORDER BY T.id DESC, name ASC
             ]
         ], ['id' => [3, 4, 5]]);
         $this->assertEquals([
-            ['id' => '3', 'name' => 'c', 'a' => 'A'],
             ['id' => '3', 'name' => 'C', 'a' => 'A'],
-        ], $database->unionAll([$test1, $test2], ['id', 'name', 'a' => new Expression('UPPER(?)', 'a')], ['id' => 3])->array());
+            ['id' => '3', 'name' => 'c', 'a' => 'A'],
+        ], $database->unionAll([$test1, $test2], ['id', 'name', 'a' => new Expression('UPPER(?)', 'a')], ['id' => 3], $ordkey)->array());
 
         // gw
         $test1 = $database->test1['(1,2,3).id, name1 name'];
@@ -4367,9 +4369,9 @@ ORDER BY T.id DESC, name ASC
             'name' => 'name2',
         ], ['id' => [3, 4, 5]]);
         $this->assertEquals([
-            ['id' => '3', 'name' => 'c', 'a' => 'A'],
             ['id' => '3', 'name' => 'C', 'a' => 'A'],
-        ], $database->unionAll([$test1, $test2], ['id', 'name', 'a' => new Expression('UPPER(?)', 'a')], ['id' => 3])->array());
+            ['id' => '3', 'name' => 'c', 'a' => 'A'],
+        ], $database->unionAll([$test1, $test2], ['id', 'name', 'a' => new Expression('UPPER(?)', 'a')], ['id' => 3], $ordkey)->array());
     }
 
     /**

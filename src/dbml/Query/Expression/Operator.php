@@ -4,7 +4,6 @@ namespace ryunosuke\dbml\Query\Expression;
 
 use ryunosuke\dbml\Metadata\CompatiblePlatform;
 use ryunosuke\dbml\Query\Queryable;
-use const ryunosuke\dbml\strcat;
 use function ryunosuke\dbml\array_depth;
 use function ryunosuke\dbml\array_each;
 use function ryunosuke\dbml\array_flatten;
@@ -12,6 +11,7 @@ use function ryunosuke\dbml\array_nmap;
 use function ryunosuke\dbml\arrayize;
 use function ryunosuke\dbml\first_keyvalue;
 use function ryunosuke\dbml\str_subreplace;
+use const ryunosuke\dbml\strcat;
 
 /**
  * 演算子を表すクラス
