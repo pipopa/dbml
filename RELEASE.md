@@ -20,6 +20,32 @@
 
 - Entity 消したい。使わない…
 
+## 1.0.2
+
+- [feature][Database] クエリビルダを返す aggregate を実装
+- [feature][Database] bool は int で bind されるように修正
+- [feature][Database] レコードをかき集める gather を実装
+- [feature][Database] update/delete のテーブル記法対応
+- [feature][Database] レコードを削減する reduce を実装
+- [feature][QueryBuilder] 集約系を where でも使えるように拡張
+- [feature][QueryBuilder] クロージャを返すクロージャに対応
+- [feature][QueryBuilder] where で主キーを表す空文字キーを実装
+- [feature][QueryBuilder] レコードを少しづつ取得する chunk を実装
+- [feature][CompatiblePlatform] Postgres の upsert に対応
+- [feature][Logger] クロージャログの対応
+- [refactor][QueryBuilder] ORDER BY の内部の保持形式を変更
+- [fixbug][Database] mysql 以外で自動採番列に null を与えるとエラーになる不具合を修正
+- [fixbug][Database] テーブル記法と引数渡しの複合で記法が効かない不具合を修正
+- [fixbug][Database] 集約結果が数値前提だった不具合を修正
+- [fixbug][Database] スキーマ取得前に context 相当のことをすると2重に取ってしまう不具合を修正
+- [fixbug][TableGateway] subselect 系が一切動いていない不具合を修正
+- [fixbug][TableGateway] スコープを当てても結果が残る不具合を修正
+- [fixbug][TableGateway] 特定条件で WHERE が2倍になる不具合を修正
+- [fixbug][QueryBuilder] detectAutoOrder を修正
+- [fixbug][QueryBuilder] join の時の駆動表判定が誤る可能性がある不具合を修正
+- [fixbug][QueryBuilder] join 条件で sub 系や!が使えない不具合を修正
+- [change][TableGateway] offsetGet の挙動を find から pk に変更（互換性のため要オプション）
+
 ## 1.0.1
 
 - [fixbug][Database] エンティティ名でアクセスしてもエンティティゲートウェイが返らない不具合を修正
