@@ -711,6 +711,11 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
             return $this->database->$name(...array_values($sp));
         }
 
+        // subselect 系
+        if (preg_match('/^subselect?(.+?)$/i', $name, $matches)) {
+            return $this->database->$name(array_shift($arguments), ...array_values($this->getScopeParams(...$arguments)));
+        }
+
         // find メソッド（tuple メソッドの特別版とみなせる）
         if (preg_match('#^find(.*)#ui', $name, $matches)) {
             $method = 'tuple' . $matches[1];
