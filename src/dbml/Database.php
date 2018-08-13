@@ -3153,9 +3153,11 @@ class Database
      * // JOIN も含めて複数テーブルがあり、明確に「t_article と t_comment で」結びたい場合はキーで明示する
      * $db->select('t_article, t_something', [
      *     // 「何と？」をキーで明示できる
-     *     't_article'   => $db->subexists('t_comment'),
-     *     // // これだと t_something と t_comment での結合となる（外部キーがあれば、だが）
-     *     't_something' => $db->subexists('t_comment'),
+     *     't_article'          => $db->subexists('t_comment'),
+     *     // これだと t_something と t_comment での結合となる（外部キーがあれば、だが）
+     *     't_something'        => $db->subexists('t_comment'),
+     *     // さらに t_something に複数の外部キーがある場合は:で明示できる
+     *     't_something:fkname' => $db->subexists('t_comment'),
      * ]);
      * ```
      *
@@ -3184,6 +3186,7 @@ class Database
      * 下記のような subXXX のために存在しているので、このメソッドを直接呼ぶような状況はあまり無い。
      *
      * ```php
+     * // SELECT 句での使用例
      * $db->select([
      *     't_article' => [
      *         // t_article に紐づく t_comment の数を返す
@@ -3205,6 +3208,20 @@ class Database
      * //   (SELECT SUM(t_comment.comment_id) AS `t_comment.comment_id@sum` FROM t_comment WHERE t_comment.article_id = t_article.article_id) AS subsum,
      * //   (SELECT AVG(t_comment.comment_id) AS `t_comment.comment_id@avg` FROM t_comment WHERE t_comment.article_id = t_article.article_id) AS subavg
      * // FROM t_article
+     *
+     * // WHERE 句での使用例
+     * $db->select('t_article A+t_comment C', [
+     *     // 「各記事で最新のコメント1件と結合」を表す
+     *     'C.comment_id' => $db->submax('t_comment.comment_id'),
+     * ]);
+     * // SELECT A.*, C.*
+     * // FROM t_article A
+     * // INNER JOIN t_comment C ON C.article_id = A.article_id
+     * // WHERE C.comment_id IN (
+     * //   SELECT MAX(t_comment.comment_id) AS `t_comment.comment_id@max`
+     * //   FROM t_comment
+     * //   WHERE t_comment.article_id = A.article_id
+     * // )
      * ```
      *
      * @used-by subcount()

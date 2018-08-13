@@ -35,6 +35,7 @@ use function ryunosuke\dbml\arrayize;
 use function ryunosuke\dbml\concat;
 use function ryunosuke\dbml\first_keyvalue;
 use function ryunosuke\dbml\optional;
+use function ryunosuke\dbml\preg_splice;
 use function ryunosuke\dbml\rbind;
 use function ryunosuke\dbml\split_noempty;
 use function ryunosuke\dbml\stdclass;
@@ -494,13 +495,13 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
 
     private function _buildCondition($type, $predicates, $ack = true)
     {
-        $submethod = "and$type";
+        $subtype = "and$type";
 
         $froms = array_filter($this->getFromPart(), function ($from) {
             return is_string($from['table']);
         });
 
-        $predicates = array_convert($predicates, function ($cond, &$param, $keys) use ($submethod, $froms) {
+        $predicates = array_convert($predicates, function ($cond, &$param, $keys) use ($subtype, $froms) {
             // エニーカラム（*.*）
             if (is_string($cond) && preg_match('#^((.*)\.)?\*$#', $cond, $matches)) {
                 if (array_filter($keys, 'is_int') !== $keys) {
@@ -532,7 +533,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
                 }
                 // サブビルダにも適用する
                 foreach ($this->subbuilders as $subkey => $subbuilder) {
-                    $subbuilder->$submethod([$cond => $param]);
+                    $subbuilder->$subtype([$cond => $param]);
                 }
                 return $subcond;
             }
@@ -543,7 +544,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
                 }
                 list($subkey, $subcolumn) = explode('/', $cond, 2);
                 if (isset($this->subbuilders[$subkey])) {
-                    $this->subbuilders[$subkey]->$submethod([$subcolumn => $param]);
+                    $this->subbuilders[$subkey]->$subtype([$subcolumn => $param]);
                 }
                 return false;
             }
@@ -552,22 +553,26 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
                 if (count($keys) > 1) {
                     return false;
                 }
-                $this->subbuilders[$cond]->$submethod($param);
+                $this->subbuilders[$cond]->$subtype($param);
                 return false;
             }
-            // サブクエリビルダ(subexists)
-            if ($param instanceof QueryBuilder && $param->getSubmethod() !== null) {
-                foreach ($froms as $from) {
-                    // 数値キーなら最初のキーなのでいきなり使う
-                    if (is_int($cond)) {
+            // サブクエリビルダ(subexists, submax, sub...)
+            if ($param instanceof QueryBuilder && ($submethod = $param->getSubmethod()) !== null) {
+                // "P" or "P:fkey" or "colname|P" or "colname|P:fkey"
+                $conds = is_bool($submethod) ? "|$cond" : $cond;
+                $colname = preg_splice('#\|([a-z0-9_]+)(:([a-z0-9_]+))?#ui', '', $conds, $matches);
+                $falias = $matches[1] ?? null;
+                $fkname = $matches[3] ?? null;
+                if (array_key_exists($falias, $froms)) {
+                    if ($param->setSubwhere($froms[$falias]['table'], $froms[$falias]['alias'], $fkname)) {
+                        return is_string($submethod) ? $colname : true;
+                    }
+                }
+                else {
+                    foreach ($froms as $from) {
                         if ($param->setSubwhere($from['table'], $from['alias'])) {
                             return null;
                         }
-                    }
-                    // 文字列はエイリアスが一致する場合に使う
-                    if (is_string($cond) && ltrim($cond, '!') === $from['alias']) {
-                        $param->setSubwhere($from['table'], $from['alias']);
-                        return true;
                     }
                 }
             }

@@ -999,6 +999,105 @@ INNER JOIN foreign_c2 ON (foreign_c2.cid = foreign_p.id) AND (condition = 2)",
     /**
      * @dataProvider provideQueryBuilder
      * @param QueryBuilder $builder
+     * @param Database $database
+     */
+    function test_column_join_subcondition($builder, $database)
+    {
+        $qi = function ($str) use ($database) {
+            return $database->getPlatform()->quoteSingleIdentifier($str);
+        };
+
+        $this->assertQuery("SELECT * FROM foreign_p P
+INNER JOIN foreign_c1 C1 ON
+(EXISTS (SELECT * FROM foreign_c1 WHERE foreign_c1.id = P.id))
+INNER JOIN foreign_c2 C2 ON
+C2.cid IN (SELECT MAX(foreign_c2.cid) AS {$qi('foreign_c2.cid@max')} FROM foreign_c2 WHERE foreign_c2.cid = P.id)
+WHERE
+((EXISTS (SELECT * FROM foreign_c1 WHERE foreign_c1.id = P.id)))
+AND
+(C2.cid IN (SELECT MAX(foreign_c2.cid) AS {$qi('foreign_c2.cid@max')} FROM foreign_c2 WHERE foreign_c2.cid = P.id))
+",
+            $builder->column([
+                'foreign_p P' => [
+                    '+foreign_c1 C1:' => [
+                        [
+                            $database->subexists('foreign_c1'),
+                        ]
+                    ],
+                    '+foreign_c2 C2:' => [
+                        [
+                            'C2.cid' => $database->submax('foreign_c2.cid'),
+                        ]
+                    ],
+                ],
+            ])->where([
+                $database->subexists('foreign_c1'),
+                'C2.cid' => $database->submax('foreign_c2.cid'),
+            ])
+        );
+
+        $this->assertQuery("SELECT * FROM foreign_p P
+INNER JOIN foreign_c1 C1 ON
+(EXISTS (SELECT * FROM foreign_c1 WHERE foreign_c1.id = P.id))
+INNER JOIN foreign_c2 C2 ON
+C2.cid IN (SELECT MAX(foreign_c2.cid) AS {$qi('foreign_c2.cid@max')} FROM foreign_c2 WHERE foreign_c2.cid = P.id)
+WHERE
+(C2.cid IN (SELECT MAX(foreign_c2.cid) AS {$qi('foreign_c2.cid@max')} FROM foreign_c2 WHERE foreign_c2.cid = P.id))
+AND
+((EXISTS (SELECT * FROM foreign_c1 WHERE foreign_c1.id = P.id)))
+",
+            $builder->column([
+                'foreign_p P' => [
+                    '+foreign_c1 C1:' => [
+                        [
+                            'P' => $database->subexists('foreign_c1'),
+                        ]
+                    ],
+                    '+foreign_c2 C2:' => [
+                        [
+                            'C2.cid|P' => $database->submax('foreign_c2.cid'),
+                        ]
+                    ],
+                ],
+            ])->where([
+                'P'        => $database->subexists('foreign_c1'),
+                'C2.cid|P' => $database->submax('foreign_c2.cid'),
+            ])
+        );
+
+        $this->assertQuery("SELECT * FROM foreign_s S
+INNER JOIN foreign_sc SC1 ON
+(EXISTS (SELECT * FROM foreign_sc WHERE foreign_sc.s_id1 = S.id))
+INNER JOIN foreign_sc SC2 ON
+SC2.id IN (SELECT MAX(foreign_sc.id) AS {$qi('foreign_sc.id@max')} FROM foreign_sc WHERE foreign_sc.s_id2 = S.id)
+WHERE
+(SC2.id IN (SELECT MAX(foreign_sc.id) AS {$qi('foreign_sc.id@max')} FROM foreign_sc WHERE foreign_sc.s_id2 = S.id))
+AND
+((EXISTS (SELECT * FROM foreign_sc WHERE foreign_sc.s_id1 = S.id)))
+",
+            $builder->column([
+                'foreign_s S' => [
+                    '+foreign_sc SC1:' => [
+                        [
+                            'S:fk_sc1' => $database->subexists('foreign_sc'),
+                        ]
+                    ],
+                    '+foreign_sc SC2:' => [
+                        [
+                            'SC2.id|S:fk_sc2' => $database->submax('foreign_sc.id'),
+                        ]
+                    ],
+                ],
+            ])->where([
+                'S:fk_sc1'        => $database->subexists('foreign_sc'),
+                'SC2.id|S:fk_sc2' => $database->submax('foreign_sc.id'),
+            ])
+        );
+    }
+
+    /**
+     * @dataProvider provideQueryBuilder
+     * @param QueryBuilder $builder
      */
     function test_wheres($builder)
     {
