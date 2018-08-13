@@ -1568,18 +1568,19 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
             return $this->andWhere($condition);
         }
 
-        $params = [];
-        $condition = $this->database->whereInto($condition, $params);
-        if (empty($condition)) {
+        $qb = new QueryBuilder($this->database);
+        $qb->sqlParts = $this->sqlParts;
+        $qb->where($condition);
+        if (empty($qb->sqlParts['where'])) {
             throw new \InvalidArgumentException("can't nocondition join $table<->$fromTable.");
         }
-        $this->addParam($params, 'join');
+        $this->addParam($qb->params, 'join');
 
         $this->sqlParts['join'][$fromAlias][] = [
             'type'      => $type,
             'table'     => $table,
             'alias'     => $alias,
-            'condition' => implode(' AND ', Adhoc::wrapParentheses($condition)),
+            'condition' => implode(' AND ', Adhoc::wrapParentheses($qb->sqlParts['where'])),
         ];
 
         return $this->_dirty();
