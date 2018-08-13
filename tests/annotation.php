@@ -49,6 +49,8 @@ namespace Annotation;
  * @method   \ryunosuke\Test\Gateway\TableGateway noprimary($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
  * @property \ryunosuke\Test\Gateway\TableGateway $nullable
  * @method   \ryunosuke\Test\Gateway\TableGateway nullable($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
+ * @property \ryunosuke\Test\Gateway\TableGateway $oprlog
+ * @method   \ryunosuke\Test\Gateway\TableGateway oprlog($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
  * @property \ryunosuke\Test\Gateway\TableGateway $paging
  * @method   \ryunosuke\Test\Gateway\TableGateway paging($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
  * @property \ryunosuke\Test\Gateway\Article $t_article
@@ -113,6 +115,8 @@ trait Database{}
  * @method   $this noprimary($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
  * @property \ryunosuke\Test\Gateway\TableGateway $nullable
  * @method   $this nullable($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
+ * @property \ryunosuke\Test\Gateway\TableGateway $oprlog
+ * @method   $this oprlog($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
  * @property \ryunosuke\Test\Gateway\TableGateway $paging
  * @method   $this paging($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
  * @property \ryunosuke\Test\Gateway\Article $t_article

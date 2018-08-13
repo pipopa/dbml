@@ -54,7 +54,7 @@
 		<span class="label label-info"></span>
 		<span class="label label-info"></span>
 		<span class="label label-deprecated"></span>
-        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction/Logger.php#L8-L179" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction/Logger.php#L8-L191" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                     	</div>
 
 	<h2>class <span class="category-name">ryunosuke\dbml\Transaction\Logger</span></h2>
@@ -71,6 +71,12 @@ $db = new Database($connection, [
 $db = new Database($connection, [
     'logger' =&gt; new Logger([
         'destination' =&gt; '/var/log/query.log'
+    ]),
+]);
+# クロージャでログる
+$db = new Database($connection, [
+    'logger' =&gt; new Logger([
+        'destination' =&gt; function ($log) { echo $log; }
     ]),
 ]);
 </code></pre>
@@ -117,7 +123,7 @@ $db = new Database($connection, [
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction/Logger.php#L47-L61" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction/Logger.php#L53-L67" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Transaction\Logger::getDefaultOptions()" tabindex="-1" class="structure-title ">
                         getDefaultOptions						<small>()</small>
@@ -169,7 +175,7 @@ $db = new Database($connection, [
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction/Logger.php#L63-L78" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction/Logger.php#L69-L84" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Transaction\Logger::__construct()" tabindex="-1" class="structure-title ">
                         __construct						<small>($destination = null, $options = [])</small>
@@ -221,7 +227,7 @@ $db = new Database($connection, [
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-protected">protected</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction/Logger.php#L113-L130" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction/Logger.php#L125-L142" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Transaction\Logger::_escape()" tabindex="-1" class="structure-title ">
                         _escape						<small>($sql, $params)</small>
@@ -270,7 +276,7 @@ $db = new Database($connection, [
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-protected">protected</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction/Logger.php#L132-L135" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction/Logger.php#L144-L147" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Transaction\Logger::_keyvalue()" tabindex="-1" class="structure-title ">
                         _keyvalue						<small>($sql, $params)</small>
@@ -319,7 +325,7 @@ $db = new Database($connection, [
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction/Logger.php#L137-L165" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction/Logger.php#L149-L177" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Transaction\Logger::log()" tabindex="-1" class="structure-title ">
                         log						<small>($sql, $params = [])</small>
@@ -368,7 +374,7 @@ $db = new Database($connection, [
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction/Logger.php#L167-L174" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction/Logger.php#L179-L186" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Transaction\Logger::getLog()" tabindex="-1" class="structure-title ">
                         getLog						<small>()</small>
@@ -407,7 +413,7 @@ $db = new Database($connection, [
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction/Logger.php#L176-L176" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction/Logger.php#L188-L188" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Transaction\Logger::startQuery()" tabindex="-1" class="structure-title ">
                         startQuery						<small>($sql, $params = null, $types = null)</small>
@@ -475,7 +481,7 @@ $db = new Database($connection, [
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction/Logger.php#L178-L178" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction/Logger.php#L190-L190" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Transaction\Logger::stopQuery()" tabindex="-1" class="structure-title ">
                         stopQuery						<small>()</small>

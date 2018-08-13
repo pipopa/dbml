@@ -9290,6 +9290,8 @@ $db-&gt;insert('t_article', [
 </div>
                 	<h2>method<a href="ryunosuke-dbml-Entity-Entity$typespace.html#ryunosuke\dbml\Entity\Entity::__construct()"> ryunosuke\dbml\Entity\Entity::__construct()</a></h2>
 	<div class="description"></div>
+    	<h2>method<a href="ryunosuke-dbml-Entity-Entity$typespace.html#ryunosuke\dbml\Entity\Entity::__call()"> ryunosuke\dbml\Entity\Entity::__call()</a></h2>
+	<div class="description"></div>
     	<h2>method<a href="ryunosuke-dbml-Entity-Entity$typespace.html#ryunosuke\dbml\Entity\Entity::getDatabase()"> ryunosuke\dbml\Entity\Entity::getDatabase()</a></h2>
 	<div class="description"></div>
     	<h2>method<a href="ryunosuke-dbml-Entity-Entity$typespace.html#ryunosuke\dbml\Entity\Entity::offsetExists()"> ryunosuke\dbml\Entity\Entity::offsetExists()</a></h2>
@@ -9710,14 +9712,14 @@ $exists2 = isset($gw['undefined_column']); // false
 </div>
     	<h2>method<a href="ryunosuke-dbml-Gateway-TableGateway$typespace.html#ryunosuke\dbml\Gateway\TableGateway::offsetGet()"> ryunosuke\dbml\Gateway\TableGateway::offsetGet()</a></h2>
 	<div class="description"><p>なにがしかの値を取得する</p>
-<p>$offset が数値・配列なら主キーとみなして行自体を返す。<br />
+<p>$offset が数値・配列なら主キーとみなして pk する。<br />
 $offset が半角英数字ならカラムとみなしてカラム値を返す。<br />
 $offset がテーブル記法ならその記法が適用された自分自身を返す。<br />
 テーブル記法のうち、 [condition] だけであれば <code>[]</code> が省略可能となる。</p>
-<pre><code class="language-php"># 行自体を返す
-$row = $gw[1];         // 単一主キー値1のレコードを返す
-$row = $gw[[1, 2]];    // 複合主キー値[1, 2]のレコードを返す
-$row = $gw-&gt;find($pk); // 上2つは実質的にこれの糖衣構文
+<pre><code class="language-php"># 数値・配列なら pk (where) と同義
+$row = $gw[1]-&gt;tuple();      // 単一主キー値1のレコードを返す
+$row = $gw[[1, 2]]-&gt;tuple(); // 複合主キー値[1, 2]のレコードを返す
+$row = $gw-&gt;find($pk);       // 上2つは実質的にこれの糖衣構文
 
 # カラム値を返す
 $title = $gw['article_title'];
@@ -9757,10 +9759,11 @@ $gw[[1, 2]] = [$dataarray]; // $gw-&gt;modify([$dataarray] + [pcol1 =&gt; 1, pco
 
 # 記事のタイトルを設定する
 $gw['article_title'] = 'タイトル';
-// ただし、WHERE を指定しないと全行更新され大事故になるので通常はこのように何らかで縛って使用する
+// ただし、WHERE を指定しないと全行更新され大事故になるので通常は下記のように何らかで縛って使用する
 $gw-&gt;scope('scopename')['article_title'] = 'タイトル';
 $gw['id: 1']['article_title'] = 'タイトル';
 $gw-&gt;pk(1)['article_title'] = 'タイトル';
+$gw[1]['article_title'] = 'タイトル';
 </code></pre>
 </div>
     	<h2>method<a href="ryunosuke-dbml-Gateway-TableGateway$typespace.html#ryunosuke\dbml\Gateway\TableGateway::offsetUnset()"> ryunosuke\dbml\Gateway\TableGateway::offsetUnset()</a></h2>
@@ -10152,10 +10155,6 @@ $gw-&gt;uk('mail1@address', 'mail2@address');
 // SELECT * FROM t_user WHERE mailaddress = 'mail1@address' OR mailaddress = 'mail2@address'
 </code></pre>
 </div>
-    	<h2>method<a href="ryunosuke-dbml-Gateway-TableGateway$typespace.html#ryunosuke\dbml\Gateway\TableGateway::exists()"> ryunosuke\dbml\Gateway\TableGateway::exists()</a></h2>
-	<div class="description"><p>レコードが存在するか返す</p>
-<p>Gateway 版の <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::exists()' data-type-array='0' data-description='Database::exists()'>Database::exists()</tag_link> 。</p>
-</div>
     	<h2>method<a href="ryunosuke-dbml-Gateway-TableGateway$typespace.html#ryunosuke\dbml\Gateway\TableGateway::count()"> ryunosuke\dbml\Gateway\TableGateway::count()</a></h2>
 	<div class="description"><p>レコード件数を返す</p>
 <p>件数取得は下記の2種類の方法が存在する。</p>
@@ -10180,9 +10179,17 @@ $gw-&gt;uk('mail1@address', 'mail2@address');
     	<h2>method<a href="ryunosuke-dbml-Gateway-TableGateway$typespace.html#ryunosuke\dbml\Gateway\TableGateway::avg()"> ryunosuke\dbml\Gateway\TableGateway::avg()</a></h2>
 	<div class="description"><p>駆動表を省略できる <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::avg()' data-type-array='0' data-description='Database::avg()'>Database::avg()</tag_link></p>
 </div>
+    	<h2>method<a href="ryunosuke-dbml-Gateway-TableGateway$typespace.html#ryunosuke\dbml\Gateway\TableGateway::chunk()"> ryunosuke\dbml\Gateway\TableGateway::chunk()</a></h2>
+	<div class="description"><p>分割して sequence してレコードジェネレータを返す</p>
+<p>Gateway 版の <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::chunk()' data-type-array='0' data-description='QueryBuilder::chunk()'>QueryBuilder::chunk()</tag_link> 。</p>
+</div>
     	<h2>method<a href="ryunosuke-dbml-Gateway-TableGateway$typespace.html#ryunosuke\dbml\Gateway\TableGateway::getEmptyRecord()"> ryunosuke\dbml\Gateway\TableGateway::getEmptyRecord()</a></h2>
 	<div class="description"><p>空レコードを返す</p>
 <p>Gateway 版の <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::getEmptyRecord()' data-type-array='0' data-description='Database::getEmptyRecord()'>Database::getEmptyRecord()</tag_link> 。</p>
+</div>
+    	<h2>method<a href="ryunosuke-dbml-Gateway-TableGateway$typespace.html#ryunosuke\dbml\Gateway\TableGateway::gather()"> ryunosuke\dbml\Gateway\TableGateway::gather()</a></h2>
+	<div class="description"><p>レコード情報をかき集める</p>
+<p>Gateway 版の <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::gather()' data-type-array='0' data-description='Database::gather()'>Database::gather()</tag_link> 。</p>
 </div>
     	<h2>method<a href="ryunosuke-dbml-Gateway-TableGateway$typespace.html#ryunosuke\dbml\Gateway\TableGateway::getDefaultIteration()"> ryunosuke\dbml\Gateway\TableGateway::getDefaultIteration()</a></h2>
 	<div class="description"><p>デフォルトイテレーションモードを返す</p>
@@ -10376,6 +10383,30 @@ $row = $gw-&gt;find([1, 2], ['column1', 'column2']);
     	<h2>method<a href="ryunosuke-dbml-Gateway-TableGateway$typespace.html#ryunosuke\dbml\Gateway\TableGateway::subavg()"> ryunosuke\dbml\Gateway\TableGateway::subavg()</a></h2>
 	<div class="description"><p>駆動表を省略できる <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::subavg()' data-type-array='0' data-description='Database::subavg()'>Database::subavg()</tag_link></p>
 </div>
+    	<h2>method<a href="ryunosuke-dbml-Gateway-TableGateway$typespace.html#ryunosuke\dbml\Gateway\TableGateway::exists()"> ryunosuke\dbml\Gateway\TableGateway::exists()</a></h2>
+	<div class="description"><p>駆動表を省略できる <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::exists()' data-type-array='0' data-description='Database::exists()'>Database::exists()</tag_link></p>
+</div>
+    	<h2>method<a href="ryunosuke-dbml-Gateway-TableGateway$typespace.html#ryunosuke\dbml\Gateway\TableGateway::selectExists()"> ryunosuke\dbml\Gateway\TableGateway::selectExists()</a></h2>
+	<div class="description"><p>駆動表を省略できる <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::selectExists()' data-type-array='0' data-description='Database::selectExists()'>Database::selectExists()</tag_link></p>
+</div>
+    	<h2>method<a href="ryunosuke-dbml-Gateway-TableGateway$typespace.html#ryunosuke\dbml\Gateway\TableGateway::selectNotExists()"> ryunosuke\dbml\Gateway\TableGateway::selectNotExists()</a></h2>
+	<div class="description"><p>駆動表を省略できる <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::selectNotExists()' data-type-array='0' data-description='Database::selectNotExists()'>Database::selectNotExists()</tag_link></p>
+</div>
+    	<h2>method<a href="ryunosuke-dbml-Gateway-TableGateway$typespace.html#ryunosuke\dbml\Gateway\TableGateway::selectCount()"> ryunosuke\dbml\Gateway\TableGateway::selectCount()</a></h2>
+	<div class="description"><p>駆動表を省略できる <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::selectCount()' data-type-array='0' data-description='Database::selectCount()'>Database::selectCount()</tag_link></p>
+</div>
+    	<h2>method<a href="ryunosuke-dbml-Gateway-TableGateway$typespace.html#ryunosuke\dbml\Gateway\TableGateway::selectMin()"> ryunosuke\dbml\Gateway\TableGateway::selectMin()</a></h2>
+	<div class="description"><p>駆動表を省略できる <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::selectMin()' data-type-array='0' data-description='Database::selectMin()'>Database::selectMin()</tag_link></p>
+</div>
+    	<h2>method<a href="ryunosuke-dbml-Gateway-TableGateway$typespace.html#ryunosuke\dbml\Gateway\TableGateway::selectMax()"> ryunosuke\dbml\Gateway\TableGateway::selectMax()</a></h2>
+	<div class="description"><p>駆動表を省略できる <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::selectMax()' data-type-array='0' data-description='Database::selectMax()'>Database::selectMax()</tag_link></p>
+</div>
+    	<h2>method<a href="ryunosuke-dbml-Gateway-TableGateway$typespace.html#ryunosuke\dbml\Gateway\TableGateway::selectSum()"> ryunosuke\dbml\Gateway\TableGateway::selectSum()</a></h2>
+	<div class="description"><p>駆動表を省略できる <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::selectSum()' data-type-array='0' data-description='Database::selectSum()'>Database::selectSum()</tag_link></p>
+</div>
+    	<h2>method<a href="ryunosuke-dbml-Gateway-TableGateway$typespace.html#ryunosuke\dbml\Gateway\TableGateway::selectAvg()"> ryunosuke\dbml\Gateway\TableGateway::selectAvg()</a></h2>
+	<div class="description"><p>駆動表を省略できる <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::selectAvg()' data-type-array='0' data-description='Database::selectAvg()'>Database::selectAvg()</tag_link></p>
+</div>
     	<h2>method<a href="ryunosuke-dbml-Gateway-TableGateway$typespace.html#ryunosuke\dbml\Gateway\TableGateway::insertSelect()"> ryunosuke\dbml\Gateway\TableGateway::insertSelect()</a></h2>
 	<div class="description"><p>駆動表を省略できる <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::insertSelect()' data-type-array='0' data-description='Database::insertSelect()'>Database::insertSelect()</tag_link></p>
 </div>
@@ -10406,6 +10437,9 @@ $row = $gw-&gt;find([1, 2], ['column1', 'column2']);
     	<h2>method<a href="ryunosuke-dbml-Gateway-TableGateway$typespace.html#ryunosuke\dbml\Gateway\TableGateway::destroy()"> ryunosuke\dbml\Gateway\TableGateway::destroy()</a></h2>
 	<div class="description"><p>駆動表を省略できる <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::destroy()' data-type-array='0' data-description='Database::destroy()'>Database::destroy()</tag_link></p>
 </div>
+    	<h2>method<a href="ryunosuke-dbml-Gateway-TableGateway$typespace.html#ryunosuke\dbml\Gateway\TableGateway::reduce()"> ryunosuke\dbml\Gateway\TableGateway::reduce()</a></h2>
+	<div class="description"><p>駆動表を省略できる <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::reduce()' data-type-array='0' data-description='Database::reduce()'>Database::reduce()</tag_link></p>
+</div>
     	<h2>method<a href="ryunosuke-dbml-Gateway-TableGateway$typespace.html#ryunosuke\dbml\Gateway\TableGateway::upsert()"> ryunosuke\dbml\Gateway\TableGateway::upsert()</a></h2>
 	<div class="description"><p>駆動表を省略できる <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::upsert()' data-type-array='0' data-description='Database::upsert()'>Database::upsert()</tag_link></p>
 </div>
@@ -10432,6 +10466,9 @@ $row = $gw-&gt;find([1, 2], ['column1', 'column2']);
 </div>
     	<h2>method<a href="ryunosuke-dbml-Gateway-TableGateway$typespace.html#ryunosuke\dbml\Gateway\TableGateway::destroyOrThrow()"> ryunosuke\dbml\Gateway\TableGateway::destroyOrThrow()</a></h2>
 	<div class="description"><p><tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Gateway\TableGateway::destroy()' data-type-array='0' data-description='destroy()'>destroy()</tag_link> の例外送出版</p>
+</div>
+    	<h2>method<a href="ryunosuke-dbml-Gateway-TableGateway$typespace.html#ryunosuke\dbml\Gateway\TableGateway::reduceOrThrow()"> ryunosuke\dbml\Gateway\TableGateway::reduceOrThrow()</a></h2>
+	<div class="description"><p><tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Gateway\TableGateway::reduce()' data-type-array='0' data-description='reduce()'>reduce()</tag_link> の例外送出版</p>
 </div>
     	<h2>method<a href="ryunosuke-dbml-Gateway-TableGateway$typespace.html#ryunosuke\dbml\Gateway\TableGateway::upsertOrThrow()"> ryunosuke\dbml\Gateway\TableGateway::upsertOrThrow()</a></h2>
 	<div class="description"><p><tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Gateway\TableGateway::upsert()' data-type-array='0' data-description='upsert()'>upsert()</tag_link> の例外送出版</p>
@@ -10732,6 +10769,10 @@ $row = $gw-&gt;find([1, 2], ['column1', 'column2']);
 </div>
     	<h2>method<a href="ryunosuke-dbml-Metadata-CompatiblePlatform$typespace.html#ryunosuke\dbml\Metadata\CompatiblePlatform::commentize()"> ryunosuke\dbml\Metadata\CompatiblePlatform::commentize()</a></h2>
 	<div class="description"><p>与えられた文をコメント化する</p>
+</div>
+    	<h2>method<a href="ryunosuke-dbml-Metadata-CompatiblePlatform$typespace.html#ryunosuke\dbml\Metadata\CompatiblePlatform::convertMergeData()"> ryunosuke\dbml\Metadata\CompatiblePlatform::convertMergeData()</a></h2>
+	<div class="description"><p>挿入データと更新データで更新用カラム列を生成する</p>
+<p>mysql の VALUES 構文のために存在している</p>
 </div>
     	<h2>method<a href="ryunosuke-dbml-Metadata-CompatiblePlatform$typespace.html#ryunosuke\dbml\Metadata\CompatiblePlatform::convertSelectExistsQuery()"> ryunosuke\dbml\Metadata\CompatiblePlatform::convertSelectExistsQuery()</a></h2>
 	<div class="description"><p>EXISTS 構文を SELECT で使用できるようにする</p>
@@ -11146,7 +11187,7 @@ $that-&gt;setProvider(['method'] =&gt; [1, 2, 3]);
 </ul>
 <h4>AS Alias</h4>
 <p>テーブルにエイリアスをつける。<br />
-<code>AS</code> は省略して <code>tablename T</code> でも良い</p>
+<code>AS</code> は省略して <code>tablename T</code> でも良い。</p>
 <h4>.col1, col2 AS C2</h4>
 <p>取得するカラムリストを表す。カラムは直近のテーブル（エイリアス）で修飾される。<br />
 カンマ区切りで複数指定可能。<br />
@@ -11178,7 +11219,10 @@ $that-&gt;setProvider(['method'] =&gt; [1, 2, 3]);
 <p>なお、<strong>テーブル記法に決してユーザ入力を埋め込んではならない</strong>。<br />
 (pkval) などは埋め込みたくなるが、テーブル記法は値のエスケープなどを一切行わないので致命的な脆弱性となりうる。</p>
 </div>
-            	<h2>property<a href="ryunosuke-dbml-Query-Expression-TableDescriptor$typespace.html#ryunosuke\dbml\Query\Expression\TableDescriptor::$descriptor"> ryunosuke\dbml\Query\Expression\TableDescriptor::$descriptor</a></h2>
+        	<h2>classconstant<a href="ryunosuke-dbml-Query-Expression-TableDescriptor$typespace.html#ryunosuke\dbml\Query\Expression\TableDescriptor::META_CHARACTORS"> ryunosuke\dbml\Query\Expression\TableDescriptor::META_CHARACTORS</a></h2>
+	<div class="description"><p>テーブル記法を表すメタ文字</p>
+</div>
+        	<h2>property<a href="ryunosuke-dbml-Query-Expression-TableDescriptor$typespace.html#ryunosuke\dbml\Query\Expression\TableDescriptor::$descriptor"> ryunosuke\dbml\Query\Expression\TableDescriptor::$descriptor</a></h2>
 	<div class="description"></div>
     	<h2>property<a href="ryunosuke-dbml-Query-Expression-TableDescriptor$typespace.html#ryunosuke\dbml\Query\Expression\TableDescriptor::$joinsign"> ryunosuke\dbml\Query\Expression\TableDescriptor::$joinsign</a></h2>
 	<div class="description"></div>
@@ -11842,6 +11886,7 @@ $qb-&gt;column('table_name')-&gt;cast("array");
 <tr><td align="right">23</td><td align="left"><code>new PhpExpression(function($cname){}, 'cname')</code></td><td align="left">PhpExpression に第2引数を指定すると列の値として <tag_link data-kind='fqsen' data-type-category='class' data-type-fqsen='ryunosuke\dbml\Query\Expression\PhpExpression' data-type-array='0' data-description='PhpExpression'>PhpExpression</tag_link> でラップされたクロージャの返り値を返す。引数は<strong>第2引数で指定された列の値</strong></td></tr>
 <tr><td align="right">24</td><td align="left"><code>function($cname = 'cname'){}</code></td><td align="left">上と同じ。引数にデフォルト値が指定されている場合はそのデフォルト値が上で言う「指定された列」に相当する。</td></tr>
 <tr><td align="right">25</td><td align="left"><code>['cname' =&gt; function($value = null){}]</code></td><td align="left">上と同じ。引数のデフォルト値が null の場合はキーの値が使用される</td></tr>
+<tr><td align="right">26</td><td align="left"><code>function(){return function($v){return $v;};}</code></td><td align="left">クロージャの亜種。クロージャを返すクロージャはそのままクロージャとして活きるのでメソッドのような扱いにできる</td></tr>
 <tr><td align="right">30</td><td align="left"><code>Gateway object</code></td><td align="left">Gateway の表すテーブルとの <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::subtable()' data-type-array='0' data-description='Database::subtable()'>Database::subtable()</tag_link> 相当の動作</td></tr>
 <tr><td align="right">31</td><td align="left"><code>['+alias' =&gt; Gateway object]</code></td><td align="left">Gateway の表すテーブルとの JOIN を表す</td></tr>
 <tr><td align="right">50</td><td align="left"><code>'TableDescriptor'</code></td><td align="left">「テーブル名」を書く場所にはテーブル記法が使用できる（駆動表）</td></tr>
@@ -11909,12 +11954,21 @@ $qb-&gt;column([
     ],
 ]);
 
-# No.20 ～： PhpExpression（他の用法は PhpExpression クラスのリファレンスを参照）
+# No.20 ～ 25： PhpExpression（他の用法は PhpExpression クラスのリファレンスを参照）
 $qb-&gt;column([
     't_article' =&gt; [
         'phpval' =&gt; new PhpExpression('hoge'), // "hoge" という文字列を取得
     ],
 ]);
+# No.26： クロージャを返すクロージャ
+$tuple = $qb-&gt;column([
+    't_article.*' =&gt; [
+        // クロージャ内の $this は行そのものを表す ArrayAccess なオブジェクトで bind される
+        'func' =&gt; function(){return function($prefix){return $prefix . $this['name'];};},
+    ],
+])-&gt;tuple();
+// 'func' にはクロージャが格納されているので呼び出しが可能
+$tuple['func']('prefix-'); // =&gt; 'prefix-hogehoge'
 
 # No.30, 31：配列で指定する箇所は Gateway も指定できる
 $qb-&gt;column([
@@ -12031,6 +12085,7 @@ $qb-&gt;from('t_from')-&gt;innerJoinForeignOn('t_join', ['hoge = fuga'], 'Foreig
 <tr><th align="right">No</th><th align="left">where</th><th align="left">説明</th></tr>
 </thead>
 <tbody>
+<tr><td align="right">30</td><td align="left"><code>['' =&gt; 123]</code></td><td align="left">キーを空文字にすると駆動表の主キーを表す</td></tr>
 <tr><td align="right">31</td><td align="left"><code>['C' =&gt; 'childwhere']</code></td><td align="left">サブビルダの名前をキーにして配列を渡すと「その子供ビルダの where」を意味する</td></tr>
 <tr><td align="right">32</td><td align="left"><code>['C/childwhere']</code></td><td align="left">サブビルダの名前を "/" で区切ると「その子供ビルダの where」を意味する</td></tr>
 <tr><td align="right">33</td><td align="left"><code>['*.delete_flg' =&gt; 1]</code></td><td align="left">テーブル部分に <code>*</code> を指定すると「あらゆるテーブルのそのカラム」を意味する</td></tr>
@@ -12039,6 +12094,12 @@ $qb-&gt;from('t_from')-&gt;innerJoinForeignOn('t_join', ['hoge = fuga'], 'Foreig
 </table>
 <pre><code class="language-php"># 引数配列内では AND、引数間では OR される
 $qb-&gt;where(['hoge = 1', 'fuga = ?' =&gt; 1], ['piyo' =&gt; 1]); // WHERE (hoge = 1 AND fuga = 1) OR (piyo = 1)
+
+# No.30（空キーは駆動表の主キーを表す）
+$qb-&gt;column('t_article')-&gt;where(['' =&gt; 123]);            // WHERE article_id = 123
+$qb-&gt;column('t_article')-&gt;where(['' =&gt; [123, 456]]);     // WHERE article_id IN (123, 456)
+$qb-&gt;column('t_multi')-&gt;where(['' =&gt; [123, 456]]);       // WHERE id1 = 123 AND id2 = 456
+$qb-&gt;column('t_multi')-&gt;where(['' =&gt; [[1, 2], [3, 4]]]); // WHERE (id1 = 1 AND id2 = 2) OR (id1 = 3 AND id2 = 4)
 
 # No.31, 32（糖衣構文であり、できることは同じ）
 $qb-&gt;column('t_parent P/t_child C')-&gt;where([
@@ -12105,6 +12166,10 @@ $qb-&gt;orderBy('col', 'DESC'); // ORDER BY col DESC
 $qb-&gt;orderBy(['colA' =&gt; 'ASC', 'colB' =&gt; false]);  // ORDER BY colA ASC, colB DESC
 $qb-&gt;orderBy(['colA' =&gt; true, 'colB' =&gt; 'DESC']);  // ORDER BY colA ASC, colB DESC
 $qb-&gt;orderBy(['colA', 'colB' =&gt; false]);           // ORDER BY colA ASC, colB DESC
+
+# [+col, -col] 形式
+$qb-&gt;orderBy('+colA');            // ORDER BY colA ASC
+$qb-&gt;orderBy(['-colA', '+colB']); // ORDER BY colA DESC, colB ASC
 
 # [col, col, col], ORD 形式
 $qb-&gt;orderBy(['colA', 'colB', 'colC'], false);  // ORDER BY colA DESC, colB DESC, colC DESC
@@ -12297,6 +12362,27 @@ $qb-&gt;column('t_article')-&gt;where(['status' =&gt; 'active'])-&gt;countize();
     	<h2>method<a href="ryunosuke-dbml-Query-QueryBuilder$typespace.html#ryunosuke\dbml\Query\QueryBuilder::sequence()"> ryunosuke\dbml\Query\QueryBuilder::sequence()</a></h2>
 	<div class="description"><p>new Sequencer へのプロキシメソッド</p>
 <p>引数が与えられている場合は <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\Pagination\Sequencer::sequence()' data-type-array='0' data-description='Sequencer::sequence()'>Sequencer::sequence()</tag_link> も同時に行う。</p>
+</div>
+    	<h2>method<a href="ryunosuke-dbml-Query-QueryBuilder$typespace.html#ryunosuke\dbml\Query\QueryBuilder::chunk()"> ryunosuke\dbml\Query\QueryBuilder::chunk()</a></h2>
+	<div class="description"><p>分割して sequence してレコードジェネレータを返す</p>
+<p>例えば 150 件のレコードに対して chunk: 10 するとクエリを 15 回に分けて実行する。<br />
+そのそれぞれのクエリは別々であり、php 側 にも db 側にもバッファは作られないためメモリ効率が非常に良い（そのかわりそこまで高速ではない）。</p>
+<p>一般的な実装と違い、下記の制限がある。</p>
+<ul>
+<li>数値主キーか、数値的な NOT NULL ユニークキーを持っている必要がある</li>
+<li>あらかじめ設定していても ORDER BY, LIMIT は無視される</li>
+</ul>
+<p>そのかわり chunk 内でレコードの更新を行ってもズレが発生しないようになっている。</p>
+<pre><code class="language-php">// 100 件ずつループする
+foreach ($qb-&gt;where(['status' =&gt; 'active'])-&gt;chunk(100) as $row) {
+    // do something
+    var_dump($row['id']);
+}
+// SELECT * FROM t_table WHERE (status = "active") AND (id &gt; 0) ORDER BY id ASC LIMIT 100
+// SELECT * FROM t_table WHERE (status = "active") AND (id &gt; 100) ORDER BY id ASC LIMIT 100
+// SELECT * FROM t_table WHERE (status = "active") AND (id &gt; 200) ORDER BY id ASC LIMIT 100
+// ・・・のようなクエリが順次投げられる（Generator で返されるので分割されていることは意識しなくて良い）
+</code></pre>
 </div>
     	<h2>method<a href="ryunosuke-dbml-Query-QueryBuilder$typespace.html#ryunosuke\dbml\Query\QueryBuilder::postselect()"> ryunosuke\dbml\Query\QueryBuilder::postselect()</a></h2>
 	<div class="description"><p>行フェッチ後に QueryBuilder 特有の処理を行う</p>
@@ -13007,6 +13093,12 @@ $db = new Database($connection, [
         'destination' =&gt; '/var/log/query.log'
     ]),
 ]);
+# クロージャでログる
+$db = new Database($connection, [
+    'logger' =&gt; new Logger([
+        'destination' =&gt; function ($log) { echo $log; }
+    ]),
+]);
 </code></pre>
 <p>Transaction 名前空間に居るのは少し小細工をしているから（癒着している）＋「クエリログは膨大なのでログらない（RDBMS のログに任せる）がトランザクションログはアプリで取っておきたい」という要件が多いため。<br />
 別にグローバルなロガーとして設定しても問題はない。</p>
@@ -13204,10 +13296,15 @@ $db-&gt;selectArray('tablename'); // 上記で false を設定してるので自
 </div>
     	<h2>method<a href="ryunosuke-dbml-Database$typespace.html#ryunosuke\dbml\Database::__get()"> ryunosuke\dbml\Database::__get()</a></h2>
 	<div class="description"><p>ゲートウェイオブジェクトを返す</p>
-<p>テーブル名 or （設定されているなら）エンティティ名で <tag_link data-kind='fqsen' data-type-category='type' data-type-fqsen='TableGataway' data-type-array='0' data-description='TableGataway'>TableGataway</tag_link> を取得する。</p>
+<p>テーブル名 or （設定されているなら）エンティティ名で <tag_link data-kind='fqsen' data-type-category='class' data-type-fqsen='ryunosuke\dbml\Gateway\TableGateway' data-type-array='0' data-description='TableGateway'>TableGateway</tag_link> を取得する。</p>
 <pre><code class="language-php"># t_article の全レコードを取得する
 $db-&gt;t_article-&gt;array();
 </code></pre>
+</div>
+    	<h2>method<a href="ryunosuke-dbml-Database$typespace.html#ryunosuke\dbml\Database::__set()"> ryunosuke\dbml\Database::__set()</a></h2>
+	<div class="description"><p>サポートされない</p>
+<p>将来のために予約されており、呼ぶと無条件で例外を投げる。</p>
+<p>phpstorm が <code>$db-&gt;tablename[1]['title'] = 'hoge';</code> のような式で警告を出すのでそれを抑止する目的もある。</p>
 </div>
     	<h2>method<a href="ryunosuke-dbml-Database$typespace.html#ryunosuke\dbml\Database::describe()"> ryunosuke\dbml\Database::describe()</a></h2>
 	<div class="description"><p>スキーマオブジェクトを返す</p>
@@ -13415,7 +13512,8 @@ $db-&gt;select([
 </div>
     	<h2>method<a href="ryunosuke-dbml-Database$typespace.html#ryunosuke\dbml\Database::quote()"> ryunosuke\dbml\Database::quote()</a></h2>
 	<div class="description"><p>値をクオートする</p>
-<p>null を quote すると '' ではなく NULL になる。</p>
+<p>null を quote すると '' ではなく NULL になる。<br />
+bool を quote すると文字ではなく int になる。</p>
 <p>それ以外は <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='Doctrine\DBAL\Connection::quote()' data-type-array='0' data-description='Connection::quote()'>Connection::quote()</tag_link> と同じ。</p>
 </div>
     	<h2>method<a href="ryunosuke-dbml-Database$typespace.html#ryunosuke\dbml\Database::quoteIdentifier()"> ryunosuke\dbml\Database::quoteIdentifier()</a></h2>
@@ -14065,9 +14163,11 @@ $db-&gt;select('t_article', [
 // JOIN も含めて複数テーブルがあり、明確に「t_article と t_comment で」結びたい場合はキーで明示する
 $db-&gt;select('t_article, t_something', [
     // 「何と？」をキーで明示できる
-    't_article'   =&gt; $db-&gt;subexists('t_comment'),
-    // // これだと t_something と t_comment での結合となる（外部キーがあれば、だが）
-    't_something' =&gt; $db-&gt;subexists('t_comment'),
+    't_article'          =&gt; $db-&gt;subexists('t_comment'),
+    // これだと t_something と t_comment での結合となる（外部キーがあれば、だが）
+    't_something'        =&gt; $db-&gt;subexists('t_comment'),
+    // さらに t_something に複数の外部キーがある場合は:で明示できる
+    't_something:fkname' =&gt; $db-&gt;subexists('t_comment'),
 ]);
 </code></pre>
 </div>
@@ -14077,7 +14177,8 @@ $db-&gt;select('t_article, t_something', [
     	<h2>method<a href="ryunosuke-dbml-Database$typespace.html#ryunosuke\dbml\Database::subaggregate()"> ryunosuke\dbml\Database::subaggregate()</a></h2>
 	<div class="description"><p>相関サブクエリの aggaregate を表すビルダを返す</p>
 <p>下記のような subXXX のために存在しているので、このメソッドを直接呼ぶような状況はあまり無い。</p>
-<pre><code class="language-php">$db-&gt;select([
+<pre><code class="language-php">// SELECT 句での使用例
+$db-&gt;select([
     't_article' =&gt; [
         // t_article に紐づく t_comment の数を返す
         'subcount' =&gt; $db-&gt;subcount('t_comment'),
@@ -14098,6 +14199,20 @@ $db-&gt;select('t_article, t_something', [
 //   (SELECT SUM(t_comment.comment_id) AS `t_comment.comment_id@sum` FROM t_comment WHERE t_comment.article_id = t_article.article_id) AS subsum,
 //   (SELECT AVG(t_comment.comment_id) AS `t_comment.comment_id@avg` FROM t_comment WHERE t_comment.article_id = t_article.article_id) AS subavg
 // FROM t_article
+
+// WHERE 句での使用例
+$db-&gt;select('t_article A+t_comment C', [
+    // 「各記事で最新のコメント1件と結合」を表す
+    'C.comment_id' =&gt; $db-&gt;submax('t_comment.comment_id'),
+]);
+// SELECT A.*, C.*
+// FROM t_article A
+// INNER JOIN t_comment C ON C.article_id = A.article_id
+// WHERE C.comment_id IN (
+//   SELECT MAX(t_comment.comment_id) AS `t_comment.comment_id@max`
+//   FROM t_comment
+//   WHERE t_comment.article_id = A.article_id
+// )
 </code></pre>
 </div>
     	<h2>method<a href="ryunosuke-dbml-Database$typespace.html#ryunosuke\dbml\Database::subcount()"> ryunosuke\dbml\Database::subcount()</a></h2>
@@ -14149,6 +14264,43 @@ $db-&gt;exists('t_article', ['delete_flg' =&gt; 0]);
 $db-&gt;exists('t_article', ['delete_flg' =&gt; 0], true);
 // SELECT EXISTS (SELECT * FROM t_article WHERE t_article.delete_flg = 0 FOR UPDATE)
 </code></pre>
+</div>
+    	<h2>method<a href="ryunosuke-dbml-Database$typespace.html#ryunosuke\dbml\Database::selectExists()"> ryunosuke\dbml\Database::selectExists()</a></h2>
+	<div class="description"><p>EXISTS クエリビルダを返す</p>
+<pre><code class="language-php">// EXISTS (SELECT * FROM t_table)
+$db-&gt;selectExists('t_table');
+
+// NOT EXISTS (SELECT * FROM t_table WHERE delete_flg = 0)
+$db-&gt;selectNotExists('t_table', ['delete_flg' =&gt; 0]);
+</code></pre>
+</div>
+    	<h2>method<a href="ryunosuke-dbml-Database$typespace.html#ryunosuke\dbml\Database::selectNotExists()"> ryunosuke\dbml\Database::selectNotExists()</a></h2>
+	<div class="description"><p><tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::selectExists()' data-type-array='0' data-description='selectExists()'>selectExists()</tag_link> の NOT 版</p>
+</div>
+    	<h2>method<a href="ryunosuke-dbml-Database$typespace.html#ryunosuke\dbml\Database::selectAggregate()"> ryunosuke\dbml\Database::selectAggregate()</a></h2>
+	<div class="description"><p>集約クエリビルダを返す</p>
+<p><tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::selectCount()' data-type-array='0' data-description='selectCount()'>selectCount()</tag_link> などのために存在し、明示的に呼ぶことはほとんど無い。</p>
+<pre><code class="language-php">// SELECT COUNT(group_id) FROM t_table
+$db-&gt;selectCount('t_table.group_id');
+
+// SELECT MAX(id) FROM t_table WHERE delete_flg = 0 GROUP BY group_id
+$db-&gt;selectMax('t_table.id', ['delete_flg' =&gt; 0], 'group_id');
+</code></pre>
+</div>
+    	<h2>method<a href="ryunosuke-dbml-Database$typespace.html#ryunosuke\dbml\Database::selectCount()"> ryunosuke\dbml\Database::selectCount()</a></h2>
+	<div class="description"><p>COUNT クエリを返す（<tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::selectAggregate()' data-type-array='0' data-description='selectAggregate()'>selectAggregate()</tag_link> を参照）</p>
+</div>
+    	<h2>method<a href="ryunosuke-dbml-Database$typespace.html#ryunosuke\dbml\Database::selectMin()"> ryunosuke\dbml\Database::selectMin()</a></h2>
+	<div class="description"><p>MIN クエリを返す（<tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::selectAggregate()' data-type-array='0' data-description='selectAggregate()'>selectAggregate()</tag_link> を参照）</p>
+</div>
+    	<h2>method<a href="ryunosuke-dbml-Database$typespace.html#ryunosuke\dbml\Database::selectMax()"> ryunosuke\dbml\Database::selectMax()</a></h2>
+	<div class="description"><p>MAX クエリを返す（<tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::selectAggregate()' data-type-array='0' data-description='selectAggregate()'>selectAggregate()</tag_link> を参照）</p>
+</div>
+    	<h2>method<a href="ryunosuke-dbml-Database$typespace.html#ryunosuke\dbml\Database::selectSum()"> ryunosuke\dbml\Database::selectSum()</a></h2>
+	<div class="description"><p>SUM クエリを返す（<tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::selectAggregate()' data-type-array='0' data-description='selectAggregate()'>selectAggregate()</tag_link> を参照）</p>
+</div>
+    	<h2>method<a href="ryunosuke-dbml-Database$typespace.html#ryunosuke\dbml\Database::selectAvg()"> ryunosuke\dbml\Database::selectAvg()</a></h2>
+	<div class="description"><p>AVG クエリを返す（<tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::selectAggregate()' data-type-array='0' data-description='selectAggregate()'>selectAggregate()</tag_link> を参照）</p>
 </div>
     	<h2>method<a href="ryunosuke-dbml-Database$typespace.html#ryunosuke\dbml\Database::aggregate()"> ryunosuke\dbml\Database::aggregate()</a></h2>
 	<div class="description"><p>集約を実行する</p>
@@ -14251,6 +14403,59 @@ $db-&gt;exportJson($db-&gt;select('t_parent/t_child'), [], [
 </div>
     	<h2>method<a href="ryunosuke-dbml-Database$typespace.html#ryunosuke\dbml\Database::exportJson()"> ryunosuke\dbml\Database::exportJson()</a></h2>
 	<div class="description"><p><tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::export()' data-type-array='0' data-description='export()'>export()</tag_link> の JSON 版</p>
+</div>
+    	<h2>method<a href="ryunosuke-dbml-Database$typespace.html#ryunosuke\dbml\Database::gather()"> ryunosuke\dbml\Database::gather()</a></h2>
+	<div class="description"><p>レコード情報をかき集める</p>
+<p>特定のレコードと関連したレコードを再帰的に処理して主キーの配列で返す。<br />
+運用的な使用ではなく、保守的な使用を想定（運用でも使えなくはないが、おそらく速度的に実用に耐えない）。</p>
+<pre><code class="language-php"># t_article: 1 に関連するレコードをざっくりと返す（t_article -&gt; t_comment -&gt; t_comment_file のようなリレーションの場合）
+$db-&gt;gather('t_article', ['article_id' =&gt; 1]);
+// results:
+[
+    't_article' =&gt; [
+        ['article_id' =&gt; 1],
+    ],
+    't_comment' =&gt; [
+        ['comment_id' =&gt; 1, 'article_id' =&gt; 1],
+        ['comment_id' =&gt; 2, 'article_id' =&gt; 1],
+    ],
+    't_comment_file' =&gt; [
+        ['file_id' =&gt; 1, 'comment_id' =&gt; 1],
+        ['file_id' =&gt; 2, 'comment_id' =&gt; 1],
+        ['file_id' =&gt; 3, 'comment_id' =&gt; 2],
+    ],
+];
+
+# $other_wheres で他のテーブルの条件が指定できる
+$db-&gt;gather('t_article', ['article_id' =&gt; 1], [
+    't_comment'      =&gt; ['comment_id' =&gt; 2],
+    't_comment_file' =&gt; '0',
+]);
+// results:
+[
+    't_article' =&gt; [
+        ['article_id' =&gt; 1],
+    ],
+    't_comment' =&gt; [
+        ['comment_id' =&gt; 2, 'article_id' =&gt; 1],
+    ],
+];
+
+# $parentive: true で親方向に辿れる
+$db-&gt;gather('t_comment_file', ['file_id' =&gt; 1], [], true);
+// results:
+[
+    't_comment_file' =&gt; [
+        ['file_id' =&gt; 1, 'comment_id' =&gt; 1],
+    ],
+    't_comment' =&gt; [
+        ['comment_id' =&gt; 1, 'article_id' =&gt; 1],
+    ],
+    't_article' =&gt; [
+        ['article_id' =&gt; 1],
+    ],
+];
+</code></pre>
 </div>
     	<h2>method<a href="ryunosuke-dbml-Database$typespace.html#ryunosuke\dbml\Database::prepare()"> ryunosuke\dbml\Database::prepare()</a></h2>
 	<div class="description"><p>prepare されたステートメントを取得する</p>
@@ -14673,6 +14878,29 @@ $db-&gt;destroy('parenttable', ['status' =&gt; 'deleted']);
     	<h2>method<a href="ryunosuke-dbml-Database$typespace.html#ryunosuke\dbml\Database::destroyOrThrow()"> ryunosuke\dbml\Database::destroyOrThrow()</a></h2>
 	<div class="description"><p><tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::destroy()' data-type-array='0' data-description='destroy()'>destroy()</tag_link> の例外送出版</p>
 </div>
+    	<h2>method<a href="ryunosuke-dbml-Database$typespace.html#ryunosuke\dbml\Database::reduce()"> ryunosuke\dbml\Database::reduce()</a></h2>
+	<div class="description"><p>DELETE 構文（指定件数を残して削除）</p>
+<p>$orderBy の順番で $limit 件残すように DELETE を発行する。<br />
+$groupBy を指定するとそのグルーピングの世界で $limit 件残すようにそれぞれ削除する。<br />
+条件を指定した場合や同値が存在した場合、指定件数より残ることがあるが、少なくなることはない。</p>
+<p>$orderBy は単一しか対応していない（大抵の場合は日付的なカラムの単一指定のはず）。<br />
+"+column" のように + を付与すると昇順、 "-column" のように - を付与すると降順になる（未指定時は昇順）。<br />
+一応 ['column' =&gt; true] のような orderBy 指定にも対応している。</p>
+<p>削除には行値式 IN を使うので SQLServer では実行できない。また、 mysql 5.6 以下ではインデックスが効かないので注意。<br />
+単一主キーなら問題ない。</p>
+<pre><code class="language-php"># logs テーブルから log_time の降順で 10 件残して削除
+$db-&gt;reduce('logs', 10, '-log_time');
+
+# logs テーブルから log_time の降順でカテゴリごとに 10 件残して削除
+$db-&gt;reduce('logs', 10, '-log_time', ['category']);
+
+# logs テーブルから log_time の降順でカテゴリごとに 10 件残して削除するが直近1ヶ月は残す（1ヶ月以上前を削除対象とする）
+$db-&gt;reduce('logs', 10, '-log_time', ['category'], ['log_time &lt; ?' =&gt; date('Y-m-d', strtotime('now -1 month'))]);
+</code></pre>
+</div>
+    	<h2>method<a href="ryunosuke-dbml-Database$typespace.html#ryunosuke\dbml\Database::reduceOrThrow()"> ryunosuke\dbml\Database::reduceOrThrow()</a></h2>
+	<div class="description"><p><tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::reduce()' data-type-array='0' data-description='reduce()'>reduce()</tag_link> の例外送出版</p>
+</div>
     	<h2>method<a href="ryunosuke-dbml-Database$typespace.html#ryunosuke\dbml\Database::upsert()"> ryunosuke\dbml\Database::upsert()</a></h2>
 	<div class="description"><p>行が無かったら INSERT、有ったら UPDATE</p>
 <p>アプリレイヤーで SELECT EXISTS（排他ロック） で行を確認し、無ければ INSERT 有れば UPDATE する。<br />
@@ -14705,10 +14933,9 @@ $db-&gt;upsert('tablename', ['id' =&gt; 1, 'name' =&gt; 'hoge']);
 <ul>
 <li>sqlite：     存在しないので <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::upsert()' data-type-array='0' data-description='upsert()'>upsert()</tag_link> に委譲される</li>
 <li>mysql：      INSERT ～ ON DUPLICATE KEY が実行される</li>
-<li>postgresql： ON CONFLICT があるが 9.5 からなので <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::upsert()' data-type-array='0' data-description='upsert()'>upsert()</tag_link> に委譲される</li>
+<li>postgresql： INSERT ～ ON CONFLICT DO UPDATE が実行される</li>
 <li>sqlserver：  MERGE があるが複雑すぎるので <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::upsert()' data-type-array='0' data-description='upsert()'>upsert()</tag_link> に委譲される</li>
 </ul>
-<p>つまり mysql 以外は upsert と同じ。</p>
 <pre><code class="language-php"># シンプルな INSERT ～ ON DUPLICATE KEY
 $db-&gt;modify('tablename', [
     'id'   =&gt; 1,
