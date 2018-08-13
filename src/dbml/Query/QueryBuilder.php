@@ -2236,7 +2236,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
     public function countize($column = '*')
     {
         $that = clone $this;
-        $that->detectAutoOrder(false);
+        $this->setAutoOrder(false);
         $that->resetQueryPart('orderBy');
         $that->resetQueryPart('offset');
         $that->resetQueryPart('limit');
@@ -2487,7 +2487,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
     public function aggregate($aggregations, $select_limit = PHP_INT_MAX)
     {
         // 集約クエリで主キー順に意味は無い
-        $this->detectAutoOrder(false);
+        $this->setAutoOrder(false);
 
         // カラムとタプルのセットを取得しておく
         $fields = $this->sqlParts['select'] ?: ['*'];
@@ -2649,14 +2649,12 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
      */
     public function detectAutoOrder($use)
     {
-        $current = $this->enableAutoOrder;
+        if (!$this->getAutoOrder()) {
+            return $this;
+        }
 
-        if ($use && $this->getAutoOrder()) {
-            $this->enableAutoOrder = true;
-        }
-        if (!$use) {
-            $this->enableAutoOrder = false;
-        }
+        $current = $this->enableAutoOrder;
+        $this->enableAutoOrder = $use;
 
         if ($current !== $this->enableAutoOrder) {
             $this->_dirty();
