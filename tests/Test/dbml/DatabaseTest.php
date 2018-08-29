@@ -1056,18 +1056,12 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
      * @dataProvider provideDatabase
      * @param Database $database
      */
-    function test_quote_null($database)
+    function test_quote($database)
     {
-        $this->assertEquals('NULL', $database->quote(null));
-    }
-
-    /**
-     * @dataProvider provideDatabase
-     * @param Database $database
-     */
-    function test_quote_parent($database)
-    {
-        $this->assertEquals("'1'", $database->quote(1));
+        $this->assertEquals("NULL", $database->quote(null, null));
+        $this->assertEquals("0", $database->quote(false, null));
+        $this->assertEquals("1", $database->quote(true, null));
+        $this->assertEquals("'1'", $database->quote(1, null));
     }
 
     /**
@@ -2017,6 +2011,19 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
         $this->assertEquals(null, $record['id']);
         $this->assertEquals('hoge', $record['name']);
         $this->assertEquals('', $record['data']);
+    }
+
+    /**
+     * @dataProvider provideDatabase
+     * @param Database $database
+     */
+    function test_executeQuery_and_Update($database)
+    {
+        $database->insert('noauto', ['id' => false, 'name' => 'hoge']);
+        $database->insert('noauto', ['id' => true, 'name' => 'fuga']);
+
+        $this->assertCount(1, $database->selectArray('noauto', ['id' => false]));
+        $this->assertCount(1, $database->selectArray('test', ['id' => true]));
     }
 
     /**
