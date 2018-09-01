@@ -6,6 +6,16 @@ use ryunosuke\dbml\Entity\Entity;
 
 class EntityTest extends \ryunosuke\Test\AbstractUnitTestCase
 {
+    function test___call()
+    {
+        $entity = new Entity(self::getDummyDatabase());
+        $entity->assign([
+            'func' => function ($arg) { return strtoupper($arg); },
+        ]);
+        /** @noinspection PhpUndefinedMethodInspection */
+        @$this->assertEquals('XXX', $entity->func('xxx'));
+    }
+
     function test_getDatabase()
     {
         $db = self::getDummyDatabase();

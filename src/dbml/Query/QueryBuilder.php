@@ -1061,6 +1061,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
      * | 23 | `new PhpExpression(function($cname){}, 'cname')` | PhpExpression に第2引数を指定すると列の値として {@link PhpExpression} でラップされたクロージャの返り値を返す。引数は**第2引数で指定された列の値**
      * | 24 | `function($cname = 'cname'){}`                   | 上と同じ。引数にデフォルト値が指定されている場合はそのデフォルト値が上で言う「指定された列」に相当する。
      * | 25 | `['cname' => function($value = null){}]`         | 上と同じ。引数のデフォルト値が null の場合はキーの値が使用される
+     * | 26 | `function(){return function($v){return $v;};}`   | クロージャの亜種。クロージャを返すクロージャはそのままクロージャとして活きるのでメソッドのような扱いにできる
      * | 30 | `Gateway object`                                 | Gateway の表すテーブルとの {@link Database::subtable()} 相当の動作
      * | 31 | `['+alias' => Gateway object]`                   | Gateway の表すテーブルとの JOIN を表す
      * | 50 | `'TableDescriptor'`                              | 「テーブル名」を書く場所にはテーブル記法が使用できる（駆動表）
@@ -1129,12 +1130,21 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
      *     ],
      * ]);
      *
-     * # No.20 ～： PhpExpression（他の用法は PhpExpression クラスのリファレンスを参照）
+     * # No.20 ～ 25： PhpExpression（他の用法は PhpExpression クラスのリファレンスを参照）
      * $qb->column([
      *     't_article' => [
      *         'phpval' => new PhpExpression('hoge'), // "hoge" という文字列を取得
      *     ],
      * ]);
+     * # No.26： クロージャを返すクロージャ
+     * $tuple = $qb->column([
+     *     't_article.*' => [
+     *         // クロージャ内の $this は行そのものを表す ArrayAccess なオブジェクトで bind される
+     *         'func' => function(){return function($prefix){return $prefix . $this['name'];};},
+     *     ],
+     * ])->tuple();
+     * // 'func' にはクロージャが格納されているので呼び出しが可能
+     * $tuple['func']('prefix-'); // => 'prefix-hogehoge'
      *
      * # No.30, 31：配列で指定する箇所は Gateway も指定できる
      * $qb->column([
@@ -2405,12 +2415,26 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
 
         // evalute
         foreach ($parents as $n => $parent_row) {
+            $row_class = null;
             foreach ($this->phpExpressions as $name => $column) {
+                $excol = $column($parents[$n]);
+                if ($excol instanceof \Closure) {
+                    if ($row_class === null) {
+                        if ($parents[$n] instanceof Entityable) {
+                            $row_class = $parents[$n];
+                        }
+                        else {
+                            $row_class = new \ArrayObject($parents[$n], \ArrayObject::ARRAY_AS_PROPS);
+                        }
+                    }
+                    $excol = $excol->bindTo($row_class);
+                }
+
                 if ($is_scalar) {
-                    $parents[$n] = $column($parents[$n]);
+                    $parents[$n] = $excol;
                 }
                 else {
-                    $parents[$n][$name] = $column($parents[$n]);
+                    $parents[$n][$name] = $excol;
                 }
             }
         }

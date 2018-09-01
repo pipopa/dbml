@@ -2372,6 +2372,18 @@ SELECT test.* FROM test", $builder);
 
         $builder->column([
             'test' => [
+                'func' => new PhpExpression(function () { return function ($arg) { return $this['id'] * $arg; }; }),
+            ]
+        ]);
+        $actual = $builder->postselect([['id' => 1]]);
+        $this->assertEquals(10, $actual[0]['func'](10));
+
+        $actual = $builder->postselect([(new Entity($builder->getDatabase()))->assign(['id' => 1])]);
+        /** @noinspection PhpUndefinedMethodInspection */
+        $this->assertEquals(10, $actual[0]->func(10));
+
+        $builder->column([
+            'test' => [
                 'phpval' => new PhpExpression('phpval'),
                 'subcol' => $builder->getDatabase()->subselectArray('id', 'test2.name2'),
             ]
@@ -2406,6 +2418,7 @@ SELECT test.* FROM test", $builder);
      */
     function test_addSelectOption($builder)
     {
+        $builder->addSelectOption(null);
         $builder->addSelectOption(SelectOption::SQL_CACHE);
         $builder->addSelect('t');
         $builder->addSelectOption(SelectOption::SQL_NO_CACHE);

@@ -166,6 +166,7 @@ class IntegrationTest extends AbstractUnitTestCase
             'titlex' => 'title2',
             'title2',
             'title3',
+            'title4',
             'comment_count',
             'checks',
         ], $pk)->tuple();
@@ -177,7 +178,9 @@ class IntegrationTest extends AbstractUnitTestCase
             'comment_count' => '0',
             'checks'        => [1, 2, 3],
             'title3'        => 'a dummy title z',
+            'title4'        => function () { /* dummy */ },
         ], $row);
+        $this->assertEquals('[prefix] dummy title', $row['title4']('[prefix] '));
 
         $where = (string) $database->t_article->where([
             '*' => 'aaa'

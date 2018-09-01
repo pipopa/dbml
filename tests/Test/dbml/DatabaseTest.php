@@ -4639,6 +4639,7 @@ anywhere.enable = 1
                 'hoge' => new PhpExpression(null),
                 'fuga' => new PhpExpression(123),
                 'piyo' => new PhpExpression(function ($row) { return $row['id'] . ':' . $row['name']; }),
+                'func' => new PhpExpression(function () { return function ($prefix) { return $prefix . $this['name']; }; }),
                 'last' => new Expression("'dbval'"),
             ]
         ])->limit(1);
@@ -4649,12 +4650,18 @@ anywhere.enable = 1
             'hoge' => null,
             'fuga' => 123,
             'piyo' => '1:a',
+            'func' => function () { /* dummy */ },
             'last' => 'dbval'
         ];
 
         $this->assertEquals([0 => $expected], $select->array());
         $this->assertEquals([1 => $expected], $select->assoc());
         $this->assertEquals($expected, $select->tuple());
+
+        $this->assertEquals('hoge-a', $select->tuple()['func']('hoge-'));
+        $select->cast(null);
+        /** @noinspection PhpUndefinedMethodInspection */
+        $this->assertEquals('hoge-a', $select->tuple()->func('hoge-'));
 
         $select = $database->select([
             'test' => ['id', 'name'],

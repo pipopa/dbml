@@ -20,6 +20,11 @@ class Entity implements Entityable
         $this->database = $database->getOriginal();
     }
 
+    public function __call($name, $arguments)
+    {
+        return call_user_func_array($this->$name, $arguments);
+    }
+
     public function getDatabase()
     {
         return $this->database;

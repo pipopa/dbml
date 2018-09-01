@@ -205,6 +205,11 @@ namespace ryunosuke\Test\Gateway {
                         return "a $v z";
                     },
                 ],
+                'title4'        => function () {
+                    return function ($prefix) {
+                        return $prefix . $this->title;
+                    };
+                },
                 'checks'        => [
                     'type' => Type::getType('simple_array'),
                 ],
