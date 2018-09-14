@@ -1098,6 +1098,7 @@ class Database
     {
         // これはメソッド冒頭に記述し、決して場所を移動しないこと
         $columns = $this->getSchema()->getTableColumns($table);
+        $autocolumn = optional($this->getSchema()->getTableAutoIncrement($table))->getName();
 
         if ($row instanceof Entityable) {
             $row = $row->arrayize();
@@ -1146,6 +1147,11 @@ class Database
                     }
                 }
             }
+        }
+
+        // mysql は null を指定すれば自動採番されるが、他の RDBMS では伏せないと採番されないようだ
+        if ($autocolumn && !isset($row[$autocolumn])) {
+            unset($row[$autocolumn]);
         }
 
         return $row;
