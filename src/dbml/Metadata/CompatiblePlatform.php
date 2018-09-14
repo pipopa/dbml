@@ -13,6 +13,7 @@ use ryunosuke\dbml\Query\Expression\Expression;
 use ryunosuke\dbml\Query\Expression\SelectOption;
 use ryunosuke\dbml\Query\Queryable;
 use ryunosuke\dbml\Query\QueryBuilder;
+use function ryunosuke\dbml\array_each;
 use function ryunosuke\dbml\array_sprintf;
 use function ryunosuke\dbml\arrayize;
 use function ryunosuke\dbml\concat;
@@ -89,6 +90,9 @@ class CompatiblePlatform /*extends AbstractPlatform*/
     public function supportsMerge()
     {
         if ($this->platform instanceof MySqlPlatform) {
+            return true;
+        }
+        if ($this->platform instanceof PostgreSqlPlatform) {
             return true;
         }
         return false;
@@ -296,19 +300,22 @@ class CompatiblePlatform /*extends AbstractPlatform*/
      * @param string $tableName テーブル名
      * @param array $insertData INSERT 時の配列
      * @param array $updateData UPDATE 時の配列
+     * @param string|array $constraint 一意制約
      * @return string|bool MERGE 構文に対応してるなら文字列、対応していないなら false
      */
-    public function getMergeSQL($tableName, $insertData, $updateData)
+    public function getMergeSQL($tableName, $insertData, $updateData, $constraint = null)
     {
         if ($this->platform instanceof MySqlPlatform) {
             $insertSql = array_sprintf($insertData, '%2$s = %1$s', ', ');
-            if ($updateData) {
-                $updateSql = array_sprintf($updateData, '%2$s = %1$s', ', ');
-            }
-            else {
-                $updateSql = array_sprintf($insertData, '%2$s = VALUES(%2$s)', ', ');
-            }
+            $updateSql = array_sprintf($updateData, '%2$s = %1$s', ', ');
             return "INSERT INTO $tableName SET $insertSql ON DUPLICATE KEY UPDATE $updateSql";
+        }
+        if ($this->platform instanceof PostgreSqlPlatform) {
+            $insertKeys = implode(', ', array_keys($insertData));
+            $insertVals = implode(', ', $insertData);
+            $updateSql = array_sprintf($updateData, '%2$s = %1$s', ', ');
+            $constraint = is_array($constraint) ? '(' . implode(',', $constraint) . ')' : $constraint;
+            return "INSERT INTO $tableName ($insertKeys) VALUES ($insertVals) ON CONFLICT ON CONSTRAINT $constraint DO UPDATE SET $updateSql";
         }
         return false;
     }
@@ -735,6 +742,31 @@ class CompatiblePlatform /*extends AbstractPlatform*/
         }
         $comment = str_replace($e, ' ', $comment);
         return "$s $comment $e";
+    }
+
+    /**
+     * 挿入データと更新データで更新用カラム列を生成する
+     *
+     * mysql の VALUES 構文のために存在している
+     *
+     * @param array $insertData 挿入データ
+     * @param array $updateData 更新データ
+     * @return array VALUES で使用できる更新データ
+     */
+    public function convertMergeData($insertData, $updateData)
+    {
+        // 指定されているならそのまま返せば良い
+        if ($updateData) {
+            return $updateData;
+        }
+
+        // 指定されていない場合は $insertData を返す。ただし、データが長大な場合、2重に bind されることになり無駄なので mysql は VALUES を使う
+        if ($this->platform instanceof MySqlPlatform) {
+            return array_each($insertData, function (&$carry, $v, $k) {
+                $carry[$k] = new Expression("VALUES($k)");
+            }, []);
+        }
+        return $insertData;
     }
 
     /**

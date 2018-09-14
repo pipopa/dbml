@@ -84,7 +84,7 @@ class CompatiblePlatformTest extends \ryunosuke\Test\AbstractUnitTestCase
      */
     function test_supportsMerge($cplatform, $platform)
     {
-        $expected = $platform instanceof MySqlPlatform;
+        $expected = $platform instanceof MySqlPlatform || $platform instanceof PostgreSqlPlatform;
         $this->assertEquals($expected, $cplatform->supportsMerge());
     }
 
@@ -236,15 +236,21 @@ class CompatiblePlatformTest extends \ryunosuke\Test\AbstractUnitTestCase
     {
         $expected = false;
         if ($platform instanceof MySqlPlatform) {
-            $expected = 'INSERT INTO tbl SET c1 = 1, c2 = 2 ON DUPLICATE KEY UPDATE c1 = VALUES(c1), c2 = VALUES(c2)';
+            $expected = 'INSERT INTO tbl SET c1 = 1, c2 = 2 ON DUPLICATE KEY UPDATE c1 = 3, c2 = 4';
         }
-        $this->assertEquals($expected, $cplatform->getMergeSQL('tbl', ['c1' => 1, 'c2' => 2], []));
+        if ($platform instanceof PostgreSqlPlatform) {
+            $expected = 'INSERT INTO tbl (c1, c2) VALUES (1, 2) ON CONFLICT ON CONSTRAINT PK DO UPDATE SET c1 = 3, c2 = 4';
+        }
+        $this->assertEquals($expected, $cplatform->getMergeSQL('tbl', ['c1' => 1, 'c2' => 2], ['c1' => 3, 'c2' => 4], 'PK'));
 
         $expected = false;
         if ($platform instanceof MySqlPlatform) {
             $expected = 'INSERT INTO tbl SET c1 = 1, c2 = 2 ON DUPLICATE KEY UPDATE c1 = 3, c2 = 4';
         }
-        $this->assertEquals($expected, $cplatform->getMergeSQL('tbl', ['c1' => 1, 'c2' => 2], ['c1' => 3, 'c2' => 4]));
+        if ($platform instanceof PostgreSqlPlatform) {
+            $expected = 'INSERT INTO tbl (c1, c2) VALUES (1, 2) ON CONFLICT ON CONSTRAINT (col1,col2) DO UPDATE SET c1 = 3, c2 = 4';
+        }
+        $this->assertEquals($expected, $cplatform->getMergeSQL('tbl', ['c1' => 1, 'c2' => 2], ['c1' => 3, 'c2' => 4], ['col1', 'col2']));
     }
 
     /**
@@ -588,6 +594,23 @@ class CompatiblePlatformTest extends \ryunosuke\Test\AbstractUnitTestCase
         $this->assertEquals("$s hoge fuga $e", $cplatform->commentize("hoge\nfuga"));
 
         $this->assertEquals("/* hoge\nfuga */", $cplatform->commentize("hoge\nfuga", true));
+    }
+
+    /**
+     * @dataProvider providePlatform
+     * @param CompatiblePlatform $cplatform
+     * @param AbstractPlatform $platform
+     */
+    function test_convertMergeData($cplatform, $platform)
+    {
+        $expected = ['id' => 9];
+        $this->assertEquals($expected, $cplatform->convertMergeData(['id' => 1], ['id' => 9]));
+
+        $expected = ['id' => 1];
+        if ($platform instanceof MySqlPlatform) {
+            $expected = ['id' => new Expression('VALUES(id)')];
+        }
+        $this->assertEquals($expected, $cplatform->convertMergeData(['id' => 1], []));
     }
 
     /**

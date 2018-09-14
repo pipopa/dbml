@@ -8,6 +8,7 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Event\Listeners\SQLSessionInit;
 use Doctrine\DBAL\Events;
+use Doctrine\DBAL\Platforms;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Schema\AbstractAsset;
 use Doctrine\DBAL\Schema\Column;
@@ -4351,7 +4352,7 @@ class Database
 
         // バルクできそうか判定
         // @codeCoverageIgnoreStart
-        $bulkable = $this->getCompatiblePlatform()->supportsMerge();
+        $bulkable = $this->getPlatform() instanceof Platforms\MySqlPlatform;
         if ($bulkable) {
             $first = array_keys(reset($dataarray));
             foreach ($dataarray as $row) {
@@ -4845,10 +4846,8 @@ class Database
      *
      * - sqlite：     存在しないので {@link upsert()} に委譲される
      * - mysql：      INSERT ～ ON DUPLICATE KEY が実行される
-     * - postgresql： ON CONFLICT があるが 9.5 からなので {@link upsert()} に委譲される
+     * - postgresql： INSERT ～ ON CONFLICT DO UPDATE が実行される
      * - sqlserver：  MERGE があるが複雑すぎるので {@link upsert()} に委譲される
-     *
-     * つまり mysql 以外は upsert と同じ。
      *
      * ```php
      * # シンプルな INSERT ～ ON DUPLICATE KEY
@@ -4895,22 +4894,26 @@ class Database
                 $updateData = array_combine(array_keys($insertData), $updateData);
             }
         }
+        $updatable = !!$updateData;
 
         $tableName = $this->convertTableName($tableName);
 
         $insertData = $this->_normalize($tableName, $insertData);
         $updateData = $this->_normalize($tableName, $updateData);
+        $updateData = $this->getCompatiblePlatform()->convertMergeData($insertData, $updateData);
 
         $params = [];
         $sets1 = $this->bindInto($insertData, $params);
         $sets2 = $this->bindInto($updateData, $params);
 
-        $affected = $this->executeUpdate($this->getCompatiblePlatform()->getMergeSQL($tableName, $sets1, $sets2), $params);
+        $pkname = $this->getSchema()->getTablePrimaryKey($tableName)->getName();
+        $sql = $this->getCompatiblePlatform()->getMergeSQL($tableName, $sets1, $sets2, $pkname);
+        $affected = $this->executeUpdate($sql, $params);
         if (array_get($opt, 'throw')) {
             if ($affected === 0) {
                 throw new NonAffectedException('affected row is nothing.');
             }
-            return $this->_postaffect($tableName, $updateData ?: $insertData);
+            return $this->_postaffect($tableName, $updatable ? $updateData : $insertData);
         }
         return $affected;
     }
