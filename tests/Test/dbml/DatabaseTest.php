@@ -1556,6 +1556,101 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
      * @dataProvider provideDatabase
      * @param Database $database
      */
+    function test_gather($database)
+    {
+        $database->import([
+            'g_ancestor' => [
+                [
+                    'ancestor_name' => 'A',
+                    'g_parent'      => [
+                        [
+                            'parent_name' => 'AA',
+                            'g_child'     => [
+                                ['child_name' => 'AAA'],
+                                ['child_name' => 'AAB'],
+                            ],
+                        ],
+                        [
+                            'parent_name' => 'AB',
+                            'g_child'     => [
+                                ['child_name' => 'ABA'],
+                                ['child_name' => 'ABB'],
+                            ],
+                        ],
+                    ],
+                ],
+                [
+                    'ancestor_name' => 'B',
+                    'g_parent'      => [
+                        [
+                            'parent_name' => 'BA',
+                            'g_child'     => [
+                                ['child_name' => 'BAA'],
+                                ['child_name' => 'BAB'],
+                            ],
+                        ],
+                        [
+                            'parent_name' => 'BB',
+                            'g_child'     => [
+                                ['child_name' => 'BBA'],
+                                ['child_name' => 'BBB'],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ]);
+
+        $this->assertEquals([
+            'g_ancestor' => [
+                1 => ['ancestor_id' => '1',],
+            ],
+            'g_parent'   => [
+                1 => ['parent_id' => '1',],
+                2 => ['parent_id' => '2',],
+            ],
+            'g_child'    => [
+                3 => ['child_id' => '3',],
+                4 => ['child_id' => '4',],
+            ],
+        ], $database->gather('g_ancestor', ['' => 1]));
+
+        $this->assertEquals([
+            'g_child'    => [
+                3 => ['child_id' => '3',],
+            ],
+            'g_parent'   => [
+                2 => ['parent_id' => '2',],
+            ],
+            'g_ancestor' => [
+                1 => ['ancestor_id' => '1',],
+            ],
+        ], $database->gather('g_child', ['' => 3], [], true));
+
+        $this->assertEquals([
+            'g_ancestor' => [
+                2 => ['ancestor_id' => '2',],
+            ],
+            'g_parent'   => [
+                3 => ['parent_id' => '3',],
+            ],
+            'g_child'    => [
+                5 => ['child_id' => '5',],
+            ],
+        ], $database->gather('g_ancestor', ['' => 2], [
+            'g_parent' => [
+                'parent_id' => 3
+            ],
+            'g_child'  => [
+                'child_id <= ?' => 5,
+            ],
+        ]));
+    }
+
+    /**
+     * @dataProvider provideDatabase
+     * @param Database $database
+     */
     function test_fetch_string($database)
     {
         // 数値プレースホルダや名前付きプレースホルダが壊れていないことを担保

@@ -1218,6 +1218,25 @@ AND ((flag=1))", "$gw");
      * @param TableGateway $gateway
      * @param Database $database
      */
+    function test_gather($gateway, $database)
+    {
+        $t_article = new TableGateway($database, 't_article');
+        $this->assertEquals([
+            't_article' => [
+                1 => ['article_id' => '1'],
+            ],
+            't_comment' => [
+                1 => ['comment_id' => '1'],
+                3 => ['comment_id' => '3'],
+            ],
+        ], $t_article->pk(1)->gather([], ['t_comment' => ['comment_id <> ?' => 2]]));
+    }
+
+    /**
+     * @dataProvider provideGateway
+     * @param TableGateway $gateway
+     * @param Database $database
+     */
     function test_subexists($gateway, $database)
     {
         $Article = new TableGateway($database, 't_article', 'Article');

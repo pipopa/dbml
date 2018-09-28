@@ -1870,4 +1870,17 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
     {
         return $this->database->getEmptyRecord($this->original->alias ?: $this->tableName, $default);
     }
+
+    /**
+     * レコード情報をかき集める
+     *
+     * Gateway 版の {@link Database::gather()} 。
+     *
+     * @inheritdoc Database::gather()
+     */
+    public function gather($wheres = [], $other_wheres = [], $parentive = false)
+    {
+        $sp = $this->getScopeParams([], $wheres);
+        return $this->database->gather($this->tableName, $sp['where'], $other_wheres, $parentive);
+    }
 }

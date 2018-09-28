@@ -3569,6 +3569,131 @@ class Database
     }
 
     /**
+     * レコード情報をかき集める
+     *
+     * 特定のレコードと関連したレコードを再帰的に処理して主キーの配列で返す。
+     * 運用的な使用ではなく、保守的な使用を想定（運用でも使えなくはないが、おそらく速度的に実用に耐えない）。
+     *
+     * ```php
+     * # t_article: 1 に関連するレコードをざっくりと返す（t_article -> t_comment -> t_comment_file のようなリレーションの場合）
+     * $db->gather('t_article', ['article_id' => 1]);
+     * // results:
+     * [
+     *     't_article' => [
+     *         ['article_id' => 1],
+     *     ],
+     *     't_comment' => [
+     *         ['comment_id' => 1, 'article_id' => 1],
+     *         ['comment_id' => 2, 'article_id' => 1],
+     *     ],
+     *     't_comment_file' => [
+     *         ['file_id' => 1, 'comment_id' => 1],
+     *         ['file_id' => 2, 'comment_id' => 1],
+     *         ['file_id' => 3, 'comment_id' => 2],
+     *     ],
+     * ];
+     *
+     * # $other_wheres で他のテーブルの条件が指定できる
+     * $db->gather('t_article', ['article_id' => 1], [
+     *     't_comment'      => ['comment_id' => 2],
+     *     't_comment_file' => '0',
+     * ]);
+     * // results:
+     * [
+     *     't_article' => [
+     *         ['article_id' => 1],
+     *     ],
+     *     't_comment' => [
+     *         ['comment_id' => 2, 'article_id' => 1],
+     *     ],
+     * ];
+     *
+     * # $parentive: true で親方向に辿れる
+     * $db->gather('t_comment_file', ['file_id' => 1], [], true);
+     * // results:
+     * [
+     *     't_comment_file' => [
+     *         ['file_id' => 1, 'comment_id' => 1],
+     *     ],
+     *     't_comment' => [
+     *         ['comment_id' => 1, 'article_id' => 1],
+     *     ],
+     *     't_article' => [
+     *         ['article_id' => 1],
+     *     ],
+     * ];
+     * ```
+     *
+     * @param string $tablename 対象テーブル名
+     * @param array $wheres 対象テーブルの条件
+     * @param array $other_wheres その他の条件
+     * @param bool $parentive 親方向にたどるか子方向に辿るか
+     * @return array かき集めたレコード情報（[テーブル名 => [主キー配列1, 主キー配列2, ...]]）
+     */
+    public function gather($tablename, $wheres = [], $other_wheres = [], $parentive = false)
+    {
+        $schema = $this->getSchema();
+        $cplatform = $this->getCompatiblePlatform();
+        $pksep = $this->getPrimarySeparator();
+        $allfkeys = $schema->getForeignKeys();
+
+        $array_rekey = static function ($array, $map) {
+            $result = [];
+            foreach ($array as $k => $v) {
+                if (isset($map[$k])) {
+                    $result[$map[$k]] = $v;
+                }
+            }
+            return $result;
+        };
+
+        $result = [];
+        $processed = [];
+        call_user_func($f = static function (Database $that, $tablename, $wheres) use (&$f, &$result, &$processed, $schema, $cplatform, $pksep, $allfkeys, $other_wheres, $parentive, $array_rekey) {
+            $pkcol = $schema->getTablePrimaryColumns($tablename);
+            $cols = $pkcol;
+            foreach ($allfkeys as $fk) {
+                if ($fk->getLocalTableName() === $tablename) {
+                    $cols += array_flip($fk->getColumns());
+                }
+                if ($fk->getForeignTableName() === $tablename) {
+                    $cols += array_flip($fk->getForeignColumns());
+                }
+            }
+
+            $fkcols = [];
+            $select = $that->select([$tablename => array_keys($cols)], $wheres)->andWhere($other_wheres[$tablename] ?? []);
+            foreach ((array) $select->array() as $row) {
+                $pval = array_intersect_key($row, $pkcol);
+                $key = implode($pksep, $pval);
+                $result[$tablename][$key] = $pval;
+
+                foreach ($allfkeys as $fk) {
+                    $fkname = $fk->getName() . '-' . $key;
+                    if (isset($processed[$fkname])) {
+                        continue;
+                    }
+                    $processed[$fkname] = true;
+
+                    if ($parentive && $fk->getLocalTableName() === $tablename) {
+                        $fkcols[$fk->getName()][$fk->getForeignTableName()][] = $array_rekey($row, array_combine($fk->getLocalColumns(), $fk->getForeignColumns()));
+                    }
+                    if (!$parentive && $fk->getForeignTableName() === $tablename) {
+                        $fkcols[$fk->getName()][$fk->getLocalTableName()][] = $array_rekey($row, array_combine($fk->getForeignColumns(), $fk->getLocalColumns()));
+                    }
+                }
+            }
+
+            foreach ($fkcols as $fcols) {
+                foreach ($fcols as $tname => $fkcol) {
+                    $f($that, $tname, $cplatform->getPrimaryCondition($fkcol));
+                }
+            }
+        }, $this, $tablename, $wheres);
+        return $result;
+    }
+
+    /**
      * prepare されたステートメントを取得する
      *
      * ほぼ内部メソッドであり、実際は下記のように暗黙のうちに使用され、明示的に呼び出す必要はあまりない。

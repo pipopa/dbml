@@ -424,8 +424,27 @@ abstract class AbstractUnitTestCase extends TestCase
     {
         foreach (self::getConnections() as $connection) {
             /** @var TestConnection $connection */
-            $connection->clean(function ($connection) {
+            $connection->clean(function (Connection $connection) {
                 $db = new Database($connection);
+                // http://blogs.wankuma.com/naka/archive/2005/10/10/18641.aspx
+                if ($connection->getDatabasePlatform()->getName() === 'mssql') {
+                    $db->delete('t_comment');
+                    $db->delete('t_article');
+                    $db->insert('t_article', ['article_id' => 1, 'title' => '', 'checks' => '']);
+                    $db->insert('t_comment', ['article_id' => 1, 'comment' => '']);
+                    $db->delete('t_comment');
+                    $db->delete('t_article');
+
+                    $db->delete('g_child');
+                    $db->delete('g_parent');
+                    $db->delete('g_ancestor');
+                    $db->insert('g_ancestor', ['ancestor_name' => '']);
+                    $db->insert('g_parent', ['parent_name' => '', 'ancestor_id' => $db->getLastInsertId()]);
+                    $db->insert('g_child', ['child_name' => '', 'parent_id' => $db->getLastInsertId()]);
+                    $db->delete('g_child');
+                    $db->delete('g_parent');
+                    $db->delete('g_ancestor');
+                }
                 $db->truncate('test');
                 $db->truncate('test1');
                 $db->truncate('test2');
@@ -444,7 +463,10 @@ abstract class AbstractUnitTestCase extends TestCase
                 $db->delete('g_ancestor');
                 $db->delete('t_comment');
                 $db->delete('t_article');
-                $db->truncate('t_comment'); // id のリセット
+                $db->resetAutoIncrement('t_comment');
+                $db->resetAutoIncrement('g_ancestor');
+                $db->resetAutoIncrement('g_parent');
+                $db->resetAutoIncrement('g_child');
 
                 $db->transact(function (Database $db) {
                     for ($i = 0, $char = 'a'; $i < 10; $i++) {
