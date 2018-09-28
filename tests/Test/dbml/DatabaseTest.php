@@ -3217,8 +3217,8 @@ ON DUPLICATE KEY UPDATE id = VALUES(id), name = VALUES(name)", $affected);
 
         // dryrun はクエリ配列を返す
         $this->assertEquals([
-            "DELETE FROM foreign_c1 WHERE foreign_c1.id IN ('4')",
-            "DELETE FROM foreign_c2 WHERE foreign_c2.cid IN ('4')",
+            "DELETE FROM foreign_c1 WHERE foreign_c1.id = '4'",
+            "DELETE FROM foreign_c2 WHERE foreign_c2.cid = '4'",
             "DELETE FROM foreign_p WHERE name = 'name4'",
         ], $database->dryrun()->destroy('foreign_p', ['name' => 'name4'], ['in' => true]));
         // 親がいない場合に FALSE になるか担保する

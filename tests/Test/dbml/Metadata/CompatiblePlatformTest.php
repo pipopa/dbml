@@ -347,14 +347,17 @@ class CompatiblePlatformTest extends \ryunosuke\Test\AbstractUnitTestCase
         $actual = $cplatform->getPrimaryCondition([]);
         $this->assertExpression($actual, '', []);
 
+        $actual = $cplatform->getPrimaryCondition([['id' => 1]]);
+        $this->assertExpression($actual, 'id = ?', [1]);
+
         $actual = $cplatform->getPrimaryCondition([['id' => 1], ['id' => 2]]);
         $this->assertExpression($actual, 'id IN (?, ?)', [1, 2]);
 
         $actual = $cplatform->getPrimaryCondition([['id' => 1], ['id' => 1]], 'prefix');
         $this->assertExpression($actual, 'prefix.id IN (?, ?)', [1, 1]);
 
-        $actual = $cplatform->getPrimaryCondition([['id' => new Expression('?', 1)]]);
-        $this->assertExpression($actual, 'id IN (?)', [1]);
+        $actual = $cplatform->getPrimaryCondition([['id' => new Expression('?', 1)], ['id' => 2]]);
+        $this->assertExpression($actual, 'id IN (?, ?)', [1, 2]);
 
         $actual = $cplatform->getPrimaryCondition([['id' => 1, 'seq' => 2], ['id' => 3, 'seq' => 4]]);
         $this->assertExpression($actual, '(id = ? AND seq = ?) OR (id = ? AND seq = ?)', [1, 2, 3, 4]);

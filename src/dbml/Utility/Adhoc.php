@@ -171,7 +171,7 @@ class Adhoc
                 $result[$key] = $val;
                 continue;
             }
-            if (is_string($key) && strpos($key, '.') === false) {
+            if (is_string($key) && isset($key[0]) && strpos($key, '.') === false) {
                 if ($key[0] === '!') {
                     $key = '!' . $tablename . '.' . ltrim($key, '!');
                 }

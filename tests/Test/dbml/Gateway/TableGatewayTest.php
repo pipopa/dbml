@@ -148,7 +148,7 @@ class TableGatewayTest extends \ryunosuke\Test\AbstractUnitTestCase
         $gw = $database->t_comment['(1)@scope1@scope2(9)[flag1 = 1, flag2: 2]-comment_id AS C.comment_id']('comment');
         $this->assertStringIgnoreBreak("SELECT NOW(), C.comment_id, C.comment
 FROM t_comment C
-WHERE (C.comment_id = '9') AND (C.comment_id IN ('1')) AND (flag1 = 1) AND (C.flag2 = '2')
+WHERE (C.comment_id = '9') AND (C.comment_id = '1') AND (flag1 = 1) AND (C.flag2 = '2')
 ORDER BY C.comment_id DESC", "$gw");
 
         $gw = $database->t_article->as('A')->t_comment['(2)@scope1@scope2(9):fk_articlecomment AS C.comment_id']('comment', '(flag=1)');
@@ -158,7 +158,7 @@ FROM t_article A
 LEFT JOIN t_comment C
 ON (C.article_id = A.article_id)
 AND (C.comment_id = '9')
-AND (C.comment_id IN ('2'))
+AND (C.comment_id = '2')
 AND ((flag=1))", "$gw");
 
         // [] は省略できる
@@ -339,8 +339,10 @@ AND ((flag=1))", "$gw");
     function test_scoping($gateway)
     {
         $select = $gateway->scoping('NOW(1)', '1=1')->scoping('NOW(2)', '2=2')->scoping('NOW(3)', '3=3')->select();
-
         $this->assertEquals('SELECT NOW(1), NOW(2), NOW(3) FROM test WHERE (1=1) AND (2=2) AND (3=3)', (string) $select);
+
+        $select = $gateway->where(['' => [1, 2]])->select();
+        $this->assertEquals('SELECT * FROM test WHERE test.id IN (?, ?)', (string) $select);
     }
 
     /**

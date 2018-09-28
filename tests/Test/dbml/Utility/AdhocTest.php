@@ -129,6 +129,7 @@ valid3=ok3  ;行末OK
         $this->assertEquals(['c' => 'column'], Adhoc::modifier('', ['c' => 'column']));
 
         $this->assertEquals(['column'], Adhoc::modifier('T', ['column']));
+        $this->assertEquals(['' => 'column'], Adhoc::modifier('T', ['' => 'column']));
         $this->assertEquals(['T.c' => 'column'], Adhoc::modifier('T', ['c' => 'column']));
         $this->assertEquals(['!T.c' => 'column'], Adhoc::modifier('T', ['!c' => 'column']));
         $qb = self::getDummyDatabase()->subexists('t', ['id' => 1]);

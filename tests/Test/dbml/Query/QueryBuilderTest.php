@@ -1237,6 +1237,39 @@ AND
      * @dataProvider provideQueryBuilder
      * @param QueryBuilder $builder
      */
+    function test_wheres_primary($builder)
+    {
+        // 単一主キー
+        $builder->reset()->column('test');
+        $this->assertEquals("SELECT test.* FROM test", $builder->where(['' => []])->queryInto());
+        $this->assertEquals("SELECT test.* FROM test WHERE test.id = '1'", $builder->where(['' => 1])->queryInto());
+        $this->assertEquals("SELECT test.* FROM test WHERE test.id = '2'", $builder->where(['' => [2]])->queryInto());
+        $this->assertEquals("SELECT test.* FROM test WHERE test.id IN ('1', '2')", $builder->where(['' => [1, 2]])->queryInto());
+
+        // 複合主キー
+        $builder->reset()->column('multiprimary');
+        $this->assertEquals("SELECT multiprimary.* FROM multiprimary", $builder->where(['' => []])->queryInto());
+        $this->assertEquals("SELECT multiprimary.* FROM multiprimary WHERE (multiprimary.mainid = '1' AND multiprimary.subid = '1')", $builder->where(['' => [1, 1]])->queryInto());
+        $this->assertEquals("SELECT multiprimary.* FROM multiprimary WHERE (multiprimary.mainid = '1' AND multiprimary.subid = '1') OR (multiprimary.mainid = '1' AND multiprimary.subid = '2')", $builder->where(['' => [[1, 1], [1, 2]]])->queryInto());
+
+        // エラー
+        $this->assertException("base table not found", L($builder->reset())->where(['' => [[1]]]));
+        $this->assertException("not match primary columns", L($builder->reset()->column('test'))->where(['' => [[1, 2]]]));
+        $this->assertException("not match primary columns", L($builder->reset()->column('multiprimary'))->where(['' => [[1]]]));
+        $this->assertException("not match primary columns", L($builder->reset()->column('multiprimary'))->where(['' => [[1, 2, 3]]]));
+
+        // トップレベル以外無視
+        $this->assertEquals("SELECT test.* FROM test WHERE hoge IN (NULL)", $builder->reset()->column('test')->where([
+            'hoge' => [
+                '' => [1, 2],
+            ]
+        ])->queryInto());
+    }
+
+    /**
+     * @dataProvider provideQueryBuilder
+     * @param QueryBuilder $builder
+     */
     function test_wheres_anytable($builder)
     {
         // クエリビルダは無視されるはずなのでその検証用

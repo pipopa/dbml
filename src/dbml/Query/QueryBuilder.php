@@ -19,6 +19,7 @@ use ryunosuke\dbml\Query\Pagination\Paginator;
 use ryunosuke\dbml\Query\Pagination\Sequencer;
 use ryunosuke\dbml\Utility\Adhoc;
 use function ryunosuke\dbml\array_convert;
+use function ryunosuke\dbml\array_depth;
 use function ryunosuke\dbml\array_each;
 use function ryunosuke\dbml\array_find;
 use function ryunosuke\dbml\array_flatten;
@@ -39,6 +40,7 @@ use function ryunosuke\dbml\preg_splice;
 use function ryunosuke\dbml\rbind;
 use function ryunosuke\dbml\split_noempty;
 use function ryunosuke\dbml\stdclass;
+use function ryunosuke\dbml\throws;
 
 // @formatter:off
 /**
@@ -502,6 +504,26 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
         });
 
         $predicates = array_convert($predicates, function ($cond, &$param, $keys) use ($subtype, $froms) {
+            // 主キー
+            if ($cond === '') {
+                if (count($keys) > 1) {
+                    return false;
+                }
+                $from = reset($froms) ?: throws(new \UnexpectedValueException('base table not found.'));
+                $pcols = $this->database->getSchema()->getTablePrimaryKey($from['table'])->getColumns();
+                $params = (array) $param;
+                if (count($pcols) !== 1 && count($params) !== 0 && array_depth($params) === 1) {
+                    $params = [$params];
+                }
+                $pvals = array_each($params, function (&$carry, $pval) use ($pcols) {
+                    $pvals = (array) $pval;
+                    if (count($pcols) !== count($pvals)) {
+                        throw new \InvalidArgumentException('argument\'s length is not match primary columns.');
+                    }
+                    $carry[] = array_combine($pcols, $pvals);
+                });
+                return [$this->database->getCompatiblePlatform()->getPrimaryCondition($pvals, $from['alias'])];
+            }
             // エニーカラム（*.*）
             if (is_string($cond) && preg_match('#^((.*)\.)?\*$#', $cond, $matches)) {
                 if (array_filter($keys, 'is_int') !== $keys) {
@@ -1653,6 +1675,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
      *
      * | No | where                   | 説明
      * | --:|:--                      |:--
+     * | 30 | `['' => 123]`           | キーを空文字にすると駆動表の主キーを表す
      * | 31 | `['C' => 'childwhere']` | サブビルダの名前をキーにして配列を渡すと「その子供ビルダの where」を意味する
      * | 32 | `['C/childwhere']`      | サブビルダの名前を "/" で区切ると「その子供ビルダの where」を意味する
      * | 33 | `['*.delete_flg' => 1]` | テーブル部分に `*` を指定すると「あらゆるテーブルのそのカラム」を意味する
@@ -1661,6 +1684,12 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
      * ```php
      * # 引数配列内では AND、引数間では OR される
      * $qb->where(['hoge = 1', 'fuga = ?' => 1], ['piyo' => 1]); // WHERE (hoge = 1 AND fuga = 1) OR (piyo = 1)
+     *
+     * # No.30（空キーは駆動表の主キーを表す）
+     * $qb->column('t_article')->where(['' => 123]);            // WHERE article_id = 123
+     * $qb->column('t_article')->where(['' => [123, 456]]);     // WHERE article_id IN (123, 456)
+     * $qb->column('t_multi')->where(['' => [123, 456]]);       // WHERE id1 = 123 AND id2 = 456
+     * $qb->column('t_multi')->where(['' => [[1, 2], [3, 4]]]); // WHERE (id1 = 1 AND id2 = 2) OR (id1 = 3 AND id2 = 4)
      *
      * # No.31, 32（糖衣構文であり、できることは同じ）
      * $qb->column('t_parent P/t_child C')->where([

@@ -458,7 +458,7 @@ class CompatiblePlatform /*extends AbstractPlatform*/
                 }
             }
             $binds = implode(', ', $andconds);
-            $condition = concat($prefix, '.') . "$key IN ($binds)";
+            $condition = concat($prefix, '.') . (count($andconds) === 1 ? "$key = $binds" : "$key IN ($binds)");
         }
         // カラムが2つ以上なら ((c1 = v11 AND c2 = v12) OR (c1 = v21 AND c2 = v22))
         else {

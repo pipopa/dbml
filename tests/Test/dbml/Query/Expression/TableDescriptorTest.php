@@ -263,7 +263,7 @@ class TableDescriptorTest extends \ryunosuke\Test\AbstractUnitTestCase
                 'scope2' => [1, 2],
             ],
             'condition' => [
-                new Expression('T.article_id IN (?)', [1]),
+                new Expression('T.article_id = ?', [1]),
                 'on1 = 1',
             ],
             'fkeyname'  => 'fkeyname',
