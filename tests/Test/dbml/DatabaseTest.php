@@ -3955,6 +3955,19 @@ AND
 
         // groupBy は構造自体が変わってしまうので別に行う
         $this->assertCount(1, $database->selectArray('test.data', [], [], [], 'data', 'min(id) > 0'));
+
+        // TableDescriptor と select 引数の複合呼び出し
+        $this->assertStringIgnoreBreak("
+SELECT T.id FROM test T
+WHERE (T.id = '1') AND (name LIKE 'hoge')
+ORDER BY T.id DESC, name ASC
+", $database->select([
+            'test T(1)-id' => ['id'],
+        ], [
+            'name:LIKE' => 'hoge',
+        ], [
+            'name' => 'ASC',
+        ])->queryInto());
     }
 
     /**

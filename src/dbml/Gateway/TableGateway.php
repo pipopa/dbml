@@ -1048,7 +1048,7 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
         $addition = array_get($this->joinParams, 'addition', []);
         if ($sparams['limit'] || $sparams['groupBy'] || $sparams['having']) {
             return [
-                'table'     => $this->database->createQueryBuilder()->build($sparams),
+                'table'     => $this->database->select(...array_values($sparams)),
                 'condition' => arrayize($addition),
             ];
         }
