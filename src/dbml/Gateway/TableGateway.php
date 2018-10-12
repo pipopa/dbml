@@ -671,6 +671,7 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
             elseif (isset($where_index[$method])) {
                 $sp = $this->getScopeParams([], array_get($arguments, $where_index[$method], []));
                 $arguments[$where_index[$method]] = $sp['where'];
+                $sp['where'] = [];
 
                 // 順序・制限系クエリなら（mysql なら）それを活かした update/delete が実行できるのでそのようにする
                 if (count($sp['column']) > 1 || count($sp['orderBy']) > 0 || count($sp['limit']) > 0) {
