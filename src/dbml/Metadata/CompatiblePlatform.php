@@ -834,26 +834,30 @@ class CompatiblePlatform /*extends AbstractPlatform*/
      */
     public function convertUpdateQuery(QueryBuilder $builder, $sets)
     {
-        if ($this->platform instanceof \ryunosuke\Test\Platforms\SqlitePlatform || $this->platform instanceof MySqlPlatform) {
+        $froms = $builder->getFromPart();
+        $from = reset($froms);
+
+        // JOIN がなければ変換はできる
+        if (count($froms) === 1 || $this->platform instanceof \ryunosuke\Test\Platforms\SqlitePlatform || $this->platform instanceof MySqlPlatform) {
+            // SQLServerPlatform はエイリアス指定の update をサポートしていない
+            if ($from['alias'] !== $from['table'] && $this->platform instanceof SQLServerPlatform) {
+                throw new \DomainException($this->platform->getName() . ' is not supported');
+            }
             // select 化してクエリを取得して戻す
             $builder->select('__dbml_from_maker');
             $builder->innerJoinOn('__dbml_join_maker', 'TRUE', null);
 
-            $sql = preg_replace('#^SELECT __dbml_from_maker FROM#i', 'UPDATE', (string ) $builder);
+            $sql = preg_replace('#^SELECT __dbml_from_maker FROM#i', 'UPDATE', (string) $builder);
             return preg_replace('#INNER JOIN __dbml_join_maker ON TRUE#i', "SET $sets", $sql);
         }
         if ($this->platform instanceof SQLServerPlatform) {
             // select 化してクエリを取得して戻す
             $builder->select('__dbml_from_maker');
 
-            $froms = $builder->getQueryPart('from');
-            $from = $froms[0];
-            $alias = $from['alias'] ? $from['alias'] : $from['table'];
-
-            return preg_replace('#^SELECT __dbml_from_maker#i', "UPDATE $alias SET $sets", (string ) $builder);
+            return preg_replace('#^SELECT __dbml_from_maker#i', "UPDATE {$from['alias']} SET $sets", (string) $builder);
         }
 
-        // 上記2つ以外は join update をサポートしていない
+        // 上記以外は join update をサポートしていない
         // 正確に言えば PostgreSql は using 構文をサポートしているが、select クエリから単純に変換できるものではない
         throw new \DomainException($this->platform->getName() . ' is not supported');
     }
@@ -867,8 +871,11 @@ class CompatiblePlatform /*extends AbstractPlatform*/
      */
     public function convertDeleteQuery(QueryBuilder $builder, $targets)
     {
-        // MySql と SQLServer は共通でOK（\ryunosuke\dbml\Test\Platforms\SqlitePlatform はテスト用で実際には無理）
-        if ($this->platform instanceof \ryunosuke\Test\Platforms\SqlitePlatform || $this->platform instanceof MySqlPlatform || $this->platform instanceof SQLServerPlatform) {
+        $froms = $builder->getFromPart();
+        $from = reset($froms);
+
+        // JOIN がなければ変換はできる。 MySql と SQLServer は共通でOK（\ryunosuke\dbml\Test\Platforms\SqlitePlatform はテスト用で実際には無理）
+        if (count($froms) === 1 || $this->platform instanceof \ryunosuke\Test\Platforms\SqlitePlatform || $this->platform instanceof MySqlPlatform || $this->platform instanceof SQLServerPlatform) {
             $builder->select('__dbml_from_maker');
 
             if ($targets) {
@@ -879,15 +886,20 @@ class CompatiblePlatform /*extends AbstractPlatform*/
                 $alias = implode(', ', $targets);
             }
             else {
-                $froms = $builder->getQueryPart('from');
-                $from = $froms[0];
-                $alias = $from['alias'] ?: $from['table'];
+                $alias = '';
+                if (count($froms) > 1) {
+                    $alias = $from['alias'];
+                }
+                elseif ($from['alias'] !== $from['table'] && ($this->platform instanceof MySqlPlatform || $this->platform instanceof SQLServerPlatform)) {
+                    $alias = $from['alias'];
+                }
             }
 
-            return preg_replace('#^SELECT __dbml_from_maker FROM#i', "DELETE $alias FROM", (string) $builder);
+            $alias = concat(' ', $alias);
+            return preg_replace('#^SELECT __dbml_from_maker FROM#i', "DELETE{$alias} FROM", (string) $builder);
         }
 
-        // 上記2つ以外は join delete をサポートしていない
+        // 上記以外は join delete をサポートしていない
         // 正確に言えば PostgreSql は using 構文をサポートしているが、select クエリから単純に変換できるものではない
         throw new \DomainException($this->platform->getName() . ' is not supported');
     }

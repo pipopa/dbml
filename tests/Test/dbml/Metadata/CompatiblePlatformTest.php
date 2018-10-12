@@ -666,6 +666,17 @@ class CompatiblePlatformTest extends \ryunosuke\Test\AbstractUnitTestCase
      */
     function test_convertUpdateQuery($cplatform, $platform)
     {
+        $builder = self::getDummyDatabase()->select('test');
+        $this->assertEquals('UPDATE test SET key = ?', $cplatform->convertUpdateQuery($builder, 'key = ?'));
+
+        $builder = self::getDummyDatabase()->select('test T');
+        if ($platform instanceof SQLServerPlatform) {
+            $this->assertException(new \DomainException('not supported'), L($cplatform)->convertUpdateQuery($builder, 'key = ?'));
+        }
+        else {
+            $this->assertEquals('UPDATE test T SET key = ?', $cplatform->convertUpdateQuery($builder, 'key = ?'));
+        }
+
         $builder = self::getDummyDatabase()->select('foreign_c1 C, foreign_p');
         if ($platform instanceof \ryunosuke\Test\Platforms\SqlitePlatform || $platform instanceof MySqlPlatform) {
             $this->assertEquals('UPDATE foreign_c1 C, foreign_p SET key = ?', $cplatform->convertUpdateQuery($builder, 'key = ?'));
@@ -685,6 +696,17 @@ class CompatiblePlatformTest extends \ryunosuke\Test\AbstractUnitTestCase
      */
     function test_convertDeleteQuery($cplatform, $platform)
     {
+        $builder = self::getDummyDatabase()->select('test');
+        $this->assertEquals('DELETE FROM test', $cplatform->convertDeleteQuery($builder, []));
+
+        $builder = self::getDummyDatabase()->select('test T');
+        if ($platform instanceof MySqlPlatform || $platform instanceof SQLServerPlatform) {
+            $this->assertEquals('DELETE T FROM test T', $cplatform->convertDeleteQuery($builder, []));
+        }
+        else {
+            $this->assertEquals('DELETE FROM test T', $cplatform->convertDeleteQuery($builder, []));
+        }
+
         $builder = self::getDummyDatabase()->select('foreign_c1 C, foreign_p');
         if ($platform instanceof \ryunosuke\Test\Platforms\SqlitePlatform || $platform instanceof MySqlPlatform) {
             $this->assertEquals('DELETE C FROM foreign_c1 C, foreign_p', $cplatform->convertDeleteQuery($builder, []));

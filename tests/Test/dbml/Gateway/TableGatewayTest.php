@@ -985,7 +985,7 @@ AND ((flag=1))", "$gw");
                 $gateway->where(['id' => 1])->orderBy('id')->limit(1)->delete();
             }
             catch (\Exception $ex) {
-                $this->assertEquals(['DELETE test FROM test WHERE test.id = ? ORDER BY id ASC LIMIT 1' => [1]], $lastsql());
+                $this->assertEquals(['DELETE FROM test WHERE test.id = ? ORDER BY id ASC LIMIT 1' => [1]], $lastsql());
             }
         }
 
