@@ -8,6 +8,7 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Logging\DebugStack;
 use Doctrine\DBAL\Platforms\MySqlPlatform;
+use Doctrine\DBAL\Platforms\SqlitePlatform;
 use Doctrine\DBAL\Platforms\SQLServerPlatform;
 use Doctrine\DBAL\Schema;
 use Doctrine\DBAL\Types\Type;
@@ -3054,6 +3055,26 @@ ON DUPLICATE KEY UPDATE id = VALUES(id), name = VALUES(name)", $affected);
      * @dataProvider provideDatabase
      * @param Database $database
      */
+    function test_update_descriptor($database)
+    {
+        $this->assertEquals(1, $database->update('test(2)', ['name' => 'XXX']));
+        $this->assertEquals('XXX', $database->selectValue('test(2).name'));
+
+        $this->assertEquals(2, $database->update('test(1, 2, 3)', ['name' => 'YYY'], ['id <> ?' => 2]));
+        $this->assertEquals('YYY', $database->selectValue('test(1).name'));
+        $this->assertEquals('XXX', $database->selectValue('test(2).name'));
+        $this->assertEquals('YYY', $database->selectValue('test(3).name'));
+
+        if (!$database->getPlatform() instanceof SqlitePlatform && !$database->getPlatform() instanceof SQLServerPlatform) {
+            $this->assertEquals(1, $database->update('test(2) as T', ['name' => 'ZZZ']));
+            $this->assertEquals('ZZZ', $database->selectValue('test(2).name'));
+        }
+    }
+
+    /**
+     * @dataProvider provideDatabase
+     * @param Database $database
+     */
     function test_delete($database)
     {
         // 連想配列
@@ -3100,6 +3121,26 @@ ON DUPLICATE KEY UPDATE id = VALUES(id), name = VALUES(name)", $affected);
                 '+test1 T1' => [['T.id = T1.id']],
             ], '1=1');
             $this->assertEquals(8, $affected);
+        }
+    }
+
+    /**
+     * @dataProvider provideDatabase
+     * @param Database $database
+     */
+    function test_delete_descriptor($database)
+    {
+        $count = $database->count('test');
+
+        $this->assertEquals(1, $database->delete('test(2)'));
+        $this->assertEquals($count - 1, $database->count('test'));
+
+        $this->assertEquals(2, $database->delete('test(1, 2, 3)', ['id <> ?' => 2]));
+        $this->assertEquals($count - 3, $database->count('test'));
+
+        if (!$database->getPlatform() instanceof SqlitePlatform) {
+            $this->assertEquals(1, $database->delete('test(4) AS T'));
+            $this->assertEquals($count - 4, $database->count('test'));
         }
     }
 

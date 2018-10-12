@@ -184,6 +184,9 @@ use function ryunosuke\dbml\throws;
  */
 class TableDescriptor
 {
+    /** @var string[] テーブル記法を表すメタ文字 */
+    public const META_CHARACTORS = ['(', ')', '@', '[', ']', '{', '}', '+', '-', '#'];
+
     /** @var string オリジナル文字列 */
     private $descriptor;
 

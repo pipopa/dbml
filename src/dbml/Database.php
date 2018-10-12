@@ -1185,6 +1185,9 @@ class Database
                 $carry[$td->descriptor] = $td->column;
             }, []);
         }
+        if (is_string($tableName) && str_contains($tableName, TableDescriptor::META_CHARACTORS)) {
+            $tableName = TableDescriptor::forge($this, $tableName, []);
+        }
         if (is_array($tableName)) {
             $data = arrayize($data);
             if ($data && !is_hasharray($data)) {
@@ -4561,7 +4564,7 @@ class Database
             $set = $this->bindInto($data, $params);
             $sets = array_sprintf($set, '%2$s = %1$s', ', ');
             $tableName->addParam($params, 'join'); // クエリ順は from,join,set,where になるので join 位置に入れる
-            $tableName->where($identifier);
+            $tableName->andWhere($identifier);
             return $this->executeUpdate($this->getCompatiblePlatform()->convertUpdateQuery($tableName, $sets), $tableName->getParams());
         }
         if (is_array($tableName)) {
@@ -4616,7 +4619,7 @@ class Database
         $tableName = $this->_preaffect($tableName, []);
 
         if ($tableName instanceof QueryBuilder) {
-            $tableName->where($identifier);
+            $tableName->andWhere($identifier);
             return $this->executeUpdate($this->getCompatiblePlatform()->convertDeleteQuery($tableName, []), $tableName->getParams());
         }
 
