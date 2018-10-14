@@ -4048,6 +4048,10 @@ ORDER BY T.id DESC, name ASC
                 'aggregate.name@count' => 2,
             ],
         ], $database->aggregate('count', 'aggregate.id, name', ['id > 5'], ['group_id1'], ['count(aggregate.id) > 1']));
+
+        // 数値以外
+        $this->assertEquals('a', $database->aggregate('min', 'test.name'));
+        $this->assertEquals('j', $database->aggregate('max', 'test.name'));
     }
 
     /**

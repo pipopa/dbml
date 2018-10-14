@@ -3345,17 +3345,22 @@ class Database
 
         $stmt = $this->executeQuery($builder, $builder->getParams());
 
+        $cast = function ($var) {
+            if ((!is_int($var) && !is_float($var)) && preg_match('#^-?([1-9]\d*|0)(\.\d+)?$#', (string) $var, $match)) {
+                return isset($match[2]) ? (float) $var : (int) $var;
+            }
+            return $var;
+        };
+
         $selectCount = count($builder->getQueryPart('select'));
         if ($selectCount === 1) {
-            return var_apply($stmt->fetch(\PDO::FETCH_COLUMN), numval);
+            return var_apply($stmt->fetch(\PDO::FETCH_COLUMN), $cast);
         }
         elseif ($selectCount === 2) {
-            $r = $stmt->fetchAll(\PDO::FETCH_COLUMN | \PDO::FETCH_UNIQUE);
-            return var_apply($r, numval);
+            return var_apply($stmt->fetchAll(\PDO::FETCH_COLUMN | \PDO::FETCH_UNIQUE), $cast);
         }
         else {
-            $r = $stmt->fetchAll(\PDO::FETCH_ASSOC | \PDO::FETCH_UNIQUE);
-            return var_apply($r, numval);
+            return var_apply($stmt->fetchAll(\PDO::FETCH_ASSOC | \PDO::FETCH_UNIQUE), $cast);
         }
     }
 
