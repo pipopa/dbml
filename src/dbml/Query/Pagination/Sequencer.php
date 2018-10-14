@@ -77,7 +77,7 @@ class Sequencer implements \IteratorAggregate, \Countable
             if ($this->bidirection) {
                 $appender = clone $this->builder;
                 $appender->andWhere(["!$key " . (!$order ? '>= ?' : '<= ?') => $bind]);
-                $appender->orderBy([$key => !$order ? 'ASC' : 'DESC'] + $currentby);
+                $appender->orderBy([$key => !$order] + $currentby);
                 $appender->limit(1, 0);
                 $appendix = $appender->array();
             }
@@ -85,7 +85,7 @@ class Sequencer implements \IteratorAggregate, \Countable
             // アイテムを取得
             $provider = clone $this->builder;
             $provider->andWhere(["!$key " . ($order ? '> ?' : '< ?') => $bind]);
-            $provider->orderBy([$key => $order ? 'ASC' : 'DESC'] + $currentby);
+            $provider->orderBy([$key => $order] + $currentby);
             $provider->limit(1 + $this->count, 0);
             $items = $provider->array();
 

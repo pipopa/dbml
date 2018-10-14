@@ -1488,6 +1488,7 @@ INNER JOIN foreign_c2 ON (foreign_c2.cid = foreign_p.id) AND (condition = 2)",
         $builder->column('test');
 
         $this->assertQuery('SELECT test.* FROM test ORDER BY id ASC', $builder->orderBy('id'));
+        $this->assertQuery('SELECT test.* FROM test ORDER BY id DESC', $builder->orderBy('-id'));
         $this->assertQuery('SELECT test.* FROM test ORDER BY id ASC', $builder->orderBy('id', true));
         $this->assertQuery('SELECT test.* FROM test ORDER BY id DESC', $builder->orderBy('id', false));
         $this->assertQuery('SELECT test.* FROM test ORDER BY id DESC', $builder->orderBy('id', 'DESC'));
@@ -1495,6 +1496,7 @@ INNER JOIN foreign_c2 ON (foreign_c2.cid = foreign_p.id) AND (condition = 2)",
         $this->assertQuery('SELECT test.* FROM test ORDER BY id1 DESC, id2 DESC', $builder->orderBy(['id1', 'id2'], false));
         $this->assertQuery('SELECT test.* FROM test ORDER BY id1 ASC, id2 DESC, id3 ASC', $builder->orderBy(['id1' => 'ASC', 'id2' => 'DESC', 'id3']));
         $this->assertQuery('SELECT test.* FROM test ORDER BY id1 ASC, id2 DESC, id3 ASC', $builder->orderBy(['id1' => true, 'id2' => false, 'id3']));
+        $this->assertQuery('SELECT test.* FROM test ORDER BY id1 DESC, id2 ASC, id3 ASC', $builder->orderBy(['-id1', '+id2', 'id3']));
     }
 
     /**
@@ -1568,16 +1570,16 @@ INNER JOIN foreign_c2 ON (foreign_c2.cid = foreign_p.id) AND (condition = 2)",
                 'C.comment_id' => 'DESC',
             ],
         ]);
-        $this->assertEquals(['A.article_id DESC'], $builder->getQueryPart('orderBy'));
-        $this->assertEquals(['C.comment_id DESC'], $builder->getSubbuilder('C')->getQueryPart('orderBy'));
+        $this->assertEquals(['A.article_id' => false], $builder->getQueryPart('orderBy'));
+        $this->assertEquals(['C.comment_id' => false], $builder->getSubbuilder('C')->getQueryPart('orderBy'));
 
         // スラッシュネスト
         $builder->reset()->column('t_article A/t_comment C')->orderBy([
             'A.article_id' => 'DESC',
             'C/comment_id' => 'DESC',
         ]);
-        $this->assertEquals(['A.article_id DESC'], $builder->getQueryPart('orderBy'));
-        $this->assertEquals(['comment_id DESC'], $builder->getSubbuilder('C')->getQueryPart('orderBy'));
+        $this->assertEquals(['A.article_id' => false], $builder->getQueryPart('orderBy'));
+        $this->assertEquals(['comment_id' => false], $builder->getSubbuilder('C')->getQueryPart('orderBy'));
     }
 
     /**
