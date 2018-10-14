@@ -2933,6 +2933,10 @@ INNER JOIN t_leaf ON (t_leaf.leaf_root_id = t_root.root_id) AND (t_leaf.leaf_roo
         $builder->addParam(9, 9999999);
         $builder->addParam(0);
         $this->assertEquals([0, 1, 2, 3, 4, 5, 9], $builder->getParams());
+        $this->assertEquals([1, 2], $builder->getParams('select'));
+        $this->assertEquals([3], $builder->getParams('from'));
+        $this->assertEquals([4], $builder->getParams('where'));
+        $this->assertEquals([5], $builder->getParams('having'));
 
         // 順番が明示されていれば resetQueryPart で吹き飛ぶはず
         $builder->resetQueryPart('select');

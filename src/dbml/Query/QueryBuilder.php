@@ -2970,8 +2970,19 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
         return "($this)";
     }
 
-    public function getParams()
+    public function getParams($queryPartName = null)
     {
+        if ($queryPartName !== null) {
+            $params = [];
+            $offset = self::PARAMETER_OFFSETS[$queryPartName];
+            foreach ($this->params as $k => $v) {
+                if ($offset <= $k && $k < $offset + self::PARAMETER_OFFSET) {
+                    $params[] = $this->params[$k];
+                }
+            }
+            return $params;
+        }
+
         $params = $this->params;
         ksort($params);
         return array_merge($params);
