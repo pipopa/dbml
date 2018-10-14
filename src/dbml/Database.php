@@ -368,6 +368,7 @@ use ryunosuke\dbml\Utility\Adhoc;
  * @method array                  deleteOrThrow($tableName, array $identifier = []) {{@link delete()} の例外送出版@inheritdoc delete()}
  * @method array                  removeOrThrow($tableName, array $identifier = []) {{@link remove()} の例外送出版@inheritdoc remove()}
  * @method array                  destroyOrThrow($tableName, array $identifier = []) {{@link destroy()} の例外送出版@inheritdoc destroy()}
+ * @method array                  reduceOrThrow($tableName, $limit = null, $orderBy = [], $groupBy = [], $identifier = []) {{@link reduce()} の例外送出版@inheritdoc reduce()}
  * @method array                  upsertOrThrow($tableName, $insertData, $updateData = null) {{@link upsert()} の例外送出版@inheritdoc upsert()}
  * @method array                  modifyOrThrow($tableName, $insertData, $updateData = null) {{@link modify()} の例外送出版@inheritdoc modify()}
  * @method array                  replaceOrThrow($tableName, $data) {{@link replace()} の例外送出版@inheritdoc replace()}
@@ -812,7 +813,7 @@ class Database
             return $subselect->$perform();
         }
         // affect～OrThrow 系
-        if (preg_match('/^(insert|update|delete|remove|destroy|upsert|modify|replace)OrThrow$/i', $name, $matches)) {
+        if (preg_match('/^(insert|update|delete|remove|destroy|reduce|upsert|modify|replace)OrThrow$/i', $name, $matches)) {
             $method = strtolower($matches[1]);
             $refunc = reflect_callable([$this, $method]);
             if (count($arguments) < $refunc->getNumberOfRequiredParameters()) {
@@ -4986,6 +4987,117 @@ class Database
             return $this->_postaffect($tableName, arrayize($identifier));
         }
         return $affected;
+    }
+
+    /**
+     * DELETE 構文（指定件数を残して削除）
+     *
+     * $orderBy の順番で $limit 件残すように DELETE を発行する。
+     * $groupBy を指定するとそのグルーピングの世界で $limit 件残すようにそれぞれ削除する。
+     * 条件を指定した場合や同値が存在した場合、指定件数より残ることがあるが、少なくなることはない。
+     *
+     * $orderBy は単一しか対応していない（大抵の場合は日付的なカラムの単一指定のはず）。
+     * "+column" のように + を付与すると昇順、 "-column" のように - を付与すると降順になる（未指定時は昇順）。
+     * 一応 ['column' => true] のような orderBy 指定にも対応している。
+     *
+     * 削除には行値式 IN を使うので SQLServer では実行できない。また、 mysql 5.6 以下ではインデックスが効かないので注意。
+     * 単一主キーなら問題ない。
+     *
+     * ```php
+     * # logs テーブルから log_time の降順で 10 件残して削除
+     * $db->reduce('logs', 10, '-log_time');
+     *
+     * # logs テーブルから log_time の降順でカテゴリごとに 10 件残して削除
+     * $db->reduce('logs', 10, '-log_time', ['category']);
+     *
+     * # logs テーブルから log_time の降順でカテゴリごとに 10 件残して削除するが直近1ヶ月は残す（1ヶ月以上前を削除対象とする）
+     * $db->reduce('logs', 10, '-log_time', ['category'], ['log_time < ?' => date('Y-m-d', strtotime('now -1 month'))]);
+     * ```
+     *
+     * @used-by reduceOrThrow()
+     *
+     * @param string|array $tableName テーブル名
+     * @param int $limit 残す件数
+     * @param string|array $orderBy 並び順
+     * @param string|array $groupBy グルーピング条件
+     * @param array|mixed $identifier WHERE 条件
+     * @return int|string 基本的には affected row. dryrun 中は文字列
+     */
+    public function reduce($tableName, $limit = null, $orderBy = [], $groupBy = [], $identifier = [])
+    {
+        // 隠し引数 $opt
+        $opt = func_num_args() === 6 ? func_get_arg(5) : [];
+
+        $orderBy = arrayize($orderBy);
+        $groupBy = arrayize($groupBy);
+        $identifier = arrayize($identifier);
+
+        $simplize = function ($v) { return last_value(explode('.', $v)); };
+
+        $tableName = $this->_preaffect($tableName, []);
+        if ($tableName instanceof QueryBuilder) {
+            $limit = $tableName->getQueryPart('limit') ?: $limit;
+            $orderBy = array_merge($tableName->getQueryPart('orderBy'), $orderBy);
+            $groupBy = array_merge($tableName->getQueryPart('groupBy'), $groupBy);
+            if ($where = $tableName->getQueryPart('where')) {
+                $identifier[] = new Expression(implode(' AND ', Adhoc::wrapParentheses(array_map($simplize, $where))), $tableName->getParams('where'));
+            }
+            $tableName = first_value($tableName->getFromPart())['table'];
+        }
+
+        $limit = intval($limit);
+        if ($limit < 1) {
+            throw new \InvalidArgumentException("\$limit must be > 0 ($limit).");
+        }
+
+        $orderBy = array_kmap($orderBy, function ($v, $k) use ($simplize) { return is_int($k) ? $simplize($v) : ($v ? '+' : '-') . $simplize($k); });
+        if (count($orderBy) !== 1) {
+            throw new \InvalidArgumentException("\$orderBy must be === 1.");
+        }
+        $orderBy = reset($orderBy);
+
+        $groupBy = array_map($simplize, $groupBy);
+
+        $tableName = $this->convertTableName($tableName);
+        $BASETABLE = '__dbml_base_table';
+        $JOINTABLE = '__dbml_join_table';
+        $TEMPTABLE = '__dbml_temp_table';
+        $GROUPTABLE = '__dbml_group_table';
+        $VALUETABLE = '__dbml_value_table';
+
+        $pcols = $this->getSchema()->getTablePrimaryKey($tableName)->getColumns();
+        $ascdesc = $orderBy[0] !== '-';
+        $glsign = ($ascdesc ? '>' : '<');
+        $orderBy = ltrim($orderBy, '-+');
+
+        // 境界値が得られるサブクエリ
+        $subquery = $this->select(["$tableName $VALUETABLE" => $orderBy])
+            ->where(array_map(function ($gk) use ($GROUPTABLE, $VALUETABLE) { return "$GROUPTABLE.$gk = $VALUETABLE.$gk"; }, $groupBy))
+            ->orderBy($groupBy + [$orderBy => $ascdesc])
+            ->limit(1, $limit - 1);
+
+        // グルーピングしないなら主キー指定で消す必要はなく、直接比較で消すことができる（結果は変わらないがパフォーマンスが劇的に違う）
+        if (!$groupBy) {
+            $identifier["$tableName.$orderBy $glsign ?"] = $subquery->wrap("SELECT * FROM", "AS $TEMPTABLE");
+        }
+        else {
+            // グループキーと境界値が得られるサブクエリ
+            $subtable = $this->select([
+                "$tableName $GROUPTABLE" => $groupBy + [$orderBy => $subquery],
+            ], $identifier)->groupBy($groupBy);
+            // ↑と JOIN して主キーが得られるサブクエリ
+            $select = $this->select([
+                "$tableName $BASETABLE" => $pcols,
+            ])->innerJoinOn([$JOINTABLE => $subtable],
+                array_merge(array_map(function ($gk) use ($BASETABLE, $JOINTABLE) { return "$JOINTABLE.$gk = $BASETABLE.$gk"; }, $groupBy), [
+                    "$BASETABLE.$orderBy $glsign $JOINTABLE.$orderBy",
+                ])
+            );
+            // ↑を主キー where に設定する
+            $identifier["(" . implode(',', $pcols) . ")"] = $select->wrap("SELECT * FROM", "AS $TEMPTABLE");
+        }
+
+        return $this->delete($tableName, $identifier, $opt);
     }
 
     /**

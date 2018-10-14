@@ -457,6 +457,7 @@ use function ryunosuke\dbml\throws;
  * @method int                    delete(array $identifier = []) {駆動表を省略できる {@link Database::delete()}@inheritdoc Database::delete()}
  * @method int                    remove(array $identifier = []) {駆動表を省略できる {@link Database::remove()}@inheritdoc Database::remove()}
  * @method int                    destroy(array $identifier = []) {駆動表を省略できる {@link Database::destroy()}@inheritdoc Database::destroy()}
+ * @method int                    reduce($limit = null, $orderBy = [], $groupBy = [], $identifier = []) {駆動表を省略できる {@link Database::reduce()}@inheritdoc Database::reduce()}
  * @method int                    upsert($insertData, $updateData = null) {駆動表を省略できる {@link Database::upsert()}@inheritdoc Database::upsert()}
  * @method int                    modify($insertData, $updateData = null) {駆動表を省略できる {@link Database::modify()}@inheritdoc Database::modify()}
  * @method int                    replace($insertData, $updateData = null) {駆動表を省略できる {@link Database::replace()}@inheritdoc Database::replace()}
@@ -467,6 +468,7 @@ use function ryunosuke\dbml\throws;
  * @method array                  deleteOrThrow(array $identifier = []) {{@link delete()} の例外送出版@inheritdoc delete()}
  * @method array                  removeOrThrow(array $identifier = []) {{@link remove()} の例外送出版@inheritdoc remove()}
  * @method array                  destroyOrThrow(array $identifier = []) {{@link destroy()} の例外送出版@inheritdoc destroy()}
+ * @method array                  reduceOrThrow($limit = null, $orderBy = [], $groupBy = [], $identifier = []) {{@link reduce()} の例外送出版@inheritdoc reduce()}
  * @method array                  upsertOrThrow($insertData, $updateData = null) {{@link upsert()} の例外送出版@inheritdoc upsert()}
  * @method array                  modifyOrThrow($insertData, $updateData = null) {{@link modify()} の例外送出版@inheritdoc modify()}
  * @method array                  replaceOrThrow($data) {{@link replace()} の例外送出版@inheritdoc replace()}
@@ -648,7 +650,7 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
         }
 
         // 更新系メソッド
-        if (preg_match('#^(prepare)?(insert|update|delete|remove|destroy|upsert|modify|replace|changeArray|truncate).*?(OrThrow)?#ui', $name, $match)) {
+        if (preg_match('#^(prepare)?(insert|update|delete|remove|destroy|reduce|upsert|modify|replace|changeArray|truncate).*?(OrThrow)?#ui', $name, $match)) {
             $method = strtolower($match[2]);
             $this->resetResult();
 
@@ -692,6 +694,10 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
                 if (count($sp['groupBy']) > 0 || count($sp['having']) > 0) {
                     throw new \UnexpectedValueException('group or having is not allow affect query.');
                 }
+            }
+            // reduce は色々と特殊
+            elseif ($method === 'reduce') {
+                $arguments[0] = $this->select();
             }
             return $this->database->$name(...$arguments);
         }

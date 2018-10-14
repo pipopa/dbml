@@ -143,6 +143,15 @@ abstract class AbstractUnitTestCase extends TestCase
                             ],
                             [new Index('PRIMARY', ['id'], true, true)]
                         ),
+                        new Table('oprlog',
+                            [
+                                new Column('id', Type::getType('integer'), ['autoincrement' => true]),
+                                new Column('category', Type::getType('string'), ['length' => 32]),
+                                new Column('primary_id', Type::getType('integer')),
+                                new Column('log_date', Type::getType('date')),
+                            ],
+                            [new Index('PRIMARY', ['id'], true, true)]
+                        ),
                         new Table('noprimary',
                             [
                                 new Column('id', Type::getType('integer')),
@@ -451,6 +460,7 @@ abstract class AbstractUnitTestCase extends TestCase
                 $db->truncate('noauto');
                 $db->truncate('paging');
                 $db->truncate('aggregate');
+                $db->truncate('oprlog');
                 $db->truncate('noprimary');
                 $db->truncate('multiprimary');
                 $db->truncate('misctype');
@@ -495,6 +505,17 @@ abstract class AbstractUnitTestCase extends TestCase
                             'group_id1' => floor($i / 2) + 1,
                             'group_id2' => (floor($i / 5) + 1) * 10,
                         ]);
+                    }
+                    foreach (range(1, 9) as $i) {
+                        foreach (range(1, $i) as $j) {
+                            foreach (range(1, $j) as $k) {
+                                $db->insert('oprlog', [
+                                    'category'   => "category-$i",
+                                    'primary_id' => $j,
+                                    'log_date'   => date('Y-m-d', strtotime("200$i-$j-$k"))
+                                ]);
+                            }
+                        }
                     }
                     for ($i = 1, $char = 'a'; $i <= 10; $i++) {
                         $db->insert('multiprimary', [

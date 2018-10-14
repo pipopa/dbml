@@ -3369,6 +3369,225 @@ ON DUPLICATE KEY UPDATE id = VALUES(id), name = VALUES(name)", $affected);
      * @dataProvider provideDatabase
      * @param Database $database
      */
+    function test_reduce($database)
+    {
+        // テーブル全体で log_date 昇順で 5 件残す
+        $database->begin();
+        $this->assertEquals(160, $database->reduce('oprlog', 5, 'log_date'));
+        $this->assertEquals(5, $database->count('oprlog'));
+        $this->assertEquals([
+            '2001-01-01',
+            '2002-01-01',
+            '2002-02-01',
+            '2002-02-02',
+            '2003-01-01',
+        ], $database->selectLists('oprlog.log_date'));
+        $database->rollback();
+
+        // テーブル全体で log_date 降順で 5 件残す
+        $database->begin();
+        $this->assertEquals(160, $database->reduce('oprlog', 5, '-log_date'));
+        $this->assertEquals(5, $database->count('oprlog'));
+        $this->assertEquals([
+            '2009-09-09',
+            '2009-09-08',
+            '2009-09-07',
+            '2009-09-06',
+            '2009-09-05',
+        ], $database->selectLists('oprlog-log_date.log_date'));
+        $database->rollback();
+
+        // category でグルーピングして log_date 昇順で 1 件残す
+        $database->begin();
+        $this->assertEquals(156, $database->reduce('oprlog', 1, 'log_date', ['category']));
+        $this->assertEquals(9, $database->count('oprlog'));
+        $this->assertEquals([
+            '2001-01-01',
+            '2002-01-01',
+            '2003-01-01',
+            '2004-01-01',
+            '2005-01-01',
+            '2006-01-01',
+            '2007-01-01',
+            '2008-01-01',
+            '2009-01-01',
+        ], $database->selectLists('oprlog.log_date'));
+        $database->rollback();
+
+        // category でグルーピングして log_date 降順で 1 件残す
+        $database->begin();
+        $this->assertEquals(156, $database->reduce('oprlog', 1, '-log_date', ['category']));
+        $this->assertEquals(9, $database->count('oprlog'));
+        $this->assertEquals([
+            '2001-01-01',
+            '2002-02-02',
+            '2003-03-03',
+            '2004-04-04',
+            '2005-05-05',
+            '2006-06-06',
+            '2007-07-07',
+            '2008-08-08',
+            '2009-09-09'
+        ], $database->selectLists('oprlog.log_date'));
+        $database->rollback();
+
+        // category, primary_id でグルーピングして log_date 昇順で 5 件残す
+        $database->begin();
+        $this->assertEquals(20, $database->reduce('oprlog', 5, 'log_date', ['category', 'primary_id']));
+        $this->assertEquals(1, $database->count('oprlog', ['category' => 'category-9', 'primary_id' => 1]));
+        $this->assertEquals(2, $database->count('oprlog', ['category' => 'category-9', 'primary_id' => 2]));
+        $this->assertEquals(3, $database->count('oprlog', ['category' => 'category-9', 'primary_id' => 3]));
+        $this->assertEquals(4, $database->count('oprlog', ['category' => 'category-9', 'primary_id' => 4]));
+        $this->assertEquals(5, $database->count('oprlog', ['category' => 'category-9', 'primary_id' => 5]));
+        $this->assertEquals(5, $database->count('oprlog', ['category' => 'category-9', 'primary_id' => 6]));
+        $this->assertEquals(5, $database->count('oprlog', ['category' => 'category-9', 'primary_id' => 7]));
+        $this->assertEquals(5, $database->count('oprlog', ['category' => 'category-9', 'primary_id' => 8]));
+        $this->assertEquals(5, $database->count('oprlog', ['category' => 'category-9', 'primary_id' => 9]));
+        $this->assertEquals("2009-01-01", $database->min('oprlog.log_date', ['category' => 'category-9', 'primary_id' => 1]));
+        $this->assertEquals("2009-02-01", $database->min('oprlog.log_date', ['category' => 'category-9', 'primary_id' => 2]));
+        $this->assertEquals("2009-03-01", $database->min('oprlog.log_date', ['category' => 'category-9', 'primary_id' => 3]));
+        $this->assertEquals("2009-04-01", $database->min('oprlog.log_date', ['category' => 'category-9', 'primary_id' => 4]));
+        $this->assertEquals("2009-05-01", $database->min('oprlog.log_date', ['category' => 'category-9', 'primary_id' => 5]));
+        $this->assertEquals("2009-06-01", $database->min('oprlog.log_date', ['category' => 'category-9', 'primary_id' => 6]));
+        $this->assertEquals("2009-07-01", $database->min('oprlog.log_date', ['category' => 'category-9', 'primary_id' => 7]));
+        $this->assertEquals("2009-08-01", $database->min('oprlog.log_date', ['category' => 'category-9', 'primary_id' => 8]));
+        $this->assertEquals("2009-09-01", $database->min('oprlog.log_date', ['category' => 'category-9', 'primary_id' => 9]));
+        $this->assertEquals("2009-01-01", $database->max('oprlog.log_date', ['category' => 'category-9', 'primary_id' => 1]));
+        $this->assertEquals("2009-02-02", $database->max('oprlog.log_date', ['category' => 'category-9', 'primary_id' => 2]));
+        $this->assertEquals("2009-03-03", $database->max('oprlog.log_date', ['category' => 'category-9', 'primary_id' => 3]));
+        $this->assertEquals("2009-04-04", $database->max('oprlog.log_date', ['category' => 'category-9', 'primary_id' => 4]));
+        $this->assertEquals("2009-05-05", $database->max('oprlog.log_date', ['category' => 'category-9', 'primary_id' => 5]));
+        $this->assertEquals("2009-06-05", $database->max('oprlog.log_date', ['category' => 'category-9', 'primary_id' => 6]));
+        $this->assertEquals("2009-07-05", $database->max('oprlog.log_date', ['category' => 'category-9', 'primary_id' => 7]));
+        $this->assertEquals("2009-08-05", $database->max('oprlog.log_date', ['category' => 'category-9', 'primary_id' => 8]));
+        $this->assertEquals("2009-09-05", $database->max('oprlog.log_date', ['category' => 'category-9', 'primary_id' => 9]));
+        $database->rollback();
+
+        // category, primary_id でグルーピングして log_date 降順で 5 件残す
+        $database->begin();
+        $this->assertEquals(20, $database->reduce('oprlog', 5, '-log_date', ['category', 'primary_id']));
+        $this->assertEquals(1, $database->count('oprlog', ['category' => 'category-9', 'primary_id' => 1]));
+        $this->assertEquals(2, $database->count('oprlog', ['category' => 'category-9', 'primary_id' => 2]));
+        $this->assertEquals(3, $database->count('oprlog', ['category' => 'category-9', 'primary_id' => 3]));
+        $this->assertEquals(4, $database->count('oprlog', ['category' => 'category-9', 'primary_id' => 4]));
+        $this->assertEquals(5, $database->count('oprlog', ['category' => 'category-9', 'primary_id' => 5]));
+        $this->assertEquals(5, $database->count('oprlog', ['category' => 'category-9', 'primary_id' => 6]));
+        $this->assertEquals(5, $database->count('oprlog', ['category' => 'category-9', 'primary_id' => 7]));
+        $this->assertEquals(5, $database->count('oprlog', ['category' => 'category-9', 'primary_id' => 8]));
+        $this->assertEquals(5, $database->count('oprlog', ['category' => 'category-9', 'primary_id' => 9]));
+        $this->assertEquals("2009-01-01", $database->min('oprlog.log_date', ['category' => 'category-9', 'primary_id' => 1]));
+        $this->assertEquals("2009-02-01", $database->min('oprlog.log_date', ['category' => 'category-9', 'primary_id' => 2]));
+        $this->assertEquals("2009-03-01", $database->min('oprlog.log_date', ['category' => 'category-9', 'primary_id' => 3]));
+        $this->assertEquals("2009-04-01", $database->min('oprlog.log_date', ['category' => 'category-9', 'primary_id' => 4]));
+        $this->assertEquals("2009-05-01", $database->min('oprlog.log_date', ['category' => 'category-9', 'primary_id' => 5]));
+        $this->assertEquals("2009-06-02", $database->min('oprlog.log_date', ['category' => 'category-9', 'primary_id' => 6]));
+        $this->assertEquals("2009-07-03", $database->min('oprlog.log_date', ['category' => 'category-9', 'primary_id' => 7]));
+        $this->assertEquals("2009-08-04", $database->min('oprlog.log_date', ['category' => 'category-9', 'primary_id' => 8]));
+        $this->assertEquals("2009-09-05", $database->min('oprlog.log_date', ['category' => 'category-9', 'primary_id' => 9]));
+        $this->assertEquals("2009-01-01", $database->max('oprlog.log_date', ['category' => 'category-9', 'primary_id' => 1]));
+        $this->assertEquals("2009-02-02", $database->max('oprlog.log_date', ['category' => 'category-9', 'primary_id' => 2]));
+        $this->assertEquals("2009-03-03", $database->max('oprlog.log_date', ['category' => 'category-9', 'primary_id' => 3]));
+        $this->assertEquals("2009-04-04", $database->max('oprlog.log_date', ['category' => 'category-9', 'primary_id' => 4]));
+        $this->assertEquals("2009-05-05", $database->max('oprlog.log_date', ['category' => 'category-9', 'primary_id' => 5]));
+        $this->assertEquals("2009-06-06", $database->max('oprlog.log_date', ['category' => 'category-9', 'primary_id' => 6]));
+        $this->assertEquals("2009-07-07", $database->max('oprlog.log_date', ['category' => 'category-9', 'primary_id' => 7]));
+        $this->assertEquals("2009-08-08", $database->max('oprlog.log_date', ['category' => 'category-9', 'primary_id' => 8]));
+        $this->assertEquals("2009-09-09", $database->max('oprlog.log_date', ['category' => 'category-9', 'primary_id' => 9]));
+        $database->rollback();
+
+        // category, primary_id でグルーピングして log_date 降順で 5 件残す。ただし、2009-07-04 以降は残す（2009-07-04 以前のみ削除する）
+        $database->begin();
+        $this->assertEquals(13, $database->reduce('oprlog', 5, '-log_date', ['category', 'primary_id'], ['log_date < ?' => '2009-07-04']));
+        $this->assertEquals(1, $database->count('oprlog', ['category' => 'category-9', 'primary_id' => 1]));
+        $this->assertEquals(2, $database->count('oprlog', ['category' => 'category-9', 'primary_id' => 2]));
+        $this->assertEquals(3, $database->count('oprlog', ['category' => 'category-9', 'primary_id' => 3]));
+        $this->assertEquals(4, $database->count('oprlog', ['category' => 'category-9', 'primary_id' => 4]));
+        $this->assertEquals(5, $database->count('oprlog', ['category' => 'category-9', 'primary_id' => 5]));
+        $this->assertEquals(5, $database->count('oprlog', ['category' => 'category-9', 'primary_id' => 6]));
+        $this->assertEquals(5, $database->count('oprlog', ['category' => 'category-9', 'primary_id' => 7]));
+        $this->assertEquals(8, $database->count('oprlog', ['category' => 'category-9', 'primary_id' => 8]));
+        $this->assertEquals(9, $database->count('oprlog', ['category' => 'category-9', 'primary_id' => 9]));
+        $this->assertEquals("2009-01-01", $database->min('oprlog.log_date', ['category' => 'category-9', 'primary_id' => 1]));
+        $this->assertEquals("2009-02-01", $database->min('oprlog.log_date', ['category' => 'category-9', 'primary_id' => 2]));
+        $this->assertEquals("2009-03-01", $database->min('oprlog.log_date', ['category' => 'category-9', 'primary_id' => 3]));
+        $this->assertEquals("2009-04-01", $database->min('oprlog.log_date', ['category' => 'category-9', 'primary_id' => 4]));
+        $this->assertEquals("2009-05-01", $database->min('oprlog.log_date', ['category' => 'category-9', 'primary_id' => 5]));
+        $this->assertEquals("2009-06-02", $database->min('oprlog.log_date', ['category' => 'category-9', 'primary_id' => 6]));
+        $this->assertEquals("2009-07-03", $database->min('oprlog.log_date', ['category' => 'category-9', 'primary_id' => 7]));
+        $this->assertEquals("2009-08-01", $database->min('oprlog.log_date', ['category' => 'category-9', 'primary_id' => 8]));
+        $this->assertEquals("2009-09-01", $database->min('oprlog.log_date', ['category' => 'category-9', 'primary_id' => 9]));
+        $this->assertEquals("2009-01-01", $database->max('oprlog.log_date', ['category' => 'category-9', 'primary_id' => 1]));
+        $this->assertEquals("2009-02-02", $database->max('oprlog.log_date', ['category' => 'category-9', 'primary_id' => 2]));
+        $this->assertEquals("2009-03-03", $database->max('oprlog.log_date', ['category' => 'category-9', 'primary_id' => 3]));
+        $this->assertEquals("2009-04-04", $database->max('oprlog.log_date', ['category' => 'category-9', 'primary_id' => 4]));
+        $this->assertEquals("2009-05-05", $database->max('oprlog.log_date', ['category' => 'category-9', 'primary_id' => 5]));
+        $this->assertEquals("2009-06-06", $database->max('oprlog.log_date', ['category' => 'category-9', 'primary_id' => 6]));
+        $this->assertEquals("2009-07-07", $database->max('oprlog.log_date', ['category' => 'category-9', 'primary_id' => 7]));
+        $this->assertEquals("2009-08-08", $database->max('oprlog.log_date', ['category' => 'category-9', 'primary_id' => 8]));
+        $this->assertEquals("2009-09-09", $database->max('oprlog.log_date', ['category' => 'category-9', 'primary_id' => 9]));
+        $database->rollback();
+
+        // ↑のクエリビルダ版
+        $database->begin();
+        $select = $database->select('oprlog-log_date#-5')->where(['log_date < ?' => '2009-07-04'])->groupBy('category', 'primary_id');
+        $this->assertEquals(13, $database->reduce($select));
+        $this->assertEquals(1, $database->count('oprlog', ['category' => 'category-9', 'primary_id' => 1]));
+        $this->assertEquals(2, $database->count('oprlog', ['category' => 'category-9', 'primary_id' => 2]));
+        $this->assertEquals(3, $database->count('oprlog', ['category' => 'category-9', 'primary_id' => 3]));
+        $this->assertEquals(4, $database->count('oprlog', ['category' => 'category-9', 'primary_id' => 4]));
+        $this->assertEquals(5, $database->count('oprlog', ['category' => 'category-9', 'primary_id' => 5]));
+        $this->assertEquals(5, $database->count('oprlog', ['category' => 'category-9', 'primary_id' => 6]));
+        $this->assertEquals(5, $database->count('oprlog', ['category' => 'category-9', 'primary_id' => 7]));
+        $this->assertEquals(8, $database->count('oprlog', ['category' => 'category-9', 'primary_id' => 8]));
+        $this->assertEquals(9, $database->count('oprlog', ['category' => 'category-9', 'primary_id' => 9]));
+        $this->assertEquals("2009-01-01", $database->min('oprlog.log_date', ['category' => 'category-9', 'primary_id' => 1]));
+        $this->assertEquals("2009-02-01", $database->min('oprlog.log_date', ['category' => 'category-9', 'primary_id' => 2]));
+        $this->assertEquals("2009-03-01", $database->min('oprlog.log_date', ['category' => 'category-9', 'primary_id' => 3]));
+        $this->assertEquals("2009-04-01", $database->min('oprlog.log_date', ['category' => 'category-9', 'primary_id' => 4]));
+        $this->assertEquals("2009-05-01", $database->min('oprlog.log_date', ['category' => 'category-9', 'primary_id' => 5]));
+        $this->assertEquals("2009-06-02", $database->min('oprlog.log_date', ['category' => 'category-9', 'primary_id' => 6]));
+        $this->assertEquals("2009-07-03", $database->min('oprlog.log_date', ['category' => 'category-9', 'primary_id' => 7]));
+        $this->assertEquals("2009-08-01", $database->min('oprlog.log_date', ['category' => 'category-9', 'primary_id' => 8]));
+        $this->assertEquals("2009-09-01", $database->min('oprlog.log_date', ['category' => 'category-9', 'primary_id' => 9]));
+        $this->assertEquals("2009-01-01", $database->max('oprlog.log_date', ['category' => 'category-9', 'primary_id' => 1]));
+        $this->assertEquals("2009-02-02", $database->max('oprlog.log_date', ['category' => 'category-9', 'primary_id' => 2]));
+        $this->assertEquals("2009-03-03", $database->max('oprlog.log_date', ['category' => 'category-9', 'primary_id' => 3]));
+        $this->assertEquals("2009-04-04", $database->max('oprlog.log_date', ['category' => 'category-9', 'primary_id' => 4]));
+        $this->assertEquals("2009-05-05", $database->max('oprlog.log_date', ['category' => 'category-9', 'primary_id' => 5]));
+        $this->assertEquals("2009-06-06", $database->max('oprlog.log_date', ['category' => 'category-9', 'primary_id' => 6]));
+        $this->assertEquals("2009-07-07", $database->max('oprlog.log_date', ['category' => 'category-9', 'primary_id' => 7]));
+        $this->assertEquals("2009-08-08", $database->max('oprlog.log_date', ['category' => 'category-9', 'primary_id' => 8]));
+        $this->assertEquals("2009-09-09", $database->max('oprlog.log_date', ['category' => 'category-9', 'primary_id' => 9]));
+        $database->rollback();
+    }
+
+    /**
+     * @dataProvider provideDatabase
+     * @param Database $database
+     */
+    function test_reduce_misc($database)
+    {
+        $database->begin();
+        $this->assertEquals(135, $database->reduce('oprlog', 5, '-log_date', [], ['log_date < ?' => '2009-06-01']));
+        $database->rollback();
+
+        $database->begin();
+        $this->assertEquals(101, $database->reduce('oprlog', 5, '-log_date', ['category'], ['log_date < ?' => '2009-06-01']));
+        $database->rollback();
+
+        $database->begin();
+        $this->assertEquals(10, $database->reduce('oprlog', 5, '-log_date', ['category', 'primary_id'], ['category' => 'category-9']));
+        $database->rollback();
+
+        $this->assertException('must be > 0', L($database)->reduceOrThrow('oprlog', 0));
+        $this->assertException('must be === 1', L($database)->reduceOrThrow('oprlog', 1, ['a' => true, 'b' => false]));
+        $this->assertException('affected row is nothing', L($database)->reduceOrThrow('oprlog', 5, 'log_date', [], ['1=0']));
+    }
+
+    /**
+     * @dataProvider provideDatabase
+     * @param Database $database
+     */
     function test_upsert($database)
     {
         $current = $database->count('test');

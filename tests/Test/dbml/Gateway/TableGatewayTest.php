@@ -1161,6 +1161,18 @@ AND ((flag=1))", "$gw");
      * @param TableGateway $gateway
      * @param Database $database
      */
+    function test_reduce($gateway, $database)
+    {
+        $oprlog = new TableGateway($database, 'oprlog');
+        $this->assertEquals(35, $oprlog->reduce(10, '-log_date', [], ['category' => 'category-9']));
+        $this->assertEquals(26, $oprlog->where(["category" => 'category-8'])->orderBy(['log_date' => false])->groupBy('category')->limit(10)->reduce());
+    }
+
+    /**
+     * @dataProvider provideGateway
+     * @param TableGateway $gateway
+     * @param Database $database
+     */
     function test_entity($gateway, $database)
     {
         $Article = new TableGateway($database, 't_article', 'Article');
