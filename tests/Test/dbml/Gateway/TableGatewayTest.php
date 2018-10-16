@@ -705,6 +705,22 @@ AND ((flag=1))", "$gw");
      * @param TableGateway $gateway
      * @param Database $database
      */
+    function test_chunk($gateway, $database)
+    {
+        $gateway = $gateway->where(['id >= 5']);
+
+        $actual = iterator_to_array($gateway->chunk(3), false);
+        $this->assertEquals(iterator_to_array($gateway, false), $actual);
+
+        $actual = iterator_to_array($gateway->chunk(3, '-id'), false);
+        $this->assertEquals(iterator_to_array($gateway->orderBy('-id'), false), $actual);
+    }
+
+    /**
+     * @dataProvider provideGateway
+     * @param TableGateway $gateway
+     * @param Database $database
+     */
     function test_fetch($gateway, $database)
     {
         /// 「正しく委譲されているか？」が確認できればいいので細かい動作はテストしない

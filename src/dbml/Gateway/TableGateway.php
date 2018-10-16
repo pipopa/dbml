@@ -1851,6 +1851,18 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
     }
 
     /**
+     * 分割して sequence してレコードジェネレータを返す
+     *
+     * Gateway 版の {@link QueryBuilder::chunk()} 。
+     *
+     * @inheritdoc QueryBuilder::chunk()
+     */
+    public function chunk($count, $column = null)
+    {
+        return $this->select()->chunk($count, $column);
+    }
+
+    /**
      * 空レコードを返す
      *
      * Gateway 版の {@link Database::getEmptyRecord()} 。

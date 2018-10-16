@@ -2156,6 +2156,40 @@ SELECT test.* FROM test", $builder);
      * @dataProvider provideQueryBuilder
      * @param QueryBuilder $builder
      */
+    function test_chunk($builder)
+    {
+        // スキーマ収集で無駄なクエリが投がるのであらかじめ取得しておく
+        foreach ($builder->getDatabase()->getSchema()->getTableNames() as $table) {
+            $builder->getDatabase()->getSchema()->getTable($table);
+        }
+
+        $logs = $builder->getDatabase()->preview(function ($a) use ($builder) {
+            $builder->reset()->column('test');
+            $this->assertEquals($builder->array(), iterator_to_array($builder->chunk(3), false));
+            $this->assertEquals($builder->orderBy(['id' => false])->array(), iterator_to_array($builder->chunk(3, '-id'), false));
+        });
+        $this->assertCount(14, $logs);
+
+        $logs = $builder->getDatabase()->preview(function ($a) use ($builder) {
+            $builder->reset()->column('multiprimary')->orderBy('subid');
+            $this->assertEquals($builder->array(), iterator_to_array($builder->chunk(3, 'subid'), false));
+            $this->assertEquals($builder->orderBy(['subid' => false])->array(), iterator_to_array($builder->chunk(3, '-subid'), false));
+        });
+        $this->assertCount(14, $logs);
+
+        try {
+            iterator_to_array($builder->reset()->column('noauto')->chunk(10), false);
+            $this->fail('exception not thrown.');
+        }
+        catch (\Exception $ex) {
+            $this->assertContains('not autoincrement column', $ex->getMessage());
+        }
+    }
+
+    /**
+     * @dataProvider provideQueryBuilder
+     * @param QueryBuilder $builder
+     */
     function test_rowcount($builder)
     {
         $builder->column('test')->limit(5, 5);

@@ -35,6 +35,7 @@ use function ryunosuke\dbml\array_unset;
 use function ryunosuke\dbml\arrayize;
 use function ryunosuke\dbml\concat;
 use function ryunosuke\dbml\first_keyvalue;
+use function ryunosuke\dbml\first_value;
 use function ryunosuke\dbml\optional;
 use function ryunosuke\dbml\preg_splice;
 use function ryunosuke\dbml\rbind;
@@ -2353,6 +2354,52 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
             $p->sequence(...func_get_args());
         }
         return $p;
+    }
+
+    /**
+     * 分割して sequence してレコードジェネレータを返す
+     *
+     * 例えば 150 件のレコードに対して chunk: 10 するとクエリを 15 回に分けて実行する。
+     * そのそれぞれのクエリは別々であり、php 側 にも db 側にもバッファは作られないためメモリ効率が非常に良い（そのかわりそこまで高速ではない）。
+     *
+     * 一般的な実装と違い、下記の制限がある。
+     *
+     * - 数値主キーか、数値的な NOT NULL ユニークキーを持っている必要がある
+     * - あらかじめ設定していても ORDER BY, LIMIT は無視される
+     *
+     * そのかわり chunk 内でレコードの更新を行ってもズレが発生しないようになっている。
+     *
+     * ```php
+     * // 100 件ずつループする
+     * foreach ($qb->where(['status' => 'active'])->chunk(100) as $row) {
+     *     // do something
+     *     var_dump($row['id']);
+     * }
+     * // SELECT * FROM t_table WHERE (status = "active") AND (id > 0) ORDER BY id ASC LIMIT 100
+     * // SELECT * FROM t_table WHERE (status = "active") AND (id > 100) ORDER BY id ASC LIMIT 100
+     * // SELECT * FROM t_table WHERE (status = "active") AND (id > 200) ORDER BY id ASC LIMIT 100
+     * // ・・・のようなクエリが順次投げられる（Generator で返されるので分割されていることは意識しなくて良い）
+     * ```
+     *
+     * @param int $chunk 分割数
+     * @param string $column 基準カラム。省略時は AUTO_INCREMENT な主キー。 '-' プレフィックスを付けると降順になる
+     * @return \Generator 分割して返す Generator
+     */
+    public function chunk($chunk, $column = null)
+    {
+        $from = first_value($this->getFromPart())['table'] ?? throws(new \UnexpectedValueException('from table is not set.'));
+        $column = $column ?: strval(optional($this->database->getSchema()->getTableAutoIncrement($from))->getName() ?: throws(new \UnexpectedValueException('not autoincrement column.')));
+        $orderasc = $column[0] !== '-';
+        $column = ltrim($column, '-+');
+
+        $sequencer = new Sequencer($this);
+        $items = [];
+        do {
+            $n = end($items)[$column] ?? null;
+            $sequencer->sequence([$column => $n], $chunk, $orderasc, null);
+            $items = $sequencer->getItems();
+            yield from $items;
+        } while ($items);
     }
 
     /**
