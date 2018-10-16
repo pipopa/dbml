@@ -996,10 +996,11 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
      */
     public function clone($force = false)
     {
+        $this->resetResult();
+
         // スコープを呼ぶたびにコピーが生成されるのは無駄なので clone する（ただし、1度だけ）
         if ($force || $this->original === $this) {
             $that = clone $this;
-            $that->resetResult();
             return $that;
         }
         return $this;
