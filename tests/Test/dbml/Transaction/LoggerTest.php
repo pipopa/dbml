@@ -112,6 +112,20 @@ class LoggerTest extends \ryunosuke\Test\AbstractUnitTestCase
         $this->assertEquals("select 9\n", stream_get_contents($resource));
     }
 
+    function test_closure()
+    {
+        $logs = [];
+        $logger = new Logger([
+            'destination' => function ($log) use (&$logs) { $logs[] = $log; },
+            'lockmode'    => true,
+            'method'      => 'escape',
+        ]);
+
+        $logger->log('select ?', [9]);
+
+        $this->assertEquals(['select 9'], $logs);
+    }
+
     function test_nosupport()
     {
         $logger = new Logger([
