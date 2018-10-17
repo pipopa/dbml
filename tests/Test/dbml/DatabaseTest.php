@@ -289,6 +289,12 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
         });
     }
 
+    function test_getSchema()
+    {
+        $database = self::getDummyDatabase();
+        $this->assertSame($database->dryrun()->getSchema(), $database->getSchema());
+    }
+
     function test_getPdo()
     {
         $master = DriverManager::getConnection(['url' => 'sqlite:///:memory:']);

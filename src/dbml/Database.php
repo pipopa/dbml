@@ -420,7 +420,7 @@ class Database
     /** @var Connection */
     private $txConnection;
 
-    /** @var array 「未初期化なら生成して返す」系のメソッドのキャッシュ */
+    /** @var \ArrayObject 「未初期化なら生成して返す」系のメソッドのキャッシュ */
     private $cache;
 
     public static function getDefaultOptions()
@@ -642,6 +642,7 @@ class Database
         }
         $this->connections = array_combine(['master', 'slave'], $connections);
         $this->txConnection = $this->getMasterConnection();
+        $this->cache = new \ArrayObject();
 
         $this->setDefault($options);
 
