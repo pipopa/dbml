@@ -420,7 +420,7 @@ class Database
     /** @var Connection */
     private $txConnection;
 
-    /** @var array 「未初期化なら生成して返す」系のメソッドのキャッシュ */
+    /** @var \ArrayObject 「未初期化なら生成して返す」系のメソッドのキャッシュ */
     private $cache;
 
     public static function getDefaultOptions()
@@ -642,6 +642,7 @@ class Database
         }
         $this->connections = array_combine(['master', 'slave'], $connections);
         $this->txConnection = $this->getMasterConnection();
+        $this->cache = new \ArrayObject();
 
         $this->setDefault($options);
 
@@ -1097,6 +1098,7 @@ class Database
     {
         // これはメソッド冒頭に記述し、決して場所を移動しないこと
         $columns = $this->getSchema()->getTableColumns($table);
+        $autocolumn = optional($this->getSchema()->getTableAutoIncrement($table))->getName();
 
         if ($row instanceof Entityable) {
             $row = $row->arrayize();
@@ -1145,6 +1147,11 @@ class Database
                     }
                 }
             }
+        }
+
+        // mysql は null を指定すれば自動採番されるが、他の RDBMS では伏せないと採番されないようだ
+        if ($autocolumn && !isset($row[$autocolumn])) {
+            unset($row[$autocolumn]);
         }
 
         return $row;
@@ -2930,7 +2937,7 @@ class Database
     public function select($tableDescriptor, $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
     {
         $builder = $this->createQueryBuilder();
-        return $builder->build(array_combine(QueryBuilder::CLAUSES, [$tableDescriptor, $where, $orderBy, $limit, $groupBy, $having]));
+        return $builder->build(array_combine(QueryBuilder::CLAUSES, [$tableDescriptor, $where, $orderBy, $limit, $groupBy, $having]), true);
     }
 
     /**
@@ -3338,17 +3345,22 @@ class Database
 
         $stmt = $this->executeQuery($builder, $builder->getParams());
 
+        $cast = function ($var) {
+            if ((!is_int($var) && !is_float($var)) && preg_match('#^-?([1-9]\d*|0)(\.\d+)?$#', (string) $var, $match)) {
+                return isset($match[2]) ? (float) $var : (int) $var;
+            }
+            return $var;
+        };
+
         $selectCount = count($builder->getQueryPart('select'));
         if ($selectCount === 1) {
-            return var_apply($stmt->fetch(\PDO::FETCH_COLUMN), numval);
+            return var_apply($stmt->fetch(\PDO::FETCH_COLUMN), $cast);
         }
         elseif ($selectCount === 2) {
-            $r = $stmt->fetchAll(\PDO::FETCH_COLUMN | \PDO::FETCH_UNIQUE);
-            return var_apply($r, numval);
+            return var_apply($stmt->fetchAll(\PDO::FETCH_COLUMN | \PDO::FETCH_UNIQUE), $cast);
         }
         else {
-            $r = $stmt->fetchAll(\PDO::FETCH_ASSOC | \PDO::FETCH_UNIQUE);
-            return var_apply($r, numval);
+            return var_apply($stmt->fetchAll(\PDO::FETCH_ASSOC | \PDO::FETCH_UNIQUE), $cast);
         }
     }
 

@@ -289,6 +289,12 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
         });
     }
 
+    function test_getSchema()
+    {
+        $database = self::getDummyDatabase();
+        $this->assertSame($database->dryrun()->getSchema(), $database->getSchema());
+    }
+
     function test_getPdo()
     {
         $master = DriverManager::getConnection(['url' => 'sqlite:///:memory:']);
@@ -3949,6 +3955,19 @@ AND
 
         // groupBy は構造自体が変わってしまうので別に行う
         $this->assertCount(1, $database->selectArray('test.data', [], [], [], 'data', 'min(id) > 0'));
+
+        // TableDescriptor と select 引数の複合呼び出し
+        $this->assertStringIgnoreBreak("
+SELECT T.id FROM test T
+WHERE (T.id = '1') AND (name LIKE 'hoge')
+ORDER BY T.id DESC, name ASC
+", $database->select([
+            'test T(1)-id' => ['id'],
+        ], [
+            'name:LIKE' => 'hoge',
+        ], [
+            'name' => 'ASC',
+        ])->queryInto());
     }
 
     /**
@@ -4029,6 +4048,10 @@ AND
                 'aggregate.name@count' => 2,
             ],
         ], $database->aggregate('count', 'aggregate.id, name', ['id > 5'], ['group_id1'], ['count(aggregate.id) > 1']));
+
+        // 数値以外
+        $this->assertEquals('a', $database->aggregate('min', 'test.name'));
+        $this->assertEquals('j', $database->aggregate('max', 'test.name'));
     }
 
     /**

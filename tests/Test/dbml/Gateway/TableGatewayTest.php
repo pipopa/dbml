@@ -1243,6 +1243,46 @@ AND ((flag=1))", "$gw");
      * @param TableGateway $gateway
      * @param Database $database
      */
+    function test_subselect($gateway, $database)
+    {
+        $test1 = new TableGateway($database, 'test1');
+        $test2 = new TableGateway($database, 'test2');
+
+        $rows = $test1->assoc([
+            'tests2s' => $test2->subselectAssoc('id', '*'),
+        ], ['id' => 1]);
+        $this->assertEquals([
+            1 => [
+                'id'      => '1',
+                'name1'   => 'a',
+                'tests2s' => [
+                    1 => [
+                        'id'    => '1',
+                        'name2' => 'A'
+                    ],
+                ],
+            ],
+        ], $rows);
+
+        $rows = $test1->assoc([
+            'tests2s' => $test2->subselectPairs('id', '*'),
+        ], ['id' => 1]);
+        $this->assertEquals([
+            1 => [
+                'id'      => '1',
+                'name1'   => 'a',
+                'tests2s' => [
+                    1 => 'A',
+                ],
+            ],
+        ], $rows);
+    }
+
+    /**
+     * @dataProvider provideGateway
+     * @param TableGateway $gateway
+     * @param Database $database
+     */
     function test_modifier($gateway, $database)
     {
         $t_article = new TableGateway($database, 't_article');

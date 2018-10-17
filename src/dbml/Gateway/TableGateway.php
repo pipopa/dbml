@@ -671,6 +671,7 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
             elseif (isset($where_index[$method])) {
                 $sp = $this->getScopeParams([], array_get($arguments, $where_index[$method], []));
                 $arguments[$where_index[$method]] = $sp['where'];
+                $sp['where'] = [];
 
                 // 順序・制限系クエリなら（mysql なら）それを活かした update/delete が実行できるのでそのようにする
                 if (count($sp['column']) > 1 || count($sp['orderBy']) > 0 || count($sp['limit']) > 0) {
@@ -709,6 +710,11 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
         if (preg_match('/^sub(select)?(.+?)$/i', $name, $matches)) {
             $sp = $this->getScopeParams(...$arguments);
             return $this->database->$name(...array_values($sp));
+        }
+
+        // subselect 系
+        if (preg_match('/^subselect?(.+?)$/i', $name, $matches)) {
+            return $this->database->$name(array_shift($arguments), ...array_values($this->getScopeParams(...$arguments)));
         }
 
         // find メソッド（tuple メソッドの特別版とみなせる）
@@ -990,10 +996,11 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
      */
     public function clone($force = false)
     {
+        $this->resetResult();
+
         // スコープを呼ぶたびにコピーが生成されるのは無駄なので clone する（ただし、1度だけ）
         if ($force || $this->original === $this) {
             $that = clone $this;
-            $that->resetResult();
             return $that;
         }
         return $this;
@@ -1041,7 +1048,7 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
         $addition = array_get($this->joinParams, 'addition', []);
         if ($sparams['limit'] || $sparams['groupBy'] || $sparams['having']) {
             return [
-                'table'     => $this->database->createQueryBuilder()->build($sparams),
+                'table'     => $this->database->select(...array_values($sparams)),
                 'condition' => arrayize($addition),
             ];
         }
