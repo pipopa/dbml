@@ -537,6 +537,8 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
             'defaultIteration'  => 'array',
             // マジック JOIN 時のデフォルトモード
             'defaultJoinMethod' => 'auto',
+            // offsetGet したときに find するか pk するか（後方互換性のための設定であり、いずれ削除され pk に統一される）
+            'offsetGetFind'     => true,
         ];
     }
 
@@ -843,16 +845,16 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
     /**
      * なにがしかの値を取得する
      *
-     * $offset が数値・配列なら主キーとみなして行自体を返す。
+     * $offset が数値・配列なら主キーとみなして pk する。
      * $offset が半角英数字ならカラムとみなしてカラム値を返す。
      * $offset がテーブル記法ならその記法が適用された自分自身を返す。
      * テーブル記法のうち、 [condition] だけであれば `[]` が省略可能となる。
      *
      * ```php
-     * # 行自体を返す
-     * $row = $gw[1];         // 単一主キー値1のレコードを返す
-     * $row = $gw[[1, 2]];    // 複合主キー値[1, 2]のレコードを返す
-     * $row = $gw->find($pk); // 上2つは実質的にこれの糖衣構文
+     * # 数値・配列なら pk (where) と同義
+     * $row = $gw[1]->tuple();      // 単一主キー値1のレコードを返す
+     * $row = $gw[[1, 2]]->tuple(); // 複合主キー値[1, 2]のレコードを返す
+     * $row = $gw->find($pk);       // 上2つは実質的にこれの糖衣構文
      *
      * # カラム値を返す
      * $title = $gw['article_title'];
@@ -884,7 +886,7 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
     public function offsetGet($offset)
     {
         if (is_array($offset) || filter_var($offset, \FILTER_VALIDATE_INT) !== false) {
-            return $this->find($offset);
+            return $this->getUnsafeOption('offsetGetFind') ? $this->find($offset) : $this->pk($offset);
         }
         if (preg_match('#^[_a-z0-9]+$#i', $offset)) {
             return $this->value($offset);
@@ -934,10 +936,11 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
      *
      * # 記事のタイトルを設定する
      * $gw['article_title'] = 'タイトル';
-     * // ただし、WHERE を指定しないと全行更新され大事故になるので通常はこのように何らかで縛って使用する
+     * // ただし、WHERE を指定しないと全行更新され大事故になるので通常は下記のように何らかで縛って使用する
      * $gw->scope('scopename')['article_title'] = 'タイトル';
      * $gw['id: 1']['article_title'] = 'タイトル';
      * $gw->pk(1)['article_title'] = 'タイトル';
+     * $gw[1]['article_title'] = 'タイトル';
      * ```
      *
      * @param string $offset カラム名

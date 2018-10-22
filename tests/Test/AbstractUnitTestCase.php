@@ -393,6 +393,7 @@ abstract class AbstractUnitTestCase extends TestCase
                         }
                         return \ryunosuke\Test\Gateway\TableGateway::class;
                     },
+                    'offsetGetFind' => false, // this is compatible setting
                 ])
             ];
         }, self::provideConnection());

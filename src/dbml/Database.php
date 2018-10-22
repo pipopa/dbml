@@ -716,6 +716,18 @@ class Database
     }
 
     /**
+     * サポートされない
+     *
+     * 将来のために予約されており、呼ぶと無条件で例外を投げる。
+     *
+     * phpstorm が `$db->tablename[1]['title'] = 'hoge';` のような式で警告を出すのでそれを抑止する目的もある。
+     *
+     * @param string $name
+     * @param mixed $value
+     */
+    public function __set($name, $value) { throw new \DomainException(__METHOD__ . ' is not supported.'); }
+
+    /**
      * @ignore
      *
      * @param string $name メソッド名

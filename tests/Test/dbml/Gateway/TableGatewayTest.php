@@ -80,7 +80,7 @@ class TableGatewayTest extends \ryunosuke\Test\AbstractUnitTestCase
             'id'   => '1',
             'name' => 'a',
             'data' => '',
-        ], $gateway[1]);
+        ], $gateway[1]->tuple());
     }
 
     /**
@@ -101,7 +101,7 @@ class TableGatewayTest extends \ryunosuke\Test\AbstractUnitTestCase
             'id'   => '11',
             'name' => 'new',
             'data' => '',
-        ], $gateway[$database->getLastInsertId('test', 'id')]);
+        ], $gateway[$database->getLastInsertId('test', 'id')]->tuple());
 
         $gateway[99] = [
             'name' => 'new',
@@ -111,7 +111,7 @@ class TableGatewayTest extends \ryunosuke\Test\AbstractUnitTestCase
             'id'   => '99',
             'name' => 'new',
             'data' => '',
-        ], $gateway[99]);
+        ], $gateway[99]->tuple());
 
         $gateway[99] = [
             'name' => 'newnew',
@@ -121,7 +121,7 @@ class TableGatewayTest extends \ryunosuke\Test\AbstractUnitTestCase
             'id'   => '99',
             'name' => 'newnew',
             'data' => '',
-        ], $gateway[99]);
+        ], $gateway[99]->tuple());
     }
 
     /**
@@ -131,7 +131,7 @@ class TableGatewayTest extends \ryunosuke\Test\AbstractUnitTestCase
     function test_offsetUnset($gateway)
     {
         unset($gateway[1]);
-        $this->assertFalse($gateway[1]);
+        $this->assertFalse($gateway[1]->tuple());
 
         $this->assertException('not supported', function () use ($gateway) {
             unset($gateway['undefined']);
