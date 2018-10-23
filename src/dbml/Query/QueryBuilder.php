@@ -447,7 +447,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
             . concat(' WHERE ', implode(' AND ', Adhoc::wrapParentheses($builder->sqlParts['where'])))
             . concat(' GROUP BY ', implode(', ', $builder->sqlParts['groupBy']))
             . concat(' HAVING ', implode(' AND ', Adhoc::wrapParentheses($builder->sqlParts['having'])))
-            . concat(' ORDER BY ', implode(', ', $builder->sqlParts['orderBy']));
+            . concat(' ORDER BY ', array_sprintf($builder->sqlParts['orderBy'], function ($v, $k) { return "$k " . ($v ? 'ASC' : 'DESC'); }, ', '));
 
         $sql = $platform->modifyLimitQuery($sql, $builder->sqlParts['limit'], $builder->sqlParts['offset']);
         $sql = $cplatform->appendLockSuffix($sql, $builder->lockMode, $builder->lockOption);
@@ -1780,6 +1780,10 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
      * $qb->orderBy(['colA' => true, 'colB' => 'DESC']);  // ORDER BY colA ASC, colB DESC
      * $qb->orderBy(['colA', 'colB' => false]);           // ORDER BY colA ASC, colB DESC
      *
+     * # [+col, -col] 形式
+     * $qb->orderBy('+colA');            // ORDER BY colA ASC
+     * $qb->orderBy(['-colA', '+colB']); // ORDER BY colA DESC, colB ASC
+     *
      * # [col, col, col], ORD 形式
      * $qb->orderBy(['colA', 'colB', 'colC'], false);  // ORDER BY colA DESC, colB DESC, colC DESC
      *
@@ -1832,12 +1836,6 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
      */
     public function addOrderBy($sort, $order = null)
     {
-        // 順序は [ASC|DESC] しか受け入れない
-        if (is_bool($order)) {
-            $order = $order ? 'ASC' : 'DESC';
-        }
-        $order = strtoupper($order) === 'DESC' ? 'DESC' : null;
-
         // クロージャは行自体の比較関数
         if ($sort instanceof \Closure) {
             $this->phpOrders = $sort;
@@ -1866,7 +1864,14 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
             }
         }
         else {
-            $this->sqlParts['orderBy'][] = $sort . ' ' . (!$order ? 'ASC' : $order);
+            if (is_string($sort) && $order === null) {
+                $order = $sort[0] !== '-';
+                $sort = ltrim($sort, '-+');
+            }
+            if (is_bool($order)) {
+                $order = $order ? 'ASC' : 'DESC';
+            }
+            $this->sqlParts['orderBy'][(string) $sort] = strtoupper($order) !== 'DESC';
         }
 
         return $this->_dirty();
@@ -1951,7 +1956,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
         $columns = $primary->getColumns();
 
         $tablename = $fromtable['alias'] ?: $fromtable['table'];
-        return $this->orderBy(array_strpad($columns, '', $tablename . '.'), $is_asc ? 'ASC' : 'DESC');
+        return $this->orderBy(array_strpad($columns, '', $tablename . '.'), $is_asc);
     }
 
     /**
@@ -2237,7 +2242,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
     public function countize($column = '*')
     {
         $that = clone $this;
-        $that->detectAutoOrder(false);
+        $this->setAutoOrder(false);
         $that->resetQueryPart('orderBy');
         $that->resetQueryPart('offset');
         $that->resetQueryPart('limit');
@@ -2488,7 +2493,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
     public function aggregate($aggregations, $select_limit = PHP_INT_MAX)
     {
         // 集約クエリで主キー順に意味は無い
-        $this->detectAutoOrder(false);
+        $this->setAutoOrder(false);
 
         // カラムとタプルのセットを取得しておく
         $fields = $this->sqlParts['select'] ?: ['*'];
@@ -2650,14 +2655,12 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
      */
     public function detectAutoOrder($use)
     {
-        $current = $this->enableAutoOrder;
+        if (!$this->getAutoOrder()) {
+            return $this;
+        }
 
-        if ($use && $this->getAutoOrder()) {
-            $this->enableAutoOrder = true;
-        }
-        if (!$use) {
-            $this->enableAutoOrder = false;
-        }
+        $current = $this->enableAutoOrder;
+        $this->enableAutoOrder = $use;
 
         if ($current !== $this->enableAutoOrder) {
             $this->_dirty();
@@ -2968,8 +2971,19 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
         return "($this)";
     }
 
-    public function getParams()
+    public function getParams($queryPartName = null)
     {
+        if ($queryPartName !== null) {
+            $params = [];
+            $offset = self::PARAMETER_OFFSETS[$queryPartName];
+            foreach ($this->params as $k => $v) {
+                if ($offset <= $k && $k < $offset + self::PARAMETER_OFFSET) {
+                    $params[] = $this->params[$k];
+                }
+            }
+            return $params;
+        }
+
         $params = $this->params;
         ksort($params);
         return array_merge($params);

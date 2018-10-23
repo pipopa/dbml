@@ -23,6 +23,12 @@ use ryunosuke\dbml\Mixin\OptionTrait;
  *         'destination' => '/var/log/query.log'
  *     ]),
  * ]);
+ * # クロージャでログる
+ * $db = new Database($connection, [
+ *     'logger' => new Logger([
+ *         'destination' => function ($log) { echo $log; }
+ *     ]),
+ * ]);
  * ```
  *
  * Transaction 名前空間に居るのは少し小細工をしているから（癒着している）＋「クエリログは膨大なのでログらない（RDBMS のログに任せる）がトランザクションログはアプリで取っておきたい」という要件が多いため。
@@ -82,6 +88,12 @@ class Logger implements SQLLogger
         // ArrayObjet は特別扱いでリソースに書き込むのではなく配列に格納する
         if ($destination instanceof \ArrayObject) {
             $destination[] = $log;
+            return;
+        }
+
+        // クロージャは後段のようなややこしいことは抜きに単純に渡せば良い
+        if ($destination instanceof \Closure) {
+            $destination($log);
             return;
         }
 

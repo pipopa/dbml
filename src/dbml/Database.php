@@ -717,6 +717,18 @@ class Database
     }
 
     /**
+     * サポートされない
+     *
+     * 将来のために予約されており、呼ぶと無条件で例外を投げる。
+     *
+     * phpstorm が `$db->tablename[1]['title'] = 'hoge';` のような式で警告を出すのでそれを抑止する目的もある。
+     *
+     * @param string $name
+     * @param mixed $value
+     */
+    public function __set($name, $value) { throw new \DomainException(__METHOD__ . ' is not supported.'); }
+
+    /**
      * @ignore
      *
      * @param string $name メソッド名
@@ -1998,6 +2010,7 @@ class Database
      * 値をクオートする
      *
      * null を quote すると '' ではなく NULL になる。
+     * bool を quote すると文字ではなく int になる。
      *
      * それ以外は {@link Connection::quote()} と同じ。
      *
@@ -2009,6 +2022,10 @@ class Database
     {
         if ($value === null) {
             return 'NULL';
+        }
+
+        if (is_bool($value)) {
+            return (int) $value;
         }
 
         return $this->getSlaveConnection()->quote($value, $type);
@@ -3515,6 +3532,8 @@ class Database
      */
     public function executeQuery($query, array $params = [])
     {
+        $params = array_map(function ($p) { return is_bool($p) ? (int) $p : $p; }, $params);
+
         if ($filter_path = $this->getInjectCallStack()) {
             $query = implode('', $this->_getCallStack($filter_path)) . $query;
         }
@@ -3536,6 +3555,8 @@ class Database
      */
     public function executeUpdate($query, array $params = [])
     {
+        $params = array_map(function ($p) { return is_bool($p) ? (int) $p : $p; }, $params);
+
         if ($this->getUnsafeOption('dryrun')) {
             return $this->queryInto($query, $params);
         }

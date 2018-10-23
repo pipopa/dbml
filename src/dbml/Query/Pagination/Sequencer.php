@@ -74,10 +74,10 @@ class Sequencer implements \IteratorAggregate, \Countable
 
             // 補足行を取得
             $appendix = false;
-            if ($this->bidirection) {
+            if ($this->bidirection === true) {
                 $appender = clone $this->builder;
                 $appender->andWhere(["!$key " . (!$order ? '>= ?' : '<= ?') => $bind]);
-                $appender->orderBy([$key => !$order ? 'ASC' : 'DESC'] + $currentby);
+                $appender->orderBy([$key => !$order] + $currentby);
                 $appender->limit(1, 0);
                 $appendix = $appender->array();
             }
@@ -85,21 +85,23 @@ class Sequencer implements \IteratorAggregate, \Countable
             // アイテムを取得
             $provider = clone $this->builder;
             $provider->andWhere(["!$key " . ($order ? '> ?' : '< ?') => $bind]);
-            $provider->orderBy([$key => $order ? 'ASC' : 'DESC'] + $currentby);
-            $provider->limit(1 + $this->count, 0);
+            $provider->orderBy([$key => $order] + $currentby);
+            $provider->limit($this->count + ($this->bidirection === null ? 0 : 1), 0);
             $items = $provider->array();
 
             // 昇順・降順・正順・逆順に基づいて prev/next を設定
-            $garbage = count($items) > $this->count ? array_pop($items) : false;
-            if ($value >= 0) {
-                // $items が無い場合は 0 になって頭から始まってしまうので $appendix + 1 にする
-                $this->prev = $appendix && $value ? [$key => (reset($items)[$key] ?: reset($appendix)[$key] + 1) * -1] : false;
-                $this->next = $garbage ? [$key => end($items)[$key]] : false;
-            }
-            else {
-                $items = array_reverse($items);
-                $this->prev = $garbage && $value ? [$key => reset($items)[$key] * -1] : false;
-                $this->next = $appendix ? [$key => end($items)[$key]] : false;
+            if ($this->bidirection !== null) {
+                $garbage = count($items) > $this->count ? array_pop($items) : false;
+                if ($value >= 0) {
+                    // $items が無い場合は 0 になって頭から始まってしまうので $appendix + 1 にする
+                    $this->prev = $appendix && $value ? [$key => (reset($items)[$key] ?: reset($appendix)[$key] + 1) * -1] : false;
+                    $this->next = $garbage ? [$key => end($items)[$key]] : false;
+                }
+                else {
+                    $items = array_reverse($items);
+                    $this->prev = $garbage && $value ? [$key => reset($items)[$key] * -1] : false;
+                    $this->next = $appendix ? [$key => end($items)[$key]] : false;
+                }
             }
 
             return $items;
@@ -118,11 +120,11 @@ class Sequencer implements \IteratorAggregate, \Countable
      *
      * @param array $condition シーク条件として使用する [カラム => 値]（大抵は主キー、あるいはインデックスカラム）
      * @param int $count 読み取り行数
-     * @param bool $orderbyasc 昇順/降順
-     * @param bool $bidirection 双方向サポート。双方向だと2クエリ投げられる
+     * @param bool|null $orderbyasc 昇順/降順。 null を渡すと $condition の符号に応じて自動判別する
+     * @param bool|null $bidirection 双方向サポート。双方向だと2クエリ投げられる。 null を渡すと指定数以上取らない（ただし内部仕様）
      * @return $this 自分自身
      */
-    public function sequence($condition, $count, $orderbyasc = true, $bidirection = true)
+    public function sequence($condition, $count, $orderbyasc = null, $bidirection = true)
     {
         // 再生成のために null っとく
         $this->prev = false;
@@ -141,7 +143,7 @@ class Sequencer implements \IteratorAggregate, \Countable
 
         $this->condition = $condition;
         $this->count = $count;
-        $this->order = !!$orderbyasc;
+        $this->order = $orderbyasc === null ? reset($condition) >= 0 : !!$orderbyasc;
         $this->bidirection = $bidirection;
 
         return $this;

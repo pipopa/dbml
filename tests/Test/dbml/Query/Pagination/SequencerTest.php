@@ -64,7 +64,7 @@ class SequencerTest extends \ryunosuke\Test\AbstractUnitTestCase
         $this->assertEquals(['id' => -6], $sequencer->getPrev());
 
         $database->delete('paging', ['id' => 1]);
-        $sequencer->sequence(['id' => -1], 10);
+        $sequencer->sequence(['id' => -1], 10, true);
         $this->assertFalse($sequencer->getPrev());
     }
 
@@ -118,6 +118,18 @@ class SequencerTest extends \ryunosuke\Test\AbstractUnitTestCase
     /**
      * @dataProvider provideSequencer
      * @param Sequencer $sequencer
+     * @param Database $database
+     */
+    function test_direction_null($sequencer)
+    {
+        $sequencer->sequence(['id' => 5], 10, null, null);
+        $this->assertFalse($sequencer->getPrev());
+        $this->assertFalse($sequencer->getNext());
+    }
+
+    /**
+     * @dataProvider provideSequencer
+     * @param Sequencer $sequencer
      */
     function test_getItems($sequencer)
     {
@@ -145,6 +157,33 @@ class SequencerTest extends \ryunosuke\Test\AbstractUnitTestCase
     /**
      * @dataProvider provideSequencer
      * @param Sequencer $sequencer
+     */
+    function test_getItems_reverse($sequencer)
+    {
+        $sequencer->sequence(['id' => -1], 3);
+        $this->assertEquals([
+            ['id' => 4, 'name' => 'd'],
+            ['id' => 3, 'name' => 'c'],
+            ['id' => 2, 'name' => 'b'],
+        ], $sequencer->getItems());
+
+        $sequencer->sequence(['id' => -3], 3);
+        $this->assertEquals([
+            ['id' => 6, 'name' => 'f'],
+            ['id' => 5, 'name' => 'e'],
+            ['id' => 4, 'name' => 'd'],
+        ], $sequencer->getItems());
+
+        $sequencer->sequence(['id' => -98], 3);
+        $this->assertEquals([
+            ['id' => 100, 'name' => 'cv'],
+            ['id' => 99, 'name' => 'cu'],
+        ], $sequencer->getItems());
+    }
+
+    /**
+     * @dataProvider provideSequencer
+     * @param Sequencer $sequencer
      * @param Database $database
      */
     function test_continue($sequencer, $database)
@@ -166,16 +205,16 @@ class SequencerTest extends \ryunosuke\Test\AbstractUnitTestCase
 
         // 同上(逆順)
         $rows = [];
-        $rows = array_merge($sequencer->sequence(['id' => -999], 10)->getItems(), $rows);
-        $rows = array_merge($sequencer->sequence($sequencer->getPrev(), 10)->getItems(), $rows);
-        $rows = array_merge($sequencer->sequence($sequencer->getPrev(), 10)->getItems(), $rows);
-        $rows = array_merge($sequencer->sequence($sequencer->getPrev(), 10)->getItems(), $rows);
-        $rows = array_merge($sequencer->sequence($sequencer->getPrev(), 10)->getItems(), $rows);
-        $rows = array_merge($sequencer->sequence($sequencer->getPrev(), 10)->getItems(), $rows);
-        $rows = array_merge($sequencer->sequence($sequencer->getPrev(), 10)->getItems(), $rows);
-        $rows = array_merge($sequencer->sequence($sequencer->getPrev(), 10)->getItems(), $rows);
-        $rows = array_merge($sequencer->sequence($sequencer->getPrev(), 10)->getItems(), $rows);
-        $rows = array_merge($sequencer->sequence($sequencer->getPrev(), 10)->getItems(), $rows);
+        $rows = array_merge($sequencer->sequence(['id' => -999], 10, true)->getItems(), $rows);
+        $rows = array_merge($sequencer->sequence($sequencer->getPrev(), 10, true)->getItems(), $rows);
+        $rows = array_merge($sequencer->sequence($sequencer->getPrev(), 10, true)->getItems(), $rows);
+        $rows = array_merge($sequencer->sequence($sequencer->getPrev(), 10, true)->getItems(), $rows);
+        $rows = array_merge($sequencer->sequence($sequencer->getPrev(), 10, true)->getItems(), $rows);
+        $rows = array_merge($sequencer->sequence($sequencer->getPrev(), 10, true)->getItems(), $rows);
+        $rows = array_merge($sequencer->sequence($sequencer->getPrev(), 10, true)->getItems(), $rows);
+        $rows = array_merge($sequencer->sequence($sequencer->getPrev(), 10, true)->getItems(), $rows);
+        $rows = array_merge($sequencer->sequence($sequencer->getPrev(), 10, true)->getItems(), $rows);
+        $rows = array_merge($sequencer->sequence($sequencer->getPrev(), 10, true)->getItems(), $rows);
         $this->assertEquals($database->selectArray('paging'), $rows);
         $this->assertFalse($sequencer->getPrev());
     }
