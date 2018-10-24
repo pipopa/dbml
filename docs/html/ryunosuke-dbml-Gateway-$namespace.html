@@ -61,7 +61,7 @@
 							<span class="label label-info"></span>
 							<span class="label label-info">iterateable</span>
 							<span class="label label-deprecated"></span>
-                            			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Gateway/TableGateway.php#L25-L1892" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                            			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Gateway/TableGateway.php#L25-L1935" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
             						</div>
 						<h4 id="ryunosuke\dbml\Gateway\TableGateway" tabindex="-1" class="structure-title ">
 							<a href="ryunosuke-dbml-Gateway-TableGateway$typespace.html#ryunosuke\dbml\Gateway\TableGateway">TableGateway</a>
@@ -119,6 +119,10 @@ $gw-&gt;insert(['data array']);
 $gw-&gt;update(['data array'], ['where array']);
 // 行を削除する
 $gw-&gt;delete(['where array']);
+
+// カラム値をインクリメント
+$gw[1]['hoge_count'] += 1;                         // こういう指定もできるがこれは SELECT + UPDATE なので注意
+$gw[1]['hoge_count'] = $db-&gt;raw('hoge_count + 1'); // 単純かつアトミックにやるならこうしなければならない
 </code></pre>
 <h3>クエリスコープ</h3>
 <p>SELECT 句や WHERE 句のセットに名前をつけて、簡単に呼ぶことができる。</p>

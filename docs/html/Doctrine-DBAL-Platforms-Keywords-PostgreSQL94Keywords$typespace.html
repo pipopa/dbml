@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html>
+<head>	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/styles/zenburn.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js-bootstrap-css/1.2.1/typeaheadjs.min.css">
+	<link rel="stylesheet" type="text/css" data-href="common.css">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/highlight.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/3.1.1/bootstrap3-typeahead.min.js"></script>
+	<script data-src="common.js"></script>
+
+	<script>
+        (function () {
+            var cachekey;
+            try {
+                cachekey = window.parent.CACHEKEY;
+            }
+            catch (e) {
+                cachekey = 'nocache';
+            }
+            $('link[data-href]').attr('href', function () {
+                return this.dataset.href + '?' + cachekey;
+            });
+            $('script[data-src]').attr('src', function () {
+                return this.dataset.src + '?' + cachekey;
+            });
+
+            $(document).on('click', 'a[href]:not([target="_blank"]):not(.cachekey)', function () {
+                this.classList.add('cachekey');
+                this.href = this.href.replace('.html', '.html?' + cachekey);
+            });
+        })();
+	</script>
+    </head>
+<body>
+<a id="anchor" href="./" style="display: none"></a>
+<h1 class="ellipsis">
+	<span class="pull-left">
+	Structure
+	<small class="ellipsis-text">(Doctrine\DBAL\Platforms\Keywords\PostgreSQL94Keywords)</small>
+	</span>
+	<span class="pull-right">
+		<small class="frame-switch">
+		<a target="_parent">frame</a> | <a target="_parent">noframe</a>
+		</small>
+	</span>
+</h1>
+<div class="main-wrapper">
+	<div class="attribute">
+		<span class="label label-danger"></span>
+		<span class="label label-warning"></span>
+		<span class="label label-info"></span>
+		<span class="label label-info"></span>
+		<span class="label label-deprecated"></span>
+        			<a href="https://github.com/doctrine/dbal/blob/v2.9.2/lib/Doctrine/DBAL/Platforms/Keywords/PostgreSQL94Keywords.php#L8-L32" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                    	</div>
+
+	<h2>class <span class="category-name">Doctrine\DBAL\Platforms\Keywords\PostgreSQL94Keywords</span></h2>
+
+	<div class="description"><p>PostgreSQL 9.4 reserved keywords list.</p>
+</div>
+
+	<h3>Construction</h3>
+    	<table class="table">
+		<caption>Parents</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Platforms-Keywords-PostgreSQL92Keywords$typespace.html#Doctrine\DBAL\Platforms\Keywords\PostgreSQL92Keywords" class="fqsen "><small>Doctrine\DBAL\Platforms\Keywords\</small><wbr>PostgreSQL92Keywords</a></td>
+				<td class="desc">PostgreSQL 9.2 reserved keywords list.</td>
+			</tr>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Platforms-Keywords-PostgreSQL91Keywords$typespace.html#Doctrine\DBAL\Platforms\Keywords\PostgreSQL91Keywords" class="fqsen "><small>Doctrine\DBAL\Platforms\Keywords\</small><wbr>PostgreSQL91Keywords</a></td>
+				<td class="desc">PostgreSQL 9.1 reserved keywords list.</td>
+			</tr>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Platforms-Keywords-PostgreSQLKeywords$typespace.html#Doctrine\DBAL\Platforms\Keywords\PostgreSQLKeywords" class="fqsen "><small>Doctrine\DBAL\Platforms\Keywords\</small><wbr>PostgreSQLKeywords</a></td>
+				<td class="desc">PostgreSQL Keywordlist.</td>
+			</tr>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Platforms-Keywords-KeywordList$typespace.html#Doctrine\DBAL\Platforms\Keywords\KeywordList" class="fqsen "><small>Doctrine\DBAL\Platforms\Keywords\</small><wbr>KeywordList</a></td>
+				<td class="desc">Abstract interface for a SQL reserved keyword dictionary.</td>
+			</tr>
+        		</tbody>
+	</table>
+                
+	<h3>Hierarchy</h3>
+	<div class="hierarchy">
+	<ul class="">
+        			<li class="">
+                <a href="Doctrine-DBAL-Platforms-Keywords-KeywordList$typespace.html#Doctrine\DBAL\Platforms\Keywords\KeywordList" class="fqsen "><small>Doctrine\DBAL\Platforms\Keywords\</small><wbr>KeywordList</a>                
+	<ul class="has-indent">
+        			<li class="indent">
+                <a href="Doctrine-DBAL-Platforms-Keywords-PostgreSQLKeywords$typespace.html#Doctrine\DBAL\Platforms\Keywords\PostgreSQLKeywords" class="fqsen "><small>Doctrine\DBAL\Platforms\Keywords\</small><wbr>PostgreSQLKeywords</a>                
+	<ul class="has-indent">
+        			<li class="indent">
+                <a href="Doctrine-DBAL-Platforms-Keywords-PostgreSQL91Keywords$typespace.html#Doctrine\DBAL\Platforms\Keywords\PostgreSQL91Keywords" class="fqsen "><small>Doctrine\DBAL\Platforms\Keywords\</small><wbr>PostgreSQL91Keywords</a>                
+	<ul class="has-indent">
+        			<li class="indent">
+                <a href="Doctrine-DBAL-Platforms-Keywords-PostgreSQL92Keywords$typespace.html#Doctrine\DBAL\Platforms\Keywords\PostgreSQL92Keywords" class="fqsen "><small>Doctrine\DBAL\Platforms\Keywords\</small><wbr>PostgreSQL92Keywords</a>                
+	<ul class="has-indent">
+        			<li class="indent">
+                <a href="Doctrine-DBAL-Platforms-Keywords-PostgreSQL94Keywords$typespace.html#Doctrine\DBAL\Platforms\Keywords\PostgreSQL94Keywords" class="fqsen bold"><small>Doctrine\DBAL\Platforms\Keywords\</small><wbr>PostgreSQL94Keywords</a>                
+	<ul class="has-indent">
+        			<li class="indent">
+                <a href="Doctrine-DBAL-Platforms-Keywords-PostgreSQL100Keywords$typespace.html#Doctrine\DBAL\Platforms\Keywords\PostgreSQL100Keywords" class="fqsen "><small>Doctrine\DBAL\Platforms\Keywords\</small><wbr>PostgreSQL100Keywords</a>                			</li>
+        	</ul>
+    			</li>
+        	</ul>
+    			</li>
+        	</ul>
+    			</li>
+        	</ul>
+    			</li>
+        	</ul>
+    			</li>
+        	</ul>
+    </div>
+
+	<h3>Constants</h3>
+    
+	<h3>Properties</h3>
+    
+	<h3>Methods</h3>
+    		<ul>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.9.2/lib/Doctrine/DBAL/Platforms/Keywords/PostgreSQL94Keywords.php#L13-L19" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Platforms\Keywords\PostgreSQL94Keywords::getName()" tabindex="-1" class="structure-title ">
+                        getName						<small>()</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p><tag_inheritdoc data-type='' data-description=''>Returns the name of this keyword list.</tag_inheritdoc></p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">string</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                    	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Platforms-Keywords-KeywordList$typespace.html#Doctrine\DBAL\Platforms\Keywords\KeywordList::getName()" class="fqsen "><small>Doctrine\DBAL\Platforms\Keywords\</small><wbr>KeywordList::getName()</a></td>
+				<td class="desc">Returns the name of this keyword list.</td>
+				<td class="rest">override</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-protected">protected</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.9.2/lib/Doctrine/DBAL/Platforms/Keywords/PostgreSQL94Keywords.php#L21-L31" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Platforms\Keywords\PostgreSQL94Keywords::getKeywords()" tabindex="-1" class="structure-title ">
+                        getKeywords						<small>()</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p><tag_inheritdoc data-type='' data-description=''>Returns the list of keywords.</tag_inheritdoc></p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">string[]</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                    	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Platforms-Keywords-KeywordList$typespace.html#Doctrine\DBAL\Platforms\Keywords\KeywordList::getKeywords()" class="fqsen "><small>Doctrine\DBAL\Platforms\Keywords\</small><wbr>KeywordList::getKeywords()</a></td>
+				<td class="desc">Returns the list of keywords.</td>
+				<td class="rest">override</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.9.2/lib/Doctrine/DBAL/Platforms/Keywords/KeywordList.php#L17-L31" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Platforms\Keywords\PostgreSQL94Keywords::isKeyword()" tabindex="-1" class="structure-title ">
+                        isKeyword						<small>($word)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Checks if the given word is a keyword of this dialect/vendor platform.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">string</td>
+				<td class="rest">$word</td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">bool</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                    	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Platforms-Keywords-KeywordList$typespace.html#Doctrine\DBAL\Platforms\Keywords\KeywordList::isKeyword()" class="fqsen "><small>Doctrine\DBAL\Platforms\Keywords\</small><wbr>KeywordList::isKeyword()</a></td>
+				<td class="desc">Checks if the given word is a keyword of this dialect/vendor platform.</td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-protected">protected</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.9.2/lib/Doctrine/DBAL/Platforms/Keywords/KeywordList.php#L33-L39" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Platforms\Keywords\PostgreSQL94Keywords::initializeKeywords()" tabindex="-1" class="structure-title ">
+                        initializeKeywords						<small>()</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">void</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                    	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Platforms-Keywords-KeywordList$typespace.html#Doctrine\DBAL\Platforms\Keywords\KeywordList::initializeKeywords()" class="fqsen "><small>Doctrine\DBAL\Platforms\Keywords\</small><wbr>KeywordList::initializeKeywords()</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            		</ul>
+    
+	<div class="attribute">
+		<span class="label label-default"></span>
+		<span class="label label-default"></span>
+	</div>
+	<div class="clearfix"></div>
+</div>
+</body>
+</html>

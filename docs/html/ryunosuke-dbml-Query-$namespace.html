@@ -115,7 +115,7 @@
 							<span class="label label-info"></span>
 							<span class="label label-info">iterateable</span>
 							<span class="label label-deprecated"></span>
-                            			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L48-L3104" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                            			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L48-L3188" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
             						</div>
 						<h4 id="ryunosuke\dbml\Query\QueryBuilder" tabindex="-1" class="structure-title ">
 							<a href="ryunosuke-dbml-Query-QueryBuilder$typespace.html#ryunosuke\dbml\Query\QueryBuilder">QueryBuilder</a>
@@ -174,24 +174,25 @@ echo count($qb); // t_article の件数を返す
 							<span class="label label-info"></span>
 							<span class="label label-info"></span>
 							<span class="label label-deprecated"></span>
-                            			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/Statement.php#L9-L142" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                            			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/Statement.php#L9-L143" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
             						</div>
 						<h4 id="ryunosuke\dbml\Query\Statement" tabindex="-1" class="structure-title ">
 							<a href="ryunosuke-dbml-Query-Statement$typespace.html#ryunosuke\dbml\Query\Statement">Statement</a>
 						</h4>
 						<div class="inner-item">
 							<div class="description"><p>Statement をラップして扱いやすくしたクラス</p>
-<p>主にプリペアドステートメントのために存在する。よってエミュレーションモードがオンだとほとんど意味を為さない。</p>
+<p>主にプリペアドステートメントのために存在する。よってエミュレーションモードがオンだとほとんど意味を為さない。<br />
+が、 <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::insert()' data-type-array='0' data-description='Database::insert()'>Database::insert()</tag_link> や <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::update()' data-type-array='0' data-description='Database::update()'>Database::update()</tag_link> などはそれ自体にそれなりの付随処理があるので、使うことに意味がないわけではない。</p>
 <p>クエリビルダは疑問符プレースホルダが大量に埋め込まれる可能性があるので、全部パラメータにするのが大変。<br />
 ので、「prepare した時点で固定し、残り（名前付き）のみ後から指定する」という仕様になっている。</p>
-<pre><code class="language-php">$qb = $db-&gt;select('t_table.*', ['id = :id', 'opt1' =&gt; 1, 'opt2' =&gt; 2])-&gt;prepare();
+<pre><code class="language-php">$qb = $db-&gt;select('t_table.*', [':id', 'opt1' =&gt; 1, 'opt2' =&gt; 2])-&gt;prepare();
 // :id は解決していないため、パラメータで渡すことができる（下記はエミュレーションモードがオフなら『本当の』プリペアドステートメントで実行される）
-$qb-&gt;fetchArray([':id' =&gt; 100]); // SELECT t_table.* FROM t_table WHERE id = 100 AND opt1 = 1 AND opt2 = 2
-$qb-&gt;fetchArray([':id' =&gt; 101]); // SELECT t_table.* FROM t_table WHERE id = 101 AND opt1 = 1 AND opt2 = 2
-$qb-&gt;fetchArray([':id' =&gt; 102]); // SELECT t_table.* FROM t_table WHERE id = 102 AND opt1 = 1 AND opt2 = 2
+$qb-&gt;array(['id' =&gt; 100]); // SELECT t_table.* FROM t_table WHERE id = 100 AND opt1 = 1 AND opt2 = 2
+$qb-&gt;array(['id' =&gt; 101]); // SELECT t_table.* FROM t_table WHERE id = 101 AND opt1 = 1 AND opt2 = 2
+$qb-&gt;array(['id' =&gt; 102]); // SELECT t_table.* FROM t_table WHERE id = 102 AND opt1 = 1 AND opt2 = 2
 </code></pre>
-<p><code>['id' =&gt; ':id']</code> ではなく <code>['id = :id']</code> であることに注意。<br />
-「通常の値バインド」と区別する必要がある（<code>['id' =&gt; ':id']</code> だと <code>WHERE id = ":id"</code> というただの文字列の WHERE になってしまう）。</p>
+<p>上記のように ":id" という形で「キー無しでかつ :から始まる要素」は利便性のため <code>['id = :id']</code> のように展開される。<br />
+普通の条件式では通常の値バインドと区別する必要があるので注意（<code>['id &gt; ?' =&gt; ':id']</code> だと <code>WHERE id &gt; ? = ":id"</code> というただの文字列の WHERE になる）。</p>
 </div>
 						</div>
 						<div class="attribute">

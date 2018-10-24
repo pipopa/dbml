@@ -1,0 +1,3398 @@
+<!DOCTYPE html>
+<html>
+<head>	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/styles/zenburn.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js-bootstrap-css/1.2.1/typeaheadjs.min.css">
+	<link rel="stylesheet" type="text/css" data-href="common.css">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/highlight.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/3.1.1/bootstrap3-typeahead.min.js"></script>
+	<script data-src="common.js"></script>
+
+	<script>
+        (function () {
+            var cachekey;
+            try {
+                cachekey = window.parent.CACHEKEY;
+            }
+            catch (e) {
+                cachekey = 'nocache';
+            }
+            $('link[data-href]').attr('href', function () {
+                return this.dataset.href + '?' + cachekey;
+            });
+            $('script[data-src]').attr('src', function () {
+                return this.dataset.src + '?' + cachekey;
+            });
+
+            $(document).on('click', 'a[href]:not([target="_blank"]):not(.cachekey)', function () {
+                this.classList.add('cachekey');
+                this.href = this.href.replace('.html', '.html?' + cachekey);
+            });
+        })();
+	</script>
+    </head>
+<body>
+<a id="anchor" href="./" style="display: none"></a>
+<h1 class="ellipsis">
+	<span class="pull-left">
+	Structure
+	<small class="ellipsis-text">(Doctrine\DBAL\Driver\PDOConnection)</small>
+	</span>
+	<span class="pull-right">
+		<small class="frame-switch">
+		<a target="_parent">frame</a> | <a target="_parent">noframe</a>
+		</small>
+	</span>
+</h1>
+<div class="main-wrapper">
+	<div class="attribute">
+		<span class="label label-danger"></span>
+		<span class="label label-warning"></span>
+		<span class="label label-info"></span>
+		<span class="label label-info"></span>
+		<span class="label label-deprecated"></span>
+        			<a href="https://github.com/doctrine/dbal/blob/v2.9.2/lib/Doctrine/DBAL/Driver/PDOConnection.php#L10-L121" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                    	</div>
+
+	<h2>class <span class="category-name">Doctrine\DBAL\Driver\PDOConnection</span></h2>
+
+	<div class="description"><p>PDO implementation of the Connection interface.<br />
+Used by all PDO-based drivers.</p>
+</div>
+
+	<h3>Construction</h3>
+    	<table class="table">
+		<caption>Parents</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php" class="fqsen" target="_blank">\PDO</a></td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+        	<table class="table">
+		<caption>Implements</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Driver-Connection$typespace.html#Doctrine\DBAL\Driver\Connection" class="fqsen "><small>Doctrine\DBAL\Driver\</small><wbr>Connection</a></td>
+				<td class="desc">Connection interface.</td>
+			</tr>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Driver-ServerInfoAwareConnection$typespace.html#Doctrine\DBAL\Driver\ServerInfoAwareConnection" class="fqsen "><small>Doctrine\DBAL\Driver\</small><wbr>ServerInfoAwareConnection</a></td>
+				<td class="desc">Contract for a connection that is able to provide information about the server it is connected to.</td>
+			</tr>
+        		</tbody>
+	</table>
+            
+	<h3>Hierarchy</h3>
+	<div class="hierarchy">
+	<ul class="">
+        			<li class="">
+                <a href="http://php.net/manual/ja/class.pdo.php" class="fqsen" target="_blank">\PDO</a>                
+	<ul class="has-indent">
+        			<li class="indent">
+                <a href="Doctrine-DBAL-Driver-PDOConnection$typespace.html#Doctrine\DBAL\Driver\PDOConnection" class="fqsen bold"><small>Doctrine\DBAL\Driver\</small><wbr>PDOConnection</a>                			</li>
+        	</ul>
+    			</li>
+        	</ul>
+    </div>
+
+	<h3>Constants</h3>
+    		<ul>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::PARAM_BOOL" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        PARAM_BOOL						<var> = 5</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.param_bool" class="fqsen" target="_blank">\PDO::PARAM_BOOL</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::PARAM_NULL" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        PARAM_NULL						<var></var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.param_null" class="fqsen" target="_blank">\PDO::PARAM_NULL</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::PARAM_INT" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        PARAM_INT						<var> = 1</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.param_int" class="fqsen" target="_blank">\PDO::PARAM_INT</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::PARAM_STR" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        PARAM_STR						<var> = 2</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.param_str" class="fqsen" target="_blank">\PDO::PARAM_STR</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::PARAM_LOB" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        PARAM_LOB						<var> = 3</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.param_lob" class="fqsen" target="_blank">\PDO::PARAM_LOB</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::PARAM_STMT" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        PARAM_STMT						<var> = 4</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.param_stmt" class="fqsen" target="_blank">\PDO::PARAM_STMT</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::PARAM_INPUT_OUTPUT" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        PARAM_INPUT_OUTPUT						<var> = 2147483648</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.param_input_output" class="fqsen" target="_blank">\PDO::PARAM_INPUT_OUTPUT</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::PARAM_STR_NATL" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        PARAM_STR_NATL						<var> = 1073741824</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.param_str_natl" class="fqsen" target="_blank">\PDO::PARAM_STR_NATL</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::PARAM_STR_CHAR" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        PARAM_STR_CHAR						<var> = 536870912</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.param_str_char" class="fqsen" target="_blank">\PDO::PARAM_STR_CHAR</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::PARAM_EVT_ALLOC" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        PARAM_EVT_ALLOC						<var></var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.param_evt_alloc" class="fqsen" target="_blank">\PDO::PARAM_EVT_ALLOC</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::PARAM_EVT_FREE" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        PARAM_EVT_FREE						<var> = 1</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.param_evt_free" class="fqsen" target="_blank">\PDO::PARAM_EVT_FREE</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::PARAM_EVT_EXEC_PRE" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        PARAM_EVT_EXEC_PRE						<var> = 2</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.param_evt_exec_pre" class="fqsen" target="_blank">\PDO::PARAM_EVT_EXEC_PRE</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::PARAM_EVT_EXEC_POST" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        PARAM_EVT_EXEC_POST						<var> = 3</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.param_evt_exec_post" class="fqsen" target="_blank">\PDO::PARAM_EVT_EXEC_POST</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::PARAM_EVT_FETCH_PRE" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        PARAM_EVT_FETCH_PRE						<var> = 4</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.param_evt_fetch_pre" class="fqsen" target="_blank">\PDO::PARAM_EVT_FETCH_PRE</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::PARAM_EVT_FETCH_POST" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        PARAM_EVT_FETCH_POST						<var> = 5</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.param_evt_fetch_post" class="fqsen" target="_blank">\PDO::PARAM_EVT_FETCH_POST</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::PARAM_EVT_NORMALIZE" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        PARAM_EVT_NORMALIZE						<var> = 6</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.param_evt_normalize" class="fqsen" target="_blank">\PDO::PARAM_EVT_NORMALIZE</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::FETCH_LAZY" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        FETCH_LAZY						<var> = 1</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.fetch_lazy" class="fqsen" target="_blank">\PDO::FETCH_LAZY</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::FETCH_ASSOC" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        FETCH_ASSOC						<var> = 2</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.fetch_assoc" class="fqsen" target="_blank">\PDO::FETCH_ASSOC</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::FETCH_NUM" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        FETCH_NUM						<var> = 3</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.fetch_num" class="fqsen" target="_blank">\PDO::FETCH_NUM</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::FETCH_BOTH" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        FETCH_BOTH						<var> = 4</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.fetch_both" class="fqsen" target="_blank">\PDO::FETCH_BOTH</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::FETCH_OBJ" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        FETCH_OBJ						<var> = 5</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.fetch_obj" class="fqsen" target="_blank">\PDO::FETCH_OBJ</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::FETCH_BOUND" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        FETCH_BOUND						<var> = 6</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.fetch_bound" class="fqsen" target="_blank">\PDO::FETCH_BOUND</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::FETCH_COLUMN" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        FETCH_COLUMN						<var> = 7</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.fetch_column" class="fqsen" target="_blank">\PDO::FETCH_COLUMN</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::FETCH_CLASS" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        FETCH_CLASS						<var> = 8</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.fetch_class" class="fqsen" target="_blank">\PDO::FETCH_CLASS</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::FETCH_INTO" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        FETCH_INTO						<var> = 9</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.fetch_into" class="fqsen" target="_blank">\PDO::FETCH_INTO</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::FETCH_FUNC" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        FETCH_FUNC						<var> = 10</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.fetch_func" class="fqsen" target="_blank">\PDO::FETCH_FUNC</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::FETCH_GROUP" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        FETCH_GROUP						<var> = 65536</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.fetch_group" class="fqsen" target="_blank">\PDO::FETCH_GROUP</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::FETCH_UNIQUE" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        FETCH_UNIQUE						<var> = 196608</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.fetch_unique" class="fqsen" target="_blank">\PDO::FETCH_UNIQUE</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::FETCH_KEY_PAIR" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        FETCH_KEY_PAIR						<var> = 12</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.fetch_key_pair" class="fqsen" target="_blank">\PDO::FETCH_KEY_PAIR</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::FETCH_CLASSTYPE" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        FETCH_CLASSTYPE						<var> = 262144</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.fetch_classtype" class="fqsen" target="_blank">\PDO::FETCH_CLASSTYPE</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::FETCH_SERIALIZE" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        FETCH_SERIALIZE						<var> = 524288</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.fetch_serialize" class="fqsen" target="_blank">\PDO::FETCH_SERIALIZE</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::FETCH_PROPS_LATE" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        FETCH_PROPS_LATE						<var> = 1048576</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.fetch_props_late" class="fqsen" target="_blank">\PDO::FETCH_PROPS_LATE</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::FETCH_NAMED" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        FETCH_NAMED						<var> = 11</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.fetch_named" class="fqsen" target="_blank">\PDO::FETCH_NAMED</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::ATTR_AUTOCOMMIT" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        ATTR_AUTOCOMMIT						<var></var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.attr_autocommit" class="fqsen" target="_blank">\PDO::ATTR_AUTOCOMMIT</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::ATTR_PREFETCH" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        ATTR_PREFETCH						<var> = 1</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.attr_prefetch" class="fqsen" target="_blank">\PDO::ATTR_PREFETCH</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::ATTR_TIMEOUT" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        ATTR_TIMEOUT						<var> = 2</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.attr_timeout" class="fqsen" target="_blank">\PDO::ATTR_TIMEOUT</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::ATTR_ERRMODE" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        ATTR_ERRMODE						<var> = 3</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.attr_errmode" class="fqsen" target="_blank">\PDO::ATTR_ERRMODE</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::ATTR_SERVER_VERSION" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        ATTR_SERVER_VERSION						<var> = 4</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.attr_server_version" class="fqsen" target="_blank">\PDO::ATTR_SERVER_VERSION</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::ATTR_CLIENT_VERSION" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        ATTR_CLIENT_VERSION						<var> = 5</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.attr_client_version" class="fqsen" target="_blank">\PDO::ATTR_CLIENT_VERSION</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::ATTR_SERVER_INFO" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        ATTR_SERVER_INFO						<var> = 6</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.attr_server_info" class="fqsen" target="_blank">\PDO::ATTR_SERVER_INFO</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::ATTR_CONNECTION_STATUS" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        ATTR_CONNECTION_STATUS						<var> = 7</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.attr_connection_status" class="fqsen" target="_blank">\PDO::ATTR_CONNECTION_STATUS</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::ATTR_CASE" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        ATTR_CASE						<var> = 8</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.attr_case" class="fqsen" target="_blank">\PDO::ATTR_CASE</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::ATTR_CURSOR_NAME" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        ATTR_CURSOR_NAME						<var> = 9</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.attr_cursor_name" class="fqsen" target="_blank">\PDO::ATTR_CURSOR_NAME</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::ATTR_CURSOR" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        ATTR_CURSOR						<var> = 10</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.attr_cursor" class="fqsen" target="_blank">\PDO::ATTR_CURSOR</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::ATTR_ORACLE_NULLS" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        ATTR_ORACLE_NULLS						<var> = 11</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.attr_oracle_nulls" class="fqsen" target="_blank">\PDO::ATTR_ORACLE_NULLS</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::ATTR_PERSISTENT" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        ATTR_PERSISTENT						<var> = 12</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.attr_persistent" class="fqsen" target="_blank">\PDO::ATTR_PERSISTENT</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::ATTR_STATEMENT_CLASS" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        ATTR_STATEMENT_CLASS						<var> = 13</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.attr_statement_class" class="fqsen" target="_blank">\PDO::ATTR_STATEMENT_CLASS</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::ATTR_FETCH_TABLE_NAMES" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        ATTR_FETCH_TABLE_NAMES						<var> = 14</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.attr_fetch_table_names" class="fqsen" target="_blank">\PDO::ATTR_FETCH_TABLE_NAMES</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::ATTR_FETCH_CATALOG_NAMES" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        ATTR_FETCH_CATALOG_NAMES						<var> = 15</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.attr_fetch_catalog_names" class="fqsen" target="_blank">\PDO::ATTR_FETCH_CATALOG_NAMES</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::ATTR_DRIVER_NAME" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        ATTR_DRIVER_NAME						<var> = 16</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.attr_driver_name" class="fqsen" target="_blank">\PDO::ATTR_DRIVER_NAME</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::ATTR_STRINGIFY_FETCHES" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        ATTR_STRINGIFY_FETCHES						<var> = 17</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.attr_stringify_fetches" class="fqsen" target="_blank">\PDO::ATTR_STRINGIFY_FETCHES</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::ATTR_MAX_COLUMN_LEN" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        ATTR_MAX_COLUMN_LEN						<var> = 18</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.attr_max_column_len" class="fqsen" target="_blank">\PDO::ATTR_MAX_COLUMN_LEN</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::ATTR_EMULATE_PREPARES" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        ATTR_EMULATE_PREPARES						<var> = 20</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.attr_emulate_prepares" class="fqsen" target="_blank">\PDO::ATTR_EMULATE_PREPARES</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::ATTR_DEFAULT_FETCH_MODE" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        ATTR_DEFAULT_FETCH_MODE						<var> = 19</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.attr_default_fetch_mode" class="fqsen" target="_blank">\PDO::ATTR_DEFAULT_FETCH_MODE</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::ATTR_DEFAULT_STR_PARAM" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        ATTR_DEFAULT_STR_PARAM						<var> = 21</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.attr_default_str_param" class="fqsen" target="_blank">\PDO::ATTR_DEFAULT_STR_PARAM</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::ERRMODE_SILENT" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        ERRMODE_SILENT						<var></var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.errmode_silent" class="fqsen" target="_blank">\PDO::ERRMODE_SILENT</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::ERRMODE_WARNING" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        ERRMODE_WARNING						<var> = 1</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.errmode_warning" class="fqsen" target="_blank">\PDO::ERRMODE_WARNING</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::ERRMODE_EXCEPTION" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        ERRMODE_EXCEPTION						<var> = 2</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.errmode_exception" class="fqsen" target="_blank">\PDO::ERRMODE_EXCEPTION</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::CASE_NATURAL" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        CASE_NATURAL						<var></var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.case_natural" class="fqsen" target="_blank">\PDO::CASE_NATURAL</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::CASE_LOWER" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        CASE_LOWER						<var> = 2</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.case_lower" class="fqsen" target="_blank">\PDO::CASE_LOWER</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::CASE_UPPER" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        CASE_UPPER						<var> = 1</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.case_upper" class="fqsen" target="_blank">\PDO::CASE_UPPER</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::NULL_NATURAL" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        NULL_NATURAL						<var></var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.null_natural" class="fqsen" target="_blank">\PDO::NULL_NATURAL</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::NULL_EMPTY_STRING" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        NULL_EMPTY_STRING						<var> = 1</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.null_empty_string" class="fqsen" target="_blank">\PDO::NULL_EMPTY_STRING</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::NULL_TO_STRING" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        NULL_TO_STRING						<var> = 2</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.null_to_string" class="fqsen" target="_blank">\PDO::NULL_TO_STRING</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::ERR_NONE" tabindex="-1" class="structure-title">
+						<small>string</small>
+                        ERR_NONE						<var> = &#039;00000&#039;</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.err_none" class="fqsen" target="_blank">\PDO::ERR_NONE</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::FETCH_ORI_NEXT" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        FETCH_ORI_NEXT						<var></var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.fetch_ori_next" class="fqsen" target="_blank">\PDO::FETCH_ORI_NEXT</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::FETCH_ORI_PRIOR" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        FETCH_ORI_PRIOR						<var> = 1</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.fetch_ori_prior" class="fqsen" target="_blank">\PDO::FETCH_ORI_PRIOR</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::FETCH_ORI_FIRST" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        FETCH_ORI_FIRST						<var> = 2</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.fetch_ori_first" class="fqsen" target="_blank">\PDO::FETCH_ORI_FIRST</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::FETCH_ORI_LAST" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        FETCH_ORI_LAST						<var> = 3</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.fetch_ori_last" class="fqsen" target="_blank">\PDO::FETCH_ORI_LAST</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::FETCH_ORI_ABS" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        FETCH_ORI_ABS						<var> = 4</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.fetch_ori_abs" class="fqsen" target="_blank">\PDO::FETCH_ORI_ABS</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::FETCH_ORI_REL" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        FETCH_ORI_REL						<var> = 5</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.fetch_ori_rel" class="fqsen" target="_blank">\PDO::FETCH_ORI_REL</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::CURSOR_FWDONLY" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        CURSOR_FWDONLY						<var></var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.cursor_fwdonly" class="fqsen" target="_blank">\PDO::CURSOR_FWDONLY</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::CURSOR_SCROLL" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        CURSOR_SCROLL						<var> = 1</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.cursor_scroll" class="fqsen" target="_blank">\PDO::CURSOR_SCROLL</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::MYSQL_ATTR_USE_BUFFERED_QUERY" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        MYSQL_ATTR_USE_BUFFERED_QUERY						<var> = 1000</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.mysql_attr_use_buffered_query" class="fqsen" target="_blank">\PDO::MYSQL_ATTR_USE_BUFFERED_QUERY</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::MYSQL_ATTR_LOCAL_INFILE" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        MYSQL_ATTR_LOCAL_INFILE						<var> = 1001</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.mysql_attr_local_infile" class="fqsen" target="_blank">\PDO::MYSQL_ATTR_LOCAL_INFILE</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::MYSQL_ATTR_INIT_COMMAND" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        MYSQL_ATTR_INIT_COMMAND						<var> = 1002</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.mysql_attr_init_command" class="fqsen" target="_blank">\PDO::MYSQL_ATTR_INIT_COMMAND</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::MYSQL_ATTR_COMPRESS" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        MYSQL_ATTR_COMPRESS						<var> = 1003</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.mysql_attr_compress" class="fqsen" target="_blank">\PDO::MYSQL_ATTR_COMPRESS</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::MYSQL_ATTR_DIRECT_QUERY" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        MYSQL_ATTR_DIRECT_QUERY						<var> = 1004</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.mysql_attr_direct_query" class="fqsen" target="_blank">\PDO::MYSQL_ATTR_DIRECT_QUERY</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::MYSQL_ATTR_FOUND_ROWS" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        MYSQL_ATTR_FOUND_ROWS						<var> = 1005</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.mysql_attr_found_rows" class="fqsen" target="_blank">\PDO::MYSQL_ATTR_FOUND_ROWS</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::MYSQL_ATTR_IGNORE_SPACE" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        MYSQL_ATTR_IGNORE_SPACE						<var> = 1006</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.mysql_attr_ignore_space" class="fqsen" target="_blank">\PDO::MYSQL_ATTR_IGNORE_SPACE</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::MYSQL_ATTR_SSL_KEY" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        MYSQL_ATTR_SSL_KEY						<var> = 1007</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.mysql_attr_ssl_key" class="fqsen" target="_blank">\PDO::MYSQL_ATTR_SSL_KEY</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::MYSQL_ATTR_SSL_CERT" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        MYSQL_ATTR_SSL_CERT						<var> = 1008</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.mysql_attr_ssl_cert" class="fqsen" target="_blank">\PDO::MYSQL_ATTR_SSL_CERT</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::MYSQL_ATTR_SSL_CA" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        MYSQL_ATTR_SSL_CA						<var> = 1009</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.mysql_attr_ssl_ca" class="fqsen" target="_blank">\PDO::MYSQL_ATTR_SSL_CA</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::MYSQL_ATTR_SSL_CAPATH" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        MYSQL_ATTR_SSL_CAPATH						<var> = 1010</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.mysql_attr_ssl_capath" class="fqsen" target="_blank">\PDO::MYSQL_ATTR_SSL_CAPATH</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::MYSQL_ATTR_SSL_CIPHER" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        MYSQL_ATTR_SSL_CIPHER						<var> = 1011</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.mysql_attr_ssl_cipher" class="fqsen" target="_blank">\PDO::MYSQL_ATTR_SSL_CIPHER</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::MYSQL_ATTR_SERVER_PUBLIC_KEY" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        MYSQL_ATTR_SERVER_PUBLIC_KEY						<var> = 1012</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.mysql_attr_server_public_key" class="fqsen" target="_blank">\PDO::MYSQL_ATTR_SERVER_PUBLIC_KEY</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::MYSQL_ATTR_MULTI_STATEMENTS" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        MYSQL_ATTR_MULTI_STATEMENTS						<var> = 1013</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.mysql_attr_multi_statements" class="fqsen" target="_blank">\PDO::MYSQL_ATTR_MULTI_STATEMENTS</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        MYSQL_ATTR_SSL_VERIFY_SERVER_CERT						<var> = 1014</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.mysql_attr_ssl_verify_server_cert" class="fqsen" target="_blank">\PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::PGSQL_ATTR_DISABLE_PREPARES" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        PGSQL_ATTR_DISABLE_PREPARES						<var> = 1000</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.pgsql_attr_disable_prepares" class="fqsen" target="_blank">\PDO::PGSQL_ATTR_DISABLE_PREPARES</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::PGSQL_TRANSACTION_IDLE" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        PGSQL_TRANSACTION_IDLE						<var></var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.pgsql_transaction_idle" class="fqsen" target="_blank">\PDO::PGSQL_TRANSACTION_IDLE</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::PGSQL_TRANSACTION_ACTIVE" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        PGSQL_TRANSACTION_ACTIVE						<var> = 1</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.pgsql_transaction_active" class="fqsen" target="_blank">\PDO::PGSQL_TRANSACTION_ACTIVE</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::PGSQL_TRANSACTION_INTRANS" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        PGSQL_TRANSACTION_INTRANS						<var> = 2</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.pgsql_transaction_intrans" class="fqsen" target="_blank">\PDO::PGSQL_TRANSACTION_INTRANS</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::PGSQL_TRANSACTION_INERROR" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        PGSQL_TRANSACTION_INERROR						<var> = 3</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.pgsql_transaction_inerror" class="fqsen" target="_blank">\PDO::PGSQL_TRANSACTION_INERROR</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-public">public</span>
+                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::PGSQL_TRANSACTION_UNKNOWN" tabindex="-1" class="structure-title">
+						<small>integer</small>
+                        PGSQL_TRANSACTION_UNKNOWN						<var> = 4</var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+
+                        	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.pdo.php#pdo.constants.pgsql_transaction_unknown" class="fqsen" target="_blank">\PDO::PGSQL_TRANSACTION_UNKNOWN</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+				</li>
+            		</ul>
+    
+	<h3>Properties</h3>
+    
+	<h3>Methods</h3>
+    		<ul>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.9.2/lib/Doctrine/DBAL/Driver/PDOConnection.php#L16-L33" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::__construct()" tabindex="-1" class="structure-title ">
+                        __construct						<small>($dsn, $user = null, $password = null, $options = null)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">string</td>
+				<td class="rest">$dsn</td>
+				<td class="desc"></td>
+			</tr>
+        			<tr>
+				<td class="type">string<span class="type-separator"></span><wbr>null</td>
+				<td class="rest">$user = null</td>
+				<td class="desc"></td>
+			</tr>
+        			<tr>
+				<td class="type">string<span class="type-separator"></span><wbr>null</td>
+				<td class="rest">$password = null</td>
+				<td class="desc"></td>
+			</tr>
+        			<tr>
+				<td class="type">array<span class="type-separator"></span><wbr>mixed[]<span class="type-separator"></span><wbr>null</td>
+				<td class="rest">$options = null</td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">void</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Throws</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Driver-PDOException$typespace.html#Doctrine\DBAL\Driver\PDOException" class="fqsen "><small>Doctrine\DBAL\Driver\</small><wbr>PDOException</a></td>
+				<td class="desc">In case of an error.</td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/pdo.construct.php" class="fqsen" target="_blank">\PDO::__construct()</a></td>
+				<td class="desc"></td>
+				<td class="rest">override</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.9.2/lib/Doctrine/DBAL/Driver/PDOConnection.php#L35-L45" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::exec()" tabindex="-1" class="structure-title ">
+                        exec						<small>($statement)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p><tag_inheritdoc data-type='' data-description=''>Executes an SQL statement and return the number of affected rows.</tag_inheritdoc></p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">string</td>
+				<td class="rest">$statement</td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">int</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                    	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Driver-Connection$typespace.html#Doctrine\DBAL\Driver\Connection::exec()" class="fqsen "><small>Doctrine\DBAL\Driver\</small><wbr>Connection::exec()</a></td>
+				<td class="desc">Executes an SQL statement and return the number of affected rows.</td>
+				<td class="rest">implement</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.9.2/lib/Doctrine/DBAL/Driver/PDOConnection.php#L47-L53" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::getServerVersion()" tabindex="-1" class="structure-title ">
+                        getServerVersion						<small>()</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p><tag_inheritdoc data-type='' data-description=''>Returns the version number of the database server connected to.</tag_inheritdoc></p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">string</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                    	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Driver-ServerInfoAwareConnection$typespace.html#Doctrine\DBAL\Driver\ServerInfoAwareConnection::getServerVersion()" class="fqsen "><small>Doctrine\DBAL\Driver\</small><wbr>ServerInfoAwareConnection::getServerVersion()</a></td>
+				<td class="desc">Returns the version number of the database server connected to.</td>
+				<td class="rest">implement</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.9.2/lib/Doctrine/DBAL/Driver/PDOConnection.php#L55-L65" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::prepare()" tabindex="-1" class="structure-title ">
+                        prepare						<small>($prepareString, $driverOptions = [])</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p><tag_inheritdoc data-type='' data-description=''>Prepares a statement for execution and returns a Statement object.</tag_inheritdoc></p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">string</td>
+				<td class="rest">$prepareString</td>
+				<td class="desc"></td>
+			</tr>
+        			<tr>
+				<td class="type"></td>
+				<td class="rest">$driverOptions = []</td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="Doctrine-DBAL-Driver-Statement$typespace.html#Doctrine\DBAL\Driver\Statement" class="fqsen "><small>Doctrine\DBAL\Driver\</small><wbr>Statement</a></td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                    	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Driver-Connection$typespace.html#Doctrine\DBAL\Driver\Connection::prepare()" class="fqsen "><small>Doctrine\DBAL\Driver\</small><wbr>Connection::prepare()</a></td>
+				<td class="desc">Prepares a statement for execution and returns a Statement object.</td>
+				<td class="rest">implement</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.9.2/lib/Doctrine/DBAL/Driver/PDOConnection.php#L67-L92" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::query()" tabindex="-1" class="structure-title ">
+                        query						<small>()</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p><tag_inheritdoc data-type='' data-description=''>Executes an SQL statement, returning a result set as a Statement object.</tag_inheritdoc></p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="Doctrine-DBAL-Driver-Statement$typespace.html#Doctrine\DBAL\Driver\Statement" class="fqsen "><small>Doctrine\DBAL\Driver\</small><wbr>Statement</a></td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                    	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Driver-Connection$typespace.html#Doctrine\DBAL\Driver\Connection::query()" class="fqsen "><small>Doctrine\DBAL\Driver\</small><wbr>Connection::query()</a></td>
+				<td class="desc">Executes an SQL statement, returning a result set as a Statement object.</td>
+				<td class="rest">implement</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.9.2/lib/Doctrine/DBAL/Driver/PDOConnection.php#L94-L100" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::quote()" tabindex="-1" class="structure-title ">
+                        quote						<small>($input, $type = Doctrine\DBAL\ParameterType::STRING)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p><tag_inheritdoc data-type='' data-description=''>Quotes a string for use in a query.</tag_inheritdoc></p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">mixed</td>
+				<td class="rest">$input</td>
+				<td class="desc"></td>
+			</tr>
+        			<tr>
+				<td class="type">int</td>
+				<td class="rest">$type = Doctrine\DBAL\ParameterType::STRING</td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">mixed</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                    	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Driver-Connection$typespace.html#Doctrine\DBAL\Driver\Connection::quote()" class="fqsen "><small>Doctrine\DBAL\Driver\</small><wbr>Connection::quote()</a></td>
+				<td class="desc">Quotes a string for use in a query.</td>
+				<td class="rest">implement</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.9.2/lib/Doctrine/DBAL/Driver/PDOConnection.php#L102-L112" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::lastInsertId()" tabindex="-1" class="structure-title ">
+                        lastInsertId						<small>($name = null)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p><tag_inheritdoc data-type='' data-description=''>Returns the ID of the last inserted row or sequence value.</tag_inheritdoc></p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">string<span class="type-separator"></span><wbr>null</td>
+				<td class="rest">$name = null</td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">string</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                    	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Driver-Connection$typespace.html#Doctrine\DBAL\Driver\Connection::lastInsertId()" class="fqsen "><small>Doctrine\DBAL\Driver\</small><wbr>Connection::lastInsertId()</a></td>
+				<td class="desc">Returns the ID of the last inserted row or sequence value.</td>
+				<td class="rest">implement</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.9.2/lib/Doctrine/DBAL/Driver/PDOConnection.php#L114-L120" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::requiresQueryForServerVersion()" tabindex="-1" class="structure-title ">
+                        requiresQueryForServerVersion						<small>()</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p><tag_inheritdoc data-type='' data-description=''>Checks whether a query is required to retrieve the database server version.</tag_inheritdoc></p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">bool</td>
+			<td class="desc"><p>True if a query is required to retrieve the database server version, false otherwise.</p>
+</td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                    	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Driver-ServerInfoAwareConnection$typespace.html#Doctrine\DBAL\Driver\ServerInfoAwareConnection::requiresQueryForServerVersion()" class="fqsen "><small>Doctrine\DBAL\Driver\</small><wbr>ServerInfoAwareConnection::requiresQueryForServerVersion()</a></td>
+				<td class="desc">Checks whether a query is required to retrieve the database server version.</td>
+				<td class="rest">implement</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="#L0-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::beginTransaction()" tabindex="-1" class="structure-title ">
+                        beginTransaction						<small>()</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Initiates a transaction.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">bool</td>
+			<td class="desc"><p>TRUE on success or FALSE on failure.</p>
+</td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                    	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/pdo.begintransaction.php" class="fqsen" target="_blank">\PDO::beginTransaction()</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="#L0-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::commit()" tabindex="-1" class="structure-title ">
+                        commit						<small>()</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Commits a transaction.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">bool</td>
+			<td class="desc"><p>TRUE on success or FALSE on failure.</p>
+</td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                    	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/pdo.commit.php" class="fqsen" target="_blank">\PDO::commit()</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="#L0-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::rollBack()" tabindex="-1" class="structure-title ">
+                        rollBack						<small>()</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Rolls back the current transaction, as initiated by beginTransaction().</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">bool</td>
+			<td class="desc"><p>TRUE on success or FALSE on failure.</p>
+</td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                    	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/pdo.rollback.php" class="fqsen" target="_blank">\PDO::rollBack()</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="#L0-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::inTransaction()" tabindex="-1" class="structure-title ">
+                        inTransaction						<small>()</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">void</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                    	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/pdo.intransaction.php" class="fqsen" target="_blank">\PDO::inTransaction()</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="#L0-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::setAttribute()" tabindex="-1" class="structure-title ">
+                        setAttribute						<small>($attribute, $value)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type"></td>
+				<td class="rest">$attribute</td>
+				<td class="desc"></td>
+			</tr>
+        			<tr>
+				<td class="type"></td>
+				<td class="rest">$value</td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">void</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                    	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/pdo.setattribute.php" class="fqsen" target="_blank">\PDO::setAttribute()</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="#L0-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::errorCode()" tabindex="-1" class="structure-title ">
+                        errorCode						<small>()</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Returns the error code associated with the last operation on the database handle.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">string<span class="type-separator"></span><wbr>null</td>
+			<td class="desc"><p>The error code, or null if no operation has been run on the database handle.</p>
+</td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                    	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/pdo.errorcode.php" class="fqsen" target="_blank">\PDO::errorCode()</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="#L0-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::errorInfo()" tabindex="-1" class="structure-title ">
+                        errorInfo						<small>()</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>Returns extended error information associated with the last operation on the database handle.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">mixed[]</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                    	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/pdo.errorinfo.php" class="fqsen" target="_blank">\PDO::errorInfo()</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="#L0-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::getAttribute()" tabindex="-1" class="structure-title ">
+                        getAttribute						<small>($attribute)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type"></td>
+				<td class="rest">$attribute</td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">void</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                    	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/pdo.getattribute.php" class="fqsen" target="_blank">\PDO::getAttribute()</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger">final</span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="#L0-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::__wakeup()" tabindex="-1" class="structure-title ">
+                        __wakeup						<small>()</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">void</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                    	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/pdo.wakeup.php" class="fqsen" target="_blank">\PDO::__wakeup()</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger">final</span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="#L0-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::__sleep()" tabindex="-1" class="structure-title ">
+                        __sleep						<small>()</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">void</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                    	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/pdo.sleep.php" class="fqsen" target="_blank">\PDO::__sleep()</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default">static</span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="#L0-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::getAvailableDrivers()" tabindex="-1" class="structure-title ">
+                        getAvailableDrivers						<small>()</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">void</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                    	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/pdo.getavailabledrivers.php" class="fqsen" target="_blank">\PDO::getAvailableDrivers()</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            		</ul>
+    
+	<div class="attribute">
+		<span class="label label-default"></span>
+		<span class="label label-default"></span>
+	</div>
+	<div class="clearfix"></div>
+</div>
+</body>
+</html>

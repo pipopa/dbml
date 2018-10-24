@@ -61,23 +61,13 @@
 							<span class="label label-info"></span>
 							<span class="label label-info">iterateable</span>
 							<span class="label label-deprecated"></span>
-                            			<a href="https://github.com/doctrine/dbal/blob/v2.8.0/lib/Doctrine/DBAL/Cache/ResultCacheStatement.php#L30-L229" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                            			<a href="https://github.com/doctrine/dbal/blob/v2.9.2/lib/Doctrine/DBAL/Cache/ArrayStatement.php#L16-L137" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
             						</div>
-						<h4 id="Doctrine\DBAL\Cache\ResultCacheStatement" tabindex="-1" class="structure-title ">
-							<a href="Doctrine-DBAL-Cache-ResultCacheStatement$typespace.html#Doctrine\DBAL\Cache\ResultCacheStatement">ResultCacheStatement</a>
+						<h4 id="Doctrine\DBAL\Cache\ArrayStatement" tabindex="-1" class="structure-title ">
+							<a href="Doctrine-DBAL-Cache-ArrayStatement$typespace.html#Doctrine\DBAL\Cache\ArrayStatement">ArrayStatement</a>
 						</h4>
 						<div class="inner-item">
-							<div class="description"><p>Cache statement for SQL results.</p>
-<p>A result is saved in multiple cache keys, there is the originally specified<br />
-cache key which is just pointing to result rows by key. The following things<br />
-have to be ensured:</p>
-<ol>
-<li>lifetime of the original key has to be longer than that of all the individual rows keys</li>
-<li>if any one row key is missing the query has to be re-executed.</li>
-</ol>
-<p>Also you have to realize that the cache will load the whole result into memory at once to ensure 2.<br />
-This means that the memory usage for cached results might increase by using this feature.</p>
-</div>
+							<div class="description"></div>
 						</div>
 						<div class="attribute">
 							<span class="label label-default"></span>
@@ -92,7 +82,28 @@ This means that the memory usage for cached results might increase by using this
 							<span class="label label-info"></span>
 							<span class="label label-info"></span>
 							<span class="label label-deprecated"></span>
-                            			<a href="https://github.com/doctrine/dbal/blob/v2.8.0/lib/Doctrine/DBAL/Cache/QueryCacheProfile.php#L27-L145" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                            			<a href="https://github.com/doctrine/dbal/blob/v2.9.2/lib/Doctrine/DBAL/Cache/CacheException.php#L7-L24" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+            						</div>
+						<h4 id="Doctrine\DBAL\Cache\CacheException" tabindex="-1" class="structure-title ">
+							<a href="Doctrine-DBAL-Cache-CacheException$typespace.html#Doctrine\DBAL\Cache\CacheException">CacheException</a>
+						</h4>
+						<div class="inner-item">
+							<div class="description"></div>
+						</div>
+						<div class="attribute">
+							<span class="label label-default"></span>
+							<span class="label label-default"></span>
+						</div>
+						<div class="clearfix"></div>
+					</li>
+                					<li class="structure-item">
+						<div class="attribute">
+							<span class="label label-danger"></span>
+							<span class="label label-warning"></span>
+							<span class="label label-info"></span>
+							<span class="label label-info"></span>
+							<span class="label label-deprecated"></span>
+                            			<a href="https://github.com/doctrine/dbal/blob/v2.9.2/lib/Doctrine/DBAL/Cache/QueryCacheProfile.php#L10-L121" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
             						</div>
 						<h4 id="Doctrine\DBAL\Cache\QueryCacheProfile" tabindex="-1" class="structure-title ">
 							<a href="Doctrine-DBAL-Cache-QueryCacheProfile$typespace.html#Doctrine\DBAL\Cache\QueryCacheProfile">QueryCacheProfile</a>
@@ -115,38 +126,27 @@ This means that the memory usage for cached results might increase by using this
 							<span class="label label-info"></span>
 							<span class="label label-info">iterateable</span>
 							<span class="label label-deprecated"></span>
-                            			<a href="https://github.com/doctrine/dbal/blob/v2.8.0/lib/Doctrine/DBAL/Cache/ArrayStatement.php#L29-L156" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                            			<a href="https://github.com/doctrine/dbal/blob/v2.9.2/lib/Doctrine/DBAL/Cache/ResultCacheStatement.php#L17-L201" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
             						</div>
-						<h4 id="Doctrine\DBAL\Cache\ArrayStatement" tabindex="-1" class="structure-title ">
-							<a href="Doctrine-DBAL-Cache-ArrayStatement$typespace.html#Doctrine\DBAL\Cache\ArrayStatement">ArrayStatement</a>
+						<h4 id="Doctrine\DBAL\Cache\ResultCacheStatement" tabindex="-1" class="structure-title ">
+							<a href="Doctrine-DBAL-Cache-ResultCacheStatement$typespace.html#Doctrine\DBAL\Cache\ResultCacheStatement">ResultCacheStatement</a>
 						</h4>
 						<div class="inner-item">
-							<div class="description"></div>
+							<div class="description"><p>Cache statement for SQL results.</p>
+<p>A result is saved in multiple cache keys, there is the originally specified<br />
+cache key which is just pointing to result rows by key. The following things<br />
+have to be ensured:</p>
+<ol>
+<li>lifetime of the original key has to be longer than that of all the individual rows keys</li>
+<li>if any one row key is missing the query has to be re-executed.</li>
+</ol>
+<p>Also you have to realize that the cache will load the whole result into memory at once to ensure 2.<br />
+This means that the memory usage for cached results might increase by using this feature.</p>
+</div>
 						</div>
 						<div class="attribute">
 							<span class="label label-default"></span>
 							<span class="label label-default"></span>
-						</div>
-						<div class="clearfix"></div>
-					</li>
-                					<li class="structure-item">
-						<div class="attribute">
-							<span class="label label-danger"></span>
-							<span class="label label-warning"></span>
-							<span class="label label-info"></span>
-							<span class="label label-info"></span>
-							<span class="label label-deprecated"></span>
-                            			<a href="https://github.com/doctrine/dbal/blob/v2.8.0/lib/Doctrine/DBAL/Cache/CacheException.php#L22-L43" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
-            						</div>
-						<h4 id="Doctrine\DBAL\Cache\CacheException" tabindex="-1" class="structure-title ">
-							<a href="Doctrine-DBAL-Cache-CacheException$typespace.html#Doctrine\DBAL\Cache\CacheException">CacheException</a>
-						</h4>
-						<div class="inner-item">
-							<div class="description"></div>
-						</div>
-						<div class="attribute">
-							<span class="label label-default"></span>
-							<span class="label label-default">author Benjamin Eberlei</span>
 						</div>
 						<div class="clearfix"></div>
 					</li>
