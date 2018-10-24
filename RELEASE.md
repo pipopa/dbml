@@ -20,6 +20,17 @@
 
 - Entity 消したい。使わない…
 
+## 1.0.3
+
+- [feature][TableGateway] offsetGet の * 対応
+- [feature][Database] INSERT SET 構文対応
+- [feature][QueryBuilder] 前後のレコードを返す neighbor を実装
+- [fixbug][QueryBuilder] ORDER, LIMIT 付きの UNION でエラーになっていた不具合を修正
+- [fixbug][All] 一部マルチバイトで動かないメソッドがあったので正規表現に/uオプションを追加
+- [chage][Database] :placeholder の仕様を変更
+  - column は ":name" と指定するのを正式仕様に変更
+  - where も ":name" で placeholder が使えるように変更
+
 ## 1.0.2
 
 - [feature][Database] クエリビルダを返す aggregate を実装
