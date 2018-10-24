@@ -10,20 +10,21 @@ use ryunosuke\dbml\Mixin\DebugInfoTrait;
  * Statement をラップして扱いやすくしたクラス
  *
  * 主にプリペアドステートメントのために存在する。よってエミュレーションモードがオンだとほとんど意味を為さない。
+ * が、 {@link Database::insert()} や {@link Database::update()} などはそれ自体にそれなりの付随処理があるので、使うことに意味がないわけではない。
  *
  * クエリビルダは疑問符プレースホルダが大量に埋め込まれる可能性があるので、全部パラメータにするのが大変。
  * ので、「prepare した時点で固定し、残り（名前付き）のみ後から指定する」という仕様になっている。
  *
  * ```php
- * $qb = $db->select('t_table.*', ['id = :id', 'opt1' => 1, 'opt2' => 2])->prepare();
+ * $qb = $db->select('t_table.*', [':id', 'opt1' => 1, 'opt2' => 2])->prepare();
  * // :id は解決していないため、パラメータで渡すことができる（下記はエミュレーションモードがオフなら『本当の』プリペアドステートメントで実行される）
- * $qb->fetchArray([':id' => 100]); // SELECT t_table.* FROM t_table WHERE id = 100 AND opt1 = 1 AND opt2 = 2
- * $qb->fetchArray([':id' => 101]); // SELECT t_table.* FROM t_table WHERE id = 101 AND opt1 = 1 AND opt2 = 2
- * $qb->fetchArray([':id' => 102]); // SELECT t_table.* FROM t_table WHERE id = 102 AND opt1 = 1 AND opt2 = 2
+ * $qb->array(['id' => 100]); // SELECT t_table.* FROM t_table WHERE id = 100 AND opt1 = 1 AND opt2 = 2
+ * $qb->array(['id' => 101]); // SELECT t_table.* FROM t_table WHERE id = 101 AND opt1 = 1 AND opt2 = 2
+ * $qb->array(['id' => 102]); // SELECT t_table.* FROM t_table WHERE id = 102 AND opt1 = 1 AND opt2 = 2
  * ```
  *
- * `['id' => ':id']` ではなく `['id = :id']` であることに注意。
- * 「通常の値バインド」と区別する必要がある（`['id' => ':id']` だと `WHERE id = ":id"` というただの文字列の WHERE になってしまう）。
+ * 上記のように ":id" という形で「キー無しでかつ :から始まる要素」は利便性のため `['id = :id']` のように展開される。
+ * 普通の条件式では通常の値バインドと区別する必要があるので注意（`['id > ?' => ':id']` だと `WHERE id > ? = ":id"` というただの文字列の WHERE になる）。
  */
 class Statement implements Queryable
 {

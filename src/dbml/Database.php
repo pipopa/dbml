@@ -1129,7 +1129,14 @@ class Database
         }
 
         if ($this->getUnsafeOption('preparing')) {
-            $row = Adhoc::to_hash($row, function ($v) { return $this->raw(':' . $v); });
+            $row = array_each($row, function (&$carry, $v, $k) {
+                // for compatible. もともと "name" で ":name" のような bind 形式になる仕様だったが ":name" で明示する仕様になった
+                if (is_int($k) && is_string($v)) {
+                    $k = ltrim($v, ':'); // substr($v, 1);
+                    $v = $this->raw(":$k");
+                }
+                $carry[$k] = $v;
+            }, []);
         }
 
         if ($this->getUnsafeOption('filterNoExistsColumn')) {
@@ -2185,6 +2192,7 @@ class Database
      * |  9 | `['hoge:LIKE' => 'xxx']`                       | `hoge LIKE ('xxx')`                | `:演算子`を付与するとその演算子で比較が行われる
      * | 10 | `['hoge:!LIKE' => 'xxx']`                      | `NOT (hoge LIKE ('xxx'))`          | `:` で演算子を明示しかつ `!` を付与すると全体として NOT で囲まれる
      * | 11 | `['hoge:!' => 'xxx']`                          | `NOT (hoge = 'xxx')`               | `:` 以降がない場合はNo.5～8 とみなすその否定なので NOT = になる
+     * | 15 | `[':hoge']`                                    | `hoge = :hoge`                     | :hoge のようにコロンで始まる要素は 'hoge = :hoge' に展開される（prepare の利便性が上がる）
      * | 21 | `['(hoge, fuga)'] => [[1, 2], [3, 4]]`         | `(hoge, fuga) IN ((1, 2), (3, 4))` | 行値式のようなキーは `IN` に展開される
      * | 22 | `['!hoge' => '']`                              | -                                  | キーが "!" で始まるかつ bind 値が(phpで)空判定される場合、その条件文自体が抹消される（記号は同じだが前述の `:!演算子` とは全く別個）
      * | 23 | `['AND/OR' => ['hoge' => 1, 'fuga' => 2]]`     | `hoge = 1 OR fuga = 2`             | キーが "AND/OR" の場合は特別扱いされ、AND/OR コンテキストの切り替えが行わる
@@ -2219,6 +2227,13 @@ class Database
      * $wheres['id:'] = 1;       // ↑と同じ
      * $wheres['id:!'] = 1;      // 用途なしに見えるが、このように:!とすると WHERE NOT (id = 1) になり、否定が行える
      * $wheres['id:!'] = [1, 2]; // No.5～8 相当なので配列を与えれば WHERE NOT (id IN (1, 2)) になり、IN の否定が行える
+     *
+     * # No.15（:hoge は hoge = :hoge になる。頻度は低いが下記のように prepare 化するときに指定が楽になる）
+     * $stmt = $db->prepareDelete('table_name', ['id = :id']);    // prepare するときは本来ならこのように指定すべきだが・・・
+     * $stmt = $db->prepareDelete('table_name', ['id' => ':id']); // このようなミスがよくある（これは id = ":id" に展開されるのでエラーになる）
+     * $stmt = $db->prepareDelete('table_name', ':id');           // このように指定したほうが平易で良い。そしてこの時点で id = :id になるので・・・
+     * $stmt->executeUpdate(['id' => 1]);                         // WHERE id = 1 で実行できる
+     * $stmt->executeUpdate(['id' => 2]);                         // WHERE id = 2 で実行できる
      *
      * # No.23（最高にややこしいが、実用上は「OR する場合は配列で包む」という認識でまず事足りるはず）
      * # 原則として配列間は AND で結合される。しかし、要素を配列で包むと、現在のコンテキストとは逆（AND なら OR、OR なら AND）の演算子で結合させることができる
@@ -2323,6 +2338,10 @@ class Database
                 // Queryable はマージしたものを
                 if ($value instanceof Queryable && $value->getQuery()) {
                     $criteria[] = $value->merge($params);
+                }
+                // :hoge なら hoge = :hoge に展開
+                elseif (is_string($value) && strpos($value, ':') === 0) {
+                    $criteria[] = substr($value, 1) . ' = ' . $value;
                 }
                 // 上記以外はそのまま
                 else {
@@ -3714,21 +3733,21 @@ class Database
      * $db->fetchTuple($stmt, ['id' => 1]); // SELECT * FROM t_table WHERE id = 1
      * $db->fetchTuple($stmt, ['id' => 2]); // SELECT * FROM t_table WHERE id = 2
      *
-     * # 実際は DML のプロキシメソッドがあるのでそっちを使うことが多い
+     * # 実際は DML のプロキシメソッドがあるのでそっちを使うことが多い（":id" のような省略記法を使っている。詳細は Statement の方を参照）
      * // SELECT
-     * $stmt = $db->prepareSelect('t_table', 'id = :id');
+     * $stmt = $db->prepareSelect('t_table', ':id');
      * $db->fetchTuple($stmt, ['id' => 1]); // SELECT * FROM t_table WHERE id = 1
      * $db->fetchTuple($stmt, ['id' => 2]); // SELECT * FROM t_table WHERE id = 2
      * // INSERT
-     * $stmt = $db->prepareInsert('t_table', ['id', 'name']);
+     * $stmt = $db->prepareInsert('t_table', [':id', ':name']);
      * $stmt->executeUpdate(['id' => 101, 'name' => 'hoge']);
      * $stmt->executeUpdate(['id' => 102, 'name' => 'fuga']);
      * // UPDATE
-     * $stmt = $db->prepareUpdate('t_table', ['name'], ['id = :id']);
+     * $stmt = $db->prepareUpdate('t_table', [':name'], [':id']);
      * $stmt->executeUpdate(['id' => 101, 'name' => 'HOGE']);
      * $stmt->executeUpdate(['id' => 102, 'name' => 'FUGA']);
      * // DELETE
-     * $stmt = $db->prepareDelete('t_table', ['id = :id']);
+     * $stmt = $db->prepareDelete('t_table', [':id']);
      * $stmt->executeUpdate(['id' => 101]);
      * $stmt->executeUpdate(['id' => 102]);
      * ```

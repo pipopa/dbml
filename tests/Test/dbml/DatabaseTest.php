@@ -701,6 +701,12 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
         $stmt->executeUpdate(['id' => 102, 'name' => 'updateYYY']);
         $this->assertEquals(['updateXXX', 'updateYYY'], $database->selectLists('test.name', ['id' => [101, 102]]));
 
+        // :hoge, :fuga の簡易記法
+        $stmt = $database->prepareUpdate('test', [':name'], [':id']);
+        $stmt->executeUpdate(['id' => 101, 'name' => 'bindXXX']);
+        $stmt->executeUpdate(['id' => 102, 'name' => 'bindYYY']);
+        $this->assertEquals(['bindXXX', 'bindYYY'], $database->selectLists('test.name', ['id' => [101, 102]]));
+
         // delete
         $stmt = $database->prepareDelete('test', ['id = :id']);
         $stmt->executeUpdate(['id' => 101]);
@@ -1194,6 +1200,9 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
 
         $this->assertEquals(['hoge = ? OR fuga IN (?,?)'], $whereInto(['hoge = ? OR fuga IN (?)' => [[1], [2, 3]]]));
         $this->assertEquals([1, 2, 3], $params);
+
+        $this->assertEquals(['cond = ?', 'id = :id', 'condition'], $whereInto(['cond' => 1, ':id', 'condition']));
+        $this->assertEquals([1], $params);
 
         $this->assertEquals([
             'b1 = ?',
