@@ -757,14 +757,14 @@ class Database
         }
         // subaggregate 系
         if (in_array(strtolower($name), ['subcount', 'submin', 'submax', 'subsum', 'subavg'], true)) {
-            return $this->subaggregate(preg_replace('#^sub#i', '', $name), ...$arguments);
+            return $this->subaggregate(preg_replace('#^sub#ui', '', $name), ...$arguments);
         }
         // selectAggregate 系
-        if (preg_match('/^select(count|min|max|sum|avg)$/i', $name, $matches)) {
+        if (preg_match('/^select(count|min|max|sum|avg)$/ui', $name, $matches)) {
             return $this->selectAggregate($matches[1], ...$arguments);
         }
         // prepare 系
-        if (preg_match('/^prepare(.+)$/i', $name, $matches)) {
+        if (preg_match('/^prepare(.+)$/ui', $name, $matches)) {
             // SELECT 系のみ実装が違うので分岐
             $method = $matches[1];
             if (strtolower($method) === 'select') {
@@ -774,7 +774,7 @@ class Database
             return try_finally([$this, $method], $restorer, ...$arguments);
         }
         // fetch～OrThrow 系
-        if (preg_match('/^fetch(.+?)OrThrow$/i', $name, $matches)) {
+        if (preg_match('/^fetch(.+?)OrThrow$/ui', $name, $matches)) {
             $method = 'fetch' . $matches[1];
             $result = $this->$method(...$arguments);
             // Value, Tuple は [] を返し得ないし、複数行系も false を返し得ない
@@ -784,7 +784,7 @@ class Database
             return $result;
         }
         // select|entity～ 系
-        if (preg_match('/^(select|entity)(.+?)(ForUpdate|InShare)?(OrThrow)?$/i', $name, $matches)) {
+        if (preg_match('/^(select|entity)(.+?)(ForUpdate|InShare)?(OrThrow)?$/ui', $name, $matches)) {
             list(, $mode, $perform, $lockmode, $orthrow) = array_map('strtolower', $matches + [3 => '', 4 => '']);
             $select = $this->$mode(...$arguments);
             if ($lockmode) {
@@ -794,15 +794,15 @@ class Database
             return $this->$method($select);
         }
         // yield～ 系
-        if (preg_match('/^yield(.+?)$/i', $name, $matches)) {
+        if (preg_match('/^yield(.+?)$/ui', $name, $matches)) {
             return $this->yield(...$arguments)->setFetchMethod(strtolower($matches[1]));
         }
         // export～ 系
-        if (preg_match('/^export(.+?)$/i', $name, $matches)) {
+        if (preg_match('/^export(.+?)$/ui', $name, $matches)) {
             return $this->export($matches[1], ...$arguments);
         }
         // sub～ 系
-        if (preg_match('/^(sub(table|select)?)(.+?)$/i', $name, $matches)) {
+        if (preg_match('/^(sub(table|select)?)(.+?)$/ui', $name, $matches)) {
             list(, $submethod, , $perform) = array_map('strtolower', $matches);
             if ($submethod === 'subtable') {
                 $subselect = $this->subtable(...$arguments);
@@ -813,7 +813,7 @@ class Database
             return $subselect->$perform();
         }
         // affect～OrThrow 系
-        if (preg_match('/^(insert|update|delete|remove|destroy|reduce|upsert|modify|replace)OrThrow$/i', $name, $matches)) {
+        if (preg_match('/^(insert|update|delete|remove|destroy|reduce|upsert|modify|replace)OrThrow$/ui', $name, $matches)) {
             $method = strtolower($matches[1]);
             $refunc = reflect_callable([$this, $method]);
             if (count($arguments) < $refunc->getNumberOfRequiredParameters()) {
@@ -1221,7 +1221,7 @@ class Database
     private function _postaffect($tableName, $data)
     {
         foreach ($data as $k => $v) {
-            $kk = preg_replace("#^$tableName\.#", '', $k);
+            $kk = preg_replace("#^$tableName\.#u", '', $k);
             if (!isset($data[$kk])) {
                 $data[$kk] = $v;
             }
@@ -2477,7 +2477,7 @@ class Database
         $word = (string) $word;
         $is_numeric = is_numeric($word);
         $ymdhis = Adhoc::parseYmdHis($word);
-        $inwords = '%' . preg_replace('#[\s　]+#', '%', $this->getCompatiblePlatform()->escapeLike($word)) . '%';
+        $inwords = '%' . preg_replace('#[\s　]+#u', '%', $this->getCompatiblePlatform()->escapeLike($word)) . '%';
 
         $where = [];
         foreach ($schema->getTableColumns($tname) as $cname => $column) {
@@ -3465,7 +3465,7 @@ class Database
         $stmt = $this->executeQuery($builder, $builder->getParams());
 
         $cast = function ($var) {
-            if ((!is_int($var) && !is_float($var)) && preg_match('#^-?([1-9]\d*|0)(\.\d+)?$#', (string) $var, $match)) {
+            if ((!is_int($var) && !is_float($var)) && preg_match('#^-?([1-9]\d*|0)(\.\d+)?$#u', (string) $var, $match)) {
                 return isset($match[2]) ? (float) $var : (int) $var;
             }
             return $var;

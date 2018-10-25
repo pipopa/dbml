@@ -303,15 +303,15 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
         }
 
         // join 系
-        if (preg_match('/^(inner|left|right)joinOn$/i', $name, $matches)) {
+        if (preg_match('/^(inner|left|right)joinOn$/ui', $name, $matches)) {
             array_splice($arguments, 2, 0, ['']);
             return $this->join($matches[1], ...$arguments);
         }
-        if (preg_match('/^(auto|inner|left|right)joinForeign$/i', $name, $matches)) {
+        if (preg_match('/^(auto|inner|left|right)joinForeign$/ui', $name, $matches)) {
             array_splice($arguments, 1, 0, [[]]);
             return $this->join($matches[1], ...$arguments);
         }
-        if (preg_match('/^(auto|inner|left|right)joinForeignOn$/i', $name, $matches)) {
+        if (preg_match('/^(auto|inner|left|right)joinForeignOn$/ui', $name, $matches)) {
             return $this->join($matches[1], ...$arguments);
         }
 
@@ -526,7 +526,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
                 return [$this->database->getCompatiblePlatform()->getPrimaryCondition($pvals, $from['alias'])];
             }
             // エニーカラム（*.*）
-            if (is_string($cond) && preg_match('#^((.*)\.)?\*$#', $cond, $matches)) {
+            if (is_string($cond) && preg_match('#^((.*)\.)?\*$#u', $cond, $matches)) {
                 if (array_filter($keys, 'is_int') !== $keys) {
                     return false;
                 }

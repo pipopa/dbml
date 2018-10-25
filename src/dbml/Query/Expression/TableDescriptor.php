@@ -231,7 +231,7 @@ class TableDescriptor
         // @todo 影響が小さい内にリファクタする（何をしてるかさっぱりわからない）
 
         $joinsigns = implode('', Database::JOIN_MAPPER);
-        $ejoinsigns = preg_quote($joinsigns, '#');
+        $ejoinsigns = preg_quote($joinsigns, '#u');
 
         $split = function ($delimiters, $string, $skip) use ($ejoinsigns) {
             $brace_count = 0;
@@ -254,11 +254,11 @@ class TableDescriptor
                     if ($prev === '*' && $string[$i] === '*') {
                         continue;
                     }
-                    $result[] = preg_replace("#^([$ejoinsigns])\s#", '$1', trim(substr($string, $current, $i - $current), ', '));
+                    $result[] = preg_replace("#^([$ejoinsigns])\s#u", '$1', trim(substr($string, $current, $i - $current), ', '));
                     $current = $i + (int) $skip;
                 }
             }
-            $result[] = preg_replace("#^([$ejoinsigns])\s#", '$1', trim(substr($string, $current, $i - $current), ', '));
+            $result[] = preg_replace("#^([$ejoinsigns])\s#u", '$1', trim(substr($string, $current, $i - $current), ', '));
             return $result;
         };
 
@@ -389,7 +389,7 @@ class TableDescriptor
 
         $descriptor = preg_splice("`(\s*[+-][_a-z][_a-z0-9]*)+`ui", '', trim($descriptor), $m);
         if ($m) {
-            foreach (preg_split('#(?=[+-])#', $m[0], -1, PREG_SPLIT_NO_EMPTY) as $order) {
+            foreach (preg_split('#(?=[+-])#u', $m[0], -1, PREG_SPLIT_NO_EMPTY) as $order) {
                 $sign = $order[0];
                 $order = substr($order, 1);
                 $this->order[trim($order)] = ['+' => 'ASC', '-' => 'DESC'][$sign];
@@ -511,7 +511,7 @@ class TableDescriptor
         // **+ カラムの処理1パス目（'**' なカラムを集める）
         $subcols = [];
         foreach ($this->column as $k => $col) {
-            if (!is_string($col) || !preg_match('#^\*(\*+)$#', $col, $m)) {
+            if (!is_string($col) || !preg_match('#^\*(\*+)$#u', $col, $m)) {
                 continue;
             }
 

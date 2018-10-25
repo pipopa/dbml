@@ -114,7 +114,7 @@ class Adhoc
             $entries = [];
             // エラー起因の行を吹き飛ばして再帰（なんかここまでするなら自前パースのほうが楽な気が・・・）
             $le = error_get_last();
-            if (preg_match('#on line (\d+)#i', $le['message'], $m)) {
+            if (preg_match('#on line (\d+)#ui', $le['message'], $m)) {
                 $lines = preg_split('#\R#u', $inistring);
                 unset($lines[$m[1] - 1]);
                 $entries = Adhoc::parse_ini(implode("\n", $lines));
@@ -199,10 +199,10 @@ class Adhoc
     public static function parseYmdHis($string)
     {
         // 空白文字で日・時を分割
-        list($date, $time) = preg_split('#[\s　]#', preg_replace('#^[\s　]+|[\s　]+$#', '', $string)) + [1 => ''];
+        list($date, $time) = preg_split('#[\s　]#u', preg_replace('#^[\s　]+|[\s　]+$#u', '', $string)) + [1 => ''];
 
         // 日の数値のみで分割
-        list($y, $m, $d) = preg_split('#[^\d]+#', $date, -1, PREG_SPLIT_NO_EMPTY) + [0 => false, 1 => false, 2 => false];
+        list($y, $m, $d) = preg_split('#[^\d]+#u', $date, -1, PREG_SPLIT_NO_EMPTY) + [0 => false, 1 => false, 2 => false];
         // ただし "2014/12" と "12/24" の区別はつかないので字数で判断
         if (strlen($y) <= 2) {
             list($y, $m, $d) = [false, $y, $m];
@@ -213,7 +213,7 @@ class Adhoc
         }
 
         // 時の数値のみで分割
-        list($h, $i, $s) = preg_split('#[^\d]+#', $time, -1, PREG_SPLIT_NO_EMPTY) + [0 => false, 1 => false, 2 => false];
+        list($h, $i, $s) = preg_split('#[^\d]+#u', $time, -1, PREG_SPLIT_NO_EMPTY) + [0 => false, 1 => false, 2 => false];
 
         // 全部 false なら NG
         if ($y === false && $m === false && $d === false && $h === false && $i === false && $s === false) {

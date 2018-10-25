@@ -221,7 +221,7 @@ class Transaction
 
         $default = [];
         foreach ($database->getOptions() as $key => $value) {
-            $key = preg_replace('#^transaction#', '', $key, -1, $count);
+            $key = preg_replace('#^transaction#u', '', $key, -1, $count);
             if ($count) {
                 $default[lcfirst($key)] = $value;
             }

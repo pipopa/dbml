@@ -222,7 +222,7 @@ class CompatiblePlatform /*extends AbstractPlatform*/
             return $word;
         }
 
-        if (!preg_match('#^[_a-z0-9]+$#i', $word) || $this->platform->getReservedKeywordsList()->isKeyword($word)) {
+        if (!preg_match('#^[_a-z0-9]+$#ui', $word) || $this->platform->getReservedKeywordsList()->isKeyword($word)) {
             return $this->platform->quoteSingleIdentifier($word);
         }
 
@@ -847,14 +847,14 @@ class CompatiblePlatform /*extends AbstractPlatform*/
             $builder->select('__dbml_from_maker');
             $builder->innerJoinOn('__dbml_join_maker', 'TRUE', null);
 
-            $sql = preg_replace('#^SELECT __dbml_from_maker FROM#i', 'UPDATE', (string) $builder);
-            return preg_replace('#INNER JOIN __dbml_join_maker ON TRUE#i', "SET $sets", $sql);
+            $sql = preg_replace('#^SELECT __dbml_from_maker FROM#ui', 'UPDATE', (string) $builder);
+            return preg_replace('#INNER JOIN __dbml_join_maker ON TRUE#ui', "SET $sets", $sql);
         }
         if ($this->platform instanceof SQLServerPlatform) {
             // select 化してクエリを取得して戻す
             $builder->select('__dbml_from_maker');
 
-            return preg_replace('#^SELECT __dbml_from_maker#i', "UPDATE {$from['alias']} SET $sets", (string) $builder);
+            return preg_replace('#^SELECT __dbml_from_maker#ui', "UPDATE {$from['alias']} SET $sets", (string) $builder);
         }
 
         // 上記以外は join update をサポートしていない
@@ -896,7 +896,7 @@ class CompatiblePlatform /*extends AbstractPlatform*/
             }
 
             $alias = concat(' ', $alias);
-            return preg_replace('#^SELECT __dbml_from_maker FROM#i', "DELETE{$alias} FROM", (string) $builder);
+            return preg_replace('#^SELECT __dbml_from_maker FROM#ui', "DELETE{$alias} FROM", (string) $builder);
         }
 
         // 上記以外は join delete をサポートしていない

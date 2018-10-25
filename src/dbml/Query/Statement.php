@@ -47,7 +47,7 @@ class Statement implements Queryable
     {
         // コンストラクタ時点で疑問符プレースホルダーをすべて名前付きプレースホルダーに変換しておく
         $n = 0;
-        $this->query = preg_replace_callback('#\?#', function () use (&$n) {
+        $this->query = preg_replace_callback('#\?#u', function () use (&$n) {
             return ':' . self::AUTO_BIND_KEY . ($n++);
         }, $query);
 

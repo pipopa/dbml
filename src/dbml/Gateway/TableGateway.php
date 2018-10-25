@@ -725,13 +725,13 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
         }
 
         // ↑と同じだが、引数体系が違うもの系
-        if (preg_match('/^(exists|select(Not)?Exists)$/i', $name, $matches)) {
+        if (preg_match('/^(exists|select(Not)?Exists)$/ui', $name, $matches)) {
             $sp = $this->getScopeParams([], array_get($arguments, 0, []));
             return $this->database->$name($sp['column'], $sp['where'], array_get($arguments, 1, false));
         }
 
         // subselect 系
-        if (preg_match('/^subselect?(.+?)$/i', $name, $matches)) {
+        if (preg_match('/^subselect?(.+?)$/ui', $name, $matches)) {
             return $this->database->$name(array_shift($arguments), ...array_values($this->getScopeParams(...$arguments)));
         }
 
@@ -750,7 +750,7 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
         }
 
         // yield 系メソッド
-        if (preg_match('/^yield/i', $name, $matches)) {
+        if (preg_match('/^yield/ui', $name, $matches)) {
             return $this->database->$name($this->select(...$arguments));
         }
 
@@ -763,7 +763,7 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
 
         // 上記以外はすべて fetch 系メソッドとする（例外は Database 側で投げてくれるはず）
         $lockmode = null;
-        if (preg_match('#(ForUpdate|InShare)#i', $name, $matches)) {
+        if (preg_match('#(ForUpdate|InShare)#ui', $name, $matches)) {
             $lockmode = strtolower($matches[1]);
             $name = str_ireplace($lockmode, '', $name);
         }
@@ -910,7 +910,7 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
         if (is_array($offset) || filter_var($offset, \FILTER_VALIDATE_INT) !== false) {
             return $this->getUnsafeOption('offsetGetFind') ? $this->find($offset) : $this->pk($offset);
         }
-        if (preg_match('#^[_a-z0-9]+$#i', $offset)) {
+        if (preg_match('#^[_a-z0-9]+$#ui', $offset)) {
             return $this->value($offset);
         }
 
