@@ -68,7 +68,7 @@ class Yielder implements \Iterator
     private function _fetch()
     {
         if ($this->statement instanceof \Closure) {
-            $this->statement = call_user_func($this->statement, $this->connection);
+            $this->statement = ($this->statement)($this->connection);
             if (!$this->statement instanceof \PDOStatement) {
                 throw new \RuntimeException('stetement provider returns invalid type.');
             }
@@ -80,7 +80,7 @@ class Yielder implements \Iterator
         }
 
         if ($this->callback) {
-            $row = call_user_func($this->callback, $row);
+            $row = ($this->callback)($row);
         }
         return $row;
     }

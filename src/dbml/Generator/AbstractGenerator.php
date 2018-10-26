@@ -65,7 +65,7 @@ abstract class AbstractGenerator
         $first_flg = true;
         foreach ($provider as $key => $value) {
             if ($this->config['callback']) {
-                $value = call_user_func($this->config['callback'], $value);
+                $value = $this->config['callback']($value);
             }
             $bytelength += $this->generateBody($resource, $key, $value, $first_flg);
             $first_flg = false;

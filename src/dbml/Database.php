@@ -856,7 +856,7 @@ class Database
                 'EtoT'  => [],
             ];
             foreach ($this->getSchema()->getTableNames() as $tablename) {
-                $entityclass = call_user_func($entityMapper, $tablename);
+                $entityclass = $entityMapper($tablename);
                 if ($entityclass === null) {
                     continue;
                 }
@@ -3650,7 +3650,7 @@ class Database
 
         $result = [];
         $processed = [];
-        call_user_func($f = static function (Database $that, $tablename, $wheres) use (&$f, &$result, &$processed, $schema, $cplatform, $pksep, $allfkeys, $other_wheres, $parentive, $array_rekey) {
+        ($f = static function (Database $that, $tablename, $wheres) use (&$f, &$result, &$processed, $schema, $cplatform, $pksep, $allfkeys, $other_wheres, $parentive, $array_rekey) {
             $pkcol = $schema->getTablePrimaryColumns($tablename);
             $cols = $pkcol;
             foreach ($allfkeys as $fk) {
@@ -3690,7 +3690,7 @@ class Database
                     $f($that, $tname, $cplatform->getPrimaryCondition($fkcol));
                 }
             }
-        }, $this, $tablename, $wheres);
+        })($this, $tablename, $wheres);
         return $result;
     }
 
@@ -5434,7 +5434,7 @@ class Database
         static $cache = [];
         if (!$usecache || !isset($cache[$yaml])) {
             $cache[$yaml] = call_safely(function ($yaml) {
-                return call_user_func($this->getUnsafeOption('yamlParser'), $yaml);
+                return $this->getUnsafeOption('yamlParser')($yaml);
             }, $yaml);
         }
         return $cache[$yaml];

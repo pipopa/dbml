@@ -22,7 +22,7 @@ class Entity implements Entityable
 
     public function __call($name, $arguments)
     {
-        return call_user_func_array($this->$name, $arguments);
+        return ($this->$name)(...$arguments);
     }
 
     public function getDatabase()

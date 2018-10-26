@@ -373,7 +373,7 @@ class Transaction
 
             // リトライ
             $retries = $this->retries;
-            if (isset($retries[$this->retryCount]) && call_user_func($this->retryable, $ex)) {
+            if (isset($retries[$this->retryCount]) && ($this->retryable)($ex)) {
                 usleep($retries[$this->retryCount] * 1000);
                 $this->retryCount++;
 
