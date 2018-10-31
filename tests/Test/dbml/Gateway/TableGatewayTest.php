@@ -88,6 +88,94 @@ class TableGatewayTest extends \ryunosuke\Test\AbstractUnitTestCase
      * @param TableGateway $gateway
      * @param Database $database
      */
+    function test_offsetGet_primary($gateway, $database)
+    {
+        $gateway->setOption('offsetGetFind', true);
+        $this->assertInternalType('array', $gateway[1]);
+        /** @noinspection PhpIllegalArrayKeyTypeInspection */
+        $this->assertInternalType('array', $gateway[[1]]);
+
+        $gateway->setOption('offsetGetFind', false);
+        $this->assertInstanceOf(TableGateway::class, $gateway[1]);
+        /** @noinspection PhpIllegalArrayKeyTypeInspection */
+        $this->assertInstanceOf(TableGateway::class, $gateway[[1]]);
+    }
+
+    /**
+     * @dataProvider provideGateway
+     * @param TableGateway $gateway
+     * @param Database $database
+     */
+    function test_offsetGet_asterisk($gateway, $database)
+    {
+        $this->assertEquals([
+            'id'   => '1',
+            'name' => 'a',
+            'data' => '',
+        ], $gateway[1]['*']);
+
+        $this->assertEquals([
+            'article_id' => '1',
+            'title'      => 'タイトルです',
+            'checks'     => '',
+            'Comment'    => [
+                1 => [
+                    'comment_id' => '1',
+                    'article_id' => '1',
+                    'comment'    => 'コメント1です',
+                ],
+                2 => [
+                    'comment_id' => '2',
+                    'article_id' => '1',
+                    'comment'    => 'コメント2です',
+                ],
+                3 => [
+                    'comment_id' => '3',
+                    'article_id' => '1',
+                    'comment'    => 'コメント3です',
+                ],
+            ],
+        ], $database->t_article[1]['**']);
+    }
+
+    /**
+     * @dataProvider provideGateway
+     * @param TableGateway $gateway
+     * @param Database $database
+     */
+    function test_offsetGet_desccriptor($gateway, $database)
+    {
+        $gw = $database->t_comment['(1)@scope1@scope2(9)[flag1 = 1, flag2: 2]-comment_id AS C.comment_id']('comment');
+        $this->assertStringIgnoreBreak("SELECT NOW(), C.comment_id, C.comment
+FROM t_comment C
+WHERE (C.comment_id = '9') AND (C.comment_id = '1') AND (flag1 = 1) AND (C.flag2 = '2')
+ORDER BY C.comment_id DESC", "$gw");
+
+        $gw = $database->t_article->as('A')->t_comment['(2)@scope1@scope2(9):fk_articlecomment AS C.comment_id']('comment', '(flag=1)');
+        $this->assertStringIgnoreBreak("
+SELECT NOW(), C.comment_id, C.comment
+FROM t_article A
+LEFT JOIN t_comment C
+ON (C.article_id = A.article_id)
+AND (C.comment_id = '9')
+AND (C.comment_id = '2')
+AND ((flag=1))", "$gw");
+
+        // [] は省略できる
+        $this->assertEquals("SELECT * FROM t_article WHERE t_article.id = '1'", (string) $database->t_article['id: 1']);
+        $this->assertEquals("SELECT * FROM t_article WHERE id = 1", (string) $database->t_article['id = 1']);
+
+        // #offset-limit（方言が有るので実際に取得する）
+        $this->assertEquals(['b', 'c'], $database->test['#1-3']->lists('name'));
+        $this->assertEquals(['a', 'b'], $database->test['#-2']->lists('name'));
+        $this->assertEquals(['c'], $database->test['#2']->lists('name'));
+    }
+
+    /**
+     * @dataProvider provideGateway
+     * @param TableGateway $gateway
+     * @param Database $database
+     */
     function test_offsetSet($gateway, $database)
     {
         $gateway->pk(1)['name'] = 'change!';
@@ -136,39 +224,6 @@ class TableGatewayTest extends \ryunosuke\Test\AbstractUnitTestCase
         $this->assertException('not supported', function () use ($gateway) {
             unset($gateway['undefined']);
         });
-    }
-
-    /**
-     * @dataProvider provideGateway
-     * @param TableGateway $gateway
-     * @param Database $database
-     */
-    function test_offsetGet_desccriptor($gateway, $database)
-    {
-        $gw = $database->t_comment['(1)@scope1@scope2(9)[flag1 = 1, flag2: 2]-comment_id AS C.comment_id']('comment');
-        $this->assertStringIgnoreBreak("SELECT NOW(), C.comment_id, C.comment
-FROM t_comment C
-WHERE (C.comment_id = '9') AND (C.comment_id = '1') AND (flag1 = 1) AND (C.flag2 = '2')
-ORDER BY C.comment_id DESC", "$gw");
-
-        $gw = $database->t_article->as('A')->t_comment['(2)@scope1@scope2(9):fk_articlecomment AS C.comment_id']('comment', '(flag=1)');
-        $this->assertStringIgnoreBreak("
-SELECT NOW(), C.comment_id, C.comment
-FROM t_article A
-LEFT JOIN t_comment C
-ON (C.article_id = A.article_id)
-AND (C.comment_id = '9')
-AND (C.comment_id = '2')
-AND ((flag=1))", "$gw");
-
-        // [] は省略できる
-        $this->assertEquals("SELECT * FROM t_article WHERE t_article.id = '1'", (string) $database->t_article['id: 1']);
-        $this->assertEquals("SELECT * FROM t_article WHERE id = 1", (string) $database->t_article['id = 1']);
-
-        // #offset-limit（方言が有るので実際に取得する）
-        $this->assertEquals(['b', 'c'], $database->test['#1-3']->lists('name'));
-        $this->assertEquals(['a', 'b'], $database->test['#-2']->lists('name'));
-        $this->assertEquals(['c'], $database->test['#2']->lists('name'));
     }
 
     /**

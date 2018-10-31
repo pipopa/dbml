@@ -77,6 +77,10 @@ use function ryunosuke\dbml\throws;
  * $gw->update(['data array'], ['where array']);
  * // 行を削除する
  * $gw->delete(['where array']);
+ *
+ * // カラム値をインクリメント
+ * $gw[1]['hoge_count'] += 1;                         // こういう指定もできるがこれは SELECT + UPDATE なので注意
+ * $gw[1]['hoge_count'] = $db->raw('hoge_count + 1'); // 単純かつアトミックにやるならこうしなければならない
  * ```
  *
  * ### クエリスコープ
@@ -867,8 +871,9 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
     /**
      * なにがしかの値を取得する
      *
-     * $offset が数値・配列なら主キーとみなして pk する。
-     * $offset が半角英数字ならカラムとみなしてカラム値を返す。
+     * $offset が数値・配列なら主キーとみなして where する（≒pk）。
+     * $offset が '*' なら*指定とみなしてレコードを返す（≒tuple）。
+     * $offset が半角英数字ならカラムとみなしてカラム値を返す（≒value）。
      * $offset がテーブル記法ならその記法が適用された自分自身を返す。
      * テーブル記法のうち、 [condition] だけであれば `[]` が省略可能となる。
      *
@@ -877,6 +882,12 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
      * $row = $gw[1]->tuple();      // 単一主キー値1のレコードを返す
      * $row = $gw[[1, 2]]->tuple(); // 複合主キー値[1, 2]のレコードを返す
      * $row = $gw->find($pk);       // 上2つは実質的にこれの糖衣構文
+     *
+     * # レコードを返す
+     * $row = $gw['*'];
+     * // ただし、WHERE を指定しないとエラーになるので通常はこのように使用する
+     * $row = $gw->[1]['*'];  // 主キー=1 の全カラムを返す（SELECT * FROM t_table WHERE id = 1）
+     * $row = $gw->[1]['**']; // 怠惰取得も可能（怠惰取得については QueryBuilder::column() を参照）
      *
      * # カラム値を返す
      * $title = $gw['article_title'];
@@ -909,6 +920,9 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
     {
         if (is_array($offset) || filter_var($offset, \FILTER_VALIDATE_INT) !== false) {
             return $this->getUnsafeOption('offsetGetFind') ? $this->find($offset) : $this->pk($offset);
+        }
+        if (preg_match('#^\\*+$#ui', $offset)) {
+            return $this->tuple($offset);
         }
         if (preg_match('#^[_a-z0-9]+$#ui', $offset)) {
             return $this->value($offset);
