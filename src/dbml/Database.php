@@ -4681,10 +4681,22 @@ class Database
      *
      * # TableDescriptor 的値や QueryBuilder を渡すと複数テーブルへ INSERT できる
      * // この用途は「垂直分割したテーブルへの INSERT」である（主キーを混ぜてくれるので小細工をする必要がない）。
-     * #db->insert('t_article + t_article_misc', [
+     * $db->insert('t_article + t_article_misc', [
      *     'title'     => 'article_title', // t_article 側のデータ
      *     'misc_data' => 'misc_data',     // t_article_misc 側のデータ
      * ]);
+     * // INSERT INTO t_article (title) VALUES ('article_title')
+     * // INSERT INTO t_article_misc (id, misc_data) VALUES ('1', 'misc_data')
+     *
+     * # 複数テーブルへ INSERT は配列でも表現できる
+     * $db->insert([
+     *     't_article' => [
+     *         'title' => 'article_title',
+     *     ],
+     *     '+t_article_misc' => [
+     *         'misc_data' => 'misc_data',
+     *     ],
+     * ], []);
      * // INSERT INTO t_article (title) VALUES ('article_title')
      * // INSERT INTO t_article_misc (id, misc_data) VALUES ('1', 'misc_data')
      * ```
@@ -4704,24 +4716,31 @@ class Database
 
         // oracle には multiple insert なるものが有るらしいが・・・
         if ($tableName instanceof QueryBuilder) {
+            $data += $tableName->getQueryPart('colval');
             $result = null;
             $affected = [];
             foreach ($tableName->getFromPart() as $table) {
+                $owndata = array_map_key($data, function ($k) use ($table) {
+                    return preg_replace('#^' . $table['alias'] . '\.#', '', $k);
+                });
                 $jtype = $table['type'] ?? '';
                 if ($jtype === '') {
-                    $result = $this->insert($table['table'], $data, $opt);
+                    $result = $this->insert($table['table'], $owndata, $opt);
                     $affected[] = $result;
                 }
                 elseif (strcasecmp($jtype, 'INNER') === 0) {
-                    $affected[] = $this->insert($table['table'], $data, ['ignore' => $this->getCompatiblePlatform()->supportsIgnore()] + $opt);
+                    $affected[] = $this->insert($table['table'], $owndata, ['ignore' => $this->getCompatiblePlatform()->supportsIgnore()] + $opt);
                 }
                 else {
-                    $affected[] = $this->insert($table['table'], $data, ['ignore' => false] + $opt);
+                    $affected[] = $this->insert($table['table'], $owndata, ['ignore' => false] + $opt);
                 }
-                $data += $this->_postaffect($table['table'], $data);
+                $data += $this->_postaffect($table['table'], $owndata);
             }
             if (array_get($opt, 'throw')) {
                 return $result;
+            }
+            if ($this->getUnsafeOption('dryrun') || $this->getUnsafeOption('preparing')) {
+                return $affected;
             }
             return array_sum($affected);
         }
@@ -4768,6 +4787,17 @@ class Database
      *     'comment' => 'fuga',
      * ]);
      * // UPDATE t_article INNER JOIN t_comment ON t_comment.article_id = t_article.article_id SET title = "hoge", comment = "fuga"
+     *
+     * # UPDATE JOIN は配列でも表現できる（やはり mysql のみ）
+     * $db->update([
+     *     't_article' => [
+     *         'title' => 'hoge',
+     *     ],
+     *     '+t_comment' => [
+     *         'comment' => 'fuga',
+     *     ],
+     * ], []);
+     * // UPDATE t_article A INNER JOIN t_comment C ON C.article_id = A.article_id SET A.title = 'hoge', C.comment = 'fuga'
      * ```
      *
      * @used-by updateOrThrow()
@@ -4786,6 +4816,7 @@ class Database
 
         if ($tableName instanceof QueryBuilder) {
             $params = [];
+            $data += $tableName->getQueryPart('colval');
             $set = $this->bindInto($data, $params);
             $sets = array_sprintf($set, '%2$s = %1$s', ', ');
             $tableName->addParam($params, 'join'); // クエリ順は from,join,set,where になるので join 位置に入れる

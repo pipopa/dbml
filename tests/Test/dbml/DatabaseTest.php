@@ -3017,6 +3017,37 @@ ON DUPLICATE KEY UPDATE id = VALUES(id), name = VALUES(name)", $affected);
         ], ['EEE', 'RRR']));
         $this->assertEquals(['name' => 'EEE', 'data' => 'RRR'], $database->selectTuple('test.!id', [], ['id' => 'desc'], 1));
 
+        // 複数テーブル
+        $this->assertEquals(2, $database->insert([
+            'foreign_p P' => [
+                'id'   => 99,
+                'name' => 'hoge',
+            ],
+            '+foreign_c1' => [
+                'name' => new Expression("UPPER('fuga')"),
+            ]
+        ], ['seq' => 9]));
+        $this->assertEquals([
+            [
+                'id'    => '99',
+                'pname' => 'hoge',
+                'name'  => 'FUGA',
+                'seq'   => '9'
+            ],
+        ], $database->selectArray('foreign_p(99).*, name pname + foreign_c1.*'));
+
+        $sqls = $database->dryrun()->insert([
+            'foreign_p P' => [
+                'id'   => 99,
+                'name' => 'hoge',
+            ],
+            '+foreign_c1' => [
+                'name' => new Expression("UPPER('fuga')"),
+            ]
+        ], ['seq' => 9]);
+        $this->assertContains("INTO foreign_p (id, name) VALUES (99, 'hoge')", $sqls[0]);
+        $this->assertContains("INTO foreign_c1 (seq, name, id) VALUES ('9', UPPER('fuga'), '99')", $sqls[1]);
+
         $this->assertException(new \InvalidArgumentException('specify multiple table'), L($database)->insert('test1,test2', ['X']));
         $this->assertException(new \InvalidArgumentException('data array are difference'), L($database)->insert('test.name', ['X', 'Y']));
     }
@@ -3129,6 +3160,37 @@ ON DUPLICATE KEY UPDATE id = VALUES(id), name = VALUES(name)", $affected);
             'test' => ['name', 'data'],
         ], ['EEE', 'RRR'], ['id' => 1]));
         $this->assertEquals(['name' => 'EEE', 'data' => 'RRR'], $database->selectTuple('test.!id', ['id' => 1]));
+
+        // 普通はこういうことはせず、 JOIN 時のみ有用なので mysql だけでテストする
+        if ($database->getPlatform() instanceof MySqlPlatform) {
+            $database->insert('foreign_p', ['id' => 1, 'name' => 'pname']);
+            $database->insert('foreign_c1', ['id' => 1, 'seq' => 1, 'name' => 'c1name1']);
+            $database->insert('foreign_c1', ['id' => 1, 'seq' => 2, 'name' => 'c1name2']);
+            $database->insert('foreign_c2', ['cid' => 1, 'seq' => 1, 'name' => 'c2name1']);
+            $database->insert('foreign_c2', ['cid' => 1, 'seq' => 2, 'name' => 'c2name2']);
+            $this->assertEquals(3, $database->update([
+                'foreign_p(1)'   => [
+                    'name' => 'hoge',
+                ],
+                '+foreign_c1 C1' => [
+                    'name' => new Expression('UPPER(C1.name)'),
+                ]
+            ], []));
+            $this->assertEquals([
+                [
+                    'id'    => 1,
+                    'pname' => 'hoge',
+                    'name'  => 'C1NAME1',
+                    'seq'   => 1,
+                ],
+                [
+                    'id'    => 1,
+                    'pname' => 'hoge',
+                    'name'  => 'C1NAME2',
+                    'seq'   => 2,
+                ],
+            ], $database->selectArray('foreign_p(1).*, name pname + foreign_c1.*'));
+        }
 
         $this->assertException(new \InvalidArgumentException('specify multiple table'), L($database)->update('test1,test2', ['X']));
         $this->assertException(new \InvalidArgumentException('data array are difference'), L($database)->update('test.name', ['X', 'Y']));

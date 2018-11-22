@@ -185,6 +185,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
         'offset'  => null,
         'limit'   => null,
         'union'   => [],
+        'colval'  => [],
     ];
 
     /** @var string 生成した SQL（キャッシュ） */
@@ -1263,6 +1264,14 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
                 if ($column === null) {
                     // dummy
                 }
+                // SelectOption は単純に addSelectOption するだけ
+                elseif ($column instanceof SelectOption) {
+                    $this->addSelectOption($column);
+                }
+                // Alias はそのまま
+                elseif ($column instanceof Alias) {
+                    $columns[] = $column;
+                }
                 // 配列や Gateway なら subtable 化
                 elseif (is_array($column) || $column instanceof TableGateway) {
                     // Gateway ならパースの必要はない
@@ -1341,19 +1350,17 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
                     }
                     $columns[] = Alias::forge($key, $column->getQuery());
                     $this->addParam($column->getParams(), 'select');
-                }
-                // SelectOption は単純に addSelectOption するだけ
-                elseif ($column instanceof SelectOption) {
-                    $this->addSelectOption($column);
+                    if (!is_int($key)) {
+                        $this->sqlParts['colval'][$prefix . $key] = $column->getQuery();
+                    }
                 }
                 // Expression なら文字列化したものをそのまま select
                 elseif ($column instanceof Expression) {
                     $columns[] = Alias::forge($key, $column);
                     $this->addParam($column->getParams(), 'select');
-                }
-                // Alias はそのまま
-                elseif ($column instanceof Alias) {
-                    $columns[] = $column;
+                    if (!is_int($key)) {
+                        $this->sqlParts['colval'][$prefix . $key] = $column;
+                    }
                 }
                 // ! プレフィクスなら「それ以外のカラム」
                 elseif (is_string($column) && $column[0] === '!') {
@@ -1369,6 +1376,9 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
                         // エイリアスをバラす
                         list($key, $col) = Alias::split($col, $key);
                         $columns[] = Alias::forge($key, $prefix . $col);
+                        if (!is_int($key)) {
+                            $this->sqlParts['colval'][$prefix . $key] = $col;
+                        }
                     }
                 }
             }
