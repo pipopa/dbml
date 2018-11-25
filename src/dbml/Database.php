@@ -649,7 +649,7 @@ class Database
             }
         }
 
-        if (count(array_unique(array_maps($connections, '@getDriver', '@getName'))) !== 1) {
+        if (count(array_unique(array_maps($connections, func_method('getDriver'), func_method('getName')))) !== 1) {
             throw new \DomainException('master and slave connection are must be same platform.');
         }
         $this->connections = array_combine(['master', 'slave'], $connections);
@@ -761,7 +761,7 @@ class Database
         }
         // subaggregate 系
         if (in_array(strtolower($name), ['subcount', 'submin', 'submax', 'subsum', 'subavg'], true)) {
-            return $this->subaggregate(preg_replace('#^sub#ui', '', $name), ...$arguments);
+            return $this->subaggregate(str_lchop($name, 'sub', true), ...$arguments);
         }
         // selectAggregate 系
         if (preg_match('/^select(count|min|max|sum|avg)$/ui', $name, $matches)) {
@@ -1232,7 +1232,7 @@ class Database
     private function _postaffect($tableName, $data)
     {
         foreach ($data as $k => $v) {
-            $kk = preg_replace("#^$tableName\.#u", '', $k);
+            $kk = str_lchop($k, "$tableName.");
             if (!isset($data[$kk])) {
                 $data[$kk] = $v;
             }
@@ -4739,7 +4739,7 @@ class Database
             $affected = [];
             foreach ($tableName->getFromPart() as $table) {
                 $owndata = array_map_key($data, function ($k) use ($table) {
-                    return preg_replace('#^' . $table['alias'] . '\.#', '', $k);
+                    return str_lchop($k, "{$table['alias']}.");
                 });
                 $jtype = $table['type'] ?? '';
                 if ($jtype === '') {

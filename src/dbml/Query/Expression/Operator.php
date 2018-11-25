@@ -245,7 +245,7 @@ class Operator implements Queryable
 
     private function _raw()
     {
-        $isnestarray = $this->isarray && array_depth($this->operand2) > 1;
+        $isnestarray = $this->isarray && array_depth($this->operand2, 2) > 1;
         $isnesting = $this->isarray && ($isnestarray || substr_count($this->operand1, '?') === count($this->operand2, COUNT_RECURSIVE));
         $values = $isnesting ? $this->operand2 : [$this->operand2];
 
@@ -306,7 +306,7 @@ class Operator implements Queryable
     private function _in($allownull)
     {
         $ph = '?';
-        if (array_depth($this->operand2) > 1) {
+        if (array_depth($this->operand2, 2) > 1) {
             $first = reset($this->operand2);
             $ph = $first ? '(' . implode(',', array_fill(0, count($first), '?')) . ')' : '';
         }

@@ -7,7 +7,7 @@ use ryunosuke\dbml\Gateway\TableGateway;
 use ryunosuke\dbml\Query\QueryBuilder;
 use ryunosuke\dbml\Query\SubqueryBuilder;
 use function ryunosuke\dbml\array_each;
-use function ryunosuke\dbml\array_set;
+use function ryunosuke\dbml\array_put;
 use function ryunosuke\dbml\arrayize;
 use function ryunosuke\dbml\concat;
 use function ryunosuke\dbml\preg_splice;
@@ -504,7 +504,7 @@ class TableDescriptor
             }
             // 上記以外は単純に追加すれば良い
             else {
-                array_set($this->column, $c, is_int($k) ? null : $k, false);
+                array_put($this->column, $c, $k);
             }
         }
 
