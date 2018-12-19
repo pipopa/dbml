@@ -4512,6 +4512,19 @@ ORDER BY T.id DESC, name ASC
      * @dataProvider provideDatabase
      * @param Database $database
      */
+    function test_neighbor($database)
+    {
+        // プロキシメソッドなのでデフォルト引数のみテスト
+        $this->assertEquals([
+            -1 => ['id' => '4', 'name' => 'd'],
+            1  => ['id' => '6', 'name' => 'f'],
+        ], $database->neighbor('test.id, name', ['id' => 5]));
+    }
+
+    /**
+     * @dataProvider provideDatabase
+     * @param Database $database
+     */
     function test_exists($database)
     {
         $this->assertTrue($database->exists('test', ['id' => 1]));

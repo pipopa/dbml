@@ -3430,6 +3430,20 @@ class Database
     }
 
     /**
+     * 特定レコードの前後のレコードを返す
+     *
+     * {@link QueryBuilder::neighbor()} へのプロキシメソッド。
+     *
+     * @inheritdoc QueryBuilder::neighbor()
+     *
+     * @param array|string $tableDescriptor 取得テーブルとカラム（{@link TableDescriptor}）
+     */
+    public function neighbor($tableDescriptor, $predicates, $limit = 1)
+    {
+        return $this->select($tableDescriptor)->neighbor($predicates, $limit);
+    }
+
+    /**
      * 集約を実行する
      *
      * - 取得列が1つの場合は value 相当（スカラー値を返す）

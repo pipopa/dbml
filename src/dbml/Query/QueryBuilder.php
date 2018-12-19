@@ -2415,6 +2415,78 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
     }
 
     /**
+     * 特定レコードの前後のレコードを返す
+     *
+     * 結果配列は特定レコードとの距離がキーになり、かつ昇順でソートされる。
+     *
+     * ```php
+     * # id:5 の前後のレコードを1行ずつ返す
+     * $qb->neighbor(['id' => 5]);
+     * // results:
+     * [
+     *     -1 => ['id' => 4],
+     *     1  => ['id' => 6],
+     * ];
+     *
+     * # id:5 の前後のレコードを2行ずつ返す
+     * $qb->neighbor(['id' => 5], 2);
+     * // results:
+     * [
+     *     -2 => ['id' => 3],
+     *     -1 => ['id' => 4],
+     *     1  => ['id' => 6],
+     *     2  => ['id' => 7],
+     * ];
+     *
+     * # 前後が無い場合、無い方は含まれない
+     * $qb->neighbor(['id' => 99999], 2);
+     * // results:
+     * [
+     *     // 99999 より大きいレコードが無いとすると負数キー（前後の前）のみ返ってくる
+     *     -2 => ['id' => 99997],
+     *     -1 => ['id' => 99998],
+     * ];
+     * ```
+     *
+     * @param array $predicates 「特定レコード」の条件。複数指定で行値式になる
+     * @param int $limit 前後の取得数。前後を表すので取得数はこの値の2倍になる
+     * @return array 前後のレコード配列
+     */
+    public function neighbor($predicates, $limit = 1)
+    {
+        $pcount = count($predicates);
+        if (!$pcount) {
+            throw new \InvalidArgumentException('$predicates is empty.');
+        }
+
+        $cols = array_keys($predicates);
+        $vals = array_values($predicates);
+
+        $colss = implode(',', $cols);
+        $valss = '?';
+        if ($pcount >= 2) {
+            $colss = "($colss)";
+            $valss = "($valss)";
+        }
+
+        // ORDER BY の順番が保証されているという情報はないし、取得列に $col が含まれている保証もないので UNION ORDER BY は使えない。2回に分けて取得する
+        $baselect = $this->limit($limit);
+        $prevs = (clone $baselect)->where(["$colss < $valss" => $vals])->orderBy($cols, false)->array();
+        $nexts = (clone $baselect)->where(["$colss > $valss" => $vals])->orderBy($cols, true)->array();
+
+        $result = [];
+
+        foreach (array_reverse($prevs, true) as $n => $row) {
+            $result[-($n + 1)] = $row;
+        }
+        foreach ($nexts as $n => $row) {
+            $result[+($n + 1)] = $row;
+        }
+
+        return $result;
+    }
+
+    /**
      * クエリの結果行数を返すようにするか
      *
      * @ignore

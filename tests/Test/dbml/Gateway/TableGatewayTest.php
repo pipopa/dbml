@@ -581,6 +581,49 @@ AND ((flag=1))", "$gw");
      * @param TableGateway $gateway
      * @param Database $database
      */
+    function test_neighbor($gateway, $database)
+    {
+        // 正しく移譲できていることを担保
+        $this->assertEquals([
+            -1 => ['id' => '4', 'name' => 'd'],
+            1  => ['id' => '6', 'name' => 'f'],
+        ], $gateway->column(['id', 'name'])->neighbor(['id' => 5]));
+
+        // EntityGateway ならエンティティで返ってくる
+        $Test = (new TableGateway($database, 'test', 'Test'));
+        $this->assertEquals([
+            -1 => $Test->find(4, ['id', 'name']),
+            1  => $Test->find(6, ['id', 'name']),
+        ], $Test->column(['id', 'name'])->neighbor(['id' => 5]));
+
+        // gateway 版に限り $predicates は省略できる
+        $this->assertEquals([
+            -1 => ['id' => '4'],
+            1  => ['id' => '6'],
+        ], $database->multiunique->column(['id'])->uk('e')->neighbor());
+
+        // 上記の UK 版や複数版など
+        if ($database->getCompatiblePlatform()->supportsRowConstructor()) {
+            $this->assertEquals([
+                -1 => ['id' => '4'],
+                1  => ['id' => '6'],
+            ], $database->multiunique->column(['id'])->uk('e')->neighbor());
+            $this->assertEquals([
+                -1 => ['mainid' => '1', 'subid' => '4'],
+                1  => ['mainid' => '2', 'subid' => '6'],
+            ], $database->multiprimary->column(['mainid', 'subid'])->pk([1, 5])->neighbor());
+            $this->assertEquals([
+                -1 => ['id' => '4'],
+                1  => ['id' => '6'],
+            ], $database->multiunique->column(['id'])->uk(['e,e', 500])->neighbor());
+        }
+    }
+
+    /**
+     * @dataProvider provideGateway
+     * @param TableGateway $gateway
+     * @param Database $database
+     */
     function test_preparing($gateway, $database)
     {
         $platform = $database->getPlatform();

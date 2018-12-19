@@ -2194,6 +2194,72 @@ SELECT test.* FROM test", $builder);
      * @dataProvider provideQueryBuilder
      * @param QueryBuilder $builder
      */
+    function test_neighbor($builder)
+    {
+        $builder->column('test.id, name');
+
+        // 単純
+        $this->assertEquals([
+            -1 => ['id' => '4', 'name' => 'd'],
+            1  => ['id' => '6', 'name' => 'f'],
+        ], $builder->neighbor(['id' => 5]));
+
+        // 前後2行
+        $this->assertEquals([
+            -2 => ['id' => '3', 'name' => 'c'],
+            -1 => ['id' => '4', 'name' => 'd'],
+            1  => ['id' => '6', 'name' => 'f'],
+            2  => ['id' => '7', 'name' => 'g'],
+        ], $builder->neighbor(['id' => 5], 2));
+
+        // 後ろがない
+        $this->assertEquals([
+            -1 => ['id' => '9', 'name' => 'i'],
+        ], $builder->neighbor(['id' => 10], 1));
+
+        // 複数指定は行値式になる
+        if ($builder->getDatabase()->getCompatiblePlatform()->supportsRowConstructor()) {
+            $builder->column('multiprimary.mainid, subid');
+            $this->assertEquals([
+                -1 => ['mainid' => '1', 'subid' => '4'],
+                1  => ['mainid' => '2', 'subid' => '6'],
+            ], $builder->neighbor(['mainid' => 1, 'subid' => 5], 1));
+        }
+
+        // テーブル記法なので JOIN も使えるはず
+        $builder->column([
+            't_comment' => [
+                'comment_id',
+                'comment',
+                '+t_article' => [
+                    'article_id',
+                    'title',
+                ],
+            ],
+        ]);
+        $this->assertEquals([
+            -1 => [
+                'comment_id' => '1',
+                'article_id' => '1',
+                'comment'    => 'コメント1です',
+                'title'      => 'タイトルです',
+            ],
+            1  => [
+                'comment_id' => '3',
+                'article_id' => '1',
+                'comment'    => 'コメント3です',
+                'title'      => 'タイトルです',
+            ],
+        ], $builder->neighbor(['comment_id' => 2]));
+
+        // 例外
+        $this->assertException('$predicates is empty', L($builder)->neighbor([]));
+    }
+
+    /**
+     * @dataProvider provideQueryBuilder
+     * @param QueryBuilder $builder
+     */
     function test_rowcount($builder)
     {
         $builder->column('test')->limit(5, 5);

@@ -463,6 +463,7 @@ abstract class AbstractUnitTestCase extends TestCase
                 $db->truncate('oprlog');
                 $db->truncate('noprimary');
                 $db->truncate('multiprimary');
+                $db->truncate('multiunique');
                 $db->truncate('misctype');
                 $db->truncate('misctype_child');
                 $db->delete('foreign_c1');
@@ -523,6 +524,16 @@ abstract class AbstractUnitTestCase extends TestCase
                             'subid'  => $i,
                             'name'   => $char++,
                         ]);
+                    }
+                    for ($i = 1, $char = 'a'; $i <= 10; $i++) {
+                        $db->insert('multiunique', [
+                            'id'   => $i,
+                            'uc_s' => $char,
+                            'uc_i' => $i * 10,
+                            'uc1'  => "$char,$char",
+                            'uc2'  => $i * 100,
+                        ]);
+                        $char++;
                     }
                     $db->insert('t_article', [
                         'article_id' => 1,

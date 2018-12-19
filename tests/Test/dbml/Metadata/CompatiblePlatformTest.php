@@ -192,6 +192,23 @@ class CompatiblePlatformTest extends \ryunosuke\Test\AbstractUnitTestCase
      * @param CompatiblePlatform $cplatform
      * @param AbstractPlatform $platform
      */
+    function test_supportsRowConstructor($cplatform, $platform)
+    {
+        $expected = true;
+        if ($platform instanceof SqlitePlatform) {
+            $expected = version_compare(\SQLite3::version()['versionString'], '3.15.0', '>=');
+        }
+        if ($platform instanceof SQLServerPlatform) {
+            $expected = false;
+        }
+        $this->assertEquals($expected, $cplatform->supportsRowConstructor());
+    }
+
+    /**
+     * @dataProvider providePlatform
+     * @param CompatiblePlatform $cplatform
+     * @param AbstractPlatform $platform
+     */
     function test_quoteIdentifierIfNeeded($cplatform, $platform)
     {
         $this->assertEquals('', $cplatform->quoteIdentifierIfNeeded(''));

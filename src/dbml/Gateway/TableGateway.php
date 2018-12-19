@@ -437,6 +437,7 @@ use function ryunosuke\dbml\throws;
  * @method QueryBuilder           subsum($column = [], $where = []) {駆動表を省略できる {@link Database::subsum()}@inheritdoc Database::subsum()}
  * @method QueryBuilder           subavg($column = [], $where = []) {駆動表を省略できる {@link Database::subavg()}@inheritdoc Database::subavg()}
  *
+ * @method array|Entityable[]     neighbor($predicates = [], $limit = 1) {前後のレコードを返す（{@link QueryBuilder::neighbor()} を参照）@inheritdoc QueryBuilder::neighbor()}
  * @method int|float              exists($where = [], $for_update = false) {駆動表を省略できる {@link Database::exists()}@inheritdoc Database::exists()}
  * @method int|float              min($column, $where = [], $groupBy = [], $having = []) {駆動表を省略できる {@link Database::min()}@inheritdoc Database::min()}
  * @method int|float              max($column, $where = [], $groupBy = [], $having = []) {駆動表を省略できる {@link Database::max()}@inheritdoc Database::max()}
@@ -544,6 +545,9 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
 
     /** @var array join するパラメータ */
     private $joinParams = [];
+
+    /** @var array 行を一意に特定できるなにか */
+    private $pkukval = [];
 
     public static function getDefaultOptions()
     {
@@ -756,6 +760,18 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
         // yield 系メソッド
         if (preg_match('/^yield/ui', $name, $matches)) {
             return $this->database->$name($this->select(...$arguments));
+        }
+
+        // builder への移譲系メソッド
+        if (preg_match('#^(neighbor)$#ui', $name, $matches)) {
+            if (strcasecmp($name, 'neighbor') === 0 && $this->pkukval && !($arguments[0] ?? null)) {
+                $arguments[0] = $this->pkukval;
+            }
+            $select = $this->select();
+            if ($this->original->alias) {
+                $select->cast(null);
+            }
+            return $select->$name(...$arguments);
         }
 
         // マジックジョイン
@@ -1737,7 +1753,12 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
      */
     public function pk(...$variadic)
     {
-        return $this->where([array_map([$this, '_primary'], $variadic)]);
+        $where = array_map([$this, '_primary'], $variadic);
+        $that = $this->where([$where]);
+        if (count($where) === 1) {
+            $that->pkukval = reset($where);
+        }
+        return $that;
     }
 
     /**
@@ -1804,7 +1825,11 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
             $where = array_each($uvals, function (&$carry, $pvals) use ($ucols) {
                 $carry[] = array_combine($ucols, $pvals);
             }, []);
-            return $this->where([$where]);
+            $that = $this->where([$where]);
+            if (count($where) === 1) {
+                $that->pkukval = reset($where);
+            }
+            return $that;
         }
 
         // 2つ以上なら型が一致するものを使う
@@ -1823,7 +1848,11 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
             $where = array_each($uvals, function (&$carry, $pvals) use ($ucols) {
                 $carry[] = array_combine($ucols, $pvals);
             }, []);
-            return $this->where([$where]);
+            $that = $this->where([$where]);
+            if (count($where) === 1) {
+                $that->pkukval = reset($where);
+            }
+            return $that;
         }
 
         // ここまでたどり着くということは一致する一意キーがない

@@ -224,6 +224,22 @@ class CompatiblePlatform /*extends AbstractPlatform*/
     }
 
     /**
+     * 行値式が有効か否かを返す
+     *
+     * @return bool 行値式が有効なら true
+     */
+    public function supportsRowConstructor()
+    {
+        if ($this->platform instanceof SQLServerPlatform) {
+            return false;
+        }
+        if ($this->platform instanceof SqlitePlatform) {
+            return version_compare(\SQLite3::version()['versionString'], '3.15.0', '>=');
+        }
+        return true;
+    }
+
+    /**
      * 必要に応じて識別子をエスケープする
      *
      * @param string $word エスケープする文字列
