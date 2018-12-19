@@ -2006,20 +2006,22 @@ SELECT test.* FROM test", $builder);
     function test_union($builder)
     {
         $original = clone $builder;
+        $us = $builder->getDatabase()->getCompatiblePlatform()->supportsUnionParentheses() ? '(' : '';
+        $ue = $builder->getDatabase()->getCompatiblePlatform()->supportsUnionParentheses() ? ')' : '';
 
         $builder->reset();
-        $this->assertQuery('SELECT 1', $builder->union('SELECT 1'));
-        $this->assertQuery('SELECT 1 UNION SELECT 2', $builder->union('SELECT 2'));
-        $this->assertQuery('SELECT 1 UNION SELECT 2 UNION ALL SELECT 3', $builder->unionAll('SELECT 3'));
+        $this->assertQuery("{$us}SELECT 1{$ue}", $builder->union('SELECT 1'));
+        $this->assertQuery("{$us}SELECT 1{$ue} UNION {$us}SELECT 2{$ue}", $builder->union('SELECT 2'));
+        $this->assertQuery("{$us}SELECT 1{$ue} UNION {$us}SELECT 2{$ue} UNION ALL {$us}SELECT 3{$ue}", $builder->unionAll('SELECT 3'));
 
         $builder->reset()->union('SELECT 1')->union($original->column('hoge.id')->where(['id' => 1]));
-        $this->assertQuery('SELECT 1 UNION SELECT hoge.id FROM hoge WHERE id = ?', $builder);
+        $this->assertQuery("{$us}SELECT 1{$ue} UNION {$us}SELECT hoge.id FROM hoge WHERE id = ?{$ue}", $builder);
         $this->assertEquals([1], $builder->getParams());
 
         // SQLServer は limit が違いすぎるので除外（Database 側のテストで担保）
         if (!$builder->getDatabase()->getPlatform() instanceof SQLServerPlatform) {
             $builder->column([[new Expression('RAND(?)', 100)]])->where(['uid' => 'inner'])->innerJoinOn('foo', new Expression('uid1 = ?', 10), '__dbml_union_table')->innerJoinOn('bar', new Expression('uid2 = ?', 20), 'foo')->orderBy('uuid')->limit(10, 1);
-            $this->assertQuery('SELECT RAND(?) FROM (SELECT 1 UNION SELECT hoge.id FROM hoge WHERE id = ?) __dbml_union_table INNER JOIN foo ON uid1 = ? INNER JOIN bar ON uid2 = ? WHERE uid = ? ORDER BY uuid ASC LIMIT 10 OFFSET 1', $builder);
+            $this->assertQuery("SELECT RAND(?) FROM ({$us}SELECT 1{$ue} UNION {$us}SELECT hoge.id FROM hoge WHERE id = ?{$ue}) __dbml_union_table INNER JOIN foo ON uid1 = ? INNER JOIN bar ON uid2 = ? WHERE uid = ? ORDER BY uuid ASC LIMIT 10 OFFSET 1", $builder);
             $this->assertEquals([100, 1, 10, 20, 'inner'], $builder->getParams());
         }
     }
@@ -2043,9 +2045,11 @@ SELECT test.* FROM test", $builder);
         $this->assertQuery('SELECT COUNT(1) AS __dbml_auto_cnt FROM (SELECT 1 FROM t_hoge GROUP BY hoge_id) __dbml_auto_table', $counter);
 
         // union も OK
+        $us = $builder->getDatabase()->getCompatiblePlatform()->supportsUnionParentheses() ? '(' : '';
+        $ue = $builder->getDatabase()->getCompatiblePlatform()->supportsUnionParentheses() ? ')' : '';
         $original = clone $builder;
         $counter = $builder->reset()->union($original->reset()->column('test1.id'))->union($original->reset()->column('test2.id'))->countize();
-        $this->assertQuery('SELECT COUNT(*) AS __dbml_auto_cnt FROM (SELECT test2.id FROM test2 UNION SELECT test2.id FROM test2) __dbml_union_table', $counter);
+        $this->assertQuery("SELECT COUNT(*) AS __dbml_auto_cnt FROM ({$us}SELECT test2.id FROM test2{$ue} UNION {$us}SELECT test2.id FROM test2{$ue}) __dbml_union_table", $counter);
 
         // limit は無視される
         $counter = $builder->reset()->column(['t_hoge' => 'hoge_id'])->limit(100, 50)->groupBy('hoge_id')->countize(1);

@@ -376,7 +376,9 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
         // UNION
         if ($builder->sqlParts['union']) {
             // 0 には UNIONN ALL/UNION の記号（最初の要素以外）、1 にはクエリ文字列が入っている
-            $sql = array_sprintf($builder->sqlParts['union'], function ($union) { return trim(implode(' ', $union)); }, ' ');
+            $sql = array_sprintf($builder->sqlParts['union'], function ($union) use ($cplatform) {
+                return concat($union[0], ' ') . ($cplatform->supportsUnionParentheses() ? "({$union[1]})" : "{$union[1]}");
+            }, ' ');
 
             // select,join,where,group,having,order,limit(要するに from 以外) が設定されている場合はラップしたサブクエリに掛かる
             $parts = $builder->sqlParts;

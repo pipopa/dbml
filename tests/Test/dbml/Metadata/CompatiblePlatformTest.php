@@ -159,6 +159,17 @@ class CompatiblePlatformTest extends \ryunosuke\Test\AbstractUnitTestCase
      * @param CompatiblePlatform $cplatform
      * @param AbstractPlatform $platform
      */
+    function test_supportsUnionParentheses($cplatform, $platform)
+    {
+        $expected = !$platform instanceof SqlitePlatform;
+        $this->assertEquals($expected, $cplatform->supportsUnionParentheses());
+    }
+
+    /**
+     * @dataProvider providePlatform
+     * @param CompatiblePlatform $cplatform
+     * @param AbstractPlatform $platform
+     */
     function test_supportsResetAutoIncrementOnTruncate($cplatform, $platform)
     {
         $expected = !$platform instanceof SqlitePlatform;

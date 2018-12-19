@@ -182,6 +182,19 @@ class CompatiblePlatform /*extends AbstractPlatform*/
     }
 
     /**
+     * UNION が括弧をサポートするか否かを返す
+     *
+     * @return bool UNION が括弧をサポートするなら true
+     */
+    public function supportsUnionParentheses()
+    {
+        if ($this->platform instanceof SqlitePlatform) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
      * TRUNCATE 文で自動採番列がリセットされるか否かを返す
      *
      * @return bool TRUNCATE で自動採番列がリセットされるなら true
