@@ -91,9 +91,9 @@ class TableGatewayTest extends \ryunosuke\Test\AbstractUnitTestCase
     function test_offsetGet_primary($gateway, $database)
     {
         $gateway->setOption('offsetGetFind', true);
-        $this->assertInternalType('array', $gateway[1]);
+        $this->assertIsArray($gateway[1]);
         /** @noinspection PhpIllegalArrayKeyTypeInspection */
-        $this->assertInternalType('array', $gateway[[1]]);
+        $this->assertIsArray($gateway[[1]]);
 
         $gateway->setOption('offsetGetFind', false);
         $this->assertInstanceOf(TableGateway::class, $gateway[1]);
@@ -499,7 +499,7 @@ AND ((flag=1))", "$gw");
         $this->assertEquals([1], $select->getParams());
 
         $select = $gateway->select('id', ['id' => 1]);
-        $this->assertInternalType('array', $select->tuple());
+        $this->assertIsArray($select->tuple());
 
         $Article = new TableGateway($database, 't_article', 'Article');
         $select = $Article->select('*', ['article_id' => 1]);
@@ -1279,7 +1279,7 @@ AND ((flag=1))", "$gw");
         // Article で作成した Gateway はエンティティで返すはず
         $this->assertInstanceOf(Article::class, $Article->find(1));
         // t_article で作成した Gateway は配列で返すはず
-        $this->assertInternalType('array', $t_article->find(1));
+        $this->assertIsArray($t_article->find(1));
 
         // alias しても大丈夫
         $this->assertInstanceOf(Article::class, $Article->as('A')->find(1));
@@ -1316,7 +1316,7 @@ AND ((flag=1))", "$gw");
         // Article で作成した Gateway はエンティティで返すはず
         $this->assertInstanceOf(Article::class, $entity);
         // t_article で作成した Gateway は配列で返すはず
-        $this->assertInternalType('array', $record);
+        $this->assertIsArray($record);
 
         // デフォルト値が効いてるはず
         $this->assertEquals('hoge', $entity['title']);

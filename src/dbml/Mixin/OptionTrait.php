@@ -47,8 +47,6 @@ trait OptionTrait
      * オプションのデフォルト値を返す static メソッド
      *
      * このメソッドの返り値が構成要素とデフォルト値を担っていて、その配列以外のキーは基本的に保持できない。
-     *
-     * @return array デフォルトオプション配列
      */
     public static function getDefaultOptions()
     {

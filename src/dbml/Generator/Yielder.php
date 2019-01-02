@@ -4,7 +4,7 @@ namespace ryunosuke\dbml\Generator;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Driver\PDOStatement;
-use Doctrine\DBAL\Driver\Statement;
+use Doctrine\DBAL\Driver\ResultStatement;
 use ryunosuke\dbml\Database;
 
 /**
@@ -21,7 +21,7 @@ class Yielder implements \Iterator
     /** @var array 現在行 */
     private $current;
 
-    /** @var Statement|\Closure ステートメント */
+    /** @var ResultStatement|\Closure ステートメント */
     private $statement;
 
     /** @var Connection */
@@ -42,7 +42,7 @@ class Yielder implements \Iterator
     /**
      * コンストラクタ
      *
-     * @param Statement|\Closure $statement 取得に使用される \Statement
+     * @param ResultStatement|\Closure $statement 取得に使用される \Statement
      * @param Connection $connection 取得に使用するコネクション
      * @param string $method フェッチメソッド名
      * @param callable $callback 1行ごとに呼ばれるコールバック処理

@@ -116,7 +116,7 @@ class QueryBuilderTest extends \ryunosuke\Test\AbstractUnitTestCase
         $this->assertSame(self::getDummyDatabase(), $row->getDatabase());
 
         $row = call_user_func($builder->cast(function ($row) { return $row; })->getCaster(), ['c' => 'v']);
-        $this->assertInternalType('array', $row);
+        $this->assertIsArray($row);
         $this->assertEquals(['c' => 'v'], $row);
 
         // default entity

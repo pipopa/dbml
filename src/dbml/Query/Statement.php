@@ -71,7 +71,7 @@ class Statement implements Queryable
         $this->database = $database;
     }
 
-    private function _execute(array $params = [], Connection $connection)
+    private function _execute(array $params, Connection $connection)
     {
         // 同じコネクションの stmt はキャッシュする（$this->query は不変なので問題ない）
         $key = spl_object_hash($connection);

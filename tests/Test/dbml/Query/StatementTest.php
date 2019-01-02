@@ -16,8 +16,8 @@ class StatementTest extends \ryunosuke\Test\AbstractUnitTestCase
     {
         // ? の数と引数が同じ
         $stmt = new Statement('this is no=?, this is named=:named', ['hoge'], $database);
-        $this->assertAttributeEquals('this is no=:__dbml_auto_bind0, this is named=:named', 'query', $stmt);
-        $this->assertAttributeEquals(['__dbml_auto_bind0' => 'hoge'], 'params', $stmt);
+        $this->assertEquals('this is no=:__dbml_auto_bind0, this is named=:named', $stmt->getQuery());
+        $this->assertEquals(['__dbml_auto_bind0' => 'hoge'], $stmt->getParams());
 
         // 引数のほうが少ない
         $this->assertException('mismatch', function () use ($database) {

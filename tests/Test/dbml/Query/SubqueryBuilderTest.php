@@ -131,7 +131,7 @@ class SubqueryBuilderTest extends \ryunosuke\Test\AbstractUnitTestCase
         // builder のfetch 呼び出しは builder を返すはず
         $this->assertInstanceOf(get_class($builder), $builder->array());
         // connection 経由なら普通に結果を返すはず
-        $this->assertInternalType('array', $builder->getDatabase()->fetchArray($builder));
+        $this->assertIsArray($builder->getDatabase()->fetchArray($builder));
     }
 
     /**
@@ -141,8 +141,8 @@ class SubqueryBuilderTest extends \ryunosuke\Test\AbstractUnitTestCase
     function test_subquery_misc($builder)
     {
         // 本来連続して呼ぶフローはなく、テスト時に変更が蓄積されていってしまうので clone する
-        $clone = function () {
-            return clone func_get_arg(0);
+        $clone = function (SubqueryBuilder $builder) {
+            return clone $builder;
         };
 
         // test2.name2 をすべて 'a' にしておく

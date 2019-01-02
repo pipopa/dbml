@@ -144,8 +144,8 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
     function test___call($database)
     {
         // aggregate 系
-        $this->assertInternalType('integer', $database->count('test'));
-        $this->assertInternalType('float', $database->avg('test.id'));
+        $this->assertIsInt($database->count('test'));
+        $this->assertIsFloat($database->avg('test.id'));
 
         // select は select のはず
         $this->assertInstanceOf(QueryBuilder::class, $database->select('t', []));
@@ -2106,7 +2106,7 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
     {
         // テーブル指定は配列で返るはず
         $record = $database->getEmptyRecord('test');
-        $this->assertInternalType('array', $record);
+        $this->assertIsArray($record);
         $this->assertEquals(null, $record['id']);
         $this->assertEquals('', $record['name']);
         $this->assertEquals('', $record['data']);
@@ -3083,7 +3083,7 @@ ON DUPLICATE KEY UPDATE id = VALUES(id), name = VALUES(name)", $affected);
             'name'    => 'name2',
             'summary' => 'summary2',
         ]);
-        $this->assertInternalType('array', $result);
+        $this->assertIsArray($result);
         $result = reset($result);
         $this->assertEquals([
             'name'    => 'name2',
@@ -4795,9 +4795,9 @@ anywhere.enable = 1
         ]);
 
         // こやつらは普通に結果を返す
-        $this->assertInternalType('array', $database->fetchArray($select));
-        $this->assertInternalType('array', $database->fetchAssoc($select));
-        $this->assertInternalType('array', $database->fetchTuple($select->limit(1)));
+        $this->assertIsArray($database->fetchArray($select));
+        $this->assertIsArray($database->fetchAssoc($select));
+        $this->assertIsArray($database->fetchTuple($select->limit(1)));
 
         // こやつらは例外が飛ぶはず
         $ex = new \BadMethodCallException('parent is scalar value');

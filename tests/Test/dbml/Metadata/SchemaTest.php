@@ -128,8 +128,8 @@ class SchemaTest extends \ryunosuke\Test\AbstractUnitTestCase
     {
         $schema->addTable($this->getDummyTable('metatest'));
 
-        $this->assertInternalType('array', $schema->getTableColumns('metatest'));
-        $this->assertInternalType('array', $schema->getTableColumns('viewsample'));
+        $this->assertIsArray($schema->getTableColumns('metatest'));
+        $this->assertIsArray($schema->getTableColumns('viewsample'));
 
         $this->assertException(SchemaException::tableDoesNotExist('hogera'), L($schema)->getTableColumns('hogera'));
     }
@@ -223,7 +223,7 @@ class SchemaTest extends \ryunosuke\Test\AbstractUnitTestCase
         $foreign->addForeignKeyConstraint('metatest', ['id'], ['id']);
         $schema->addTable($foreign);
 
-        $this->assertInternalType('array', $schema->getTableForeignKeys('metatest'));
+        $this->assertIsArray($schema->getTableForeignKeys('metatest'));
 
         $this->assertException(SchemaException::tableDoesNotExist('hogera'), L($schema)->getTableForeignKeys('hogera'));
     }
