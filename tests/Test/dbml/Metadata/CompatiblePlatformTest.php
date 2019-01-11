@@ -71,6 +71,17 @@ class CompatiblePlatformTest extends \ryunosuke\Test\AbstractUnitTestCase
      * @param CompatiblePlatform $cplatform
      * @param AbstractPlatform $platform
      */
+    function test_supportsInsertSet($cplatform, $platform)
+    {
+        $expected = $platform instanceof MySqlPlatform || $platform instanceof \ryunosuke\Test\Platforms\SqlitePlatform;
+        $this->assertEquals($expected, $cplatform->supportsInsertSet());
+    }
+
+    /**
+     * @dataProvider providePlatform
+     * @param CompatiblePlatform $cplatform
+     * @param AbstractPlatform $platform
+     */
     function test_supportsReplace($cplatform, $platform)
     {
         $expected = $platform instanceof SqlitePlatform || $platform instanceof MySqlPlatform;

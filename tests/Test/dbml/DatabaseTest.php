@@ -2995,6 +2995,17 @@ ON DUPLICATE KEY UPDATE id = VALUES(id), name = VALUES(name)", $affected);
             'name' => new Expression('UPPER(?)', 'lower')
         ]);
         $this->assertEquals('LOWER', $database->selectValue('test.name', [], ['id' => 'desc'], 1));
+
+        // for mysql
+        if ($database->getCompatiblePlatform()->supportsInsertSet()) {
+            $sql = $database->context(['insertSet' => true])->dryrun()->insert('test', ['name' => 'zz']);
+            $this->assertEquals("INSERT INTO test SET name = 'zz'", $sql);
+
+            if ($database->getPlatform() instanceof MySqlPlatform) {
+                $database->executeUpdate($sql);
+                $this->assertEquals('zz', $database->selectValue('test.name', [], ['id' => 'desc'], 1));
+            }
+        }
     }
 
     /**

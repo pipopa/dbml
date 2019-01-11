@@ -67,6 +67,20 @@ class CompatiblePlatform /*extends AbstractPlatform*/
     }
 
     /**
+     * INSERT SET 拡張構文が使えるか否かを返す
+     *
+     * @return bool INSERT SET 拡張構文が使えるなら true
+     */
+    public function supportsInsertSet()
+    {
+        if ($this->platform instanceof MySqlPlatform || $this->platform instanceof \ryunosuke\Test\Platforms\SqlitePlatform) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * REPLACE が使えるか否かを返す
      *
      * @return bool REPLACE が使えるなら true

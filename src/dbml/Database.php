@@ -131,6 +131,8 @@ use ryunosuke\dbml\Utility\Adhoc;
  *     entityMapper でマッピングしたテーブルはそのエンティティ名が使用されるが、未設定だったり null を返したりすると、この設定に応じてデフォルトエンティティを返す。
  *     キーがクラス名、値がコンストラクタ引数になる。
  * }
+ * @method bool                   getInsertSet()
+ * @method $this                  setInsertSet($bool)
  * @method bool                   getFilterNoExistsColumn()
  * @method $this                  setFilterNoExistsColumn($bool) {
  *     存在しないカラムをフィルタするか指定する
@@ -440,6 +442,8 @@ class Database
             'initCommand'          => null,
             // デフォルトエンティティクラス名
             'defaultEntity'        => [Entity::class => function ($database) { return [$database]; }],
+            // 拡張 INSERT SET 構文を使うか否か（mysql 以外は無視される）
+            'insertSet'            => false,
             // insert 時などにテーブルに存在しないカラムを自動でフィルタするか否か
             'filterNoExistsColumn' => true,
             // insert 時などに NULLABLE NUMERIC カラムは 空文字を null として扱うか否か
@@ -4768,8 +4772,12 @@ class Database
         $data = $this->_normalize($tableName, $data);
         $set = $this->bindInto($data, $params);
 
-        $ignore = array_get($opt, 'ignore') ? $this->getCompatiblePlatform()->getIgnoreSyntax() . ' ' : '';
-        $sql = "INSERT {$ignore}INTO $tableName (" . implode(', ', array_keys($set)) . ") VALUES (" . implode(', ', $set) . ")";
+        $cplatform = $this->getCompatiblePlatform();
+        $ignore = array_get($opt, 'ignore') ? $cplatform->getIgnoreSyntax() . ' ' : '';
+        $sql = "INSERT {$ignore}INTO $tableName ";
+        $sql .= $cplatform->supportsInsertSet() && $this->getUnsafeOption('insertSet')
+            ? "SET " . array_sprintf($set, '%2$s = %1$s', ', ')
+            : sprintf("(%s) VALUES (%s)", implode(', ', array_keys($set)), implode(', ', $set));
         $affected = $this->executeUpdate($sql, $params);
 
         if (array_get($opt, 'throw')) {
