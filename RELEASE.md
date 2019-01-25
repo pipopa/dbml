@@ -20,6 +20,15 @@
 
 - Entity 消したい。使わない…
 
+## 1.0.4
+
+- [feature][Operator] range で行値式が使えるように拡張
+- [feature][Transaction] catch イベントを追加
+- [feature][TableGateway] invoke で find が呼び出せるように拡張
+- [feature][Database] aggregate でクロス集計がしやすいように拡張
+- [feature][Database] [insert|upsert|modify]Conditionally を実装
+- [fixbug][Database] loadCsv が dryrun に対応していなかった不具合を修正
+
 ## 1.0.3
 
 - [feature][TableGateway] offsetGet の * 対応
