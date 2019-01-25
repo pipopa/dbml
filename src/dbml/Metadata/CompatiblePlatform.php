@@ -312,6 +312,19 @@ class CompatiblePlatform /*extends AbstractPlatform*/
     }
 
     /**
+     * （対応しているなら） dual 表を返す
+     *
+     * @return string dual 表
+     */
+    public function getDualTable()
+    {
+        if ($this->platform instanceof MySqlPlatform) {
+            return 'dual';
+        }
+        return '';
+    }
+
+    /**
      * CALC_FOUND_ROWS が使える場合にその SelectOption を返す
      *
      * @return SelectOption CALC_FOUND_ROWS が使えるなら SelectOption::SQL_CALC_FOUND_ROWS
@@ -340,25 +353,20 @@ class CompatiblePlatform /*extends AbstractPlatform*/
     /**
      * MERGE 構文を返す
      *
-     * @param string $tableName テーブル名
-     * @param array $insertData INSERT 時の配列
      * @param array $updateData UPDATE 時の配列
      * @param string|array $constraint 一意制約
      * @return string|bool MERGE 構文に対応してるなら文字列、対応していないなら false
      */
-    public function getMergeSQL($tableName, $insertData, $updateData, $constraint = null)
+    public function getMergeSQL($updateData, $constraint = null)
     {
         if ($this->platform instanceof MySqlPlatform) {
-            $insertSql = array_sprintf($insertData, '%2$s = %1$s', ', ');
             $updateSql = array_sprintf($updateData, '%2$s = %1$s', ', ');
-            return "INSERT INTO $tableName SET $insertSql ON DUPLICATE KEY UPDATE $updateSql";
+            return "ON DUPLICATE KEY UPDATE $updateSql";
         }
         if ($this->platform instanceof PostgreSqlPlatform) {
-            $insertKeys = implode(', ', array_keys($insertData));
-            $insertVals = implode(', ', $insertData);
             $updateSql = array_sprintf($updateData, '%2$s = %1$s', ', ');
             $constraint = is_array($constraint) ? '(' . implode(',', $constraint) . ')' : $constraint;
-            return "INSERT INTO $tableName ($insertKeys) VALUES ($insertVals) ON CONFLICT ON CONSTRAINT $constraint DO UPDATE SET $updateSql";
+            return "ON CONFLICT ON CONSTRAINT $constraint DO UPDATE SET $updateSql";
         }
         return false;
     }

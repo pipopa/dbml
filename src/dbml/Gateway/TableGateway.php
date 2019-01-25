@@ -478,6 +478,17 @@ use function ryunosuke\dbml\throws;
  * @method array                  modifyOrThrow($insertData, $updateData = null) {{@link modify()} の例外送出版@inheritdoc modify()}
  * @method array                  replaceOrThrow($data) {{@link replace()} の例外送出版@inheritdoc replace()}
  *
+ * @method array                  insertIgnore($data) {駆動表を省略できる {@link Database::insertIgnore()}@inheritdoc insertOrThrow()}
+ * @method array                  updateIgnore($data, array $identifier = []) {駆動表を省略できる {@link Database::updateIgnore()}@inheritdoc updateOrThrow()}
+ * @method array                  deleteIgnore(array $identifier = []) {駆動表を省略できる {@link Database::deleteIgnore()}@inheritdoc deleteOrThrow()}
+ * @method array                  removeIgnore(array $identifier = []) {駆動表を省略できる {@link Database::removeIgnore()}@inheritdoc removeOrThrow()}
+ * @method array                  destroyIgnore(array $identifier = []) {駆動表を省略できる {@link Database::destroyIgnore()}@inheritdoc destroyOrThrow()}
+ * @method array                  modifyIgnore($insertData, $updateData = null) {駆動表を省略できる {@link Database::modifyIgnore()}@inheritdoc modifyOrThrow()}
+ *
+ * @method array                  insertConditionally($condition, $data) {駆動表を省略できる {@link Database::insertConditionally()}@inheritdoc Database::insertConditionally()}
+ * @method array                  upsertConditionally($condition, $insertData, $updateData = null) {駆動表を省略できる {@link Database::upsertConditionally()}@inheritdoc Database::upsertConditionally()}
+ * @method array                  modifyConditionally($condition, $insertData, $updateData = null) {駆動表を省略できる {@link Database::modifyConditionally()}@inheritdoc Database::modifyConditionally()}
+ *
  * @method Statement              prepareSelect($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {駆動表を省略できる {@link Database::prepareSelect()}@inheritdoc Database::prepareSelect()}
  * @method Statement              prepareInsert($data) {駆動表を省略できる {@link Database::prepareInsert()}@inheritdoc Database::prepareInsert()}
  * @method Statement              prepareUpdate($data, array $identifier = []) {駆動表を省略できる {@link Database::prepareUpdate()}@inheritdoc Database::prepareUpdate()}

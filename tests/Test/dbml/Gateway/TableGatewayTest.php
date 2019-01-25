@@ -1110,6 +1110,37 @@ AND ((flag=1))", "$gw");
      * @param TableGateway $gateway
      * @param Database $database
      */
+    function test_affect_ignore($gateway, $database)
+    {
+        if ($database->getCompatiblePlatform()->supportsIgnore()) {
+            $this->assertEquals(['id' => '11'], $gateway->insertIgnore(['id' => 11, 'name' => 'hoge']));
+            $this->assertEquals([], $gateway->insertIgnore(['id' => 11, 'name' => 'hoge']));
+
+            $this->assertEquals(['id' => '11'], $gateway->updateIgnore(['name' => 'fuga'], ['id' => 11]));
+            $this->assertEquals([], $gateway->updateIgnore(['name' => 'hoge'], ['id' => -1]));
+        }
+    }
+
+    /**
+     * @dataProvider provideGateway
+     * @param TableGateway $gateway
+     * @param Database $database
+     */
+    function test_affect_conditionally($gateway, $database)
+    {
+        $this->assertEquals(['id' => '11'], $gateway->insertConditionally(['id' => -1], ['name' => 'hoge']));
+        $this->assertEquals(['id' => '12'], $gateway->upsertConditionally(['id' => -1], ['name' => 'fuga']));
+        $this->assertEquals(['id' => '13'], $gateway->modifyConditionally(['id' => -1], ['name' => 'piyo']));
+        $this->assertEquals([], $gateway->insertConditionally(['id' => 11], ['name' => 'hoge']));
+        $this->assertEquals([], $gateway->upsertConditionally(['id' => 12], ['name' => 'fuga']));
+        $this->assertEquals([], $gateway->modifyConditionally(['id' => 13], ['name' => 'piyo']));
+    }
+
+    /**
+     * @dataProvider provideGateway
+     * @param TableGateway $gateway
+     * @param Database $database
+     */
     function test_scoped_modify($gateway, $database)
     {
         $logger = new DebugStack();

@@ -118,6 +118,17 @@ use ryunosuke\dbml\Utility\Adhoc;
  * [update/delete]OrThrow の戻り値は主キーだが、複数行に作用した場合は未定義となる（['id' => 3] で update/delete した場合は 3 を返せるが、['create_at < ?' => '2011-12-34'] といった場合は返しようがないため）。
  * そもそも「更新/削除できなかったら例外」という挙動が必要なケースはほぼ無いためこれらの用途はほとんどなく、単に他のメソッドとの統一のために存在している。
  *
+ * **Ignore**
+ *
+ * [insert, updert, modify, delete, remove, destroy] メソッドのみに付与できる。
+ * RDBMS に動作は異なるが、 `INSERT IGNORE` のようなクエリが発行される。
+ *
+ * **Conditionally**
+ *
+ * [insert, upsert, modify] メソッドのみに付与できる。
+ * 条件付き insert となり、「insert された場合にその主キー」を「されなかった場合に空配列」を返す。
+ * 最も多いユースケースとしては「行がないなら insert」だろう。
+ *
  * ### エスケープ
  *
  * 識別子のエスケープは一切面倒をみない。外部入力を識別子にしたい（テーブル・カラムを外部指定するとか）場合は自前でエスケープすること。
@@ -374,6 +385,47 @@ use ryunosuke\dbml\Utility\Adhoc;
  * @method array                  upsertOrThrow($tableName, $insertData, $updateData = null) {{@link upsert()} の例外送出版@inheritdoc upsert()}
  * @method array                  modifyOrThrow($tableName, $insertData, $updateData = null) {{@link modify()} の例外送出版@inheritdoc modify()}
  * @method array                  replaceOrThrow($tableName, $data) {{@link replace()} の例外送出版@inheritdoc replace()}
+ *
+ * @method array                  insertIgnore($tableName, $data) {IGNORE 付き {@link insert()}@inheritdoc insertOrThrow()}
+ * @method array                  updateIgnore($tableName, $data, array $identifier = []) {IGNORE 付き {@link update()}@inheritdoc updateOrThrow()}
+ * @method array                  deleteIgnore($tableName, array $identifier = []) {IGNORE 付き {@link delete()}@inheritdoc deleteOrThrow()}
+ * @method array                  removeIgnore($tableName, array $identifier = []) {IGNORE 付き {@link remove()}@inheritdoc removeOrThrow()}
+ * @method array                  destroyIgnore($tableName, array $identifier = []) {IGNORE 付き {@link destroy()}@inheritdoc destroyOrThrow()}
+ * @method array                  modifyIgnore($tableName, $insertData, $updateData = null) {IGNORE 付き {@link modify()}@inheritdoc modifyOrThrow()}
+ *
+ * @method array                  insertConditionally($tableName, $condition, $data) {
+ *     条件付き {@link insert()}
+ *
+ *     $condition が WHERE 的判定され、合致しないときは insert が行われない。
+ *     $condition が配列の場合は $tableName で selectNotExists する。つまり「存在しないとき実行」となる。
+ *
+ *     実行したら主キー配列を返し、されなかったら空配列を返す。
+ *
+ *     @param QueryBuilder|string|array $condition WHERE 条件 or Select オブジェクト
+ *     @inheritdoc insertOrThrow()
+ * }
+ * @method array                  upsertConditionally($tableName, $condition, $insertData, $updateData = null) {
+ *     条件付き {@link upsert()}
+ *
+ *     $condition が WHERE 的判定され、合致しないときは upsert が行われない。
+ *     $condition が配列の場合は $tableName で selectNotExists する。つまり「存在しないとき実行」となる。
+ *
+ *     実行したら主キー配列を返し、されなかったら空配列を返す。
+ *
+ *     @param QueryBuilder|string|array $condition WHERE 条件 or Select オブジェクト
+ *     @inheritdoc upsertOrThrow()
+ * }
+ * @method array                  modifyConditionally($tableName, $condition, $insertData, $updateData = null) {
+ *     条件付き {@link modify()}
+ *
+ *     $condition が WHERE 的判定され、合致しないときは modify が行われない。
+ *     $condition が配列の場合は $tableName で selectNotExists する。つまり「存在しないとき実行」となる。
+ *
+ *     実行したら主キー配列を返し、されなかったら空配列を返す。
+ *
+ *     @param QueryBuilder|string|array $condition WHERE 条件 or Select オブジェクト
+ *     @inheritdoc modifyOrThrow()
+ * }
  *
  * @method Statement              prepareSelect($tableDescriptor, $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {クエリビルダ構文で SELECT 用プリペアドステートメント取得する（{@link prepare()}, {@link select()} も参照）@inheritdoc select()}
  * @method Statement              prepareInsert($tableName, $data) {クエリビルダ構文で INSERT 用プリペアドステートメント取得する（{@link prepare()}, {@link insert()} も参照）@inheritdoc insert()}
@@ -819,16 +871,22 @@ class Database
         // affect～OrThrow 系
         if (preg_match('/^(insert|update|delete|remove|destroy|reduce|upsert|modify|replace)OrThrow$/ui', $name, $matches)) {
             $method = strtolower($matches[1]);
-            $refunc = reflect_callable([$this, $method]);
-            if (count($arguments) < $refunc->getNumberOfRequiredParameters()) {
-                throw new \InvalidArgumentException("argument's length too short.");
-            }
-            foreach ($refunc->getParameters() as $n => $param) {
-                if (!array_key_exists($n, $arguments) && $param->isDefaultValueAvailable()) {
-                    $arguments[$n] = $param->getDefaultValue();
-                }
-            }
-            $arguments[] = ['throw' => true];
+            Adhoc::reargument($arguments, [$this, $method], []);
+            $arguments[] = ['primary' => 1, 'throw' => true];
+            return $this->$method(...$arguments);
+        }
+        // affect～Ignore 系
+        if (preg_match('/^(insert|update|delete|remove|destroy|modify)Ignore$/ui', $name, $matches)) {
+            $method = strtolower($matches[1]);
+            Adhoc::reargument($arguments, [$this, $method], []);
+            $arguments[] = ['primary' => 2, 'ignore' => true];
+            return $this->$method(...$arguments);
+        }
+        // affect～Conditionally 系
+        if (preg_match('/^(insert|upsert|modify)Conditionally$/ui', $name, $matches)) {
+            $method = strtolower($matches[1]);
+            $opt = Adhoc::reargument($arguments, [$this, $method], [1 => 'where']);
+            $arguments[] = ['primary' => 2] + $opt;
             return $this->$method(...$arguments);
         }
 
@@ -4720,10 +4778,12 @@ class Database
      * ```
      *
      * @used-by insertOrThrow()
+     * @used-by insertIgnore()
+     * @used-by insertConditionally()
      *
      * @param string|array $tableName テーブル名
      * @param mixed $data INSERT データ配列
-     * @return int|string|string[]|Statement 基本的には affected row. dryrun 中は文字列、preparing 中は Statement
+     * @return int|string|array|Statement 基本的には affected row. dryrun 中は文字列、preparing 中は Statement
      */
     public function insert($tableName, $data)
     {
@@ -4754,13 +4814,15 @@ class Database
                 }
                 $data += $this->_postaffect($table['table'], $owndata);
             }
-            if (array_get($opt, 'throw')) {
-                return $result;
-            }
             if ($this->getUnsafeOption('dryrun') || $this->getUnsafeOption('preparing')) {
                 return $affected;
             }
-            return array_sum($affected);
+
+            $affected = array_sum($affected);
+            if (array_get($opt, 'primary')) {
+                return $result;
+            }
+            return $affected;
         }
         if (is_array($tableName)) {
             list($tableName, $data) = first_keyvalue($tableName);
@@ -4775,15 +4837,34 @@ class Database
         $cplatform = $this->getCompatiblePlatform();
         $ignore = array_get($opt, 'ignore') ? $cplatform->getIgnoreSyntax() . ' ' : '';
         $sql = "INSERT {$ignore}INTO $tableName ";
-        $sql .= $cplatform->supportsInsertSet() && $this->getUnsafeOption('insertSet')
-            ? "SET " . array_sprintf($set, '%2$s = %1$s', ', ')
-            : sprintf("(%s) VALUES (%s)", implode(', ', array_keys($set)), implode(', ', $set));
-        $affected = $this->executeUpdate($sql, $params);
-
-        if (array_get($opt, 'throw')) {
-            if ($affected === 0) {
-                throw new NonAffectedException('affected row is nothing.');
+        if (($condition = array_get($opt, 'where')) !== null) {
+            if (is_array($condition)) {
+                $condition = $this->selectNotExists($tableName, $condition);
             }
+            if ($condition instanceof Queryable) {
+                $condition = $condition->merge($params);
+            }
+            $fromDual = concat(' FROM ', $cplatform->getDualTable());
+            $sql .= sprintf("(%s) SELECT %s$fromDual WHERE $condition", implode(', ', array_keys($set)), implode(', ', $set));
+        }
+        elseif ((!$cplatform->supportsInsertSet() || !$this->getUnsafeOption('insertSet'))) {
+            $sql .= sprintf("(%s) VALUES (%s)", implode(', ', array_keys($set)), implode(', ', $set));
+        }
+        else {
+            $sql .= "SET " . array_sprintf($set, '%2$s = %1$s', ', ');
+        }
+        $affected = $this->executeUpdate($sql, $params);
+        if (!is_int($affected)) {
+            return $affected;
+        }
+
+        if ($affected === 0 && array_get($opt, 'throw')) {
+            throw new NonAffectedException('affected row is nothing.');
+        }
+        if ($affected === 0 && array_get($opt, 'primary') === 2) {
+            return [];
+        }
+        if (array_get($opt, 'primary')) {
             return $this->_postaffect($tableName, $data);
         }
         return $affected;
@@ -4823,11 +4904,12 @@ class Database
      * ```
      *
      * @used-by updateOrThrow()
+     * @used-by updateIgnore()
      *
      * @param string|array|QueryBuilder $tableName テーブル名
      * @param mixed $data UPDATE データ配列
      * @param array|mixed $identifier WHERE 条件
-     * @return int|string|Statement 基本的には affected row. dryrun 中は文字列、preparing 中は Statement
+     * @return int|string|array|Statement 基本的には affected row. dryrun 中は文字列、preparing 中は Statement
      */
     public function update($tableName, $data, $identifier = [])
     {
@@ -4859,10 +4941,17 @@ class Database
 
         $ignore = array_get($opt, 'ignore') ? $this->getCompatiblePlatform()->getIgnoreSyntax() . ' ' : '';
         $affected = $this->executeUpdate("UPDATE {$ignore}$tableName SET $sets" . ($criteria ? ' WHERE ' . implode(' AND ', Adhoc::wrapParentheses($criteria)) : ''), $params);
-        if (array_get($opt, 'throw')) {
-            if ($affected === 0) {
-                throw new NonAffectedException('affected row is nothing.');
-            }
+        if (!is_int($affected)) {
+            return $affected;
+        }
+
+        if ($affected === 0 && array_get($opt, 'throw')) {
+            throw new NonAffectedException('affected row is nothing.');
+        }
+        if ($affected === 0 && array_get($opt, 'primary') === 2) {
+            return [];
+        }
+        if (array_get($opt, 'primary')) {
             return $this->_postaffect($tableName, $data + arrayize($identifier));
         }
         return $affected;
@@ -4884,10 +4973,11 @@ class Database
      * ```
      *
      * @used-by deleteOrThrow()
+     * @used-by deleteIgnore()
      *
      * @param string|array|QueryBuilder $tableName テーブル名
      * @param array|mixed $identifier WHERE 条件
-     * @return int|string|Statement 基本的には affected row. dryrun 中は文字列、preparing 中は Statement
+     * @return int|string|array|Statement 基本的には affected row. dryrun 中は文字列、preparing 中は Statement
      */
     public function delete($tableName, $identifier = [])
     {
@@ -4908,10 +4998,17 @@ class Database
 
         $ignore = array_get($opt, 'ignore') ? $this->getCompatiblePlatform()->getIgnoreSyntax() . ' ' : '';
         $affected = $this->executeUpdate("DELETE {$ignore}FROM $tableName" . ($criteria ? ' WHERE ' . implode(' AND ', Adhoc::wrapParentheses($criteria)) : ''), $params);
-        if (array_get($opt, 'throw')) {
-            if ($affected === 0) {
-                throw new NonAffectedException('affected row is nothing.');
-            }
+        if (!is_int($affected)) {
+            return $affected;
+        }
+
+        if ($affected === 0 && array_get($opt, 'throw')) {
+            throw new NonAffectedException('affected row is nothing.');
+        }
+        if ($affected === 0 && array_get($opt, 'primary') === 2) {
+            return [];
+        }
+        if (array_get($opt, 'primary')) {
             return $this->_postaffect($tableName, arrayize($identifier));
         }
         return $affected;
@@ -4930,10 +5027,11 @@ class Database
      * ```
      *
      * @used-by removeOrThrow()
+     * @used-by removeIgnore()
      *
      * @param string|array|QueryBuilder $tableName テーブル名
      * @param array|mixed $identifier WHERE 条件
-     * @return int|string|Statement 基本的には affected row. dryrun 中は文字列、preparing 中は Statement
+     * @return int|string|array|Statement 基本的には affected row. dryrun 中は文字列、preparing 中は Statement
      */
     public function remove($tableName, $identifier = [])
     {
@@ -4973,10 +5071,17 @@ class Database
 
         $ignore = array_get($opt, 'ignore') ? $this->getCompatiblePlatform()->getIgnoreSyntax() . ' ' : '';
         $affected = $this->executeUpdate("DELETE {$ignore}FROM $tableName" . ($criteria ? ' WHERE ' . implode(' AND ', Adhoc::wrapParentheses($criteria)) : ''), $params);
-        if (array_get($opt, 'throw')) {
-            if ($affected === 0) {
-                throw new NonAffectedException('affected row is nothing.');
-            }
+        if (!is_int($affected)) {
+            return $affected;
+        }
+
+        if ($affected === 0 && array_get($opt, 'throw')) {
+            throw new NonAffectedException('affected row is nothing.');
+        }
+        if ($affected === 0 && array_get($opt, 'primary') === 2) {
+            return [];
+        }
+        if (array_get($opt, 'primary')) {
             return $this->_postaffect($tableName, arrayize($identifier));
         }
         return $affected;
@@ -5005,6 +5110,7 @@ class Database
      * ```
      *
      * @used-by destroyOrThrow()
+     * @used-by destroyIgnore()
      *
      * @param string|array $tableName テーブル名
      * @param array|mixed $identifier WHERE 条件
@@ -5051,11 +5157,15 @@ class Database
         if ($this->getUnsafeOption('dryrun')) {
             return $affected;
         }
+
         $affected = array_sum($affected);
-        if (array_get($opt, 'throw')) {
-            if ($affected === 0) {
-                throw new NonAffectedException('affected row is nothing.');
-            }
+        if ($affected === 0 && array_get($opt, 'throw')) {
+            throw new NonAffectedException('affected row is nothing.');
+        }
+        if ($affected === 0 && array_get($opt, 'primary') === 2) {
+            return [];
+        }
+        if (array_get($opt, 'primary')) {
             return $this->_postaffect($tableName, arrayize($identifier));
         }
         return $affected;
@@ -5200,11 +5310,12 @@ class Database
      * ```
      *
      * @used-by upsertOrThrow()
+     * @used-by upsertConditionally()
      *
      * @param string|array $tableName テーブル名
      * @param mixed $insertData INSERT データ配列
      * @param mixed $updateData UPDATE データ配列
-     * @return int affected rows. if update return 0 or 2, else insert return 1
+     * @return int|array affected rows. if update return 0 or 2, else insert return 1
      */
     public function upsert($tableName, $insertData, $updateData = null)
     {
@@ -5225,6 +5336,22 @@ class Database
 
         $originalName = $tableName;
         $tableName = $this->convertTableName($tableName);
+
+        $condition = array_get($opt, 'where');
+        if ($condition !== null) {
+            $params = [];
+            if (is_array($condition)) {
+                $condition = $this->selectNotExists($tableName, $condition);
+            }
+            if ($condition instanceof Queryable) {
+                $condition = $condition->merge($params);
+            }
+            $fromDual = concat(' FROM ', $this->getCompatiblePlatform()->getDualTable());
+            if (!$this->fetchValue("SELECT 1$fromDual WHERE $condition", $params)) {
+                return [];
+            }
+        }
+
         $pcols = $this->getSchema()->getTablePrimaryColumns($tableName);
         $wheres = array_intersect_key($insertData, $pcols);
 
@@ -5275,13 +5402,15 @@ class Database
      * ```
      *
      * @used-by modifyOrThrow()
+     * @used-by modifyIgnore()
+     * @used-by modifyConditionally()
      *
      * @codeCoverageIgnore カバレッジは sqlite だけで完結したい（mysql は毎回走らせてるので大丈夫でしょう）
      *
      * @param string|array $tableName テーブル名
      * @param mixed $insertData INSERT データ配列
      * @param mixed $updateData UPDATE データ配列
-     * @return int|Statement affected rows. if update return 0 or 2, else insert return 1
+     * @return int|array|Statement affected rows. if update return 0 or 2, else insert return 1
      */
     public function modify($tableName, $insertData, $updateData = [])
     {
@@ -5313,15 +5442,43 @@ class Database
 
         $params = [];
         $sets1 = $this->bindInto($insertData, $params);
+        $condition = array_get($opt, 'where');
+        if (is_array($condition)) {
+            $condition = $this->selectNotExists($tableName, $condition);
+        }
+        if ($condition instanceof Queryable) {
+            $condition = $condition->merge($params);
+        }
         $sets2 = $this->bindInto($updateData, $params);
 
         $pkname = $this->getSchema()->getTablePrimaryKey($tableName)->getName();
-        $sql = $this->getCompatiblePlatform()->getMergeSQL($tableName, $sets1, $sets2, $pkname);
+
+        $cplatform = $this->getCompatiblePlatform();
+        $ignore = array_get($opt, 'ignore') ? $cplatform->getIgnoreSyntax() . ' ' : '';
+        $sql = "INSERT {$ignore}INTO $tableName ";
+        if ($condition !== null) {
+            $fromDual = concat(' FROM ', $cplatform->getDualTable());
+            $sql .= sprintf("(%s) SELECT %s$fromDual WHERE $condition", implode(', ', array_keys($sets1)), implode(', ', $sets1));
+        }
+        elseif ((!$cplatform->supportsInsertSet() || !$this->getUnsafeOption('insertSet'))) {
+            $sql .= sprintf("(%s) VALUES (%s)", implode(', ', array_keys($sets1)), implode(', ', $sets1));
+        }
+        else {
+            $sql .= "SET " . array_sprintf($sets1, '%2$s = %1$s', ', ');
+        }
+        $sql .= ' ' . $this->getCompatiblePlatform()->getMergeSQL($sets2, $pkname);
         $affected = $this->executeUpdate($sql, $params);
-        if (array_get($opt, 'throw')) {
-            if ($affected === 0) {
-                throw new NonAffectedException('affected row is nothing.');
-            }
+        if (!is_int($affected)) {
+            return $affected;
+        }
+
+        if ($affected === 0 && array_get($opt, 'throw')) {
+            throw new NonAffectedException('affected row is nothing.');
+        }
+        if ($affected === 0 && array_get($opt, 'primary') === 2) {
+            return [];
+        }
+        if (array_get($opt, 'primary')) {
             return $this->_postaffect($tableName, $updatable ? $updateData : $insertData);
         }
         return $affected;
@@ -5346,7 +5503,7 @@ class Database
      *
      * @param string|array $tableName テーブル名
      * @param mixed $data REPLACE データ配列
-     * @return int|Statement affected rows. if update return 0 or 2, else insert return 1
+     * @return int|array|Statement affected rows. if update return 0 or 2, else insert return 1
      */
     public function replace($tableName, $data)
     {
@@ -5374,9 +5531,15 @@ class Database
         $sql .= "LEFT JOIN $tableName ON " . ($criteria ? implode(' AND ', Adhoc::wrapParentheses($criteria)) : '1=0');
 
         $affected = $this->executeUpdate($sql, $params);
-        if (array_get($opt, 'throw')) {
-            // REPLACE が 0 を返すことはない
-            // if ($affected === 0) throw new NonAffectedException('affected row is nothing.');
+        if (!is_int($affected)) {
+            return $affected;
+        }
+
+        /** @noinspection PhpStatementHasEmptyBodyInspection REPLACE が 0 を返すことはない */
+        if ($affected === 0 && array_get($opt, 'throw')) {
+            // throw new NonAffectedException('affected row is nothing.');
+        }
+        if (array_get($opt, 'primary')) {
             return $this->_postaffect($tableName, $data);
         }
         return $affected;

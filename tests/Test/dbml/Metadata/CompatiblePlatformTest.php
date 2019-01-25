@@ -249,6 +249,17 @@ class CompatiblePlatformTest extends \ryunosuke\Test\AbstractUnitTestCase
      * @param CompatiblePlatform $cplatform
      * @param AbstractPlatform $platform
      */
+    function test_getDualTable($cplatform, $platform)
+    {
+        $expected = $platform instanceof MySqlPlatform ? 'dual' : '';
+        $this->assertEquals($expected, $cplatform->getDualTable());
+    }
+
+    /**
+     * @dataProvider providePlatform
+     * @param CompatiblePlatform $cplatform
+     * @param AbstractPlatform $platform
+     */
     function test_getFoundRowsOption($cplatform, $platform)
     {
         $expected = $platform instanceof MySqlPlatform ? 'SQL_CALC_FOUND_ROWS' : '';
@@ -275,21 +286,21 @@ class CompatiblePlatformTest extends \ryunosuke\Test\AbstractUnitTestCase
     {
         $expected = false;
         if ($platform instanceof MySqlPlatform) {
-            $expected = 'INSERT INTO tbl SET c1 = 1, c2 = 2 ON DUPLICATE KEY UPDATE c1 = 3, c2 = 4';
+            $expected = 'ON DUPLICATE KEY UPDATE c1 = 3, c2 = 4';
         }
         if ($platform instanceof PostgreSqlPlatform) {
-            $expected = 'INSERT INTO tbl (c1, c2) VALUES (1, 2) ON CONFLICT ON CONSTRAINT PK DO UPDATE SET c1 = 3, c2 = 4';
+            $expected = 'ON CONFLICT ON CONSTRAINT PK DO UPDATE SET c1 = 3, c2 = 4';
         }
-        $this->assertEquals($expected, $cplatform->getMergeSQL('tbl', ['c1' => 1, 'c2' => 2], ['c1' => 3, 'c2' => 4], 'PK'));
+        $this->assertEquals($expected, $cplatform->getMergeSQL(['c1' => 3, 'c2' => 4], 'PK'));
 
         $expected = false;
         if ($platform instanceof MySqlPlatform) {
-            $expected = 'INSERT INTO tbl SET c1 = 1, c2 = 2 ON DUPLICATE KEY UPDATE c1 = 3, c2 = 4';
+            $expected = 'ON DUPLICATE KEY UPDATE c1 = 3, c2 = 4';
         }
         if ($platform instanceof PostgreSqlPlatform) {
-            $expected = 'INSERT INTO tbl (c1, c2) VALUES (1, 2) ON CONFLICT ON CONSTRAINT (col1,col2) DO UPDATE SET c1 = 3, c2 = 4';
+            $expected = 'ON CONFLICT ON CONSTRAINT (col1,col2) DO UPDATE SET c1 = 3, c2 = 4';
         }
-        $this->assertEquals($expected, $cplatform->getMergeSQL('tbl', ['c1' => 1, 'c2' => 2], ['c1' => 3, 'c2' => 4], ['col1', 'col2']));
+        $this->assertEquals($expected, $cplatform->getMergeSQL(['c1' => 3, 'c2' => 4], ['col1', 'col2']));
     }
 
     /**

@@ -219,6 +219,52 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
             $this->assertException($ex, L($database)->upsertOrThrow('test', ['id' => 9, 'name' => 'i', 'data' => '']));
         }
 
+        // affectConditionally
+        $database->truncate('noauto');
+        $this->assertEquals(['id' => 'a'], $database->insertConditionally('noauto', ['id' => ''], ['id' => 'a', 'name' => 'hoge']));
+        $this->assertEquals(['id' => 'b'], $database->upsertConditionally('noauto', ['id' => ''], ['id' => 'b', 'name' => 'fuga']));
+        $this->assertEquals(['id' => 'c'], $database->modifyConditionally('noauto', ['id' => ''], ['id' => 'c', 'name' => 'piyo']));
+        $this->assertEquals([], $database->insertConditionally('noauto', ['id' => 'a'], ['id' => 'a', 'name' => 'hoge']));
+        $this->assertEquals([], $database->upsertConditionally('noauto', ['id' => 'b'], ['id' => 'b', 'name' => 'fuga']));
+        $this->assertEquals([], $database->modifyConditionally('noauto', ['id' => 'c'], ['id' => 'c', 'name' => 'piyo']));
+
+        // affectIgnore
+        if ($database->getCompatiblePlatform()->supportsIgnore()) {
+            $database->truncate('noauto');
+            $database->insert('noauto', ['id' => 'x', 'name' => '']);
+            $this->assertEquals(['id' => 'a'], $database->insertIgnore('noauto', ['id' => 'a', 'name' => 'hoge']));
+            $this->assertEquals(['id' => 'a'], $database->updateIgnore('noauto', ['name' => 'fuga'], ['id' => 'a']));
+            $this->assertEquals(['id' => 'a'], $database->modifyIgnore('noauto', ['id' => 'a', 'name' => 'piyo']));
+            $this->assertEquals([], $database->insertIgnore('noauto', ['id' => 'x']));
+            $this->assertEquals([], $database->updateIgnore('noauto', ['id' => 'x'], ['id' => 'a']));
+            $this->assertEquals([], $database->modifyIgnore('noauto', ['id' => 'x'], ['id' => 'a']));
+
+            $database->import([
+                'foreign_p' => [
+                    [
+                        'id'         => 1,
+                        'name'       => 'P1',
+                        'foreign_c1' => [],
+                    ],
+                    [
+                        'id'         => 2,
+                        'name'       => 'P2',
+                        'foreign_c1' => [['seq' => 1, 'name' => 'C']],
+                    ],
+                ],
+            ]);
+
+            // for coverage
+            $this->assertEquals([], $database->delete('foreign_c1', ['id' => -1], ['primary' => 2]));
+            $this->assertEquals([], $database->remove('foreign_c1', ['id' => -1], ['primary' => 2]));
+            $this->assertEquals([], $database->destroy('foreign_c1', ['id' => -1], ['primary' => 2]));
+
+            if ($database->getPlatform() instanceof MySqlPlatform) {
+                $this->assertEquals(['id' => 1], $database->deleteIgnore('foreign_p', ['id' => 1]));
+                $this->assertEquals([], $database->deleteIgnore('foreign_p', ['id' => 2]));
+            }
+        }
+
         // テーブル記法＋OrThrowもきちんと動くことを担保
         if ($database->getCompatiblePlatform()->supportsIdentityUpdate()) {
             $this->assertEquals(['id' => 199], $database->insertOrThrow('test.id', 199));
@@ -236,6 +282,7 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
 
         // 引数が足りない
         $this->assertException(new \InvalidArgumentException('too short'), L($database)->insertOrThrow('test'));
+        $this->assertException(new \InvalidArgumentException('too short'), L($database)->insertConditionally('test', []));
     }
 
     /**
@@ -3012,6 +3059,32 @@ ON DUPLICATE KEY UPDATE id = VALUES(id), name = VALUES(name)", $affected);
      * @dataProvider provideDatabase
      * @param Database $database
      */
+    function test_insertConditionally($database)
+    {
+        $result = $database->insertConditionally('test', ['id' => 1], [
+            'id'   => 1,
+            'name' => 'a',
+        ]);
+        $this->assertEquals([], $result);
+
+        $result = $database->insertConditionally('test', ['id' => 100], [
+            'id'   => 100,
+            'name' => 'zzz',
+        ]);
+        $this->assertEquals(['id' => 100], $result);
+
+        $sql = $database->dryrun()->insertConditionally('test', ['id' => 1], [
+            'id'   => 1,
+            'name' => 'a',
+        ]);
+        $this->assertContains('INSERT INTO test (id, name) SELECT', $sql);
+        $this->assertContains('WHERE (NOT EXISTS (SELECT * FROM test WHERE id =', $sql);
+    }
+
+    /**
+     * @dataProvider provideDatabase
+     * @param Database $database
+     */
     function test_insert_column($database)
     {
         // 1カラム
@@ -3820,6 +3893,31 @@ ON DUPLICATE KEY UPDATE id = VALUES(id), name = VALUES(name)", $affected);
      * @dataProvider provideDatabase
      * @param Database $database
      */
+    function test_upsertConditionally($database)
+    {
+        $result = $database->upsertConditionally('test', ['id' => 1], [
+            'id'   => 1,
+            'name' => 'a',
+        ]);
+        $this->assertEquals([], $result);
+
+        $result = $database->upsertConditionally('test', ['id' => 100], [
+            'id'   => 100,
+            'name' => 'zzz',
+        ]);
+        $this->assertEquals(['id' => 100], $result);
+
+        $result = $database->upsertConditionally('test', ['id' => -1], [
+            'id'   => 10,
+            'name' => 'zzz',
+        ]);
+        $this->assertEquals(['id' => 10], $result);
+    }
+
+    /**
+     * @dataProvider provideDatabase
+     * @param Database $database
+     */
     function test_modify($database)
     {
         $database->modify('test', ['name' => 'newN', 'data' => 'newD']);
@@ -3864,6 +3962,41 @@ ON DUPLICATE KEY UPDATE id = VALUES(id), name = VALUES(name)", $affected);
             $this->assertEquals(['id' => 101], $primary);
             $primary = $database->modifyOrThrow('test', ['id' => $database->select(['test T' => 'id'], ['id' => 1]), 'name' => 'modify4_2']);
             $this->assertEquals(['id' => 1], $primary);
+        }
+    }
+
+    /**
+     * @dataProvider provideDatabase
+     * @param Database $database
+     */
+    function test_modifyConditionally($database)
+    {
+        $result = $database->modifyConditionally('test', ['id' => 1], [
+            'id'   => 1,
+            'name' => 'a',
+        ]);
+        $this->assertEquals([], $result);
+
+        $result = $database->modifyConditionally('test', ['id' => 100], [
+            'id'   => 100,
+            'name' => 'zzz',
+        ]);
+        $this->assertEquals(['id' => 100], $result);
+
+        $result = $database->modifyConditionally('test', ['id' => -1], [
+            'id'   => 10,
+            'name' => 'zzz',
+        ]);
+        $this->assertEquals(['id' => 10], $result);
+
+        if ($database->getPlatform() instanceof MySqlPlatform) {
+            $sql = $database->dryrun()->modifyConditionally('test', ['id' => -1], [
+                'id'   => 10,
+                'name' => 'zzz',
+            ]);
+            $this->assertContains('INSERT INTO test (id, name) SELECT', $sql);
+            $this->assertContains('WHERE (NOT EXISTS (SELECT * FROM test WHERE id =', $sql);
+            $this->assertContains('ON DUPLICATE KEY UPDATE id = VALUES(id), name = VALUES(name)', $sql);
         }
     }
 
