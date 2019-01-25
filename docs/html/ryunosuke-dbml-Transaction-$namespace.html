@@ -61,7 +61,7 @@
 							<span class="label label-info"></span>
 							<span class="label label-info"></span>
 							<span class="label label-deprecated"></span>
-                            			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction/Transaction.php#L14-L569" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                            			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction/Transaction.php#L15-L594" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
             						</div>
 						<h4 id="ryunosuke\dbml\Transaction\Transaction" tabindex="-1" class="structure-title ">
 							<a href="ryunosuke-dbml-Transaction-Transaction$typespace.html#ryunosuke\dbml\Transaction\Transaction">Transaction</a>
@@ -98,31 +98,34 @@ $tx-&gt;perform(); // =3
 なお、イベント名は文字列でも良い。その場合の順番は SORT_REGULAR に従う。</p>
 <p>イベントの種類は下記。</p>
 <ul>
+<li>トランザクションのそれぞれのイベント<ul>
 <li>begin(\Closure(Connection $c))</li>
 <li>commit(\Closure(Connection $c))</li>
-<li>rollback(\Closure(Connection $c))<ul>
-<li>トランザクションのそれぞれのイベント</li>
+<li>rollback(\Closure(Connection $c))</li>
 </ul>
 </li>
-<li>main(\Closure(Database $db, $prev_return))<ul>
-<li>トランザクションのメイン処理</li>
+<li>トランザクションのメイン処理<ul>
+<li>main(\Closure(Database $db, $prev_return))</li>
 </ul>
 </li>
-<li>fail(\Closure(Expcetion $exception))<ul>
-<li>トランザクション失敗時のイベント</li>
-<li>リトライ時はトランザクションのたびに実行される</li>
+<li>トランザクション失敗時のイベント（リトライ時はトランザクションのたびに実行される）<ul>
+<li>fail(\Closure(Expcetion $exception))</li>
 </ul>
 </li>
-<li>done(\Closure(mixed $return))<ul>
-<li>トランザクション完了時のイベント</li>
+<li>トランザクション完了時のイベント<ul>
+<li>done(\Closure(mixed $return))</li>
 </ul>
 </li>
-<li>retry(\Closure(int $retryCount))<ul>
-<li>トランザクションリトライ時のイベント</li>
+<li>トランザクションリトライ時のイベント<ul>
+<li>retry(\Closure(int $retryCount))</li>
 </ul>
 </li>
-<li>finish()<ul>
-<li>処理完了時のイベント (リトライに依らず常に1回のみコール)</li>
+<li>処理失敗時のイベント (リトライに依らず常に1回のみコール)<ul>
+<li>catch(Expcetion $exception)</li>
+</ul>
+</li>
+<li>処理完了時のイベント (リトライに依らず常に1回のみコール)<ul>
+<li>finish()</li>
 </ul>
 </li>
 </ul>
@@ -147,6 +150,7 @@ $tx-&gt;perform(); // =3
 </li>
 <li>rollback</li>
 <li>fail</li>
+<li>catch</li>
 <li>finish</li>
 </ul>
 </li>
@@ -183,6 +187,7 @@ $tx-&gt;perform(); // =3
 </li>
 <li>rollback</li>
 <li>fail</li>
+<li>catch</li>
 <li>finish</li>
 </ul>
 </li>

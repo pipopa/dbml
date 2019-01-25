@@ -516,7 +516,7 @@ $db-&gt;insert('t_article', [
 							<span class="label label-info"></span>
 							<span class="label label-info"></span>
 							<span class="label label-deprecated"></span>
-                            			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Database.php#L41-L5514" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                            			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Database.php#L41-L5759" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
             						</div>
 						<h4 id="ryunosuke\dbml\Database" tabindex="-1" class="structure-title ">
 							<a href="ryunosuke-dbml-Database$typespace.html#ryunosuke\dbml\Database">Database</a>
@@ -588,6 +588,13 @@ ForUpdate を付与すると SELECT クエリに排他ロック構文が付与�
 この動作が望ましくない場合は <code>PDO::MYSQL_ATTR_FOUND_ROWS = true</code> を使用する。</p>
 <p>[update/delete]OrThrow の戻り値は主キーだが、複数行に作用した場合は未定義となる（['id' =&gt; 3] で update/delete した場合は 3 を返せるが、['create_at &lt; ?' =&gt; '2011-12-34'] といった場合は返しようがないため）。<br />
 そもそも「更新/削除できなかったら例外」という挙動が必要なケースはほぼ無いためこれらの用途はほとんどなく、単に他のメソッドとの統一のために存在している。</p>
+<p><strong>Ignore</strong></p>
+<p>[insert, updert, modify, delete, remove, destroy] メソッドのみに付与できる。<br />
+RDBMS に動作は異なるが、 <code>INSERT IGNORE</code> のようなクエリが発行される。</p>
+<p><strong>Conditionally</strong></p>
+<p>[insert, upsert, modify] メソッドのみに付与できる。<br />
+条件付き insert となり、「insert された場合にその主キー」を「されなかった場合に空配列」を返す。<br />
+最も多いユースケースとしては「行がないなら insert」だろう。</p>
 <h3>エスケープ</h3>
 <p>識別子のエスケープは一切面倒をみない。外部入力を識別子にしたい（テーブル・カラムを外部指定するとか）場合は自前でエスケープすること。<br />
 値のエスケープに関しては基本的には安全側に倒しているが、 <tag_link data-kind='fqsen' data-type-category='class' data-type-fqsen='ryunosuke\dbml\Query\Expression\Expression' data-type-array='0' data-description='Expression'>Expression</tag_link> を使用する場合はその前提が崩れる事がある（ <code>()</code> を含むエントリは自動で Expression 化されるので同じ）。<br />
