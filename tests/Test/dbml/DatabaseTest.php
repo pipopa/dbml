@@ -2416,6 +2416,17 @@ CSV
             ['id' => '1', 'name' => 'あああ', 'cint' => null, 'cfloat' => null, 'cdecimal' => null,],
         ], $database->selectArray('nullable'));
 
+        // dryrun
+        file_put_contents($csvfile, '1,name1,1.11');
+        $this->assertEquals("INSERT INTO nullable (id, name, cdecimal, cfloat) VALUES ('1', 'direct', NULL, '1.23')", $database->dryrun()->loadCsv([
+            'nullable' => [
+                'id',
+                'name'     => 'direct', // 範囲内直指定
+                'cdecimal' => null,
+                'cfloat'   => 1.23,     // 範囲外直指定
+            ],
+        ], $csvfile));
+
         // カバレッジのために SQL 検証はしておく（実際のテストはすぐ↓）
         if ($database->getPlatform() instanceof \ryunosuke\Test\Platforms\SqlitePlatform) {
             $sql = $database->dryrun()->loadCsv([

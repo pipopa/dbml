@@ -4125,7 +4125,7 @@ class Database
      * @param string|array $tableName テーブル名 or テーブル記法
      * @param string $filename CSV ファイル名
      * @param array $options CSV オプション
-     * @return int affected row
+     * @return int|string|string[]|Statement 基本的には affected row. dryrun 中は文字列、preparing 中は Statement
      */
     public function loadCsv($tableName, $filename, $options = [])
     {
@@ -4206,7 +4206,7 @@ class Database
             $colnames = array_filter(array_keys(Adhoc::to_hash($columns)), 'strlen');
             $template = "INSERT INTO $tableName (%s) VALUES %s";
 
-            $affected = 0;
+            $affected = [];
             $n = 0;
             $values = $params = [];
             $current = mb_internal_encoding();
@@ -4251,7 +4251,7 @@ class Database
 
                 if (++$n === $options['chunk']) {
                     $sql = sprintf($template, implode(', ', $colnames), implode(', ', $values));
-                    $affected += $this->executeUpdate($sql, $params);
+                    $affected[] = $this->executeUpdate($sql, $params);
                     $n = 0;
                     $values = $params = [];
                 }
@@ -4259,9 +4259,12 @@ class Database
 
             if ($values) {
                 $sql = sprintf($template, implode(', ', $colnames), implode(', ', $values));
-                $affected += $this->executeUpdate($sql, $params);
+                $affected[] = $this->executeUpdate($sql, $params);
             }
-            return $affected;
+            if ($this->getUnsafeOption('dryrun') || $this->getUnsafeOption('preparing')) {
+                return $options['chunk'] ? $affected : reset($affected);
+            }
+            return array_sum($affected);
         }
     }
 
