@@ -3029,6 +3029,26 @@ INNER JOIN t_leaf ON (t_leaf.leaf_root_id = t_root.root_id) AND (t_leaf.leaf_roo
         $this->assertEquals('MIN(test.id) AS test.id@min', $selects[0]);
         $this->assertEquals('MAX(test.id) AS test.id@max', $selects[1]);
 
+        $builder->reset()->column('test')->aggregate([
+            'year_2016' => 'SUM(YEAR(login_at) = "2016")',
+            'year_2017' => new Expression('SUM(YEAR(login_at) = ?)', '2017'),
+            'year_2018' => ['SUM(YEAR(login_at) = ?)' => '2018'],
+        ]);
+        $selects = $builder->getQueryPart('select');
+        $this->assertEquals('SUM(YEAR(login_at) = "2016") AS year_2016', $selects[0]);
+        $this->assertEquals('SUM(YEAR(login_at) = ?) AS year_2017', $selects[1]);
+        $this->assertEquals('SUM(YEAR(login_at) = ?) AS year_2018', $selects[2]);
+        $this->assertEquals([2017, 2018], $builder->getParams());
+
+        $builder->reset()->column('test')->aggregate([
+            'SUM(YEAR(login_at) = ?)' => [2016, 2017, 'x' => 2018],
+        ]);
+        $selects = $builder->getQueryPart('select');
+        $this->assertEquals('SUM(YEAR(login_at) = ?) AS  2016', $selects[0]);
+        $this->assertEquals('SUM(YEAR(login_at) = ?) AS  2017', $selects[1]);
+        $this->assertEquals('SUM(YEAR(login_at) = ?) AS x', $selects[2]);
+        $this->assertEquals([2016, 2017, 2018], $builder->getParams());
+
         $this->assertException(new \InvalidArgumentException('is empty'), L($builder->column('test'))->aggregate([]));
         $this->assertException(new \InvalidArgumentException('length is over 1'), L($builder->column('test.id,name'))->aggregate('count', 1));
     }

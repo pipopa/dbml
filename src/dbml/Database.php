@@ -3508,9 +3508,13 @@ class Database
     /**
      * 集約を実行する
      *
-     * - 取得列が1つの場合は value 相当（スカラー値を返す）
-     * - 取得列が2つの場合は pairs 相当（キーペアを返す）
-     * - 取得列がそれ以上の場合は assoc 相当（連想配列を返す）
+     * - 集約列が0個
+     *   - 取得列が1個のみ：value 相当（スカラー値を返す）
+     *   - 取得列が2個以上：tuple 相当（連想配列を返す）
+     * - 集約列が1個
+     *   - 取得列が1個のみ：pairs 相当（キーペアを返す）
+     *   - 取得列が2個以上：assoc 相当（連想配列の連想配列を返す）
+     * - 上記以外： array 相当（連想配列の配列を返す）
      *
      * ```php
      * // t_table.group_id の COUNT がスカラー値で得られる
@@ -3540,6 +3544,35 @@ class Database
      * $db->sum('t_table.id,score', ['id < 10'], ['group_id'], ['score@sum >= 5']);
      * ```
      *
+     * 特殊な使い方として $aggregate に連想配列を渡すとクロス集計ができる。
+     * これはこのメソッドのかなり特異な使い方で、そういったことがしたい場合は普通にクエリビルダや生クエリでも実行できるはず。
+     *
+     * ```php
+     * # t_login テーブルから user_id ごとの2016～2018年度月次集計を返す
+     * $db->aggregate([
+     *     'year_2016' => 'SUM(YEAR(login_at) = "2016")',              // 文字列でも良いがインジェクションの危険アリ
+     *     'year_2017' => $db->raw('SUM(YEAR(login_at) = ?)', '2017'), // 普通は raw で Expression を渡す
+     *     'year_2018' => ['SUM(YEAR(login_at) = ?)' => '2018'],       // 配列を渡すと自動で Expression 化される
+     * ], 't_login', ['login_at:[~)' => ['2016-01-01', '2019-01-01']], 'user_id');
+     * // SELECT
+     * //     user_id,
+     * //     SUM(YEAR(login_at) = "2016") AS `year_2016`,
+     * //     SUM(YEAR(login_at) = "2017") AS `year_2017`,
+     * //     SUM(YEAR(login_at) = "2018") AS `year_2018`
+     * // FROM
+     * //     t_login
+     * // WHERE
+     * //     login_at >= "2016-01-01" AND login_at < "2019-01-01"
+     * // GROUP BY
+     * //     user_id
+     *
+     * # 上記は式が同じで値のみ異なるので省略記法が存在する
+     * $db->aggregate([
+     *     'SUM(YEAR(login_at) = ?)' => ['2016', '2017', '2018'],
+     * ], 't_login', ['login_at:[~)' => ['2016-01-01', '2019-01-01']], 'user_id');
+     * // 生成される SQL は同じ
+     * ```
+     *
      * @used-by count()
      * @used-by min()
      * @used-by max()
@@ -3567,14 +3600,21 @@ class Database
         };
 
         $selectCount = count($builder->getQueryPart('select'));
-        if ($selectCount === 1) {
-            return var_apply($stmt->fetch(\PDO::FETCH_COLUMN), $cast);
+        $groupCount = count($builder->getQueryPart('groupBy'));
+        if ($groupCount === 0 && $selectCount === 1) {
+            return var_apply($stmt->fetch(\PDO::FETCH_COLUMN), $cast); // value
         }
-        elseif ($selectCount === 2) {
-            return var_apply($stmt->fetchAll(\PDO::FETCH_COLUMN | \PDO::FETCH_UNIQUE), $cast);
+        elseif ($groupCount === 0 && $selectCount >= 2) {
+            return var_apply($stmt->fetch(\PDO::FETCH_ASSOC), $cast); // tuple
+        }
+        elseif ($groupCount === 1 && $selectCount === 2) {
+            return var_apply($stmt->fetchAll(\PDO::FETCH_COLUMN | \PDO::FETCH_UNIQUE), $cast); // pairs
+        }
+        elseif ($groupCount === 1 && $selectCount >= 3) {
+            return var_apply($stmt->fetchAll(\PDO::FETCH_ASSOC | \PDO::FETCH_UNIQUE), $cast); // assoc
         }
         else {
-            return var_apply($stmt->fetchAll(\PDO::FETCH_ASSOC | \PDO::FETCH_UNIQUE), $cast);
+            return var_apply($stmt->fetchAll(\PDO::FETCH_ASSOC), $cast); // array
         }
     }
 

@@ -23,6 +23,7 @@ use ryunosuke\dbml\Transaction\Transaction;
 use ryunosuke\Test\Database;
 use ryunosuke\Test\Entity\Article;
 use ryunosuke\Test\Entity\Comment;
+use function ryunosuke\dbml\array_order;
 use function ryunosuke\dbml\mkdir_p;
 use function ryunosuke\dbml\rm_rf;
 
@@ -4714,6 +4715,24 @@ ORDER BY T.id DESC, name ASC
                 'aggregate.name@count' => 2,
             ],
         ], $database->aggregate('count', 'aggregate.id, name', ['id > 5'], ['group_id1'], ['count(aggregate.id) > 1']));
+
+        // 自由モード
+        $this->assertEquals([
+            'a' => 1,
+            'b' => 2,
+        ], $database->aggregate([
+            'a' => ['? + 1' => 0],
+            'b' => ['? + 1' => 1],
+        ], 'test'));
+
+        $this->assertEquals([
+            ['id' => 1, 'name' => 'a', 'a' => 1],
+            ['id' => 2, 'name' => 'b', 'a' => 1],
+            ['id' => 3, 'name' => 'c', 'a' => 1],
+            ['id' => 4, 'name' => 'd', 'a' => 1],
+        ], array_order((array) $database->aggregate([
+            '? + 1' => ['a' => 0],
+        ], 'test', ['id < 5'], ['id', 'name']), ['id' => true]));
 
         // 数値以外
         $this->assertEquals('a', $database->aggregate('min', 'test.name'));

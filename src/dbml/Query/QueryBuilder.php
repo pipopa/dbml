@@ -36,6 +36,7 @@ use function ryunosuke\dbml\arrayize;
 use function ryunosuke\dbml\concat;
 use function ryunosuke\dbml\first_keyvalue;
 use function ryunosuke\dbml\first_value;
+use function ryunosuke\dbml\is_hasharray;
 use function ryunosuke\dbml\optional;
 use function ryunosuke\dbml\preg_splice;
 use function ryunosuke\dbml\rbind;
@@ -2683,6 +2684,29 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
     {
         // 集約クエリで主キー順に意味は無い
         $this->setAutoOrder(false);
+
+        // $aggregations が連想配列の場合は自由モード（かなりの制約がなくなるモード）
+        if (is_array($aggregations) && is_hasharray($aggregations)) {
+            // @todo ビルダーの数値判定をごまかすためにスペースを付与している（キモいのでなんとかしたい）
+            $columns = $this->sqlParts['groupBy'];
+            foreach ($aggregations as $cond => $vals) {
+                if (strpos($cond, '?') !== false) {
+                    foreach (arrayize($vals) as $k => $v) {
+                        $v = arrayize($v);
+                        $cname = is_int($k) ? implode($this->getPrimarySeparator(), $v) : $k;
+                        $columns[ctype_digit("$cname") ? " $cname" : $cname] = $this->database->raw($cond, $v);
+                    }
+                }
+                else {
+                    if (is_array($vals)) {
+                        list($k, $v) = first_keyvalue($vals);
+                        $vals = $this->database->raw($k, $v);
+                    }
+                    $columns[is_int($cond) ? " $cond" : $cond] = $vals;
+                }
+            }
+            return $this->select($columns)->_dirty();
+        }
 
         // カラムとタプルのセットを取得しておく
         $fields = $this->sqlParts['select'] ?: ['*'];
