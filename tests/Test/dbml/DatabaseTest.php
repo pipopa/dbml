@@ -278,6 +278,13 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
         $this->assertInstanceOf('ryunosuke\\dbml\\Gateway\\TableGateway', $database->test());
         $this->assertInstanceOf('ryunosuke\\dbml\\Gateway\\TableGateway', $database->Comment('*'));
 
+        // 基本的には Gateway を返す。ただし数値のときは find になる
+        $this->assertEquals([
+            'id'   => '4',
+            'name' => 'd',
+            'data' => '',
+        ], $database->test(4));
+
         // H は存在しないはず
         $this->assertException(new \BadMethodCallException(), [$database, 'selectH'], 'hoge');
 

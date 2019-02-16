@@ -819,10 +819,14 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
      *
      * @inheritdoc scoping()
      *
-     * @return $this JOIN先 Geteway
+     * @return $this|array|Entityable|mixed レコード・カラム値・JOIN先 Geteway
      */
     public function __invoke($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
     {
+        if (filter_var($tableDescriptor, \FILTER_VALIDATE_INT) !== false) {
+            return $this->find($tableDescriptor);
+        }
+
         $args = func_get_args();
         if ($args) {
             $this->scoping(...$args);

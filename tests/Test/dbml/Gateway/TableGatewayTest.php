@@ -59,6 +59,25 @@ class TableGatewayTest extends \ryunosuke\Test\AbstractUnitTestCase
      * @dataProvider provideGateway
      * @param TableGateway $gateway
      */
+    function test___invoke($gateway)
+    {
+        /// 基本的には magic join. ただし数値のときは find になる
+
+        $this->assertEquals([
+            'id'   => '2',
+            'name' => 'b',
+            'data' => '',
+        ], $gateway(2));
+
+        $this->assertEquals([
+            'name' => 'c',
+        ], $gateway->column('name')(3));
+    }
+
+    /**
+     * @dataProvider provideGateway
+     * @param TableGateway $gateway
+     */
     function test_offsetExists($gateway)
     {
         $this->assertTrue(isset($gateway['id']));
