@@ -4,12 +4,14 @@ namespace ryunosuke\dbml\Query\Expression;
 
 use ryunosuke\dbml\Metadata\CompatiblePlatform;
 use ryunosuke\dbml\Query\Queryable;
+use ryunosuke\dbml\Utility\Adhoc;
 use function ryunosuke\dbml\array_depth;
 use function ryunosuke\dbml\array_each;
 use function ryunosuke\dbml\array_flatten;
 use function ryunosuke\dbml\array_nmap;
 use function ryunosuke\dbml\arrayize;
 use function ryunosuke\dbml\first_keyvalue;
+use function ryunosuke\dbml\is_iterable;
 use function ryunosuke\dbml\str_subreplace;
 use const ryunosuke\dbml\strcat;
 
@@ -336,12 +338,19 @@ class Operator implements Queryable
         }
         $this->operand2 = array_values($this->operand2);
         $cond = array_each([$op1, $op2], function (&$carry, $op, $k) {
-            if (strlen($this->operand2[$k])) {
-                $carry[$this->operand1 . " $op ?"] = $this->operand2[$k];
+            $operand = $this->operand2[$k];
+            if (!Adhoc::is_empty($operand)) {
+                if (is_iterable($operand)) {
+                    $placeholder = implode(',', array_fill(0, count($operand), '?'));
+                    $carry[$this->operand1 . " $op ($placeholder)"] = $operand;
+                }
+                else {
+                    $carry[$this->operand1 . " $op ?"] = $operand;
+                }
             }
         }, []);
         $this->string = implode(' AND ', array_keys($cond));
-        $this->params = array_values($cond);
+        $this->params = array_flatten($cond);
     }
 
     /**

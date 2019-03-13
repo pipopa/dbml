@@ -206,6 +206,18 @@ class OperatorTest extends \ryunosuke\Test\AbstractUnitTestCase
             $this->assertOperator("", [], $operator);
             $this->assertOperator("", [], $operator->not());
 
+            $operator = new Operator(self::$platform, $ope, '(a, b)', [[1, 2], [3, 4]]);
+            $this->assertOperator("(a, b) $ope1 (?,?) AND (a, b) $ope2 (?,?)", [1, 2, 3, 4], $operator);
+            $this->assertOperator("NOT ((a, b) $ope1 (?,?) AND (a, b) $ope2 (?,?))", [1, 2, 3, 4], $operator->not());
+
+            $operator = new Operator(self::$platform, $ope, '(a, b)', [[1, 2], []]);
+            $this->assertOperator("(a, b) $ope1 (?,?)", [1, 2], $operator);
+            $this->assertOperator("NOT ((a, b) $ope1 (?,?))", [1, 2], $operator->not());
+
+            $operator = new Operator(self::$platform, $ope, '(a, b)', [null, [3, 4]]);
+            $this->assertOperator("(a, b) $ope2 (?,?)", [3, 4], $operator);
+            $this->assertOperator("NOT ((a, b) $ope2 (?,?))", [3, 4], $operator->not());
+
             $this->assertException('array length 2', L(new Operator(self::$platform, $ope, 'a', [1]))->getQuery());
         }
     }
