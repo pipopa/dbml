@@ -258,6 +258,31 @@ class TransactionTest extends \ryunosuke\Test\AbstractUnitTestCase
      * @param Transaction $transaction
      * @param Database $database
      */
+    function test_catch_finish($transaction, $database)
+    {
+        $receiver = [];
+        $transaction->main(function () {
+            throw new \Exception('error');
+        });
+        $transaction->catch(function ($ex) use (&$receiver) {
+            $receiver['catch'] = $ex->getMessage();
+        });
+        $transaction->finish(function () use (&$receiver) {
+            $receiver['finish'] = true;
+        });
+        $transaction->perform(false);
+
+        $this->assertEquals([
+            'catch'  => 'error',
+            'finish' => true,
+        ], $receiver);
+    }
+
+    /**
+     * @dataProvider provideTransaction
+     * @param Transaction $transaction
+     * @param Database $database
+     */
     function test_savepoint($transaction, $database)
     {
         if (!$database->getPlatform()->supportsSavepoints()) {

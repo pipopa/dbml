@@ -1965,6 +1965,8 @@ class Database
      *
      * $options は {@link Transaction} を参照。
      *
+     * $throwable は catch で代替可能なので近い将来削除される。
+     *
      * ```php
      * // このクロージャ内の処理はトランザクション内で処理される
      * $return = $db->transact(function ($db) {
@@ -1973,13 +1975,20 @@ class Database
      * ```
      *
      * @param callable $main メイン処理
+     * @param callable $catch 例外発生時の処理。ただし後方互換性のため $options を与えても良い
      * @param array $options トランザクションオプション
      * @param bool $throwable 例外を投げるか返すか
      * @return mixed メイン処理の返り値
      */
-    public function transact($main, $options = [], $throwable = true)
+    public function transact($main, $catch = null, $options = [], $throwable = true)
     {
-        return $this->transaction($main, $options)->perform($throwable);
+        // for compatible
+        if (is_bool($options)) {
+            $throwable = $options;
+            $options = $catch;
+        }
+
+        return $this->transaction($main, $catch, $options)->perform($throwable);
     }
 
     /**
@@ -1988,13 +1997,25 @@ class Database
      * $options は {@link Transaction} を参照。
      *
      * @param callable $main メイン処理
-     * @param array|int $options トランザクションオプション
+     * @param callable $catch 例外発生時の処理。ただし後方互換性のため $options を与えても良い
+     * @param array $options トランザクションオプション
      * @return Transaction トランザクションオブジェクト
      */
-    public function transaction($main = null, $options = null)
+    public function transaction($main = null, $catch = null, $options = [])
     {
-        $tx = new Transaction($this, $options ?: []);
-        $tx->main($main);
+        // for compatible
+        if (!$catch instanceof \Closure) {
+            $options = (array) $catch;
+            $catch = null;
+        }
+
+        $tx = new Transaction($this, $options);
+        if ($main) {
+            $tx->main($main);
+        }
+        if ($catch) {
+            $tx->catch($catch);
+        }
         return $tx;
     }
 

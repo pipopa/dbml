@@ -974,6 +974,23 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
      * @dataProvider provideDatabase
      * @param Database $database
      */
+    function test_transact_compatible($database)
+    {
+        // for compatible 1.1
+        $finish = false;
+        $return = $database->transact(function (Database $db) {
+            throw new \Exception('error');
+        }, [
+            'finish' => function () use (&$finish) { $finish = true; }
+        ], false);
+        $this->assertEquals('error', $return->getMessage());
+        $this->assertEquals(true, $finish);
+    }
+
+    /**
+     * @dataProvider provideDatabase
+     * @param Database $database
+     */
     function test_transact_commit($database)
     {
         $current = $database->count('test');
@@ -1006,6 +1023,25 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
         }
 
         $this->fail();
+    }
+
+    /**
+     * @dataProvider provideDatabase
+     * @param Database $database
+     */
+    function test_transact_catch($database)
+    {
+        $current = $database->count('test');
+
+        $database->transact(function (Database $db) {
+            $db->getMasterConnection()->delete('test', [1 => 1]);
+            throw new \Exception();
+        }, function () use ($database, $current) {
+            // ロールバックされているはず
+            $this->assertEquals($current, $database->count('test'));
+        }, [], false);
+        // ↑の catch イベントが呼ばれていることを担保
+        $this->assertEquals(1, \PHPUnit\Framework\Assert::getCount());
     }
 
     /**

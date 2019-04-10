@@ -10,6 +10,7 @@ use ryunosuke\dbml\Database;
 use ryunosuke\dbml\Mixin\DebugInfoTrait;
 use ryunosuke\dbml\Mixin\OptionTrait;
 use function ryunosuke\dbml\array_set;
+use function ryunosuke\dbml\arrayize;
 
 /**
  * トランザクションを表すクラス
@@ -54,21 +55,22 @@ use function ryunosuke\dbml\array_set;
  *
  * イベントの種類は下記。
  *
- * - begin(\Closure(Connection $c))
- * - commit(\Closure(Connection $c))
- * - rollback(\Closure(Connection $c))
- *     - トランザクションのそれぞれのイベント
- * - main(\Closure(Database $db, $prev_return))
- *     - トランザクションのメイン処理
- * - fail(\Closure(Expcetion $exception))
- *     - トランザクション失敗時のイベント
- *     - リトライ時はトランザクションのたびに実行される
- * - done(\Closure(mixed $return))
- *     - トランザクション完了時のイベント
- * - retry(\Closure(int $retryCount))
- *     - トランザクションリトライ時のイベント
- * - finish()
- *     - 処理完了時のイベント (リトライに依らず常に1回のみコール)
+ * - トランザクションのそれぞれのイベント
+ *     - begin(\Closure(Connection $c))
+ *     - commit(\Closure(Connection $c))
+ *     - rollback(\Closure(Connection $c))
+ * - トランザクションのメイン処理
+ *     - main(\Closure(Database $db, $prev_return))
+ * - トランザクション失敗時のイベント（リトライ時はトランザクションのたびに実行される）
+ *     - fail(\Closure(Expcetion $exception))
+ * - トランザクション完了時のイベント
+ *     - done(\Closure(mixed $return))
+ * - トランザクションリトライ時のイベント
+ *     - retry(\Closure(int $retryCount))
+ * - 処理失敗時のイベント (リトライに依らず常に1回のみコール)
+ *     - catch(Expcetion $exception)
+ * - 処理完了時のイベント (リトライに依らず常に1回のみコール)
+ *     - finish()
  *
  * いくつかよくありそうなケースの呼び出しフローを下記に例として挙げる（ネストはトランザクションを表す）。
  *
@@ -84,6 +86,7 @@ use function ryunosuke\dbml\array_set;
  *       - main(throw)
  *   - rollback
  *   - fail
+ *   - catch
  *   - finish
  *
  * - **main が例外を投げるが、リトライで成功する例**
@@ -108,6 +111,7 @@ use function ryunosuke\dbml\array_set;
  *       - main(throw)
  *   - rollback
  *   - fail
+ *   - catch
  *   - finish
  *
  * @property int $isolationLevel トランザクション分離レベル
@@ -119,6 +123,7 @@ use function ryunosuke\dbml\array_set;
  * @property \Closure[] $done done イベント配列
  * @property \Closure[] $fail fail イベント配列
  * @property \Closure[] $retry retry イベント配列
+ * @property \Closure[] $catch catch イベント配列
  * @property \Closure[] $finish finish イベント配列
  * @property int[] $retries リトライ間隔
  * @property \Closure $retryable リトライ判定処理
@@ -144,6 +149,8 @@ use function ryunosuke\dbml\array_set;
  * @method $this           setFail(array $closure) fail イベント配列を設定する
  * @method \Closure[]      getRetry() retry イベント配列を取得する
  * @method $this           setRetry(array $closure) retry イベント配列を設定する
+ * @method \Closure[]      getCatch() catch イベント配列を取得する
+ * @method $this           setCatch(array $closure) catch イベント配列を設定する
  * @method \Closure[]      getFinish() finish イベント配列を取得する
  * @method $this           setFinish(array $closure) finish イベント配列を設定する
  * @method $this|int[]     retries($ints = null) リトライ間隔を設定・取得する
@@ -197,6 +204,8 @@ class Transaction
             'fail'           => [/* function ($exception) { }*/],
             // リトライイベント
             'retry'          => [/* function ($retryCount) { }*/],
+            // 失敗イベント
+            'catch'          => [/* function () { }*/],
             // 完了イベント
             'finish'         => [/* function () { }*/],
             // リトライ回数兼間隔
@@ -275,7 +284,7 @@ class Transaction
     {
         $args = array_slice(func_get_args(), 1);
         $last = count($args);
-        foreach ($invokers as $invoker) {
+        foreach (arrayize($invokers) as $invoker) {
             $args[$last] = $invoker(...$args);
         }
         return $args[$last] ?? null;
@@ -338,7 +347,6 @@ class Transaction
             if ($current_savepoint !== null) {
                 $connection->setNestTransactionsWithSavepoints($current_savepoint);
             }
-            $this->_invokeArray($this->finish);
         };
 
         return $finally;
@@ -477,6 +485,18 @@ class Transaction
     public function retry($callback, $key = null) { return $this->_callback(__FUNCTION__, $callback, $key); }
 
     /**
+     * catch イベントを設定する
+     *
+     * @used-by setCatch()
+     * @used-by getCatch()
+     *
+     * @param \Closure $callback catch イベント
+     * @param null $key イベント名。数値や文字列なら既存を上書き（無いなら追加）、未指定時は常に追加
+     * @return $this 自分自身
+     */
+    public function catch($callback, $key = null) { return $this->_callback(__FUNCTION__, $callback, $key); }
+
+    /**
      * finish イベントを設定する
      *
      * @used-by setFinish()
@@ -505,6 +525,8 @@ class Transaction
     /**
      * トランザクションとして実行する
      *
+     * $throwable は catch で代替可能なので近い将来削除される。
+     *
      * @param bool $throwable true を指定すると例外発生時に例外が飛ぶ。 false にすると返り値で返す
      * @return mixed トランザクションコールバックの返り値
      */
@@ -516,12 +538,14 @@ class Transaction
             return $this->_execute($this->database->getConnection(), false);
         }
         catch (\Exception $ex) {
+            $this->_invokeArray($this->catch, $ex);
             if ($throwable) {
                 throw $ex;
             }
             return $ex;
         }
         finally {
+            $this->_invokeArray($this->finish);
             $finally();
         }
     }
@@ -549,6 +573,7 @@ class Transaction
         }
         finally {
             $queries = $this->getLog();
+            $this->_invokeArray($this->finish);
             $finally();
         }
     }
