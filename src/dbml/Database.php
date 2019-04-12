@@ -3306,7 +3306,7 @@ class Database
      * 下記のような subXXX のために存在しているので、このメソッドを直接呼ぶような状況はあまり無い。
      *
      * ```php
-     * // SELECT 句での使用例
+     * # SELECT 句での使用例
      * $db->select([
      *     't_article' => [
      *         // t_article に紐づく t_comment の数を返す
@@ -3329,7 +3329,21 @@ class Database
      * //   (SELECT AVG(t_comment.comment_id) AS `t_comment.comment_id@avg` FROM t_comment WHERE t_comment.article_id = t_article.article_id) AS subavg
      * // FROM t_article
      *
-     * // WHERE 句での使用例
+     * # WHERE 句での使用例1
+     * $db->select('t_article A', [
+     *     // 「各記事でコメントが3件以上」を表す
+     *     '3 < ?' => $db->subcount('t_comment'),
+     * ]);
+     * // SELECT A.*
+     * // FROM t_article A
+     * // WHERE
+     * //   3 < (
+     * //     SELECT COUNT(*) AS `*@count`
+     * //     FROM t_comment
+     * //     WHERE t_comment.article_id = A.article_id
+     * //   )
+     *
+     * # WHERE 句での使用例2
      * $db->select('t_article A+t_comment C', [
      *     // 「各記事で最新のコメント1件と結合」を表す
      *     'C.comment_id' => $db->submax('t_comment.comment_id'),
