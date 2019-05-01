@@ -2176,4 +2176,28 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
         $sp = $this->getScopeParams([], $wheres);
         return $this->database->gather($this->tableName, $sp['where'], $other_wheres, $parentive);
     }
+
+    /**
+     * 最後に挿入した ID を返す
+     *
+     * Gateway 版の {@link Database::getLastInsertId()} 。
+     *
+     * @inheritdoc Database::getLastInsertId()
+     */
+    public function getLastInsertId($columnname = null)
+    {
+        return $this->database->getLastInsertId($this->tableName, $columnname);
+    }
+
+    /**
+     * 自動採番列をリセットする
+     *
+     * Gateway 版の {@link Database::resetAutoIncrement()} 。
+     *
+     * @inheritdoc Database::resetAutoIncrement()
+     */
+    public function resetAutoIncrement($seq = 1)
+    {
+        return $this->database->resetAutoIncrement($this->tableName, $seq);
+    }
 }

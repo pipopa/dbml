@@ -1708,4 +1708,17 @@ AND ((flag=1))", "$gw");
         $expected = $database->t_article()->as('A')->t_comment->as('C')->end();
         $this->assertEquals('SELECT * FROM t_article A RIGHT JOIN t_comment C ON C.article_id = A.article_id', '' . $expected->select());
     }
+
+    /**
+     * @dataProvider provideGateway
+     * @param TableGateway $gateway
+     */
+    function test_proxyAutoIncrement($gateway)
+    {
+        // プロキシメソッドなので設定して取得する単純なテスト
+        $gateway->resetAutoIncrement(55);
+        $gateway->insert(['name' => 'hoge']);
+        $lastid = $gateway->getLastInsertId('id');
+        $this->assertEquals($gateway->max('id'), $lastid);
+    }
 }
