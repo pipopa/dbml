@@ -4870,6 +4870,16 @@ anywhere.enable = 1
             'MT.ctext LIKE ?'              => '%2000%',
         ], $database->anywhere('misctype MT', '2000'));
 
+        // クオーテッド
+        $this->assertEquals([
+            'MT.cstring LIKE ?' => '%2000%',
+            'MT.ctext LIKE ?'   => '%2000%',
+        ], $database->anywhere('misctype MT', '"2000"'));
+        $this->assertEquals([
+            'MT.cstring LIKE ?' => '%2000 14%',
+            'MT.ctext LIKE ?'   => '%2000 14%',
+        ], $database->anywhere('misctype MT', '"2000 14"'));
+
         // 強欲でない数値マッチ
         $database->mergeOption('anywhereOption', [
             'greedy' => false,

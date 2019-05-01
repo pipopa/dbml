@@ -2819,6 +2819,13 @@ class Database
      */
     public function anywhere($table, $word)
     {
+        // クオートの判定（json_decode を使ってるのは手抜きだけど別段問題ないはず）
+        $json = json_decode((string) $word);
+        $quoted = is_string($json);
+        if ($quoted) {
+            $word = $json;
+        }
+
         // ! を付けるまでもなく空値は何もしない仕様とする（「よしなに」の定義に"!"も含まれている）
         if (Adhoc::is_empty($word)) {
             return [];
@@ -2845,10 +2852,14 @@ class Database
         }
 
         // 検索ワードの正規化
-        $word = (string) $word;
-        $is_numeric = is_numeric($word);
-        $ymdhis = Adhoc::parseYmdHis($word);
-        $inwords = '%' . preg_replace('#[\s　]+#u', '%', $this->getCompatiblePlatform()->escapeLike($word)) . '%';
+        $is_numeric = $quoted ? false : is_numeric($word);
+        $ymdhis = $quoted ? false : Adhoc::parseYmdHis($word);
+        if ($quoted) {
+            $inwords = '%' . $this->getCompatiblePlatform()->escapeLike($word) . '%';
+        }
+        else {
+            $inwords = '%' . preg_replace('#[\s　]+#u', '%', $this->getCompatiblePlatform()->escapeLike($word)) . '%';
+        }
 
         $where = [];
         foreach ($schema->getTableColumns($tname) as $cname => $column) {
