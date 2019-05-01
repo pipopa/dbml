@@ -2505,7 +2505,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
         }
 
         // ORDER BY の順番が保証されているという情報はないし、取得列に $col が含まれている保証もないので UNION ORDER BY は使えない。2回に分けて取得する
-        $baselect = $this->limit($limit);
+        $baselect = (clone $this)->limit($limit);
         $prevs = (clone $baselect)->where(["$colss < $valss" => $vals])->orderBy($cols, false)->array();
         $nexts = (clone $baselect)->where(["$colss > $valss" => $vals])->orderBy($cols, true)->array();
 
