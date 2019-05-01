@@ -54,8 +54,8 @@ $db = new \ryunosuke\dbml\Database([
 
 ```php
 // t_article のレコードを全件取得
-$db->selectAll('t_article'); // クエリビルダ版
-$db->t_article->all();       // ゲートウェイ版
+$db->selectArray('t_article'); // クエリビルダ版
+$db->t_article->array();       // ゲートウェイ版
 
 // t_article にレコードを追加する
 $db->insert('t_article', [

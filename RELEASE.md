@@ -19,6 +19,27 @@
 ## x.y.z
 
 - Entity 消したい。使わない…
+- QueryBuilder が直接 param を持つのではなく、 param を持った Queryable を持つことで妙なパラメータ順などは不要にできる
+
+## 1.0.5
+
+- [feature][Database] anywhere のクオート対応
+- [feature][Database] addRelation メソッドを追加
+- [feature][TableGateway] 仮想カラムの機能を強化
+  - implicit 属性を持たせて !取得や where,having で仮想カラムを使用できるようになった
+  - 仮想カラムの削除に対応（メソッド名が変わったが旧名も使える）
+- [feature][TableGateway] スコープ周りの改善
+  - スコープの同時指定
+  - 合成スコープ
+- [feature][TableGateway] autoincrement 系メソッドの移譲
+  - getLastInsertId
+  - resetAutoIncrement
+- [feature][TableDescriptor] テーブルに紐付かないカラムのフラット指定を可能にした
+- [fixbug][QueryBuilder] スコープ付きテーブル記法の場合は ON やサブクエリに飲み込まれるのが正しい仕様
+- [fixbug][QueryBuilder] スコープ付きテーブル記法の場合に修飾子がつかない不具合を修正
+- [fixbug][QueryBuilder] neighbor を呼ぶと limit が設定される副作用を修正
+- [fixbug][QueryBuilder] orderBy で Queryable を使えるように修正
+- [change][Database] var_dump の出力を変更
 
 ## 1.0.4
 
