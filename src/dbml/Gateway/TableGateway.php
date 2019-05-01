@@ -17,6 +17,7 @@ use function ryunosuke\dbml\array_each;
 use function ryunosuke\dbml\array_get;
 use function ryunosuke\dbml\arrayize;
 use function ryunosuke\dbml\concat;
+use function ryunosuke\dbml\parameter_length;
 use function ryunosuke\dbml\split_noempty;
 use function ryunosuke\dbml\throws;
 
@@ -1586,6 +1587,76 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
     }
 
     /**
+     * スコープを合成する（スコープを利用してスコープを定義する）
+     *
+     * 合成スコープの引数は「元スコープの引数が足りない場合に補うように」動作する。
+     * しかしそもそも優先順位がややこしいので使用は推奨しない。
+     * 動的を動的のまま合成したいことはあまりないと思うので、合成時に引数を完全に指定するのがもっとも無難。
+     *
+     * ```php
+     * # 既にスコープ a, b, c が登録されているとする
+     *
+     * // このようにスコープ当てるように合成できる
+     * $gw->mixScope('mixedABC', 'a b c');
+     *
+     * // 既存スコープが動的スコープなら引数を与えることができる
+     * $gw->mixScope('mixedABC', [
+     *     'a' => [1 ,2 ,3], // スコープ a の引数
+     *     'b' => [4, 5, 6], // スコープ a の引数
+     *     'c' => [7, 8 ,9], // スコープ a の引数
+     * ]);
+     *
+     * // いずれにせよ合成したスコープは普通のスコープと同じように使用できる
+     * $gw->scope('mixedABC')->array();
+     * // 実質的にこのように使用時に全部当てることと同義だが、頻出するなら使用時に複数を当てるよりも定義したほうが保守性が高くなる
+     * $gw->scope('a b c')->array();
+     * ```
+     *
+     * @param string $name スコープ名
+     * @param string|array $sourceScopes 既存スコープ名
+     * @return $this 自分自身
+     */
+    public function mixScope($name, $sourceScopes)
+    {
+        if (is_string($sourceScopes)) {
+            $sourceScopes = split_noempty(' ', $sourceScopes);
+        }
+
+        // 定義のチェックと配列の正規化
+        $scopes = [];
+        foreach ($sourceScopes as $scope => $args) {
+            if (is_int($scope)) {
+                $scope = $args;
+                $args = [];
+            }
+            if (!isset($this->scopes[$scope])) {
+                throw new \InvalidArgumentException("'$scope' scope is undefined.");
+            }
+            $scopes[$scope] = arrayize($args);
+        }
+
+        // 指定されたスコープをすべて当てるような動的スコープとして定義する
+        $this->scopes[$name] = function (...$params) use ($scopes) {
+            $result = self::$defargs;
+            foreach ($scopes as $scope => $args) {
+                if ($this->scopes[$scope] instanceof \Closure) {
+                    $alength = parameter_length($this->scopes[$scope]);
+                    $args = array_merge($args, array_splice($params, 0, $alength - count($args), []));
+                }
+                $parts = $this->getScopeParts($scope, ...$args);
+                $result = array_merge_recursive($result, $parts);
+
+                // limit は配列とスカラーで扱いが異なるので「指定されていたら上書き」という挙動にする
+                if ($parts['limit']) {
+                    $result['limit'] = $parts['limit'];
+                }
+            }
+            return $result;
+        };
+        return $this;
+    }
+
+    /**
      * スコープの追加と縛りを同時に行う
      *
      * 実際は {@link column()}, {@link where()} 等の句別メソッドを使うほうが多い。
@@ -1626,10 +1697,17 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
      *
      * # 動的スコープにパラメータを与えて当てる
      * $gw->scope('scopename', 5);
+     *
+     * # 配列指定で複数の動的スコープにパラメータを与えて当てる
+     * $gw->scope([
+     *     'scope1' => 1,          // 本来は引数を配列で与えるが、配列でない場合は配列化される（[1]と同義）
+     *     'scope2' => ['a', 'b'], // 'a' が第1引数、'b' が第2引数の意味になる
+     *     'scope3',               // パラメータなしスコープも同時指定できる
+     * ]);
      * ```
      *
-     * パラメータ有りを含むスコープをスペース区切りで同時に当てた場合の挙動は未定義。
-     * 1つならそれに適用されるが、2つ以上だと動作しないので1つずつ当てる必要がある。
+     * パラメータ有りを含むスコープをスペース区切りで同時に当てた場合は全てのスコープに引数が渡る。
+     * 意図しない挙動になり得るのでその場合は配列指定で当てたほうが良い。
      *
      * @param string|array $name スコープ名
      * @param mixed $variadic_parameters スコープパラメータ
@@ -1642,11 +1720,16 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
         }
 
         $that = $this->clone();
-        foreach ($name as $scope) {
+        $args = array_slice(func_get_args(), 1);
+        foreach ($name as $n => $scope) {
+            if (is_string($n)) {
+                $args = arrayize($scope) + $args;
+                $scope = $n;
+            }
             if (!isset($this->scopes[$scope])) {
                 throw new \InvalidArgumentException("'$scope' scope is undefined.");
             }
-            $that->activeScopes[$scope] = array_slice(func_get_args(), 1);
+            $that->activeScopes[$scope] = $args;
         }
         return $that;
     }

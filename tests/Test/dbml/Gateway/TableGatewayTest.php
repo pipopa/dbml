@@ -337,6 +337,137 @@ AND ((flag=1))", "$gw");
      * @param TableGateway $gateway
      * @param Database $database
      */
+    function test_mixScope($gateway, $database)
+    {
+        // 単純スコープ
+        $gateway->addScope('a', 'NOW()');
+        $gateway->addScope('b', 'name', 'name="a"', [], [1, 2]);
+        $gateway->addScope('c', 'id', 'name="x"', 'id DESC', 999);
+        // デフォ引数なしスコープ
+        $gateway->addScope('d', function ($id) {
+            return [
+                'where' => ['id' => $id],
+                'limit' => [3 => 4],
+            ];
+        });
+        // デフォ引数ありスコープ
+        $gateway->addScope('d0', function ($id = 0) {
+            return [
+                'where' => ['id' => $id],
+                'limit' => [3 => 4],
+            ];
+        });
+
+        $gateway->mixScope('x', 'a b d');
+        $gateway->mixScope('x1', [
+            'a',
+            'b',
+            'd0' => [],
+        ]);
+        $gateway->mixScope('x2', [
+            'a',
+            'b',
+            'd0' => [2],
+        ]);
+        $gateway->mixScope('mixmix', [
+            'x2',
+            'c',
+        ]);
+
+        // どこにも現れていないがデフォルト引数があるのでそれが使われる
+        $this->assertEquals([
+            'column'  => ['NOW()', 'name'],
+            'where'   => ['name="a"', 'id' => 0],
+            'orderBy' => [],
+            'limit'   => [3 => 4],
+            'groupBy' => [],
+            'having'  => [],
+        ], $gateway->getScopeParts('x1'));
+
+        // デフォルト引数よりスコープパラメータの方が強い
+        $this->assertEquals([
+            'column'  => ['NOW()', 'name'],
+            'where'   => ['name="a"', 'id' => 1],
+            'orderBy' => [],
+            'limit'   => [3 => 4],
+            'groupBy' => [],
+            'having'  => [],
+        ], $gateway->getScopeParts('x1', 1));
+
+        // プリセットパラメータが使用される
+        $this->assertEquals([
+            'column'  => ['NOW()', 'name'],
+            'where'   => ['name="a"', 'id' => 2],
+            'orderBy' => [],
+            'limit'   => [3 => 4],
+            'groupBy' => [],
+            'having'  => [],
+        ], $gateway->getScopeParts('x2'));
+
+        // プリセットパラメータは上書きできない。与えた 999 は次のスコープパラメータとして使用される
+        $this->assertEquals([
+            'column'  => ['NOW()', 'name'],
+            'where'   => ['name="a"', 'id' => 2],
+            'orderBy' => [],
+            'limit'   => [3 => 4],
+            'groupBy' => [],
+            'having'  => [],
+        ], $gateway->getScopeParts('x2', 999));
+
+        // 合成スコープを合成した合成スコープ（合成のネストできるかのテストで値に特に意味はない）
+        $this->assertEquals([
+            'column'  => ['NOW()', 'name', 'id'],
+            'where'   => ['name="a"', 'id' => 2, 'name="x"'],
+            'orderBy' => ['id DESC'],
+            'limit'   => 999,
+            'groupBy' => [],
+            'having'  => [],
+        ], $gateway->getScopeParts('mixmix'));
+
+        // これはエラーになる（c の引数がどこにも現れていない）
+        $this->assertException(new \ArgumentCountError(), L($gateway->scope('x'))->select());
+        // 登録されていないスコープはエラー
+        $this->assertException('scope is undefined', L($gateway)->mixScope('new', 'undefined'));
+    }
+
+    /**
+     * @dataProvider provideGateway
+     * @param TableGateway $gateway
+     */
+    function test_scopes($gateway)
+    {
+        $gateway->addScope('scope1', function ($val) {
+            return [
+                'where' => [
+                    'id' => $val,
+                ]
+            ];
+        });
+        $gateway->addScope('scope2', function ($val) {
+            return [
+                'where' => [
+                    'name' => $val,
+                ]
+            ];
+        });
+        $gateway->addScope('scope3', ['id2' => 'id']);
+
+        // 複数のスコープを同時に当てる
+        $params = $gateway->scope([
+            'scope1' => 1,
+            'scope2' => [['hoge', 'fuga']],
+            'scope3',
+        ])->getScopeParams();
+        $this->assertEquals('1', $params['where']['test.id']);
+        $this->assertEquals(['hoge', 'fuga'], $params['where']['test.name']);
+        $this->assertEquals('id', $params['column']['test']['id2']);
+    }
+
+    /**
+     * @dataProvider provideGateway
+     * @param TableGateway $gateway
+     * @param Database $database
+     */
     function test_scope_and_empty($gateway, $database)
     {
         $gateway->addScope('', [

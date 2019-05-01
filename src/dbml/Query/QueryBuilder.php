@@ -1459,9 +1459,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
             if ($descriptor->scope) {
                 $gateway = $this->database->{$descriptor->table}->clone();
                 $gateway->as($descriptor->alias);
-                foreach ($descriptor->scope as $sname => $sarg) {
-                    $gateway->scope($sname, ...$sarg);
-                }
+                $gateway->scope($descriptor->scope);
                 $sparam = $gateway->getScopeParams([]);
                 $scolumn = array_unset($sparam, 'column');
                 $this->_buildColumn(reset($scolumn), $descriptor->table, $descriptor->alias);
