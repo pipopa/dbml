@@ -118,26 +118,60 @@ use function ryunosuke\dbml\throws;
  * @method bool                   getInjectChildColumn()
  * @method $this                  setInjectChildColumn($bool)
  *
- * @method $this                  innerJoinOn($table, $on, $from = null) {結合方法が INNER で結合条件指定の {@link join()}@inheritdoc join()}
- * @method $this                  leftJoinOn($table, $on, $from = null) {結合方法が LEFT で結合条件指定の {@link join()}@inheritdoc join()}
- * @method $this                  rightJoinOn($table, $on, $from = null) {結合方法が RIGHT で結合条件指定の {@link join()}@inheritdoc join()}
+ * @method $this                  innerJoinOn($table, $on, $from = null) {
+ *     結合方法が INNER で結合条件指定の <@uses QueryBuilder::join()>
+ * }
+ * @method $this                  leftJoinOn($table, $on, $from = null) {
+ *     結合方法が LEFT で結合条件指定の <@uses QueryBuilder::join()>
+ * }
+ * @method $this                  rightJoinOn($table, $on, $from = null) {
+ *     結合方法が RIGHT で結合条件指定の <@uses QueryBuilder::join()>
+ * }
  *
- * @method $this                  autoJoinForeign($table, $fkeyname = null, $from = null) {結合方法が AUTO で外部キー指定の {@link join()}@inheritdoc join()}
- * @method $this                  innerJoinForeign($table, $fkeyname = null, $from = null) {結合方法が INNER で外部キー指定の {@link join()}@inheritdoc join()}
- * @method $this                  leftJoinForeign($table, $fkeyname = null, $from = null) {結合方法が LEFT で外部キー指定の {@link join()}@inheritdoc join()}
- * @method $this                  rightJoinForeign($table, $fkeyname = null, $from = null) {結合方法が RIGHT で外部キー指定の {@link join()}@inheritdoc join()}
+ * @method $this                  autoJoinForeign($table, $fkeyname = null, $from = null) {
+ *     結合方法が AUTO で外部キー指定の <@uses QueryBuilder::join()>
+ * }
+ * @method $this                  innerJoinForeign($table, $fkeyname = null, $from = null) {
+ *     結合方法が INNER で外部キー指定の <@uses QueryBuilder::join()>
+ * }
+ * @method $this                  leftJoinForeign($table, $fkeyname = null, $from = null) {
+ *     結合方法が LEFT で外部キー指定の <@uses QueryBuilder::join()>
+ * }
+ * @method $this                  rightJoinForeign($table, $fkeyname = null, $from = null) {
+ *     結合方法が RIGHT で外部キー指定の <@uses QueryBuilder::join()>
+ * }
  *
- * @method $this                  autoJoinForeignOn($table, $on, $fkeyname = null, $from = null) {結合方法が AUTO で結合条件・外部キー指定の {@link join()}@inheritdoc join()}
- * @method $this                  innerJoinForeignOn($table, $on, $fkeyname = null, $from = null) {結合方法が INNER で結合条件・外部キー指定の {@link join()}@inheritdoc join()}
- * @method $this                  leftJoinForeignOn($table, $on, $fkeyname = null, $from = null) {結合方法が LEFT で結合条件・外部キー指定の {@link join()}@inheritdoc join()}
- * @method $this                  rightJoinForeignOn($table, $on, $fkeyname = null, $from = null) {結合方法が RIGHT で結合条件・外部キー指定の {@link join()}@inheritdoc join()}
+ * @method $this                  autoJoinForeignOn($table, $on, $fkeyname = null, $from = null) {
+ *     結合方法が AUTO で結合条件・外部キー指定の <@uses QueryBuilder::join()>
+ * }
+ * @method $this                  innerJoinForeignOn($table, $on, $fkeyname = null, $from = null) {
+ *     結合方法が INNER で結合条件・外部キー指定の <@uses QueryBuilder::join()>
+ * }
+ * @method $this                  leftJoinForeignOn($table, $on, $fkeyname = null, $from = null) {
+ *     結合方法が LEFT で結合条件・外部キー指定の <@uses QueryBuilder::join()>
+ * }
+ * @method $this                  rightJoinForeignOn($table, $on, $fkeyname = null, $from = null) {
+ *     結合方法が RIGHT で結合条件・外部キー指定の <@uses QueryBuilder::join()>
+ * }
  *
- * @method array|Entityable[]     array(array $params = []) {自身が保持しているクエリでレコードの配列を返す（{@link Database::fetchArray()} 参照）}
- * @method array|Entityable[]     assoc(array $params = []) {自身が保持しているクエリでレコードの連想配列を返す（{@link Database::fetchAssoc()} 参照）}
- * @method array                  lists(array $params = []) {自身が保持しているクエリでレコード[1列目]の配列を返す（{@link Database::fetchLists()} 参照）}
- * @method array                  pairs(array $params = []) {自身が保持しているクエリでレコード[1列目=>2列目]の連想配列を返す（{@link Database::fetchPairs()} 参照）}
- * @method array|Entityable|false tuple(array $params = []) {自身が保持しているクエリでレコードを返す（{@link Database::fetchTuple()} 参照）}
- * @method mixed                  value(array $params = []) {自身が保持しているクエリでレコード[1列目]を返す（{@link Database::fetchValue()} 参照）}
+ * @method array|Entityable[]     array(array $params = []) {
+ *     自身が保持しているクエリでレコードの配列を返す（<@uses Database::fetchArray()> 参照）
+ * }
+ * @method array|Entityable[]     assoc(array $params = []) {
+ *     自身が保持しているクエリでレコードの連想配列を返す（<@uses Database::fetchAssoc()> 参照）
+ * }
+ * @method array                  lists(array $params = []) {
+ *     自身が保持しているクエリでレコード[1列目]の配列を返す（<@uses Database::fetchLists()> 参照）
+ * }
+ * @method array                  pairs(array $params = []) {
+ *     自身が保持しているクエリでレコード[1列目=>2列目]の連想配列を返す（<@uses Database::fetchPairs()> 参照）
+ * }
+ * @method array|Entityable|false tuple(array $params = []) {
+ *     自身が保持しているクエリでレコードを返す（<@uses Database::fetchTuple()> 参照）
+ * }
+ * @method mixed                  value(array $params = []) {
+ *     自身が保持しているクエリでレコード[1列目]を返す（<@uses Database::fetchValue()> 参照）
+ * }
  */
 // @formatter:on
 class QueryBuilder implements Queryable, \IteratorAggregate, \Countable

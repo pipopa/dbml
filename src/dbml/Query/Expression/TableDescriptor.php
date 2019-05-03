@@ -122,7 +122,7 @@ use function ryunosuke\dbml\throws;
  *
  * - e.g. `tablename#150-200` （`LIMIT 50 OFFSET 150` となり範囲を表す）
  * - e.g. `tablename#100` （`LIMIT 1 OFFSET 100` となり単一の1行を表す）
- * - e.g. `tablename#-100` （`LIMIT 100 となる（M を省略した場合、 OFFSET は設定されない））
+ * - e.g. `tablename#-100` （`LIMIT 100` となる（M を省略した場合、 OFFSET は設定されない））
  *
  * #### AS Alias
  *

@@ -178,7 +178,7 @@ use function ryunosuke\dbml\throws;
  * ```
  *
  * foreach で回すときのメソッドはデフォルトで array。 これは $defaultIteration で変更できる。
- * $defaultIteration は設定できる箇所があるが、下記の優先順位となる。
+ * $defaultIteration は複数設定できる箇所があるが、下記の優先順位となる。
  *
  * - Database の defaultIteration オプション
  * - クラスの `$defaultIteration` プロパティ
@@ -272,23 +272,47 @@ use function ryunosuke\dbml\throws;
  *     @param string $string {@link Database::JOIN_MAPPER} のいずれかのキー
  * }
  *
- * @method $this                  joinOn(TableGateway $table, $on) {結合方法が INNER で結合条件指定の {@link join()}@inheritdoc join()}
- * @method $this                  innerJoinOn(TableGateway $table, $on) {結合方法が INNER で結合条件指定の {@link join()}@inheritdoc join()}
- * @method $this                  leftJoinOn(TableGateway $table, $on) {結合方法が LEFT で結合条件指定の {@link join()}@inheritdoc join()}
- * @method $this                  rightJoinOn(TableGateway $table, $on) {結合方法が RIGHT で結合条件指定の {@link join()}@inheritdoc join()}
+ * @method $this                  joinOn(TableGateway $table, $on) {
+ *     結合方法が INNER で結合条件指定の <@uses TableGateway::join()>
+ * }
+ * @method $this                  innerJoinOn(TableGateway $table, $on) {
+ *     結合方法が INNER で結合条件指定の <@uses TableGateway::join()>
+ * }
+ * @method $this                  leftJoinOn(TableGateway $table, $on) {
+ *     結合方法が LEFT で結合条件指定の <@uses TableGateway::join()>
+ * }
+ * @method $this                  rightJoinOn(TableGateway $table, $on) {
+ *     結合方法が RIGHT で結合条件指定の <@uses TableGateway::join()>
+ * }
  *
- * @method $this                  joinForeign(TableGateway $table, $fkeyname = null) {結合方法が AUTO で外部キー指定の {@link join()}@inheritdoc join()}
- * @method $this                  innerJoinForeign(TableGateway $table, $fkeyname = null) {結合方法が INNER で外部キー指定の {@link join()}@inheritdoc join()}
- * @method $this                  leftJoinForeign(TableGateway $table, $fkeyname = null) {結合方法が LEFT で外部キー指定の {@link join()}@inheritdoc join()}
- * @method $this                  rightJoinForeign(TableGateway $table, $fkeyname = null) {結合方法が RIGHT で外部キー指定の {@link join()}@inheritdoc join()}
+ * @method $this                  joinForeign(TableGateway $table, $fkeyname = null) {
+ *     結合方法が AUTO で外部キー指定の <@uses TableGateway::join()>
+ * }
+ * @method $this                  innerJoinForeign(TableGateway $table, $fkeyname = null) {
+ *     結合方法が INNER で外部キー指定の <@uses TableGateway::join()>
+ * }
+ * @method $this                  leftJoinForeign(TableGateway $table, $fkeyname = null) {
+ *     結合方法が LEFT で外部キー指定の <@uses TableGateway::join()>
+ * }
+ * @method $this                  rightJoinForeign(TableGateway $table, $fkeyname = null) {
+ *     結合方法が RIGHT で外部キー指定の <@uses TableGateway::join()>
+ * }
  *
- * @method $this                  joinForeignOn(TableGateway $table, $on, $fkeyname = null) {結合方法が AUTO で結合条件・外部キー指定の {@link join()}@inheritdoc join()}
- * @method $this                  innerJoinForeignOn(TableGateway $table, $on, $fkeyname = null) {結合方法が INNER で結合条件・外部キー指定の {@link join()}@inheritdoc join()}
- * @method $this                  leftJoinForeignOn(TableGateway $table, $on, $fkeyname = null) {結合方法が LEFT で結合条件・外部キー指定の {@link join()}@inheritdoc join()}
- * @method $this                  rightJoinForeignOn(TableGateway $table, $on, $fkeyname = null) {結合方法が RIGHT で結合条件・外部キー指定の {@link join()}@inheritdoc join()}
+ * @method $this                  joinForeignOn(TableGateway $table, $on, $fkeyname = null) {
+ *     結合方法が AUTO で結合条件・外部キー指定の <@uses TableGateway::join()>
+ * }
+ * @method $this                  innerJoinForeignOn(TableGateway $table, $on, $fkeyname = null) {
+ *     結合方法が INNER で結合条件・外部キー指定の <@uses TableGateway::join()>
+ * }
+ * @method $this                  leftJoinForeignOn(TableGateway $table, $on, $fkeyname = null) {
+ *     結合方法が LEFT で結合条件・外部キー指定の <@uses TableGateway::join()>
+ * }
+ * @method $this                  rightJoinForeignOn(TableGateway $table, $on, $fkeyname = null) {
+ *     結合方法が RIGHT で結合条件・外部キー指定の <@uses TableGateway::join()>
+ * }
  *
  * @method $this                  column($tableDescriptor) {
- *     SELECT 句を追加する（{@link QueryBuilder::column()} を参照）
+ *     SELECT 句を追加する（<@uses QueryBuilder::column()> を参照）
  *
  *     ```php
  *     // SELECT id, name FROM tablename
@@ -298,7 +322,7 @@ use function ryunosuke\dbml\throws;
  *     @param string|array $tableDescriptor SELECT 句
  * }
  * @method $this                  where($where) {
- *     WHERE 句を追加する（{@link QueryBuilder::where()} を参照）
+ *     WHERE 句を追加する（<@uses QueryBuilder::where()> を参照）
  *
  *     ```php
  *     // SELECT * FROM tablename WHERE id = 99
@@ -308,7 +332,7 @@ use function ryunosuke\dbml\throws;
  *     @param string|array $where WHERE 句
  * }
  * @method $this                  orderBy($orderBy) {
- *     ORDER BY 句を追加する（{@link QueryBuilder::orderBy()} を参照）
+ *     ORDER BY 句を追加する（<@uses QueryBuilder::orderBy()> を参照）
  *
  *     ```php
  *     // SELECT * FROM tablename ORDER BY id ASC
@@ -318,7 +342,7 @@ use function ryunosuke\dbml\throws;
  *     @param string|array $orderBy ORDER BY 句
  * }
  * @method $this                  limit($limit) {
- *     LIMIT 句を追加する（{@link QueryBuilder::limit()} を参照）
+ *     LIMIT 句を追加する（<@uses QueryBuilder::limit()> を参照）
  *
  *     ```php
  *     // SELECT * FROM tablename LIMIT 50 OFFSET 40
@@ -328,7 +352,7 @@ use function ryunosuke\dbml\throws;
  *     @param int|array $limit LIMIT 句
  * }
  * @method $this                  groupBy($groupBy) {
- *     GROUP BY 句を追加する（{@link QueryBuilder::groupBy()} を参照）
+ *     GROUP BY 句を追加する（<@uses QueryBuilder::groupBy()> を参照）
  *
  *     ```php
  *     // SELECT * FROM tablename GROUP BY group_key
@@ -338,7 +362,7 @@ use function ryunosuke\dbml\throws;
  *     @param string|array $groupBy GROUP BY 句
  * }
  * @method $this                  having($having) {
- *     HAVING 句を追加する（{@link QueryBuilder::having()} を参照）
+ *     HAVING 句を追加する（<@uses QueryBuilder::having()> を参照）
  *
  *     ```php
  *     // SELECT * FROM tablename HAVING id = 99
@@ -348,12 +372,23 @@ use function ryunosuke\dbml\throws;
  *     @param string|array $having HAVING 句
  * }
  *
- * @method array|Entityable[]     array($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {レコード群を配列で返す（{@link Database::selectArray()} を参照）@inheritdoc Database::selectArray()}
- * @method array|Entityable[]     assoc($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {レコード群を連想配列で返す（{@link Database::selectAssoc()} を参照）@inheritdoc Database::selectAssoc()}
- * @method array                  lists($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {レコード群を[value]で返す（{@link Database::selectLists()} を参照）@inheritdoc Database::selectLists()}
- * @method array                  pairs($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {レコード群を[key => value]で返す（{@link Database::selectPairs()} を参照）@inheritdoc Database::selectPairs()}
- * @method array|Entityable|false tuple($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {レコードを配列で返す（{@link Database::selectTuple()} を参照）@inheritdoc Database::selectTuple()}
- * @method mixed                  value($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {カラム値をスカラーで返す（{@link Database::selectValue()} を参照）@inheritdoc Database::selectValue()}
+ * @method array|Entityable[]     array($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
+ *     レコード群を配列で返す（<@uses Database::selectArray()> を参照）
+ * }
+ * @method array|Entityable[]     assoc($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
+ *     レコード群を連想配列で返す（<@uses Database::selectAssoc()> を参照）
+ * }
+ * @method array                  lists($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
+ *     レコード群を[value]で返す（<@uses Database::selectLists()> を参照）
+ * }
+ * @method array                  pairs($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
+ *     レコード群を[key => value]で返す（<@uses Database::selectPairs()> を参照）
+ * }
+ * @method array|Entityable|false tuple($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
+ *     レコードを配列で返す（<@uses Database::selectTuple()> を参照）
+ * @method mixed                  value($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
+ *     カラム値をスカラーで返す（<@uses Database::selectValue()> を参照）
+ * }
  * @method array|Entityable|false find($variadic_primary, $tableDescriptor = []) {
  *     主キー指定でレコードを取得する
  *
@@ -385,116 +420,310 @@ use function ryunosuke\dbml\throws;
  *     @param mixed $tableDescriptor 取得カラム
  * }
  *
- * @method array|Entityable[]     arrayInShare($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {{@link array()} の共有ロック版@inheritdoc array()}
- * @method array|Entityable[]     assocInShare($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {{@link assoc()} の共有ロック版@inheritdoc assoc()}
- * @method array                  listsInShare($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {{@link lists()} の共有ロック版@inheritdoc lists()}
- * @method array                  pairsInShare($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {{@link pairs()} の共有ロック版@inheritdoc pairs()}
- * @method array|Entityable|false tupleInShare($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {{@link tuple()} の共有ロック版@inheritdoc tuple()}
- * @method mixed                  valueInShare($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {{@link value()} の共有ロック版@inheritdoc value()}
- * @method array|Entityable|false findInShare($variadic_primary, $tableDescriptor = []) {{@link find()} の共有ロック版@inheritdoc find()}
+ * @method array|Entityable[]     arrayInShare($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
+ *     <@uses TableGateway::array()> の共有ロック版
+ * }
+ * @method array|Entityable[]     assocInShare($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
+ *     [@uses TableGateway::assoc()] の共有ロック版
+ * }
+ * @method array                  listsInShare($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
+ *     <@uses TableGateway::lists()> の共有ロック版
+ * }
+ * @method array                  pairsInShare($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
+ *     <@uses TableGateway::pairs()> の共有ロック版
+ * }
+ * @method array|Entityable|false tupleInShare($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
+ *     <@uses TableGateway::tuple()> の共有ロック版
+ * }
+ * @method mixed                  valueInShare($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
+ *     <@uses TableGateway::value()> の共有ロック版
+ * }
+ * @method array|Entityable|false findInShare($variadic_primary, $tableDescriptor = []) {
+ *     <@uses TableGateway::find()> の共有ロック版
+ * }
  *
- * @method array|Entityable[]     arrayForUpdate($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {{@link array()} の排他ロック版@inheritdoc array()}
- * @method array|Entityable[]     assocForUpdate($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {{@link assoc()} の排他ロック版@inheritdoc assoc()}
- * @method array                  listsForUpdate($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {{@link lists()} の排他ロック版@inheritdoc lists()}
- * @method array                  pairsForUpdate($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {{@link pairs()} の排他ロック版@inheritdoc pairs()}
- * @method array|Entityable|false tupleForUpdate($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {{@link tuple()} の排他ロック版@inheritdoc tuple()}
- * @method mixed                  valueForUpdate($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {{@link value()} の排他ロック版@inheritdoc value()}
- * @method array|Entityable|false findForUpdate($variadic_primary, $tableDescriptor = []) {{@link find()} の排他ロック版@inheritdoc find()}
+ * @method array|Entityable[]     arrayForUpdate($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
+ *     <@uses TableGateway::array()> の排他ロック版
+ * }
+ * @method array|Entityable[]     assocForUpdate($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
+ *     <@uses TableGateway::assoc()> の排他ロック版
+ * }
+ * @method array                  listsForUpdate($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
+ *     <@uses TableGateway::lists()> の排他ロック版
+ * }
+ * @method array                  pairsForUpdate($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
+ *     <@uses TableGateway::pairs()> の排他ロック版
+ * }
+ * @method array|Entityable|false tupleForUpdate($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
+ *     <@uses TableGateway::tuple()> の排他ロック版
+ * }
+ * @method mixed                  valueForUpdate($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
+ *     <@uses TableGateway::value()> の排他ロック版
+ * }
+ * @method array|Entityable|false findForUpdate($variadic_primary, $tableDescriptor = []) {
+ *     <@uses TableGateway::find()> の排他ロック版
+ * }
  *
- * @method array|Entityable[]     arrayOrThrow($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {{@link array()} の例外送出版@inheritdoc array()}
- * @method array|Entityable[]     assocOrThrow($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {{@link assoc()} の例外送出版@inheritdoc assoc()}
- * @method array                  listsOrThrow($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {{@link lists()} の例外送出版@inheritdoc lists()}
- * @method array                  pairsOrThrow($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {{@link pairs()} の例外送出版@inheritdoc pairs()}
- * @method array|Entityable       tupleOrThrow($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {{@link tuple()} の例外送出版@inheritdoc tuple()}
- * @method mixed                  valueOrThrow($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {{@link value()} の例外送出版@inheritdoc value()}
- * @method array|Entityable       findOrThrow($variadic_primary, $tableDescriptor = []) {{@link find()} の例外送出版@inheritdoc find()}
+ * @method array|Entityable[]     arrayOrThrow($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
+ *     <@uses TableGateway::array()> の例外送出版
+ * }
+ * @method array|Entityable[]     assocOrThrow($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
+ *     <@uses TableGateway::assoc()> の例外送出版
+ * }
+ * @method array                  listsOrThrow($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
+ *     <@uses TableGateway::lists()> の例外送出版
+ * }
+ * @method array                  pairsOrThrow($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
+ *     <@uses TableGateway::pairs()> の例外送出版
+ * }
+ * @method array|Entityable       tupleOrThrow($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
+ *     <@uses TableGateway::tuple()> の例外送出版
+ * }
+ * @method mixed                  valueOrThrow($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
+ *     <@uses TableGateway::value()> の例外送出版
+ * }
+ * @method array|Entityable       findOrThrow($variadic_primary, $tableDescriptor = []) {
+ *     <@uses TableGateway::find()> の例外送出版
+ * }
  *
- * @method Yielder                yieldArray($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {レコード群を配列で少しずつ返す（{@link Database::yieldArray()} を参照）@inheritdoc Database::yieldArray()}
- * @method Yielder                yieldAssoc($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {レコード群を連想配列で少しずつ返す（{@link Database::yieldAssoc()} を参照）@inheritdoc Database::yieldAssoc()}
- * @method Yielder                yieldLists($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {レコード群を[value]で少しずつ返す（{@link Database::yieldLists()} を参照）@inheritdoc Database::yieldLists()}
- * @method Yielder                yieldPairs($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {レコード群を[key => value]で少しずつ返す（{@link Database::yieldPairs()} を参照）@inheritdoc Database::yieldPairs()}
+ * @method Yielder                yieldArray($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
+ *     レコード群を配列で少しずつ返す（<@uses Database::yieldArray()> を参照）
+ * }
+ * @method Yielder                yieldAssoc($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
+ *     レコード群を連想配列で少しずつ返す（<@uses Database::yieldAssoc()> を参照）
+ * }
+ * @method Yielder                yieldLists($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
+ *     レコード群を[value]で少しずつ返す（<@uses Database::yieldLists()> を参照）
+ * }
+ * @method Yielder                yieldPairs($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
+ *     レコード群を[key => value]で少しずつ返す（<@uses Database::yieldPairs()> を参照）
+ * }
  *
- * @method SubqueryBuilder        subselectArray($child_columns, $tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {結合列を指定して子供レコード（array）を表すサブビルダを返す（{@link Database::subselect()} を参照）@inheritdoc Database::subselect()}
- * @method SubqueryBuilder        subselectAssoc($child_columns, $tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {結合列を指定して子供レコード（assoc）を表すサブビルダを返す（{@link Database::subselect()} を参照）@inheritdoc Database::subselect()}
- * @method SubqueryBuilder        subselectLists($child_columns, $tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {結合列を指定して子供レコード（lists）を表すサブビルダを返す（{@link Database::subselect()} を参照）@inheritdoc Database::subselect()}
- * @method SubqueryBuilder        subselectPairs($child_columns, $tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {結合列を指定して子供レコード（pairs）を表すサブビルダを返す（{@link Database::subselect()} を参照）@inheritdoc Database::subselect()}
- * @method SubqueryBuilder        subselectTuple($child_columns, $tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {結合列を指定して子供レコード（tuple）を表すサブビルダを返す（{@link Database::subselect()} を参照）@inheritdoc Database::subselect()}
- * @method SubqueryBuilder        subselectValue($child_columns, $tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {結合列を指定して子供レコード（value）を表すサブビルダを返す（{@link Database::subselect()} を参照）@inheritdoc Database::subselect()}
+ * @method SubqueryBuilder        subselectArray($child_columns, $tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
+ *     結合列を指定して子供レコード（array）を表すサブビルダを返す（<@uses Database::subselect()> を参照）
+ * }
+ * @method SubqueryBuilder        subselectAssoc($child_columns, $tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
+ *     結合列を指定して子供レコード（assoc）を表すサブビルダを返す（<@uses Database::subselect()> を参照）
+ * }
+ * @method SubqueryBuilder        subselectLists($child_columns, $tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
+ *     結合列を指定して子供レコード（lists）を表すサブビルダを返す（<@uses Database::subselect()> を参照）
+ * }
+ * @method SubqueryBuilder        subselectPairs($child_columns, $tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
+ *     結合列を指定して子供レコード（pairs）を表すサブビルダを返す（<@uses Database::subselect()> を参照）
+ * }
+ * @method SubqueryBuilder        subselectTuple($child_columns, $tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
+ *     結合列を指定して子供レコード（tuple）を表すサブビルダを返す（<@uses Database::subselect()> を参照）
+ * }
+ * @method SubqueryBuilder        subselectValue($child_columns, $tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
+ *     結合列を指定して子供レコード（value）を表すサブビルダを返す（<@uses Database::subselect()> を参照）
+ * }
  *
- * @method SubqueryBuilder        subArray($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {外部キーを利用して子供レコード（array）を表すサブビルダを返す（{@link Database::subselect()} を参照）@inheritdoc Database::subselect()}
- * @method SubqueryBuilder        subAssoc($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {外部キーを利用して子供レコード（assoc）を表すサブビルダを返す（{@link Database::subselect()} を参照）@inheritdoc Database::subselect()}
- * @method SubqueryBuilder        subLists($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {外部キーを利用して子供レコード（lists）を表すサブビルダを返す（{@link Database::subselect()} を参照）@inheritdoc Database::subselect()}
- * @method SubqueryBuilder        subPairs($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {外部キーを利用して子供レコード（pairs）を表すサブビルダを返す（{@link Database::subselect()} を参照）@inheritdoc Database::subselect()}
- * @method SubqueryBuilder        subTuple($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {外部キーを利用して子供レコード（tuple）を表すサブビルダを返す（{@link Database::subselect()} を参照）@inheritdoc Database::subselect()}
- * @method SubqueryBuilder        subValue($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {外部キーを利用して子供レコード（value）を表すサブビルダを返す（{@link Database::subselect()} を参照）@inheritdoc Database::subselect()}
+ * @method SubqueryBuilder        subArray($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
+ *     外部キーを利用して子供レコード（array）を表すサブビルダを返す（<@uses Database::subselect()> を参照）
+ * }
+ * @method SubqueryBuilder        subAssoc($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
+ *     外部キーを利用して子供レコード（assoc）を表すサブビルダを返す（<@uses Database::subselect()> を参照）
+ * }
+ * @method SubqueryBuilder        subLists($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
+ *     外部キーを利用して子供レコード（lists）を表すサブビルダを返す（<@uses Database::subselect()> を参照）
+ * }
+ * @method SubqueryBuilder        subPairs($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
+ *     外部キーを利用して子供レコード（pairs）を表すサブビルダを返す（<@uses Database::subselect()> を参照）
+ * }
+ * @method SubqueryBuilder        subTuple($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
+ *     外部キーを利用して子供レコード（tuple）を表すサブビルダを返す（<@uses Database::subselect()> を参照）
+ * }
+ * @method SubqueryBuilder        subValue($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
+ *     外部キーを利用して子供レコード（value）を表すサブビルダを返す（<@uses Database::subselect()> を参照）
+ * }
  *
- * @method QueryBuilder           select($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {駆動表を省略できる {@link Database::select()}@inheritdoc Database::select()}
- * @method QueryBuilder           subexists($tableDescriptor = [], $where = []) {駆動表を省略できる {@link Database::subexists()}@inheritdoc Database::subexists()}
- * @method QueryBuilder           notSubexists($tableDescriptor = [], $where = []) {駆動表を省略できる {@link Database::notSubexists()}@inheritdoc Database::notSubexists()}
- * @method QueryBuilder           subcount($column = [], $where = []) {駆動表を省略できる {@link Database::subcount()}@inheritdoc Database::subcount()}
- * @method QueryBuilder           submin($column = [], $where = []) {駆動表を省略できる {@link Database::submin()}@inheritdoc Database::submin()}
- * @method QueryBuilder           submax($column = [], $where = []) {駆動表を省略できる {@link Database::submax()}@inheritdoc Database::submax()}
- * @method QueryBuilder           subsum($column = [], $where = []) {駆動表を省略できる {@link Database::subsum()}@inheritdoc Database::subsum()}
- * @method QueryBuilder           subavg($column = [], $where = []) {駆動表を省略できる {@link Database::subavg()}@inheritdoc Database::subavg()}
+ * @method QueryBuilder           select($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
+ *     駆動表を省略できる <@uses Database::select()>
+ * }
+ * @method QueryBuilder           subexists($tableDescriptor = [], $where = []) {
+ *     駆動表を省略できる <@uses Database::subexists()>
+ * }
+ * @method QueryBuilder           notSubexists($tableDescriptor = [], $where = []) {
+ *     駆動表を省略できる <@uses Database::notSubexists()>
+ * }
+ * @method QueryBuilder           subcount($column = [], $where = []) {
+ *     駆動表を省略できる <@uses Database::subcount()>
+ * }
+ * @method QueryBuilder           submin($column = [], $where = []) {
+ *     駆動表を省略できる <@uses Database::submin()>
+ * }
+ * @method QueryBuilder           submax($column = [], $where = []) {
+ *     駆動表を省略できる <@uses Database::submax()>
+ * }
+ * @method QueryBuilder           subsum($column = [], $where = []) {
+ *     駆動表を省略できる <@uses Database::subsum()>
+ * }
+ * @method QueryBuilder           subavg($column = [], $where = []) {
+ *     駆動表を省略できる <@uses Database::subavg()>
+ * }
  *
- * @method array|Entityable[]     neighbor($predicates = [], $limit = 1) {前後のレコードを返す（{@link QueryBuilder::neighbor()} を参照）@inheritdoc QueryBuilder::neighbor()}
- * @method int|float              exists($where = [], $for_update = false) {駆動表を省略できる {@link Database::exists()}@inheritdoc Database::exists()}
- * @method int|float              min($column, $where = [], $groupBy = [], $having = []) {駆動表を省略できる {@link Database::min()}@inheritdoc Database::min()}
- * @method int|float              max($column, $where = [], $groupBy = [], $having = []) {駆動表を省略できる {@link Database::max()}@inheritdoc Database::max()}
- * @method int|float              sum($column, $where = [], $groupBy = [], $having = []) {駆動表を省略できる {@link Database::sum()}@inheritdoc Database::sum()}
- * @method int|float              avg($column, $where = [], $groupBy = [], $having = []) {駆動表を省略できる {@link Database::avg()}@inheritdoc Database::avg()}
+ * @method array|Entityable[]     neighbor($predicates = [], $limit = 1) {
+ *     前後のレコードを返す（<@uses QueryBuilder::neighbor()> を参照）
+ * }
+ * @method int|float              exists($where = [], $for_update = false) {
+ *     駆動表を省略できる <@uses Database::exists()>
+ * }
+ * @method int|float              min($column, $where = [], $groupBy = [], $having = []) {
+ *     駆動表を省略できる <@uses Database::min()>
+ * }
+ * @method int|float              max($column, $where = [], $groupBy = [], $having = []) {
+ *     駆動表を省略できる <@uses Database::max()>
+ * }
+ * @method int|float              sum($column, $where = [], $groupBy = [], $having = []) {
+ *     駆動表を省略できる <@uses Database::sum()>
+ * }
+ * @method int|float              avg($column, $where = [], $groupBy = [], $having = []) {
+ *     駆動表を省略できる <@uses Database::avg()>
+ * }
  *
- * @method QueryBuilder           selectExists($where = [], $for_update = false) {駆動表を省略できる {@link Database::selectExists()}@inheritdoc Database::selectExists()}
- * @method QueryBuilder           selectNotExists($where = [], $for_update = false) {駆動表を省略できる {@link Database::selectNotExists()}@inheritdoc Database::selectNotExists()}
- * @method QueryBuilder           selectCount($column = [], $where = [], $groupBy = [], $having = []) {駆動表を省略できる {@link Database::selectCount()}@inheritdoc Database::selectCount()}
- * @method QueryBuilder           selectMin($column, $where = [], $groupBy = [], $having = []) {駆動表を省略できる {@link Database::selectMin()}@inheritdoc Database::selectMin()}
- * @method QueryBuilder           selectMax($column, $where = [], $groupBy = [], $having = []) {駆動表を省略できる {@link Database::selectMax()}@inheritdoc Database::selectMax()}
- * @method QueryBuilder           selectSum($column, $where = [], $groupBy = [], $having = []) {駆動表を省略できる {@link Database::selectSum()}@inheritdoc Database::selectSum()}
- * @method QueryBuilder           selectAvg($column, $where = [], $groupBy = [], $having = []) {駆動表を省略できる {@link Database::selectAvg()}@inheritdoc Database::selectAvg()}
+ * @method QueryBuilder           selectExists($where = [], $for_update = false) {
+ *     駆動表を省略できる <@uses Database::selectExists()>
+ * }
+ * @method QueryBuilder           selectNotExists($where = [], $for_update = false) {
+ *     駆動表を省略できる <@uses Database::selectNotExists()>
+ * }
+ * @method QueryBuilder           selectCount($column = [], $where = [], $groupBy = [], $having = []) {
+ *     駆動表を省略できる <@uses Database::selectCount()>
+ * }
+ * @method QueryBuilder           selectMin($column, $where = [], $groupBy = [], $having = []) {
+ *     駆動表を省略できる <@uses Database::selectMin()>
+ * }
+ * @method QueryBuilder           selectMax($column, $where = [], $groupBy = [], $having = []) {
+ *     駆動表を省略できる <@uses Database::selectMax()>
+ * }
+ * @method QueryBuilder           selectSum($column, $where = [], $groupBy = [], $having = []) {
+ *     駆動表を省略できる <@uses Database::selectSum()>
+ * }
+ * @method QueryBuilder           selectAvg($column, $where = [], $groupBy = [], $having = []) {
+ *     駆動表を省略できる <@uses Database::selectAvg()>
+ * }
  *
- * @method array                  insertSelect($sql, $columns = [], array $params = []) {駆動表を省略できる {@link Database::insertSelect()}@inheritdoc Database::insertSelect()}
- * @method array                  insertArray($data, $chunk = 0) {駆動表を省略できる {@link Database::insertArray()}@inheritdoc Database::insertArray()}
- * @method array                  updateArray($data, $identifier = []) {駆動表を省略できる {@link Database::updateArray()}@inheritdoc Database::updateArray()}
- * @method array                  modifyArray($insertData, $updateData = [], $chunk = 0) {駆動表を省略できる {@link Database::modifyArray()}@inheritdoc Database::modifyArray()}
- * @method array                  changeArray($dataarray, $identifier) {駆動表を省略できる {@link Database::changeArray()}@inheritdoc Database::changeArray()}
- * @method int                    insert($data) {駆動表を省略できる {@link Database::insert()}@inheritdoc Database::insert()}
- * @method int                    update($data, array $identifier = []) {駆動表を省略できる {@link Database::update()}@inheritdoc Database::update()}
- * @method int                    delete(array $identifier = []) {駆動表を省略できる {@link Database::delete()}@inheritdoc Database::delete()}
- * @method int                    remove(array $identifier = []) {駆動表を省略できる {@link Database::remove()}@inheritdoc Database::remove()}
- * @method int                    destroy(array $identifier = []) {駆動表を省略できる {@link Database::destroy()}@inheritdoc Database::destroy()}
- * @method int                    reduce($limit = null, $orderBy = [], $groupBy = [], $identifier = []) {駆動表を省略できる {@link Database::reduce()}@inheritdoc Database::reduce()}
- * @method int                    upsert($insertData, $updateData = null) {駆動表を省略できる {@link Database::upsert()}@inheritdoc Database::upsert()}
- * @method int                    modify($insertData, $updateData = null) {駆動表を省略できる {@link Database::modify()}@inheritdoc Database::modify()}
- * @method int                    replace($insertData, $updateData = null) {駆動表を省略できる {@link Database::replace()}@inheritdoc Database::replace()}
- * @method int                    truncate() {駆動表を省略できる {@link Database::truncate()}@inheritdoc Database::truncate()}
+ * @method array                  insertSelect($sql, $columns = [], array $params = []) {
+ *     駆動表を省略できる <@uses Database::insertSelect()>
+ * }
+ * @method array                  insertArray($data, $chunk = 0) {
+ *     駆動表を省略できる <@uses Database::insertArray()>
+ * }
+ * @method array                  updateArray($data, $identifier = []) {
+ *     駆動表を省略できる <@uses Database::updateArray()>
+ * }
+ * @method array                  modifyArray($insertData, $updateData = [], $chunk = 0) {
+ *     駆動表を省略できる <@uses Database::modifyArray()>
+ * }
+ * @method array                  changeArray($dataarray, $identifier) {
+ *     駆動表を省略できる <@uses Database::changeArray()>
+ * }
+ * @method int                    insert($data) {
+ *     駆動表を省略できる <@uses Database::insert()>
+ * }
+ * @method int                    update($data, array $identifier = []) {
+ *     駆動表を省略できる <@uses Database::update()>
+ * }
+ * @method int                    delete(array $identifier = []) {
+ *     駆動表を省略できる <@uses Database::delete()>
+ * }
+ * @method int                    remove(array $identifier = []) {
+ *     駆動表を省略できる <@uses Database::remove()>
+ * }
+ * @method int                    destroy(array $identifier = []) {
+ *     駆動表を省略できる <@uses Database::destroy()>
+ * }
+ * @method int                    reduce($limit = null, $orderBy = [], $groupBy = [], $identifier = []) {
+ *     駆動表を省略できる <@uses Database::reduce()>
+ * }
+ * @method int                    upsert($insertData, $updateData = null) {
+ *     駆動表を省略できる <@uses Database::upsert()>
+ * }
+ * @method int                    modify($insertData, $updateData = null) {
+ *     駆動表を省略できる <@uses Database::modify()>
+ * }
+ * @method int                    replace($insertData, $updateData = null) {
+ *     駆動表を省略できる <@uses Database::replace()>
+ * }
+ * @method int                    truncate() {
+ *     駆動表を省略できる <@uses Database::truncate()>
+ * }
  *
- * @method array                  insertOrThrow($data) {{@link insert()} の例外送出版@inheritdoc insert()}
- * @method array                  updateOrThrow($data, array $identifier = []) {{@link update()} の例外送出版@inheritdoc update()}
- * @method array                  deleteOrThrow(array $identifier = []) {{@link delete()} の例外送出版@inheritdoc delete()}
- * @method array                  removeOrThrow(array $identifier = []) {{@link remove()} の例外送出版@inheritdoc remove()}
- * @method array                  destroyOrThrow(array $identifier = []) {{@link destroy()} の例外送出版@inheritdoc destroy()}
- * @method array                  reduceOrThrow($limit = null, $orderBy = [], $groupBy = [], $identifier = []) {{@link reduce()} の例外送出版@inheritdoc reduce()}
- * @method array                  upsertOrThrow($insertData, $updateData = null) {{@link upsert()} の例外送出版@inheritdoc upsert()}
- * @method array                  modifyOrThrow($insertData, $updateData = null) {{@link modify()} の例外送出版@inheritdoc modify()}
- * @method array                  replaceOrThrow($data) {{@link replace()} の例外送出版@inheritdoc replace()}
+ * @method array                  insertOrThrow($data) {
+ *     <@uses TableGateway::insert()> の例外送出版
+ * }
+ * @method array                  updateOrThrow($data, array $identifier = []) {
+ *     <@uses TableGateway::update()> の例外送出版
+ * }
+ * @method array                  deleteOrThrow(array $identifier = []) {
+ *     <@uses TableGateway::delete()> の例外送出版
+ * }
+ * @method array                  removeOrThrow(array $identifier = []) {
+ *     <@uses TableGateway::remove()> の例外送出版
+ * }
+ * @method array                  destroyOrThrow(array $identifier = []) {
+ *     <@uses TableGateway::destroy()> の例外送出版
+ * }
+ * @method array                  reduceOrThrow($limit = null, $orderBy = [], $groupBy = [], $identifier = []) {
+ *     <@uses TableGateway::reduce()> の例外送出版
+ * }
+ * @method array                  upsertOrThrow($insertData, $updateData = null) {
+ *     <@uses TableGateway::upsert()> の例外送出版
+ * }
+ * @method array                  modifyOrThrow($insertData, $updateData = null) {
+ *     <@uses TableGateway::modify()> の例外送出版
+ * }
+ * @method array                  replaceOrThrow($data) {
+ *     <@uses TableGateway::replace()> の例外送出版
+ * }
  *
- * @method array                  insertIgnore($data) {駆動表を省略できる {@link Database::insertIgnore()}@inheritdoc insertOrThrow()}
- * @method array                  updateIgnore($data, array $identifier = []) {駆動表を省略できる {@link Database::updateIgnore()}@inheritdoc updateOrThrow()}
- * @method array                  deleteIgnore(array $identifier = []) {駆動表を省略できる {@link Database::deleteIgnore()}@inheritdoc deleteOrThrow()}
- * @method array                  removeIgnore(array $identifier = []) {駆動表を省略できる {@link Database::removeIgnore()}@inheritdoc removeOrThrow()}
- * @method array                  destroyIgnore(array $identifier = []) {駆動表を省略できる {@link Database::destroyIgnore()}@inheritdoc destroyOrThrow()}
- * @method array                  modifyIgnore($insertData, $updateData = null) {駆動表を省略できる {@link Database::modifyIgnore()}@inheritdoc modifyOrThrow()}
+ * @method array                  insertIgnore($data) {
+ *     駆動表を省略できる <@uses Database::insertIgnore()>
+ * }
+ * @method array                  updateIgnore($data, array $identifier = []) {
+ *     駆動表を省略できる <@uses Database::updateIgnore()>
+ * }
+ * @method array                  deleteIgnore(array $identifier = []) {
+ *     駆動表を省略できる <@uses Database::deleteIgnore()>
+ * }
+ * @method array                  removeIgnore(array $identifier = []) {
+ *     駆動表を省略できる <@uses Database::removeIgnore()>
+ * }
+ * @method array                  destroyIgnore(array $identifier = []) {
+ *     駆動表を省略できる <@uses Database::destroyIgnore()>
+ * }
+ * @method array                  modifyIgnore($insertData, $updateData = null) {
+ *     駆動表を省略できる <@uses Database::modifyIgnore()>
+ * }
  *
- * @method array                  insertConditionally($condition, $data) {駆動表を省略できる {@link Database::insertConditionally()}@inheritdoc Database::insertConditionally()}
- * @method array                  upsertConditionally($condition, $insertData, $updateData = null) {駆動表を省略できる {@link Database::upsertConditionally()}@inheritdoc Database::upsertConditionally()}
- * @method array                  modifyConditionally($condition, $insertData, $updateData = null) {駆動表を省略できる {@link Database::modifyConditionally()}@inheritdoc Database::modifyConditionally()}
+ * @method array                  insertConditionally($condition, $data) {
+ *     駆動表を省略できる <@uses Database::insertConditionally()>
+ * }
+ * @method array                  upsertConditionally($condition, $insertData, $updateData = null) {
+ *     駆動表を省略できる <@uses Database::upsertConditionally()>
+ * }
+ * @method array                  modifyConditionally($condition, $insertData, $updateData = null) {
+ *     駆動表を省略できる <@uses Database::modifyConditionally()>
+ * }
  *
- * @method Statement              prepareSelect($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {駆動表を省略できる {@link Database::prepareSelect()}@inheritdoc Database::prepareSelect()}
- * @method Statement              prepareInsert($data) {駆動表を省略できる {@link Database::prepareInsert()}@inheritdoc Database::prepareInsert()}
- * @method Statement              prepareUpdate($data, array $identifier = []) {駆動表を省略できる {@link Database::prepareUpdate()}@inheritdoc Database::prepareUpdate()}
- * @method Statement              prepareDelete(array $identifier = []) {駆動表を省略できる {@link Database::prepareDelete()}@inheritdoc Database::prepareDelete()}
- * @method Statement              prepareModify($insertData, $updateData = null) {駆動表を省略できる {@link Database::prepareModify()}@inheritdoc Database::prepareModify()}
- * @method Statement              prepareReplace($data) {駆動表を省略できる {@link Database::prepareReplace()}@inheritdoc Database::prepareReplace()}
+ * @method Statement              prepareSelect($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
+ *     駆動表を省略できる <@uses Database::prepareSelect()>
+ * }
+ * @method Statement              prepareInsert($data) {
+ *     駆動表を省略できる <@uses Database::prepareInsert()>
+ * }
+ * @method Statement              prepareUpdate($data, array $identifier = []) {
+ *     駆動表を省略できる <@uses Database::prepareUpdate()>
+ * }
+ * @method Statement              prepareDelete(array $identifier = []) {
+ *     駆動表を省略できる <@uses Database::prepareDelete()>
+ * }
+ * @method Statement              prepareModify($insertData, $updateData = null) {
+ *     駆動表を省略できる <@uses Database::prepareModify()>
+ * }
+ * @method Statement              prepareReplace($data) {
+ *     駆動表を省略できる <@uses Database::prepareReplace()>
+ * }
  */
 // @formatter:on
 class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
