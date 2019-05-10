@@ -534,6 +534,180 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
         return $sql . $jsql;
     }
 
+    private function _buildColumn($columns, $table = null, $alias = null)
+    {
+        $result = [];
+        $ignores = [];
+
+        $schema = $this->database->getSchema();
+        $accessor = $alias ?: $table;
+        $prefix = $accessor ? $accessor . '.' : '';
+        foreach (arrayize($columns) as $key => $column) {
+            // 仮想カラム
+            if ($table && $column !== null) {
+                $vcolumn = optional($this->database->$table)->virtualColumn($column, 'expression');
+                if ($vcolumn) {
+                    $key = is_int($key) ? $column : $key;
+                    // 仮想カラムは修飾子を付与するチャンスを与えなければ実質使い物にならない（エイリアスが動的だから）
+                    if (is_string($vcolumn)) {
+                        $vcolumn = sprintf($vcolumn, $accessor);
+                    }
+                    $column = $vcolumn;
+                }
+            }
+
+            // Expression 化出来そうならする
+            $column = Expression::forge($column);
+            $column = PhpExpression::forge($column, $key);
+
+            // テーブルに紐付かない列指定で配列指定は operator(Expression 化) する
+            if (!$table && is_array($column)) {
+                $column = $this->database->operator($column);
+            }
+
+            // null はダミーとして扱い、取得しない
+            if ($column === null) {
+                // dummy
+            }
+            // SelectOption は単純に addSelectOption するだけ
+            elseif ($column instanceof SelectOption) {
+                $this->addSelectOption($column);
+            }
+            // Alias はそのまま
+            elseif ($column instanceof Alias) {
+                $result[] = $column;
+            }
+            // 配列や Gateway なら subtable 化
+            elseif (is_array($column) || $column instanceof TableGateway) {
+                // Gateway ならパースの必要はない
+                if ($column instanceof TableGateway) {
+                    $parsed = stdclass([
+                        'table'    => $column->tableName(),
+                        'alias'    => $column->alias(),
+                        'accessor' => $column->modifier(),
+                        'fkeyname' => $column->foreign(),
+                    ]);
+                    $build_params = $column->getScopeParams([]);
+                    $key = is_int($key) ? $column->modifier() : $key;
+                }
+                // 配列なら key をパース
+                else {
+                    $parsed = new TableDescriptor($this->database, $key, []);
+                    $build_params = ['column' => [$key => array_merge($parsed->column, $column)]];
+                    $key = $parsed->alias ?: $this->database->convertEntityName($parsed->table) . $parsed->fkeysuffix;
+                }
+
+                $fcols = $schema->getForeignColumns($table, $parsed->table, $parsed->fkeyname);
+                $result[] = array_strpad($fcols, '', $prefix);
+
+                $subtable = $this->database->createSubqueryBuilder();
+                $subtable->build($build_params)->lazy('select', array_strpad($fcols, $parsed->accessor . '.'));
+
+                // 「主キーから外部キーを差っ引いたものが空」はすなわち「親との結合」とみなすことができる
+                // その場合 assoc は無駄だし、assoc のためのカラムを追加する必要もない
+                $pk = $schema->getTablePrimaryKey($parsed->table);
+                $jk = array_diff($pk->getColumns(), array_keys($fcols));
+                if (!$jk) {
+                    $this->subbuilders[$key] = $subtable->tuple();
+                }
+                else {
+                    $jk = array_strpad($jk, '', $parsed->accessor . '.');
+                    $subtable->_addPrimary(Database::AUTO_PRIMARY_KEY, $jk, true);
+                    $this->subbuilders[$key] = $subtable->assoc();
+                }
+            }
+            // PhpExpression なら phpExpressions に追加するだけ
+            elseif ($column instanceof PhpExpression) {
+                $result[] = $column->getDependColumns();
+                $this->phpExpressions[$key] = $column;
+            }
+            // SubqueryBuilder ならクエリ化せずに subbuilders に追加するだけ
+            elseif ($column instanceof SubqueryBuilder) {
+                // ビルド保留状態ならここでビルドする
+                if ($dparam = $column->getDelayedParams()) {
+                    $parsed = new TableDescriptor($this->database, $key, []);
+
+                    $dparam['column'] = [$key => array_merge($parsed->column, arrayize($dparam['column']))];
+                    $fcols = $schema->getForeignColumns($table, $parsed->table, $parsed->fkeyname);
+                    $column->build($dparam)->lazy('select', array_strpad($fcols, $parsed->accessor . '.'));
+
+                    $key = $parsed->alias ?: $this->database->convertEntityName($parsed->table) . $parsed->fkeysuffix;
+                    $add_columns = $fcols;
+                }
+                else {
+                    $add_columns = $column->setLazyColumnFrom($table);
+                }
+
+                $result[] = array_strpad($add_columns, '', $prefix);
+                $this->subbuilders[$key] = $column;
+            }
+            // QueryBuilder なら文字列化したものをカッコつきで select + パラメータ追加
+            elseif ($column instanceof QueryBuilder) {
+                // サブクエリで order は無意味
+                $column->setAutoOrder(false);
+
+                // subexists はこの段階で where が確定する
+                if (($submethod = $column->getSubmethod()) !== null) {
+                    $column->setSubwhere($table, $alias);
+                    if (is_bool($submethod)) {
+                        $column = $this->database->getCompatiblePlatform()->convertSelectExistsQuery($column);
+                    }
+                }
+                $result[] = Alias::forge($key, $column->getQuery());
+                $this->addParam($column->getParams(), 'select');
+                if (!is_int($key)) {
+                    $this->sqlParts['colval'][$prefix . $key] = $column->getQuery();
+                }
+            }
+            // Expression なら文字列化したものをそのまま select
+            elseif ($column instanceof Expression) {
+                $result[] = Alias::forge($key, $column);
+                $this->addParam($column->getParams(), 'select');
+                if (!is_int($key)) {
+                    $this->sqlParts['colval'][$prefix . $key] = $column;
+                }
+            }
+            // ! プレフィクスなら「それ以外のカラム」
+            elseif (is_string($column) && $column[0] === '!') {
+                $ignores[] = ltrim($column, '!');
+            }
+            // .. プレフィクスなら「親カラムの参照」（識別のために $prefix を付与しないで追加する）
+            elseif (is_string($column) && strpos($column, '..') === 0) {
+                $result[] = Alias::forge($key, $column);
+            }
+            // 上記以外。文字列として扱う
+            else {
+                foreach (split_noempty(',', (string) $column) as $col) {
+                    // エイリアスをバラす
+                    list($key, $col) = Alias::split($col, $key);
+                    $result[] = Alias::forge($key, $prefix . $col);
+                    if (!is_int($key)) {
+                        $this->sqlParts['colval'][$prefix . $key] = $col;
+                    }
+                }
+            }
+        }
+
+        // 上の過程で配列ごと突っ込んでいる箇所があるのでフラットにする
+        $result = array_flatten($result);
+
+        // ignore 指定があるなら describe してそれ以外のカラムをマージ
+        if ($ignores) {
+            $allcolumns = array_keys($schema->getTableColumns($table));
+
+            // 無視しようとしているカラムが存在しない場合（テーブル定義を変更した時とかの対策）
+            if (array_intersect($ignores, $allcolumns) !== $ignores) {
+                throw new \UnexpectedValueException('some columns are not found (' . implode(', ', $ignores) . ').');
+            }
+
+            $allcolumns = array_diff($allcolumns, $ignores, array_map_method($result, 'getAlias', [], true));
+            $result = array_merge(array_strpad($allcolumns, '', $prefix), $result);
+        }
+
+        $this->sqlParts['select'] = array_merge($this->sqlParts['select'], array_unique($result));
+        return $this->_dirty();
+    }
+
     private function _buildCondition($type, $predicates, $ack = true)
     {
         $subtype = "and$type";
@@ -1265,178 +1439,8 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
      */
     public function addColumn($tableDescriptor, $parent = null)
     {
-        $schema = $this->database->getSchema();
         foreach (TableDescriptor::forge($this->database, $tableDescriptor) as $descriptor) {
-            // カラム配列
-            $columns = [];
-            $ignores = [];
-
-            // カラム修飾子
-            $prefix = $descriptor->descriptor ? $descriptor->accessor . '.' : '';
-
-            foreach ($descriptor->column as $key => $column) {
-                // 仮想カラム
-                if ($descriptor->table && $column !== null) {
-                    $vcolumn = optional($this->database->{$descriptor->table})->virtualColumn($column, 'expression');
-                    if ($vcolumn) {
-                        $key = is_int($key) ? $column : $key;
-                        // 仮想カラムは修飾子を付与するチャンスを与えなければ実質使い物にならない（エイリアスが動的だから）
-                        if (is_string($vcolumn)) {
-                            $vcolumn = sprintf($vcolumn, $descriptor->accessor);
-                        }
-                        $column = $vcolumn;
-                    }
-                }
-
-                // Expression 化出来そうならする
-                $column = Expression::forge($column);
-                $column = PhpExpression::forge($column, $key);
-
-                // テーブルに紐付かない列指定で配列指定は operator(Expression 化) する
-                if (!$descriptor->table && is_array($column)) {
-                    $column = $this->database->operator($column);
-                }
-
-                // null はダミーとして扱い、取得しない
-                if ($column === null) {
-                    // dummy
-                }
-                // SelectOption は単純に addSelectOption するだけ
-                elseif ($column instanceof SelectOption) {
-                    $this->addSelectOption($column);
-                }
-                // Alias はそのまま
-                elseif ($column instanceof Alias) {
-                    $columns[] = $column;
-                }
-                // 配列や Gateway なら subtable 化
-                elseif (is_array($column) || $column instanceof TableGateway) {
-                    // Gateway ならパースの必要はない
-                    if ($column instanceof TableGateway) {
-                        $parsed = stdclass([
-                            'table'    => $column->tableName(),
-                            'alias'    => $column->alias(),
-                            'accessor' => $column->modifier(),
-                            'fkeyname' => $column->foreign(),
-                        ]);
-                        $build_params = $column->getScopeParams([]);
-                        $key = is_int($key) ? $column->modifier() : $key;
-                    }
-                    // 配列なら key をパース
-                    else {
-                        $parsed = new TableDescriptor($this->database, $key, []);
-                        $build_params = ['column' => [$key => array_merge($parsed->column, $column)]];
-                        $key = $parsed->alias ?: $this->database->convertEntityName($parsed->table) . $parsed->fkeysuffix;
-                    }
-
-                    $fcols = $schema->getForeignColumns($descriptor->table, $parsed->table, $parsed->fkeyname);
-                    $columns[] = array_strpad($fcols, '', $prefix);
-
-                    $subtable = $this->database->createSubqueryBuilder();
-                    $subtable->build($build_params)->lazy('select', array_strpad($fcols, $parsed->accessor . '.'));
-
-                    // 「主キーから外部キーを差っ引いたものが空」はすなわち「親との結合」とみなすことができる
-                    // その場合 assoc は無駄だし、assoc のためのカラムを追加する必要もない
-                    $pk = $schema->getTablePrimaryKey($parsed->table);
-                    $jk = array_diff($pk->getColumns(), array_keys($fcols));
-                    if (!$jk) {
-                        $this->subbuilders[$key] = $subtable->tuple();
-                    }
-                    else {
-                        $jk = array_strpad($jk, '', $parsed->accessor . '.');
-                        $subtable->_addPrimary(Database::AUTO_PRIMARY_KEY, $jk, true);
-                        $this->subbuilders[$key] = $subtable->assoc();
-                    }
-                }
-                // PhpExpression なら phpExpressions に追加するだけ
-                elseif ($column instanceof PhpExpression) {
-                    $columns[] = $column->getDependColumns();
-                    $this->phpExpressions[$key] = $column;
-                }
-                // SubqueryBuilder ならクエリ化せずに subbuilders に追加するだけ
-                elseif ($column instanceof SubqueryBuilder) {
-                    // ビルド保留状態ならここでビルドする
-                    if ($dparam = $column->getDelayedParams()) {
-                        $parsed = new TableDescriptor($this->database, $key, []);
-
-                        $dparam['column'] = [$key => array_merge($parsed->column, arrayize($dparam['column']))];
-                        $fcols = $schema->getForeignColumns($descriptor->table, $parsed->table, $parsed->fkeyname);
-                        $column->build($dparam)->lazy('select', array_strpad($fcols, $parsed->accessor . '.'));
-
-                        $key = $parsed->alias ?: $this->database->convertEntityName($parsed->table) . $parsed->fkeysuffix;
-                        $add_columns = $fcols;
-                    }
-                    else {
-                        $add_columns = $column->setLazyColumnFrom($descriptor->table);
-                    }
-
-                    $columns[] = array_strpad($add_columns, '', $prefix);
-                    $this->subbuilders[$key] = $column;
-                }
-                // QueryBuilder なら文字列化したものをカッコつきで select + パラメータ追加
-                elseif ($column instanceof QueryBuilder) {
-                    // サブクエリで order は無意味
-                    $column->setAutoOrder(false);
-
-                    // subexists はこの段階で where が確定する
-                    if (($submethod = $column->getSubmethod()) !== null) {
-                        $column->setSubwhere($descriptor->table, $descriptor->alias);
-                        if (is_bool($submethod)) {
-                            $column = $this->database->getCompatiblePlatform()->convertSelectExistsQuery($column);
-                        }
-                    }
-                    $columns[] = Alias::forge($key, $column->getQuery());
-                    $this->addParam($column->getParams(), 'select');
-                    if (!is_int($key)) {
-                        $this->sqlParts['colval'][$prefix . $key] = $column->getQuery();
-                    }
-                }
-                // Expression なら文字列化したものをそのまま select
-                elseif ($column instanceof Expression) {
-                    $columns[] = Alias::forge($key, $column);
-                    $this->addParam($column->getParams(), 'select');
-                    if (!is_int($key)) {
-                        $this->sqlParts['colval'][$prefix . $key] = $column;
-                    }
-                }
-                // ! プレフィクスなら「それ以外のカラム」
-                elseif (is_string($column) && $column[0] === '!') {
-                    $ignores[] = ltrim($column, '!');
-                }
-                // .. プレフィクスなら「親カラムの参照」（識別のために $prefix を付与しないで追加する）
-                elseif (is_string($column) && strpos($column, '..') === 0) {
-                    $columns[] = Alias::forge($key, $column);
-                }
-                // 上記以外。文字列として扱う
-                else {
-                    foreach (split_noempty(',', (string) $column) as $col) {
-                        // エイリアスをバラす
-                        list($key, $col) = Alias::split($col, $key);
-                        $columns[] = Alias::forge($key, $prefix . $col);
-                        if (!is_int($key)) {
-                            $this->sqlParts['colval'][$prefix . $key] = $col;
-                        }
-                    }
-                }
-            }
-
-            // 上の過程で配列ごと突っ込んでいる箇所があるのでフラットにする
-            $columns = array_flatten($columns);
-
-            // ignore 指定があるなら describe してそれ以外のカラムをマージ
-            if ($ignores) {
-                $allcolumns = array_keys($schema->getTableColumns($descriptor->table));
-
-                // 無視しようとしているカラムが存在しない場合（テーブル定義を変更した時とかの対策）
-                if (array_intersect($ignores, $allcolumns) !== $ignores) {
-                    throw new \UnexpectedValueException('some columns are not found (' . implode(', ', $ignores) . ').');
-                }
-
-                $allcolumns = array_diff($allcolumns, $ignores, array_map_method($columns, 'getAlias', [], true));
-                $columns = array_merge(array_strpad($allcolumns, '', $prefix), $columns);
-            }
-
-            $this->sqlParts['select'] = array_merge($this->sqlParts['select'], array_unique($columns));
+            $this->_buildColumn($descriptor->column, $descriptor->table, $descriptor->alias);
 
             // テーブル未指定ならカラムが確定したこの時点で終わり
             if (!$descriptor->table) {
@@ -1446,7 +1450,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
             $this->from($descriptor->table, $descriptor->alias, $descriptor->jointype, $descriptor->condition, $descriptor->fkeyname, $parent);
 
             if ($descriptor->order) {
-                $this->addOrderBy(array_strpad($descriptor->order, $prefix));
+                $this->addOrderBy(array_strpad($descriptor->order, $descriptor->accessor . '.'));
             }
             if ($descriptor->offset || $descriptor->limit) {
                 $this->limit($descriptor->limit, $descriptor->offset);
@@ -1460,7 +1464,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
                 }
                 $sparam = $gateway->getScopeParams([]);
                 $scolumn = array_unset($sparam, 'column');
-                $this->addSelect(reset($scolumn));
+                $this->_buildColumn(reset($scolumn), $descriptor->table, $descriptor->alias);
                 $this->build($sparam, true);
             }
 
@@ -1529,9 +1533,9 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
     public function addSelect(...$selects)
     {
         foreach ($selects as $select) {
-            $this->addColumn(['' => $select]);
+            $this->_buildColumn($select);
         }
-        return $this;
+        return $this->_dirty();
     }
 
     /**
