@@ -678,8 +678,8 @@ GREATEST(1,2,3) FROM test1', $builder);
                 ],
             ],
         ]);
-        $this->assertQuery("SELECT A.*, NOW(), C.*, NOW() FROM t_article A LEFT JOIN t_comment C ON C.article_id = A.article_id WHERE (A.article_id = ?) AND (C.comment_id = ?)", $builder);
-        $this->assertEquals([1, 2], $builder->getParams());
+        $this->assertQuery("SELECT A.*, NOW(), C.*, NOW() FROM t_article A LEFT JOIN t_comment C ON (C.article_id = A.article_id) AND (C.comment_id = ?) WHERE A.article_id = ?", $builder);
+        $this->assertEquals([2, 1], $builder->getParams());
 
         // sub
         $this->assertEquals([

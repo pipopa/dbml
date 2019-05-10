@@ -1468,7 +1468,15 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
                 /** @var TableDescriptor $join */
                 $jointable = $join->descriptor;
                 $jcondition = $join->condition;
+                $key = $join->key;
 
+                if ($join->scope) {
+                    $key = $join->joinsign . $join->table . ' ' . $join->alias;
+                    $jointable = $this->database->{$join->table}->clone();
+                    $jointable->as($join->alias);
+                    $jointable->column($join->descriptor);
+                    $jointable->scope($join->scope);
+                }
                 if ($jointable instanceof TableGateway) {
                     $this->hint($jointable->hint(), $jointable->modifier());
                     $joinable = $jointable->joinize();
@@ -1487,7 +1495,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
                     $this->from($jointable, $join->accessor, $join->jointype, $jcondition, $join->fkeyname, $parent);
                 }
                 else {
-                    $this->addColumn([$join->key => $jointable], $descriptor->accessor);
+                    $this->addColumn([$key => $jointable], $descriptor->accessor);
                 }
             }
         }
