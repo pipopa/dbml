@@ -2126,6 +2126,45 @@ class Database
     }
 
     /**
+     * 外部キーをまとめて追加する
+     *
+     * addForeignKey を複数呼ぶのとほぼ等しい。
+     *
+     * ```php
+     * # 下記のような配列を与える
+     * $db->addRelation([
+     *     'ローカルテーブル名' => [
+     *         '外部テーブル名' => [
+     *             '外部キー名' => [
+     *                 'ローカルカラム名1' => '外部カラム名1',
+     *                 'ローカルカラム名2' => '外部カラム名2',
+     *             ],
+     *             // 別キー名に対して上記の構造の繰り返しができる
+     *         ],
+     *         // 別外部テーブル名に対して上記の構造の繰り返しができる
+     *     ],
+     *     // 別ローカルテーブル名に対して上記の構造の繰り返しができる
+     * ]);
+     * ```
+     *
+     * @param array $relations 外部キー定義
+     * @return ForeignKeyConstraint[] 追加した外部キーオブジェクト
+     */
+    public function addRelation($relations)
+    {
+        $result = [];
+        foreach ($relations as $localTable => $foreignTables) {
+            foreach ($foreignTables as $foreignTable => $relation) {
+                foreach ($relation as $fkname => $columnsMap) {
+                    $fkey = $this->addForeignKey($localTable, $foreignTable, $columnsMap, is_int($fkname) ? null : $fkname);
+                    $result[$fkey->getName()] = $fkey;
+                }
+            }
+        }
+        return $result;
+    }
+
+    /**
      * 外部キーを追加する
      *
      * 簡易性や ForeignKeyConstraint を隠蔽するために用意されている。
@@ -2134,23 +2173,20 @@ class Database
      * @param string $localTable 外部キー定義テーブル名
      * @param string $foreignTable 参照先テーブル名
      * @param string|array $columnsMap 外部キーカラム
+     * @param string|null $fkname 外部キー名。省略時は自動命名
      * @return ForeignKeyConstraint 追加した外部キーオブジェクト
      */
-    public function addForeignKey($localTable, $foreignTable, $columnsMap)
+    public function addForeignKey($localTable, $foreignTable, $columnsMap, $fkname = null)
     {
-        // 文字列なら配列化
-        if (is_string($columnsMap)) {
-            $columnsMap = [$columnsMap];
-        }
+        $columnsMap = Adhoc::to_hash($columnsMap);
 
-        // ただの配列なら連想配列化
-        if (!is_hasharray($columnsMap)) {
-            $columnsMap = array_combine($columnsMap, $columnsMap);
+        // 省略時は自動命名
+        if (!$fkname) {
+            $fkname = $localTable . '_' . $foreignTable . '_' . count($this->getSchema()->getTableForeignKeys($localTable));
         }
 
         // 外部キーオブジェクトの生成
-        $name = $localTable . '_' . $foreignTable . '_' . count($this->getSchema()->getTableForeignKeys($localTable));
-        $fk = new ForeignKeyConstraint(array_keys($columnsMap), $foreignTable, array_values($columnsMap), $name);
+        $fk = new ForeignKeyConstraint(array_keys($columnsMap), $foreignTable, array_values($columnsMap), $fkname);
         $fk->setLocalTable($this->getSchema()->getTable($localTable));
 
         return $this->getSchema()->addForeignKey($fk);
@@ -2169,15 +2205,7 @@ class Database
      */
     public function ignoreForeignKey($localTable, $foreignTable, $columnsMap)
     {
-        // 文字列なら配列化
-        if (is_string($columnsMap)) {
-            $columnsMap = [$columnsMap];
-        }
-
-        // ただの配列なら連想配列化
-        if (!is_hasharray($columnsMap)) {
-            $columnsMap = array_combine($columnsMap, $columnsMap);
-        }
+        $columnsMap = Adhoc::to_hash($columnsMap);
 
         // 外部キーオブジェクトの生成
         $fk = new ForeignKeyConstraint(array_keys($columnsMap), $foreignTable, array_values($columnsMap));

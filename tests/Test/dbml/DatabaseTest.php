@@ -589,6 +589,38 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
      * @dataProvider provideDatabase
      * @param Database $database
      */
+    function test_addRelation($database)
+    {
+        $fkeys = $database->addRelation([
+            'test1' => [
+                'test' => [
+                    'auto_fk1' => [
+                        'id',
+                    ],
+                ],
+            ],
+            'test2' => [
+                'test' => [
+                    [
+                        'id',
+                    ],
+                ],
+            ],
+        ]);
+        $this->assertArrayHasKey('auto_fk1', $fkeys);
+        $this->assertArrayHasKey('test2_test_0', $fkeys);
+
+        $this->assertEquals('SELECT test.*, test1.* FROM test INNER JOIN test1 ON test1.id = test.id', (string) $database->select('test+test1'));
+        $this->assertEquals('SELECT test.*, test2.* FROM test INNER JOIN test2 ON test2.id = test.id', (string) $database->select('test+test2'));
+
+        // 後処理
+        $database->getSchema()->refresh();
+    }
+
+    /**
+     * @dataProvider provideDatabase
+     * @param Database $database
+     */
     function test_foreignKey($database)
     {
         // まず foreign_p<->foreign_c1 のリレーションがあることを担保して・・・
