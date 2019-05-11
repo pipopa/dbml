@@ -7,6 +7,19 @@ require_once __DIR__ . '/annotation.php';
 require_once __DIR__ . '/classess.php';
 
 if (DIRECTORY_SEPARATOR === '\\') {
+    $tmpdir = $_SERVER['TMP'] ?? $_SERVER['TEMP'] ?? null;
+    if ($tmpdir) {
+        putenv("TMP=$tmpdir\\dbml");
+    }
+}
+else {
+    $tmpdir = $_SERVER['TMPDIR'] ?? '/tmp';
+    if ($tmpdir) {
+        putenv("TMPDIR=$tmpdir/dbml");
+    }
+};
+
+if (DIRECTORY_SEPARATOR === '\\') {
     setlocale(LC_CTYPE, 'C');
 }
 

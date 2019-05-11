@@ -24,38 +24,33 @@ namespace {
     function L($object)
     {
         /** @noinspection PhpIncompatibleReturnTypeInspection */
-        return new \LazyCaller($object);
-    }
-
-    /**
-     * assertException のために遅延実行するラッパークラス
-     */
-    class LazyCaller
-    {
-        private $object;
-
-        public function __construct($object)
+        return new class($object)
         {
-            $this->object = $object;
-        }
+            private $object;
 
-        public function __get($name)
-        {
-            return function () use ($name) {
-                return $this->object->$name;
-            };
-        }
+            public function __construct($object)
+            {
+                $this->object = $object;
+            }
 
-        public function __call($name, $args)
-        {
-            return function () use ($name, $args) {
-                $params = [];
-                for ($i = 0, $l = count($args); $i < $l; $i++) {
-                    $params[$i] = &$args[$i];
-                }
-                return call_user_func_array([$this->object, $name], $params);
-            };
-        }
+            public function __get($name)
+            {
+                return function () use ($name) {
+                    return $this->object->$name;
+                };
+            }
+
+            public function __call($name, $args)
+            {
+                return function () use ($name, $args) {
+                    $params = [];
+                    for ($i = 0, $l = count($args); $i < $l; $i++) {
+                        $params[$i] = &$args[$i];
+                    }
+                    return call_user_func_array([$this->object, $name], $params);
+                };
+            }
+        };
     }
 }
 

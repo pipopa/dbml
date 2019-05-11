@@ -610,7 +610,12 @@ abstract class AbstractUnitTestCase extends TestCase
     public static function assertException($e, $callback)
     {
         if (is_string($e)) {
-            $e = new \Exception($e);
+            if (class_exists($e)) {
+                $e = (new \ReflectionClass($e))->newInstanceWithoutConstructor();
+            }
+            else {
+                $e = new \Exception($e);
+            }
         }
 
         $callback = self::forcedCallize($callback);
@@ -624,7 +629,7 @@ abstract class AbstractUnitTestCase extends TestCase
         catch (Exception $ex) {
             throw $ex;
         }
-        catch (\Exception $ex) {
+        catch (\Throwable $ex) {
             self::assertInstanceOf(get_class($e), $ex);
             self::assertEquals($e->getCode(), $ex->getCode());
             if (strlen($e->getMessage()) > 0) {
@@ -640,27 +645,6 @@ abstract class AbstractUnitTestCase extends TestCase
         $expected = preg_replace('/[\r\n]/', ' ', trim($expected, "\r\n"));
         $actual = preg_replace('/[\r\n]/', ' ', trim($actual, "\r\n"));
         self::assertEquals($expected, $actual);
-    }
-
-    public static function removeDirectory($dirname)
-    {
-        if (!file_exists($dirname)) {
-            return;
-        }
-
-        if (is_file($dirname)) {
-            unlink($dirname);
-        }
-        else {
-            $names = scandir($dirname);
-            foreach ($names as $fname) {
-                if ($fname !== '.' && $fname !== '..') {
-                    self::removeDirectory($dirname . '/' . $fname);
-                }
-            }
-
-            rmdir($dirname);
-        }
     }
 
     public static function forcedCallize($callable, $method = null)
