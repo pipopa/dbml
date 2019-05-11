@@ -3,15 +3,12 @@
 namespace ryunosuke\dbml\Entity;
 
 use ryunosuke\dbml\Database;
-use ryunosuke\dbml\Mixin\DebugInfoTrait;
 
 /**
  * 組み込みのデフォルトエンティティクラス
  */
 class Entity implements Entityable
 {
-    use DebugInfoTrait;
-
     /** @var Database これをどう使うかは自由。うまく使えば ActiveRecord のような実装もできるはず */
     private $database;
 

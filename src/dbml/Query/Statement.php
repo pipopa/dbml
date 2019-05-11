@@ -4,7 +4,6 @@ namespace ryunosuke\dbml\Query;
 
 use Doctrine\DBAL\Connection;
 use ryunosuke\dbml\Database;
-use ryunosuke\dbml\Mixin\DebugInfoTrait;
 
 /**
  * Statement をラップして扱いやすくしたクラス
@@ -28,8 +27,6 @@ use ryunosuke\dbml\Mixin\DebugInfoTrait;
  */
 class Statement implements Queryable
 {
-    use DebugInfoTrait;
-
     private const AUTO_BIND_KEY = '__dbml_auto_bind';
 
     /** @var string */

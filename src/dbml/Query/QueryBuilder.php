@@ -7,7 +7,6 @@ use Doctrine\DBAL\Schema\Column;
 use ryunosuke\dbml\Database;
 use ryunosuke\dbml\Entity\Entityable;
 use ryunosuke\dbml\Gateway\TableGateway;
-use ryunosuke\dbml\Mixin\DebugInfoTrait;
 use ryunosuke\dbml\Mixin\IteratorTrait;
 use ryunosuke\dbml\Mixin\OptionTrait;
 use ryunosuke\dbml\Query\Expression\Alias;
@@ -178,7 +177,6 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
 {
     use OptionTrait;
     use IteratorTrait;
-    use DebugInfoTrait;
 
     // 構成要素のキー
     public const CLAUSES = [

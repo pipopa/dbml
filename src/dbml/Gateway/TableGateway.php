@@ -5,7 +5,6 @@ namespace ryunosuke\dbml\Gateway;
 use ryunosuke\dbml\Database;
 use ryunosuke\dbml\Entity\Entityable;
 use ryunosuke\dbml\Generator\Yielder;
-use ryunosuke\dbml\Mixin\DebugInfoTrait;
 use ryunosuke\dbml\Mixin\IteratorTrait;
 use ryunosuke\dbml\Mixin\OptionTrait;
 use ryunosuke\dbml\Query\Expression\TableDescriptor;
@@ -733,7 +732,6 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
     use IteratorTrait {
         count as countIterator;
     }
-    use DebugInfoTrait;
 
     /** @var array scope のデフォルト値 */
     private static $defargs = [

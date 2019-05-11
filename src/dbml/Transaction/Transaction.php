@@ -7,7 +7,6 @@ use Doctrine\DBAL\Logging\LoggerChain;
 use Doctrine\DBAL\Logging\SQLLogger;
 use Doctrine\DBAL\TransactionIsolationLevel;
 use ryunosuke\dbml\Database;
-use ryunosuke\dbml\Mixin\DebugInfoTrait;
 use ryunosuke\dbml\Mixin\OptionTrait;
 use function ryunosuke\dbml\array_set;
 use function ryunosuke\dbml\arrayize;
@@ -166,7 +165,6 @@ use function ryunosuke\dbml\arrayize;
 class Transaction
 {
     use OptionTrait;
-    use DebugInfoTrait;
 
     /// トランザクション分離レベル
     public const READ_UNCOMMITTED = TransactionIsolationLevel::READ_UNCOMMITTED;

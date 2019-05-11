@@ -297,6 +297,15 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
      * @dataProvider provideDatabase
      * @param Database $database
      */
+    function test___debugInfo($database)
+    {
+        $this->assertArrayNotHasKey('cache', $database->__debugInfo());
+    }
+
+    /**
+     * @dataProvider provideDatabase
+     * @param Database $database
+     */
     function test__normalize($database)
     {
         $_normalize = self::forcedCallize($database, '_normalize');
