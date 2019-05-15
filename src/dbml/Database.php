@@ -1457,6 +1457,68 @@ class Database
         return $row;
     }
 
+    private function _normalizes($table, $rows, $unique_cols = null)
+    {
+        $columns = $this->getSchema()->getTableColumns($table);
+        if ($unique_cols === null) {
+            $unique_cols = $this->getSchema()->getTablePrimaryColumns($table);
+        }
+        else {
+            $unique_cols = array_flip($unique_cols);
+        }
+        $singleuk = count($unique_cols) === 1 ? first_key($unique_cols) : null;
+
+        $params = array_fill_keys(array_keys($columns), []);
+        $pvals = [];
+        $result = [];
+        foreach ($rows as $n => $row) {
+            if (!is_array($row)) {
+                throw new \InvalidArgumentException('$data\'s element must be array.');
+            }
+
+            foreach ($unique_cols as $pcol => $dummy) {
+                if (!isset($row[$pcol])) {
+                    throw new \InvalidArgumentException('$data\'s must be contain primary key.');
+                }
+                if (!is_scalar($row[$pcol])) {
+                    throw new \InvalidArgumentException('$data\'s primary key must be scalar value.');
+                }
+            }
+
+            $row = $this->_normalize($table, $row);
+
+            foreach ($columns as $col => $val) {
+                if (!array_key_exists($col, $row)) {
+                    continue;
+                }
+                if (isset($unique_cols[$col])) {
+                    $pvals[$col][] = $row[$col];
+                    continue;
+                }
+
+                if ($singleuk) {
+                    $pv = $this->bindInto($row[$singleuk], $params[$col]);
+                }
+                else{
+                    $pv = [];
+                    foreach ($unique_cols as $pcol => $dummy) {
+                        $pv[] = $pcol . ' = ' . $this->bindInto($row[$pcol], $params[$col]);
+                    }
+                    $pv = implode(' AND ', $pv);
+                }
+                $tv = $this->bindInto($row[$col], $params[$col]);
+                $result[$col][] = "WHEN $pv THEN $tv";
+            }
+        }
+
+        $cols = [];
+        foreach($result as $column => $exprs) {
+            $cols[$column] = $this->raw('CASE ' . concat($singleuk ?: '', ' ') . implode(' ', $exprs) . " ELSE $column END", $params[$column]);
+        }
+
+        return $pvals + $cols;
+    }
+
     private function _preaffect($tableName, $data)
     {
         if (is_callable($data)) {
@@ -4684,8 +4746,6 @@ class Database
      * `$data` の引数配列に含めた主キーは WHERE 句に必ず追加される。
      * したがって $identifier を指定するのは「`status_cd = 50` のもののみ」などといった「前提となるような条件」を書く。
      *
-     * @todo 無理に複合主キーに対応したらかなりクソい実装になったのでリファクタ対象
-     *
      * @param string $tableName テーブル名
      * @param array|callable|\Generator $data カラムデータあるいは Generator あるいは Generator を返す callable
      * @param array|mixed $identifier 束縛条件
@@ -4699,85 +4759,20 @@ class Database
         }
         $tableName = $this->convertTableName($tableName);
 
-        // 単一か複合かで扱いがまるで異なるので主キーを取得しておく
-        $pcols = $this->getSchema()->getTablePrimaryColumns($tableName);
-        reset($pcols);
-        $singlepk = count($pcols) === 1 ? key($pcols) : null;
-
-        $columns = [];
-        foreach ($data as $n => $row) {
-            if (!is_array($row)) {
-                throw new \InvalidArgumentException('$data\'s element must be array.');
-            }
-
-            foreach ($pcols as $pcol => $dummy) {
-                if (!isset($row[$pcol])) {
-                    throw new \InvalidArgumentException('$data\'s must be contain primary key.');
-                }
-
-                if (!is_scalar($row[$pcol])) {
-                    throw new \InvalidArgumentException('$data\'s primary key must be scalar value.');
-                }
-            }
-
-            // 列志向に構築しなければならない
-            $row = $this->_normalize($tableName, $row);
-            foreach ($row as $column => $d) {
-                $columns[$column][$n] = $d;
-            }
-        }
-        $primarys = array_intersect_key($columns, $pcols);
-        $columns = array_diff_key($columns, $pcols);
+        $pkey = $this->getSchema()->getTablePrimaryColumns($tableName);
+        $columns = $this->_normalizes($tableName, $data, array_keys($pkey));
+        $pkcols = array_intersect_key($columns, $pkey);
+        $cvcols = array_diff_key($columns, $pkey);
 
         $params = [];
-        $values = [];
-        foreach ($columns as $column => $value) {
-            // 単一主キーなら「CASE pk WHEN pv THEN value END」で事足りる
-            if ($singlepk) {
-                $whens = [];
-                foreach ($value as $n => $v) {
-                    $ps = $this->bindInto($primarys[$singlepk][$n], $params);
-                    $whens[] = "WHEN $ps THEN " . $this->bindInto($v, $params);
-                }
-                $values[] = "$column = CASE $singlepk " . implode(' ', $whens) . " ELSE $column END";
-            }
-            // 複合主キーなら「CASE WHEN pk1 = pv1 AND pk2 = pv2 THEN value END」にしなければならない
-            else {
-                $whens = [];
-                foreach ($value as $n => $v) {
-                    $ps = [];
-                    foreach ($primarys as $pcol => $pvals) {
-                        $ps[] = $pcol . ' = ' . $this->bindInto($pvals[$n], $params);
-                    }
-                    $ps = implode(' AND ', $ps);
-                    $whens[] = "WHEN $ps THEN " . $this->bindInto($v, $params);
-                }
-                $values[] = "$column = CASE " . implode(' ', $whens) . " ELSE $column END";
-            }
-        }
+        $set = $this->bindInto($cvcols, $params);
+        $sets = array_sprintf($set, '%2$s = %1$s', ', ');
 
-        $criteria = $this->whereInto($this->_prewhere($tableName, $identifier), $params);
+        $condition = $this->_prewhere($tableName, $identifier);
+        $condition[] = $this->getCompatiblePlatform()->getPrimaryCondition(array_uncolumns($pkcols), $tableName);
+        $criteria = $this->whereInto($condition, $params);
 
-        // 単一主キーなら IN で事足りる
-        if ($singlepk) {
-            $criteria = array_merge($criteria, $this->whereInto(["$singlepk IN (?)" => $primarys[$singlepk]], $params));
-        }
-        // 複合主キーなら (pk1 = pv1 AND pk2 = pv2) OR (pk1 = pv1 AND pk2 = pv2) でなければならない（行値式は使わない）
-        else {
-            $andcond = [];
-            foreach (reset($primarys) as $n => $dummy) {
-                $orcond = [];
-                foreach ($pcols as $pcol => $dummy2) {
-                    $orcond[] = "$pcol = " . $this->bindInto($primarys[$pcol][$n], $params);
-                }
-                $andcond[] = implode(' AND ', $orcond);
-            }
-            $criteria[] = implode(' OR ', Adhoc::wrapParentheses($andcond));
-        }
-
-        $sql = "UPDATE $tableName SET " . implode(", ", $values) . ($criteria ? ' WHERE ' . implode(' AND ', Adhoc::wrapParentheses($criteria)) : '');
-
-        return $this->executeUpdate($sql, $params);
+        return $this->executeUpdate("UPDATE $tableName SET $sets" . ' WHERE ' . implode(' AND ', Adhoc::wrapParentheses($criteria)), $params);
     }
 
     /**

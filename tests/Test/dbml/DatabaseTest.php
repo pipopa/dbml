@@ -315,6 +315,44 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
         $this->assertFalse($database->exists('t_article(99)'));
     }
 
+    /**
+     * @dataProvider provideDatabase
+     * @param Database $database
+     */
+    function test__normalizes($database)
+    {
+        $_normalizes = self::forcedCallize($database, '_normalizes');
+
+        // 省略時は主キー
+        $this->assertEquals([
+            'id'   => [1, 2],
+            'name' => $database->raw('CASE id WHEN ? THEN ? WHEN ? THEN ? ELSE name END', [1, 'a', 2, 'b']),
+        ], $_normalizes('test', [
+            ['id' => 1, 'name' => 'a'],
+            ['id' => 2, 'name' => 'b'],
+        ]));
+
+        // マルチ主キーでも動く
+        $this->assertEquals([
+            'mainid' => [1, 1],
+            'subid'  => [1, 2],
+            'name'   => $database->raw('CASE WHEN mainid = ? AND subid = ? THEN ? WHEN mainid = ? AND subid = ? THEN ? ELSE name END', [1, 1, 'a', 1, 2, 'b']),
+        ], $_normalizes('multiprimary', [
+            ['mainid' => 1, 'subid' => 1, 'name' => 'a'],
+            ['mainid' => 1, 'subid' => 2, 'name' => 'b'],
+        ]));
+
+        // カラムを明示的に指定できる
+        $this->assertEquals([
+            'mainid' => [1, 2],
+            'subid'  => $database->raw('CASE mainid WHEN ? THEN ? WHEN ? THEN ? ELSE subid END', [1, 1, 2, 2]),
+            'name'   => $database->raw('CASE mainid WHEN ? THEN ? WHEN ? THEN ? ELSE name END', [1, 'a', 2, 'b']),
+        ], $_normalizes('multiprimary', [
+            ['mainid' => 1, 'subid' => 1, 'name' => 'a'],
+            ['mainid' => 2, 'subid' => 2, 'name' => 'b'],
+        ], ['mainid']));
+    }
+
     function test_masterslave()
     {
         $master = DriverManager::getConnection(['url' => 'sqlite:///:memory:']);
@@ -4316,7 +4354,7 @@ WHERE (EXISTS (SELECT * FROM foreign_c1 WHERE (seq > '0') AND (foreign_c1.id = f
         $this->assertStringIgnoreBreak("
 UPDATE foreign_p
 SET name = CASE id WHEN '1' THEN 'HOGE' WHEN '2' THEN 'FUGA' ELSE name END
-WHERE ((EXISTS (SELECT * FROM foreign_c1 WHERE (seq > '0') AND (foreign_c1.id = foreign_p.id)))) AND (id IN ('1','2'))
+WHERE ((EXISTS (SELECT * FROM foreign_c1 WHERE (seq > '0') AND (foreign_c1.id = foreign_p.id)))) AND (foreign_p.id IN ('1', '2'))
 ", $query);
 
         $query = $cx->delete('foreign_p', $cx->subexists('foreign_c1', ['seq > ?' => 0]));
