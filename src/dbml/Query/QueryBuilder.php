@@ -1300,7 +1300,8 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
      * | 50 | `'TableDescriptor'`                              | 「テーブル名」を書く場所にはテーブル記法が使用できる（駆動表）
      * | 51 | `['+TableDescriptor' => ['*']]`                  | 「テーブル名」を書く場所にはテーブル記法が使用できる（JOIN）
      * | 80 | `SelectOption::DISTINCT()`                       | SelectOption インスタンスを与えると `addSelectOption` と同等の効果を示す
-     * | 99 | `['' => ['expression']]`                         | 空キーは「テーブルに紐付かないカラム指定」を表す
+     * | 98 | `['' => ['expression']]`                         | 空キーは「テーブルに紐付かないカラム指定」を表す
+     * | 99 | `['alias' => 'expression']`                      | 上と同じ。存在しないテーブルは「テーブルに紐付かないカラム指定」とみなされる（notableAsColumn オプションが必要）
      *
      * 上記の通り、尋常ではないほど複雑なのでサンプルコードを以下に記す。
      *
@@ -1411,7 +1412,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
      *     ],
      * ]);
      *
-     * # No.99： テーブルに紐付かないカラム指定（勝手に修飾されたり JOIN されたりせず、シンプルに SELECT 句に追加される）
+     * # No.98： 空文字キーによるテーブルに紐付かないカラム指定（勝手に修飾されたり JOIN されたりせず、シンプルに SELECT 句に追加される）
      * $qb->column([
      *     't_table' => '*',
      *     '' => [
@@ -1419,6 +1420,14 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
      *         'ttc' => 't_table.colA',                 // 修飾子として動作する
      *         'ope' => ['column_name:LIKE' => 'hoge'], // operator として動作する
      *     ],
+     * ]);
+     *
+     * # No.99： フラット指定によるテーブルに紐付かないカラム指定（同上。ただし、 now,ttc,ope のようなテーブルが存在しないことが条件）
+     * $qb->column([
+     *     't_table' => '*',
+     *     'now' => 'NOW()',
+     *     'ttc' => 't_table.colA',                 // 修飾子として動作する
+     *     'ope' => ['column_name:LIKE' => 'hoge'], // operator として動作する
      * ]);
      * ```
      *

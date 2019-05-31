@@ -282,14 +282,14 @@ FROM foreign_p INNER JOIN foreign_c1 ON foreign_c1.id = foreign_p.id
      */
     function test_column_string($builder)
     {
-        $expected = "SELECT table1.*, table2.* FROM table1, table2";
-        $this->assertQuery($expected, $builder->column('table1, table2'));
+        $expected = "SELECT test1.*, test2.* FROM test1, test2";
+        $this->assertQuery($expected, $builder->column('test1, test2'));
 
-        $expected = "SELECT T1.name, T1.id AS id1, T2.id AS id2, T2.name2 FROM table1 T1, table2 T2";
-        $this->assertQuery($expected, $builder->column('table1 T1.name, table2 T2.id id2, name2, T1.id id1'));
+        $expected = "SELECT T1.name, T1.id AS id1, T2.id AS id2, T2.name2 FROM test1 T1, test2 T2";
+        $this->assertQuery($expected, $builder->column('test1 T1.name, test2 T2.id id2, name2, T1.id id1'));
 
-        $expected = "SELECT table1.col1, table1.col2 FROM table1";
-        $this->assertQuery($expected, $builder->column(['table1' => ['col1, col2']]));
+        $expected = "SELECT test.col1, test.col2 FROM test";
+        $this->assertQuery($expected, $builder->column(['test' => ['col1, col2']]));
 
         $this->assertException('other schema', L($builder)->column('other.table.c1'));
     }
@@ -452,19 +452,6 @@ GREATEST(1,2,3) FROM test1', $builder);
             Alias::forge('comment_id', 't_comment.comment_id'),
             't_comment.*'
         ], $builder->getSubbuilder('Comment')->getQueryPart('select'));
-    }
-
-    /**
-     * @dataProvider provideQueryBuilder
-     * @param QueryBuilder $builder
-     */
-    function test_column_builder($builder)
-    {
-        $builder->column([
-            'test' => '*',
-            'sub'  => $builder->getDatabase()->select('test1')
-        ]);
-        $this->assertQuery('SELECT test.* FROM test, (SELECT test1.* FROM test1) sub', $builder);
     }
 
     /**
@@ -645,6 +632,45 @@ GREATEST(1,2,3) FROM test1', $builder);
                 ],
                 new Expression('NOALIAS_FUNC()'),
             ]
+        ]);
+        $this->assertContains('now() AS string', "$builder");
+        $this->assertContains('NOW() AS expression', "$builder");
+        $this->assertContains('(SELECT test1.id FROM test1) AS builder', "$builder");
+        $this->assertContains('(id = ?) AS arrayeq', "$builder");
+        $this->assertContains('(id IN (?,?,?)) AS arrayin', "$builder");
+        $this->assertContains('(id LIKE ?) AS arraylike', "$builder");
+        $this->assertContains('(id > ?) AS arrayholder', "$builder");
+        $this->assertContains('((A IN (?)) AND (B = ?) AND ((C = ?) OR (D = ?))) AS arraycomplex', "$builder");
+        $this->assertContains(', NOALIAS_FUNC()', "$builder");
+        $this->assertEquals([123, 1, 2, 3, 'hoge', 123, 41, 42, 43, 44,], $builder->getParams());
+
+        $context = $builder->getDatabase()->context(['notableAsColumn' => true]);
+        $builder->column([
+            'test'         => '*',
+            'string'       => 'now()',
+            'expression'   => new Expression('NOW()'),
+            'builder'      => $context->select('test1.id'),
+            'arrayeq'      => [
+                'id' => 123,
+            ],
+            'arrayin'      => [
+                'id' => [1, 2, 3],
+            ],
+            'arraylike'    => [
+                'id:like' => 'hoge',
+            ],
+            'arrayholder'  => [
+                'id > ?' => 123,
+            ],
+            'arraycomplex' => [
+                'A' => [41],
+                'B' => 42,
+                [
+                    'C' => 43,
+                    'D' => 44,
+                ],
+            ],
+            new Expression('NOALIAS_FUNC()'),
         ]);
         $this->assertContains('now() AS string', "$builder");
         $this->assertContains('NOW() AS expression', "$builder");
@@ -1795,9 +1821,6 @@ AND
      */
     function test_orderByPrimary($builder)
     {
-        $builder->column('notexists.id');
-        $this->assertQuery('SELECT notexists.id FROM notexists', $builder->orderByPrimary());
-
         $builder->column('noprimary.id');
         $this->assertQuery('SELECT noprimary.id FROM noprimary', $builder->orderByPrimary());
 
@@ -2014,14 +2037,14 @@ SELECT test.* FROM test", $builder);
         $this->assertQuery("{$us}SELECT 1{$ue} UNION {$us}SELECT 2{$ue}", $builder->union('SELECT 2'));
         $this->assertQuery("{$us}SELECT 1{$ue} UNION {$us}SELECT 2{$ue} UNION ALL {$us}SELECT 3{$ue}", $builder->unionAll('SELECT 3'));
 
-        $builder->reset()->union('SELECT 1')->union($original->column('hoge.id')->where(['id' => 1]));
-        $this->assertQuery("{$us}SELECT 1{$ue} UNION {$us}SELECT hoge.id FROM hoge WHERE id = ?{$ue}", $builder);
+        $builder->reset()->union('SELECT 1')->union($original->column('test.id')->where(['id' => 1]));
+        $this->assertQuery("{$us}SELECT 1{$ue} UNION {$us}SELECT test.id FROM test WHERE id = ?{$ue}", $builder);
         $this->assertEquals([1], $builder->getParams());
 
         // SQLServer は limit が違いすぎるので除外（Database 側のテストで担保）
         if (!$builder->getDatabase()->getPlatform() instanceof SQLServerPlatform) {
-            $builder->column([[new Expression('RAND(?)', 100)]])->where(['uid' => 'inner'])->innerJoinOn('foo', new Expression('uid1 = ?', 10), '__dbml_union_table')->innerJoinOn('bar', new Expression('uid2 = ?', 20), 'foo')->orderBy('uuid')->limit(10, 1);
-            $this->assertQuery("SELECT RAND(?) FROM ({$us}SELECT 1{$ue} UNION {$us}SELECT hoge.id FROM hoge WHERE id = ?{$ue}) __dbml_union_table INNER JOIN foo ON uid1 = ? INNER JOIN bar ON uid2 = ? WHERE uid = ? ORDER BY uuid ASC LIMIT 10 OFFSET 1", $builder);
+            $builder->column([[new Expression('RAND(?)', 100)]])->where(['uid' => 'inner'])->innerJoinOn('test1', new Expression('uid1 = ?', 10), '__dbml_union_table')->innerJoinOn('test2', new Expression('uid2 = ?', 20), 'test2')->orderBy('uuid')->limit(10, 1);
+            $this->assertQuery("SELECT RAND(?) FROM ({$us}SELECT 1{$ue} UNION {$us}SELECT test.id FROM test WHERE id = ?{$ue}) __dbml_union_table INNER JOIN test1 ON uid1 = ? INNER JOIN test2 ON uid2 = ? WHERE uid = ? ORDER BY uuid ASC LIMIT 10 OFFSET 1", $builder);
             $this->assertEquals([100, 1, 10, 20, 'inner'], $builder->getParams());
         }
     }
@@ -2033,16 +2056,16 @@ SELECT test.* FROM test", $builder);
     function test_countize($builder)
     {
         // 素のクエリは count クエリになる
-        $counter = $builder->reset()->column(['t_hoge' => 'hoge_id'])->countize('*');
-        $this->assertQuery('SELECT COUNT(*) AS __dbml_auto_cnt FROM t_hoge', $counter);
+        $counter = $builder->reset()->column(['test' => 'test_id'])->countize('*');
+        $this->assertQuery('SELECT COUNT(*) AS __dbml_auto_cnt FROM test', $counter);
 
         // limit は無視される
-        $counter = $builder->reset()->column(['t_hoge' => 'hoge_id'])->limit(100, 50)->countize('*');
-        $this->assertQuery('SELECT COUNT(*) AS __dbml_auto_cnt FROM t_hoge', $counter);
+        $counter = $builder->reset()->column(['test' => 'test_id'])->limit(100, 50)->countize('*');
+        $this->assertQuery('SELECT COUNT(*) AS __dbml_auto_cnt FROM test', $counter);
 
         // group by はサブクエリになる
-        $counter = $builder->reset()->column(['t_hoge' => 'hoge_id'])->groupBy('hoge_id')->countize(1);
-        $this->assertQuery('SELECT COUNT(1) AS __dbml_auto_cnt FROM (SELECT 1 FROM t_hoge GROUP BY hoge_id) __dbml_auto_table', $counter);
+        $counter = $builder->reset()->column(['test' => 'test_id'])->groupBy('test_id')->countize(1);
+        $this->assertQuery('SELECT COUNT(1) AS __dbml_auto_cnt FROM (SELECT 1 FROM test GROUP BY test_id) __dbml_auto_table', $counter);
 
         // union も OK
         $us = $builder->getDatabase()->getCompatiblePlatform()->supportsUnionParentheses() ? '(' : '';
@@ -2052,31 +2075,31 @@ SELECT test.* FROM test", $builder);
         $this->assertQuery("SELECT COUNT(*) AS __dbml_auto_cnt FROM ({$us}SELECT test2.id FROM test2{$ue} UNION {$us}SELECT test2.id FROM test2{$ue}) __dbml_union_table", $counter);
 
         // limit は無視される
-        $counter = $builder->reset()->column(['t_hoge' => 'hoge_id'])->limit(100, 50)->groupBy('hoge_id')->countize(1);
-        $this->assertQuery('SELECT COUNT(1) AS __dbml_auto_cnt FROM (SELECT 1 FROM t_hoge GROUP BY hoge_id) __dbml_auto_table', $counter);
+        $counter = $builder->reset()->column(['test' => 'test_id'])->limit(100, 50)->groupBy('test_id')->countize(1);
+        $this->assertQuery('SELECT COUNT(1) AS __dbml_auto_cnt FROM (SELECT 1 FROM test GROUP BY test_id) __dbml_auto_table', $counter);
 
         // order by も無視される
-        $counter = $builder->reset()->column(['t_hoge' => 'hoge_id'])->limit(100, 50)->orderBy('hoge_id')->groupBy('hoge_id')->countize(1);
-        $this->assertQuery('SELECT COUNT(1) AS __dbml_auto_cnt FROM (SELECT 1 FROM t_hoge GROUP BY hoge_id) __dbml_auto_table', $counter);
+        $counter = $builder->reset()->column(['test' => 'test_id'])->limit(100, 50)->orderBy('test_id')->groupBy('test_id')->countize(1);
+        $this->assertQuery('SELECT COUNT(1) AS __dbml_auto_cnt FROM (SELECT 1 FROM test GROUP BY test_id) __dbml_auto_table', $counter);
 
         // bind 値は引き継がれる
-        $counter = $builder->reset()->column(['t_hoge' => 'hoge_id'])->where(['pid' => 1])->groupBy('hoge_id')->countize('*');
-        $this->assertQuery('SELECT COUNT(*) AS __dbml_auto_cnt FROM (SELECT 1 FROM t_hoge WHERE pid = ? GROUP BY hoge_id) __dbml_auto_table', $counter);
+        $counter = $builder->reset()->column(['test' => 'test_id'])->where(['pid' => 1])->groupBy('test_id')->countize('*');
+        $this->assertQuery('SELECT COUNT(*) AS __dbml_auto_cnt FROM (SELECT 1 FROM test WHERE pid = ? GROUP BY test_id) __dbml_auto_table', $counter);
         $this->assertEquals([1], $counter->getParams());
 
         // が、select 句の bind 値は引き継がれない
-        $counter = $builder->reset()->column(['t_hoge' => new Expression('? as ccc', 99)])->where(['pid' => 1])->countize('*');
-        $this->assertQuery('SELECT COUNT(*) AS __dbml_auto_cnt FROM t_hoge WHERE pid = ?', $counter);
+        $counter = $builder->reset()->column(['test' => new Expression('? as ccc', 99)])->where(['pid' => 1])->countize('*');
+        $this->assertQuery('SELECT COUNT(*) AS __dbml_auto_cnt FROM test WHERE pid = ?', $counter);
         $this->assertEquals([1], $counter->getParams());
 
         // group by があっても同様
-        $counter = $builder->reset()->column(['t_hoge' => new Expression('? as ccc', 99)])->where(['pid' => 1])->groupBy('hoge_id')->countize('*');
-        $this->assertQuery('SELECT COUNT(*) AS __dbml_auto_cnt FROM (SELECT 1 FROM t_hoge WHERE pid = ? GROUP BY hoge_id) __dbml_auto_table', $counter);
+        $counter = $builder->reset()->column(['test' => new Expression('? as ccc', 99)])->where(['pid' => 1])->groupBy('test_id')->countize('*');
+        $this->assertQuery('SELECT COUNT(*) AS __dbml_auto_cnt FROM (SELECT 1 FROM test WHERE pid = ? GROUP BY test_id) __dbml_auto_table', $counter);
         $this->assertEquals([1], $counter->getParams());
 
         // ただし、having がある場合はかなり特殊な動きになる
-        $counter = $builder->reset()->column(['t_hoge' => new Expression('? as ccc', 99)])->where(['pid' => 1])->groupBy('hoge_id')->having(['aggrc' => 2])->countize('*');
-        $this->assertQuery('SELECT COUNT(*) AS __dbml_auto_cnt FROM (SELECT ? as ccc FROM t_hoge WHERE pid = ? GROUP BY hoge_id HAVING aggrc = ?) __dbml_auto_table', $counter);
+        $counter = $builder->reset()->column(['test' => new Expression('? as ccc', 99)])->where(['pid' => 1])->groupBy('test_id')->having(['aggrc' => 2])->countize('*');
+        $this->assertQuery('SELECT COUNT(*) AS __dbml_auto_cnt FROM (SELECT ? as ccc FROM test WHERE pid = ? GROUP BY test_id HAVING aggrc = ?) __dbml_auto_table', $counter);
         $this->assertEquals([99, 1, 2], $counter->getParams());
 
         // 上記全てを複合しためちゃくちゃ複雑な count(クエリとしての意味はない。というか無茶苦茶なので mysql でしかテストできない)

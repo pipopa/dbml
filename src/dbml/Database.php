@@ -142,6 +142,8 @@ use ryunosuke\dbml\Utility\Adhoc;
  *     entityMapper でマッピングしたテーブルはそのエンティティ名が使用されるが、未設定だったり null を返したりすると、この設定に応じてデフォルトエンティティを返す。
  *     キーがクラス名、値がコンストラクタ引数になる。
  * }
+ * @method bool                   getNotableAsColumn()
+ * @method $this                  setNotableAsColumn(bool $bool)
  * @method bool                   getInsertSet()
  * @method $this                  setInsertSet($bool)
  * @method bool                   getFilterNoExistsColumn()
@@ -697,6 +699,8 @@ class Database
             'initCommand'          => null,
             // デフォルトエンティティクラス名
             'defaultEntity'        => [Entity::class => function ($database) { return [$database]; }],
+            // 存在しないテーブル名指定をカラム名とみなすか（QB::column を参照）
+            'notableAsColumn'      => false, // このオプションは互換性維持であり将来的にデフォルト true になるか削除される
             // 拡張 INSERT SET 構文を使うか否か（mysql 以外は無視される）
             'insertSet'            => false,
             // insert 時などにテーブルに存在しないカラムを自動でフィルタするか否か

@@ -417,7 +417,47 @@ abstract class AbstractUnitTestCase extends TestCase
     public static function getDummyDatabase()
     {
         if (self::$database === null) {
-            self::$database = new Database(DriverManager::getConnection(['url' => 'sqlite:///:memory:']));
+            $connection = DriverManager::getConnection(['url' => 'sqlite:///:memory:']);
+            self::createTables($connection, [
+                new Table('t',
+                    [
+                        new Column('id', Type::getType('integer'), ['autoincrement' => true]),
+                    ],
+                    [new Index('PRIMARY', ['id'], true, true)]
+                ),
+                new Table('test',
+                    [
+                        new Column('id', Type::getType('integer'), ['autoincrement' => true]),
+                    ],
+                    [new Index('PRIMARY', ['id'], true, true)]
+                ),
+                new Table('foreign_p',
+                    [
+                        new Column('id', Type::getType('integer')),
+                        new Column('name', Type::getType('string'), ['length' => 32, 'default' => '']),
+                    ],
+                    [new Index('PRIMARY', ['id'], true, true)]
+                ),
+                new Table('foreign_c1',
+                    [
+                        new Column('id', Type::getType('integer')),
+                        new Column('seq', Type::getType('integer')),
+                        new Column('name', Type::getType('string'), ['length' => 32, 'default' => '']),
+                    ],
+                    [new Index('PRIMARY', ['id', 'seq'], true, true)],
+                    [new ForeignKeyConstraint(['id'], 'foreign_p', ['id'], 'fk_parentchild1')]
+                ),
+                new Table('foreign_c2',
+                    [
+                        new Column('cid', Type::getType('integer')),
+                        new Column('seq', Type::getType('integer')),
+                        new Column('name', Type::getType('string'), ['length' => 32, 'default' => '']),
+                    ],
+                    [new Index('PRIMARY', ['cid', 'seq'], true, true)],
+                    [new ForeignKeyConstraint(['cid'], 'foreign_p', ['id'], 'fk_parentchild2')]
+                ),
+            ]);
+            self::$database = new Database($connection);
         }
         return self::$database;
     }

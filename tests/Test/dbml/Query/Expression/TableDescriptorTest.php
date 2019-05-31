@@ -84,21 +84,16 @@ class TableDescriptorTest extends \ryunosuke\Test\AbstractUnitTestCase
      */
     function test_forge($database)
     {
-        $this->assertEquals(['table'], array_lookup(TableDescriptor::forge($database, 'table'), 'descriptor'));
-        $this->assertEquals(['table1', 'table2'], array_lookup(TableDescriptor::forge($database, 'table1,table2'), 'descriptor'));
-        $this->assertEquals(['table1', '+table2'], array_lookup(TableDescriptor::forge($database, 'table1+table2'), 'descriptor'));
-        $this->assertEquals(['table1', '+table2'], array_lookup(TableDescriptor::forge($database, [
-            'table1'  => [],
-            '+table2' => []
+        $this->assertEquals(['test'], array_lookup(TableDescriptor::forge($database, 'test'), 'descriptor'));
+        $this->assertEquals(['test1', 'test2'], array_lookup(TableDescriptor::forge($database, 'test1,test2'), 'descriptor'));
+        $this->assertEquals(['test1', '+test2'], array_lookup(TableDescriptor::forge($database, 'test1+test2'), 'descriptor'));
+        $this->assertEquals(['test1', '+test2'], array_lookup(TableDescriptor::forge($database, [
+            'test1'  => [],
+            '+test2' => [],
         ]), 'descriptor'));
-        $this->assertEquals(['table1', '+table2', 't_hoge'], array_lookup(TableDescriptor::forge($database, [
-            'table1'  => [],
-            '+table2' => [],
-            'td'      => new TableDescriptor($database, 't_hoge', []),
-        ]), 'descriptor'));
-        $this->assertEquals(['table', null], array_lookup(TableDescriptor::forge($database, [
+        $this->assertEquals(['test', null], array_lookup(TableDescriptor::forge($database, [
             null,
-            'table',
+            'test',
             ['c',],
         ]), 'descriptor'));
     }
@@ -110,9 +105,9 @@ class TableDescriptorTest extends \ryunosuke\Test\AbstractUnitTestCase
     function test___construct($database)
     {
         // 素
-        $this->assertDescriptor(new TableDescriptor($database, 't_table', []), [
-            'descriptor' => 't_table',
-            'table'      => 't_table',
+        $this->assertDescriptor(new TableDescriptor($database, 'test', []), [
+            'descriptor' => 'test',
+            'table'      => 'test',
             'alias'      => null,
             'joinsign'   => '',
             'jointype'   => null,
@@ -121,60 +116,60 @@ class TableDescriptorTest extends \ryunosuke\Test\AbstractUnitTestCase
             'condition'  => [],
             'fkeyname'   => null,
             'column'     => [],
-            'key'        => 't_table',
+            'key'        => 'test',
         ]);
 
         // スコープ
-        $this->assertDescriptor(new TableDescriptor($database, 't_table@scope@scope1()@scope2(1, "2,3")', []), [
-            'table' => 't_table',
+        $this->assertDescriptor(new TableDescriptor($database, 'test@scope@scope1()@scope2(1, "2,3")', []), [
+            'table' => 'test',
             'alias' => null,
             'scope' => [
                 'scope'  => [],
                 'scope1' => [],
                 'scope2' => ['1', '2,3'],
             ],
-            'key'   => 't_table@scope@scope1()@scope2(1, "2,3")',
+            'key'   => 'test@scope@scope1()@scope2(1, "2,3")',
         ]);
 
         // CONDITION
-        $this->assertDescriptor(new TableDescriptor($database, 't_table[on1=1, on2 = 2]', []), [
-            'table'     => 't_table',
+        $this->assertDescriptor(new TableDescriptor($database, 'test[on1=1, on2 = 2]', []), [
+            'table'     => 'test',
             'condition' => ['on1=1', 'on2 = 2'],
-            'key'       => 't_table[on1=1, on2 = 2]',
+            'key'       => 'test[on1=1, on2 = 2]',
         ]);
-        $this->assertDescriptor(new TableDescriptor($database, 't_table[on1=1, on2 = 2] T', []), [
-            'table'     => 't_table',
+        $this->assertDescriptor(new TableDescriptor($database, 'test[on1=1, on2 = 2] T', []), [
+            'table'     => 'test',
             'alias'     => 'T',
             'condition' => ['on1=1', 'on2 = 2'],
-            'key'       => 't_table[on1=1, on2 = 2] T',
+            'key'       => 'test[on1=1, on2 = 2] T',
         ]);
-        $this->assertDescriptor(new TableDescriptor($database, 't_table[on1=1] T', [['on2 = 2']]), [
-            'table'     => 't_table',
+        $this->assertDescriptor(new TableDescriptor($database, 'test[on1=1] T', [['on2 = 2']]), [
+            'table'     => 'test',
             'alias'     => 'T',
             'condition' => ['on1=1', 'on2 = 2'],
-            'key'       => 't_table[on1=1] T',
+            'key'       => 'test[on1=1] T',
         ]);
-        $this->assertDescriptor(new TableDescriptor($database, 't_table{tA: tB,uA: uB}', []), [
-            'table'     => 't_table',
+        $this->assertDescriptor(new TableDescriptor($database, 'test{tA: tB,uA: uB}', []), [
+            'table'     => 'test',
             'condition' => [stdclass(['tA' => 'tB', 'uA' => 'uB'])],
-            'key'       => 't_table{tA: tB,uA: uB}',
+            'key'       => 'test{tA: tB,uA: uB}',
         ]);
-        $this->assertDescriptor(new TableDescriptor($database, 't_table[cond1, cond2]', []), [
-            'table'     => 't_table',
+        $this->assertDescriptor(new TableDescriptor($database, 'test[cond1, cond2]', []), [
+            'table'     => 'test',
             'condition' => ['cond1', 'cond2'],
-            'key'       => 't_table[cond1, cond2]',
+            'key'       => 'test[cond1, cond2]',
         ]);
-        $this->assertDescriptor(new TableDescriptor($database, 't_table[cond1, cond2] T', []), [
-            'table'     => 't_table',
+        $this->assertDescriptor(new TableDescriptor($database, 'test[cond1, cond2] T', []), [
+            'table'     => 'test',
             'alias'     => 'T',
             'condition' => ['cond1', 'cond2'],
-            'key'       => 't_table[cond1, cond2] T',
+            'key'       => 'test[cond1, cond2] T',
         ]);
-        $this->assertDescriptor(new TableDescriptor($database, 't_table[cond1, cond2]{id1: id2} T', []), [
-            'table'     => 't_table',
+        $this->assertDescriptor(new TableDescriptor($database, 'test[cond1, cond2]{id1: id2} T', []), [
+            'table'     => 'test',
             'alias'     => 'T',
             'condition' => ['cond1', 'cond2', stdclass(['id1' => 'id2'])],
-            'key'       => 't_table[cond1, cond2]{id1: id2} T',
+            'key'       => 'test[cond1, cond2]{id1: id2} T',
         ]);
 
         // FOREIGN
@@ -376,15 +371,15 @@ class TableDescriptorTest extends \ryunosuke\Test\AbstractUnitTestCase
     function test___construct_misc($database)
     {
         // misc
-        $this->assertDescriptor(new TableDescriptor($database, '+t_table T', ['id']), [
-            'table'    => 't_table',
+        $this->assertDescriptor(new TableDescriptor($database, '+test T', ['id']), [
+            'table'    => 'test',
             'alias'    => 'T',
             'accessor' => 'T',
             'joinsign' => '+',
             'jointype' => 'INNER',
             'fkeyname' => null,
             'column'   => ['id'],
-            'key'      => '+t_table T',
+            'key'      => '+test T',
         ]);
         $this->assertDescriptor(new TableDescriptor($database, '+Article', []), [
             'table'    => 't_article',
@@ -397,8 +392,19 @@ class TableDescriptorTest extends \ryunosuke\Test\AbstractUnitTestCase
             'key'      => '+t_article Article',
         ]);
 
+        $this->assertDescriptor(new TableDescriptor($database->context(['notableAsColumn' => true]), 'notfoundtable', ['col']), [
+            'table'    => null,
+            'alias'    => null,
+            'accessor' => null,
+            'joinsign' => null,
+            'jointype' => null,
+            'fkeyname' => null,
+            'column'   => ['notfoundtable' => ['col']],
+            'key'      => '',
+        ]);
+
         // qb
-        $td = new TableDescriptor($database, 't_table', $database->select('t_child'));
+        $td = new TableDescriptor($database, 'test', $database->select('t_child'));
         $this->assertInstanceOf(QueryBuilder::class, $td->table);
     }
 
@@ -408,7 +414,7 @@ class TableDescriptorTest extends \ryunosuke\Test\AbstractUnitTestCase
      */
     function test___get($database)
     {
-        $td = new TableDescriptor($database, '+t_table T', ['id']);
+        $td = new TableDescriptor($database, '+test T', ['id']);
         $this->assertSame('T', $td->accessor);
         $this->assertSame(null, $td->fkeyname);
         $this->assertSame([], $td->condition);

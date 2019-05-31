@@ -1494,7 +1494,7 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
             // 数値キーで非配列を返す
             function () { return 'this is cond.'; },
             // 数値キーでクエリビルダを返す
-            function (Database $db) { return $db->select('t_table1')->exists(); },
+            function (Database $db) { return $db->select('test1')->exists(); },
             // 数値キーで空値を返す
             function () { return null; },
             function () { return ''; },
@@ -1514,20 +1514,20 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
             '!iempty2' => function () { return ''; },
             '!iempty3' => function () { return []; },
             // 文字キーでクエリビルダを返す
-            'subquery' => function (Database $db) { return $db->select('t_table2'); },
+            'subquery' => function (Database $db) { return $db->select('test2'); },
         ]);
         $this->assertEquals([
             '(A) OR (B)',
             '(a = ?) OR (b = ?)',
             'this is cond.',
-            '(EXISTS (SELECT * FROM t_table1))',
+            '(EXISTS (SELECT * FROM test1))',
             'columnA IN (?,?)',
             'columnH IN (?,?)',
             'columnC = ?',
             'empty1 IS NULL',
             'empty2 = ?',
             'empty3 IN (NULL)',
-            'subquery IN (SELECT t_table2.* FROM t_table2)',
+            'subquery IN (SELECT test2.* FROM test2)',
         ], $wheres);
         $this->assertEquals([
             'A',

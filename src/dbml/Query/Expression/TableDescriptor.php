@@ -366,6 +366,17 @@ class TableDescriptor
         /// e.g. +tablename@scope(1, 2):fkeyname[condition]#1-3 AS T.col1, col2 AS C2
 
         $schema = $database->getSchema();
+
+        // テーブルに紐付かないカラムのための下ごしらえ
+        if (true
+            && preg_match('#^[_a-z0-9]+$#i', $descriptor)
+            && $database->getOption('notableAsColumn')
+            && !$schema->hasTable($database->convertTableName($descriptor))
+        ) {
+            $cols = [$descriptor => $cols];
+            $descriptor = null;
+        }
+
         $this->descriptor = $descriptor;
 
         $joinsigns = preg_quote(implode('', Database::JOIN_MAPPER), '`');
@@ -555,7 +566,7 @@ class TableDescriptor
             return $this->alias ?: $this->table;
         }
         if (strcasecmp($name, 'jointype') === 0) {
-            if ($this->joinsign === '') {
+            if (strlen($this->joinsign) === 0) {
                 return null;
             }
             return array_search($this->joinsign, Database::JOIN_MAPPER, true) ?: throws(new \UnexpectedValueException('undefined joinsign.'));
