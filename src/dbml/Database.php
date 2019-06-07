@@ -1522,7 +1522,7 @@ class Database
                 if ($singleuk) {
                     $pv = $this->bindInto($row[$singleuk], $params[$col]);
                 }
-                else{
+                else {
                     $pv = [];
                     foreach ($unique_cols as $pcol => $dummy) {
                         $pv[] = $pcol . ' = ' . $this->bindInto($row[$pcol], $params[$col]);
@@ -1535,7 +1535,7 @@ class Database
         }
 
         $cols = [];
-        foreach($result as $column => $exprs) {
+        foreach ($result as $column => $exprs) {
             $cols[$column] = $this->raw('CASE ' . concat($singleuk ?: '', ' ') . implode(' ', $exprs) . " ELSE $column END", $params[$column]);
         }
 
@@ -2787,8 +2787,29 @@ class Database
                     $criteria[] = str_replace('?', $value->merge($params), $cond);
                     continue;
                 }
+                // 同上。配列の中に Queryable が紛れている場合
+                if (Adhoc::containQueryable($value)) {
+                    $subquerys = [];
+                    $subvalues = [];
+                    foreach ($value as $k => $v) {
+                        if ($v instanceof Queryable) {
+                            $subparams = [];
+                            $subquerys[$k] = $v->merge($subparams);
+                            foreach($subparams as $sp){
+                                $subvalues[] = $sp;
+                            }
+                        }
+                        else {
+                            $subvalues[] = $v;
+                        }
+                    }
+
+                    $cond = str_subreplace($cond, '?', $subquerys);
+                    $value = $subvalues;
+                    $ope = Operator::RAW;
+                }
                 // :区切りで演算子指定モード
-                if (strpos($cond, ':') !== false) {
+                elseif (strpos($cond, ':') !== false) {
                     list($cond, $ope) = array_map('trim', explode(':', $cond, 2));
                 }
                 // ? が無いなら column OPERATOR value モード（OPERATOR は型に応じる）

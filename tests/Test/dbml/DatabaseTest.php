@@ -1693,6 +1693,41 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
      * @dataProvider provideDatabase
      * @param Database $database
      */
+    function test_whereInto_queryable_array($database)
+    {
+        $params = [];
+        $where = $database->whereInto([
+            '? and ? and ? and ? and ?' => [
+                null,
+                $database->selectCount('test1', ['id' => 0, 'name1' => 'hoge']),
+                $database->selectExists('test2', ['id' => 1, 'name2' => 'fuga']),
+                'dummy',
+                $database->raw('(select 1)'),
+            ],
+        ], $params);
+
+        $count = $database->getPlatform()->quoteIdentifier('*@Count');
+        $this->assertEquals([
+            implode(" and ", [
+                "?",
+                "(SELECT COUNT(*) AS $count FROM test1 WHERE (id = ?) AND (name1 = ?))",
+                "(EXISTS (SELECT * FROM test2 WHERE (id = ?) AND (name2 = ?)))",
+                "?",
+                "(select 1)",
+            ])
+        ], $where);
+        $this->assertEquals([null, 0, 'hoge', 1, 'fuga', 'dummy'], $params);
+        $this->assertStringIgnoreBreak("NULL and
+(SELECT COUNT(*) AS $count FROM test1 WHERE (id = '0') AND (name1 = 'hoge')) and
+(EXISTS (SELECT * FROM test2 WHERE (id = '1') AND (name2 = 'fuga'))) and
+'dummy' and
+(select 1)", $database->queryInto($where[0], $params));
+    }
+
+    /**
+     * @dataProvider provideDatabase
+     * @param Database $database
+     */
     function test_syntax($database)
     {
         $cplatform = $database->getCompatiblePlatform();
