@@ -1645,6 +1645,7 @@ AND
     {
         $builder->column('test');
 
+        $this->assertQuery('SELECT test.* FROM test ORDER BY id1 ASC, id2 DESC, id3 DESC', $builder->orderBy([['id1', 'ASC'], ['id2', false], ['id3']], false));
         $this->assertQuery('SELECT test.* FROM test ORDER BY id ASC', $builder->orderBy('id'));
         $this->assertQuery('SELECT test.* FROM test ORDER BY id DESC', $builder->orderBy('-id'));
         $this->assertQuery('SELECT test.* FROM test ORDER BY id ASC', $builder->orderBy('id', true));
@@ -1655,6 +1656,8 @@ AND
         $this->assertQuery('SELECT test.* FROM test ORDER BY id1 ASC, id2 DESC, id3 ASC', $builder->orderBy(['id1' => 'ASC', 'id2' => 'DESC', 'id3']));
         $this->assertQuery('SELECT test.* FROM test ORDER BY id1 ASC, id2 DESC, id3 ASC', $builder->orderBy(['id1' => true, 'id2' => false, 'id3']));
         $this->assertQuery('SELECT test.* FROM test ORDER BY id1 DESC, id2 ASC, id3 ASC', $builder->orderBy(['-id1', '+id2', 'id3']));
+        $this->assertQuery('SELECT test.* FROM test ORDER BY NULL IS NULL ASC', $builder->orderBy(new Expression('NULL IS NULL')));
+        $this->assertQuery('SELECT test.* FROM test ORDER BY ? IS NULL DESC', $builder->orderBy(new Expression('? IS NULL', [1]), false));
     }
 
     /**

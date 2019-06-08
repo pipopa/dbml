@@ -195,12 +195,13 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
 
     /** @var array bind パラメータのオフセット */
     private const PARAMETER_OFFSETS = [
-        'select' => 1 * self::PARAMETER_OFFSET,
-        'union'  => 2 * self::PARAMETER_OFFSET,
-        'from'   => 3 * self::PARAMETER_OFFSET,
-        'join'   => 4 * self::PARAMETER_OFFSET,
-        'where'  => 5 * self::PARAMETER_OFFSET,
-        'having' => 6 * self::PARAMETER_OFFSET,
+        'select'  => 1 * self::PARAMETER_OFFSET,
+        'union'   => 2 * self::PARAMETER_OFFSET,
+        'from'    => 3 * self::PARAMETER_OFFSET,
+        'join'    => 4 * self::PARAMETER_OFFSET,
+        'where'   => 5 * self::PARAMETER_OFFSET,
+        'having'  => 6 * self::PARAMETER_OFFSET,
+        'orderBy' => 7 * self::PARAMETER_OFFSET,
     ];
 
     /** @var array SQL の各句 */
@@ -1964,6 +1965,9 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
                 if (isset($this->subbuilders[$col])) {
                     $this->getSubbuilder($col)->addOrderBy($ord);
                 }
+                elseif (is_int($col) && is_array($ord)) {
+                    $this->addOrderBy($ord[0], $ord[1] ?? $order);
+                }
                 elseif (is_int($col)) {
                     $this->addOrderBy($ord, $order);
                 }
@@ -1976,6 +1980,11 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
             if (is_string($sort) && $order === null) {
                 $order = $sort[0] !== '-';
                 $sort = ltrim($sort, '-+');
+            }
+            if ($sort instanceof Queryable) {
+                $params = [];
+                $sort = $sort->merge($params);
+                $this->addParam($params, 'orderBy');
             }
             if (is_bool($order)) {
                 $order = $order ? 'ASC' : 'DESC';
