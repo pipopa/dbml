@@ -1386,6 +1386,76 @@ AND
     /**
      * @dataProvider provideQueryBuilder
      * @param QueryBuilder $builder
+     * @param Database $database
+     */
+    function test_wheres_vcolumn($builder, $database)
+    {
+        $database->foreign_p->setVirtualColumn([
+            'raw1'        => [
+                'expression' => 'UPPER(%s.name)',
+                'implicit'   => true,
+            ],
+            'raw2'        => [
+                'expression' => $database->raw('id + 9 = ?', 10),
+                'implicit'   => true,
+            ],
+            'count_child' => [
+                'expression' => $database->foreign_c1->as('C1')->subcount('*', ['flag' => 0]),
+                'implicit'   => true,
+            ],
+            'has_child'   => [
+                'expression' => $database->foreign_c2->as('C2')->subexists('*', ['flag' => 0]),
+                'implicit'   => true,
+            ],
+        ]);
+
+        $builder->column('foreign_p P')->where([
+            'P.dummy = 1',
+            'P.dummy'                                                      => 1,
+            'P.raw1',
+            'P.raw1:%LIKE%'                                                => 'X',
+            'P.raw2',
+            'P.count_child'                                                => 0,
+            'P.count_child > ?'                                            => 1,
+            'P.count_child BETWEEN ? AND ?'                                => [7, 9],
+            'P.has_child',
+            'P.has_child'                                                  => 0,
+            'P.has_child IN (?)'                                           => [[0, 1]],
+            '? AND P.raw1 = ? AND P.count_child = ? AND P.has_child IN(?)' => [99, 'Y', 2, [7, 8, 9]],
+        ]);
+
+        $qi = function ($str) use ($database) {
+            return $database->getPlatform()->quoteSingleIdentifier($str);
+        };
+        $this->assertStringIgnoreBreak(<<<SQL
+SELECT P.* FROM foreign_p P WHERE
+(P.dummy = 1) AND (P.dummy = '1')
+AND (UPPER(P.name))
+AND (UPPER(P.name) LIKE '%X%')
+AND (/* vcolumn: raw2 */ id + 9 = '10')
+AND (/* vcolumn: count_child */ (SELECT COUNT(*) AS {$qi("*@count")} FROM foreign_c1 C1 WHERE (C1.flag = '0') AND (C1.id = P.id)) = '0')
+AND (/* vcolumn: count_child */ (SELECT COUNT(*) AS {$qi("*@count")} FROM foreign_c1 C1 WHERE (C1.flag = '0') AND (C1.id = P.id)) > '1')
+AND (/* vcolumn: count_child */ (SELECT COUNT(*) AS {$qi("*@count")} FROM foreign_c1 C1 WHERE (C1.flag = '0') AND (C1.id = P.id)) BETWEEN '7' AND '9')
+AND (/* vcolumn: has_child */ (EXISTS (SELECT * FROM foreign_c2 C2 WHERE (C2.flag = '0') AND (C2.cid = P.id))))
+AND (/* vcolumn: has_child */ (EXISTS (SELECT * FROM foreign_c2 C2 WHERE (C2.flag = '0') AND (C2.cid = P.id))) = '0')
+AND (/* vcolumn: has_child */ (EXISTS (SELECT * FROM foreign_c2 C2 WHERE (C2.flag = '0') AND (C2.cid = P.id))) IN ('0','1'))
+AND ('99' AND UPPER(P.name) = 'Y'
+AND /* vcolumn: count_child */ (SELECT COUNT(*) AS {$qi("*@count")} FROM foreign_c1 C1 WHERE (C1.flag = '0') AND (C1.id = P.id)) = '2'
+AND /* vcolumn: has_child */ (EXISTS (SELECT * FROM foreign_c2 C2 WHERE (C2.flag = '0') AND (C2.cid = P.id))) IN('7','8','9'))
+SQL
+            , $builder->queryInto());
+
+        $database->foreign_p->setVirtualColumn([
+            'raw1'        => null,
+            'raw2'        => null,
+            'count_child' => null,
+            'has_child'   => null,
+        ]);
+    }
+
+    /**
+     * @dataProvider provideQueryBuilder
+     * @param QueryBuilder $builder
      */
     function test_wheres_injection($builder)
     {
@@ -3042,6 +3112,27 @@ INNER JOIN t_leaf ON (t_leaf.leaf_root_id = t_root.root_id) AND (t_leaf.leaf_roo
         $this->assertException(new \UnexpectedValueException('has not foreign key'), function () use ($builder) {
             $builder->reset()->column('test1 T1')->setSubwhere('test2', 'T1', 'hoge');
         });
+    }
+
+    /**
+     * @dataProvider provideQueryBuilder
+     * @param QueryBuilder $builder
+     */
+    function test_setSubwhere_same($builder)
+    {
+        $builder->column('test1{id1: id2} T1');
+        $this->assertQuery('NOT EXISTS (SELECT * FROM test1 T1)', $builder->notExists());
+
+        $builder->setSubwhere('test2', 'T2');
+        $this->assertQuery('NOT EXISTS (SELECT * FROM test1 T1 WHERE T1.id1 = T2.id2)', $builder->notExists());
+        $builder->setSubwhere('test2', 'T2');
+        $this->assertQuery('NOT EXISTS (SELECT * FROM test1 T1 WHERE T1.id1 = T2.id2)', $builder->notExists());
+
+        $builder->reset()->column('test1{id1: id2} T1');
+        $this->assertQuery('NOT EXISTS (SELECT * FROM test1 T1)', $builder->notExists());
+
+        $builder->setSubwhere('test2', 'T2');
+        $this->assertQuery('NOT EXISTS (SELECT * FROM test1 T1 WHERE T1.id1 = T2.id2)', $builder->notExists());
     }
 
     /**

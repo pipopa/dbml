@@ -24,7 +24,7 @@ use function ryunosuke\dbml\array_find;
 use function ryunosuke\dbml\array_flatten;
 use function ryunosuke\dbml\array_implode;
 use function ryunosuke\dbml\array_lookup;
-use function ryunosuke\dbml\array_map_method;
+use function ryunosuke\dbml\array_map_filter;
 use function ryunosuke\dbml\array_maps;
 use function ryunosuke\dbml\array_order;
 use function ryunosuke\dbml\array_set;
@@ -539,22 +539,51 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
     private function _buildColumn($columns, $table = null, $alias = null)
     {
         $result = [];
-        $ignores = [];
 
         $schema = $this->database->getSchema();
+        $columns = arrayize($columns);
         $accessor = $alias ?: $table;
         $prefix = $accessor ? $accessor . '.' : '';
-        foreach (arrayize($columns) as $key => $column) {
+
+        // '*' や '!nocol' は差分をとったり仮想カラムを追加したりしなければならないので事前処理が必要
+        if ($schema->hasTable($table)) {
+            $ignores = [];
+            foreach ($columns as $key => $column) {
+                if (is_string($column) && $column[0] === '!') {
+                    $ignores[] = ltrim($column, '!');
+                    unset($columns[$key]);
+                }
+            }
+
+            if ($ignores) {
+                $acolumns = $schema->getTableColumns($table);
+                $vcolumns = array_filter($this->database->$table->virtualColumn(null, null), function ($vcol) {
+                    return $vcol['implicit'];
+                });
+                foreach ($ignores as $ignore) {
+                    // 無視しようとしているカラムが存在しない場合（テーブル定義を変更した時とかの対策）
+                    if (strlen($ignore) && !isset($acolumns[$ignore]) && !isset($vcolumns[$ignore])) {
+                        throw new \UnexpectedValueException('some columns are not found (' . $ignore . ').');
+                    }
+                    unset($acolumns[$ignore]);
+                    unset($vcolumns[$ignore]);
+                }
+                $columns = array_merge(
+                    array_keys(array_diff_key($acolumns, $columns)),
+                    $columns,
+                    array_keys(array_diff_key($vcolumns, $columns))
+                );
+            }
+        }
+
+        foreach ($columns as $key => $column) {
             // 仮想カラム
-            if ($table && $column !== null) {
-                $vcolumn = optional($this->database->$table)->virtualColumn($column, 'expression');
+            if ($schema->hasTable($table) && $column !== null) {
+                $vcolumn = $this->database->$table->virtualColumn($column, 'expression');
                 if ($vcolumn) {
                     $key = is_int($key) ? $column : $key;
                     // 仮想カラムは修飾子を付与するチャンスを与えなければ実質使い物にならない（エイリアスが動的だから）
-                    if (is_string($vcolumn)) {
-                        $vcolumn = sprintf($vcolumn, $accessor);
-                    }
-                    $column = $vcolumn;
+                    $column = is_string($vcolumn) ? sprintf($vcolumn, $accessor) : $vcolumn;
                 }
             }
 
@@ -669,10 +698,6 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
                     $this->sqlParts['colval'][$prefix . $key] = $column;
                 }
             }
-            // ! プレフィクスなら「それ以外のカラム」
-            elseif (is_string($column) && $column[0] === '!') {
-                $ignores[] = ltrim($column, '!');
-            }
             // .. プレフィクスなら「親カラムの参照」（識別のために $prefix を付与しないで追加する）
             elseif (is_string($column) && strpos($column, '..') === 0) {
                 $result[] = Alias::forge($key, $column);
@@ -693,19 +718,6 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
         // 上の過程で配列ごと突っ込んでいる箇所があるのでフラットにする
         $result = array_flatten($result);
 
-        // ignore 指定があるなら describe してそれ以外のカラムをマージ
-        if ($ignores) {
-            $allcolumns = array_keys($schema->getTableColumns($table));
-
-            // 無視しようとしているカラムが存在しない場合（テーブル定義を変更した時とかの対策）
-            if (array_intersect($ignores, $allcolumns) !== $ignores) {
-                throw new \UnexpectedValueException('some columns are not found (' . implode(', ', $ignores) . ').');
-            }
-
-            $allcolumns = array_diff($allcolumns, $ignores, array_map_method($result, 'getAlias', [], true));
-            $result = array_merge(array_strpad($allcolumns, '', $prefix), $result);
-        }
-
         $this->sqlParts['select'] = array_merge($this->sqlParts['select'], array_unique($result));
         return $this->_dirty();
     }
@@ -719,6 +731,8 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
         });
 
         $predicates = array_convert($predicates, function ($cond, &$param, $keys) use ($subtype, $froms) {
+            $is_int = is_int($cond);
+
             // 主キー
             if ($cond === '') {
                 if (count($keys) > 1) {
@@ -792,6 +806,63 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
                 }
                 $this->subbuilders[$cond]->$subtype($param);
                 return false;
+            }
+            // 仮想カラム（tablename.virtualname）@todo 何をしているか分からない
+            $cond2 = $is_int ? $param : $cond;
+            if (is_string($cond2) && preg_match('#([a-z_][a-z0-9_]*)\.([a-z_][a-z0-9_]*)#ui', $cond2, $matches)) {
+                $modifier = $matches[1];
+                $tablename = $froms[$modifier]['table'] ?? $modifier;
+                if ($gateway = $this->database->$tablename) {
+                    $vcolumns = array_map_filter($gateway->virtualColumn(), function ($vcol) {
+                        return $vcol['implicit'] ? $vcol['expression'] : null;
+                    });
+                    if ($vcolumns) {
+                        if ($is_int) {
+                            $param = [];
+                        }
+                        $cols = arrayize($param);
+                        $params = [];
+                        $vnames = implode('|', array_map(function ($v) { return preg_quote($v, '#'); }, array_keys($vcolumns)));
+                        $expr = preg_replace_callback("#(\\?)|$modifier\\.($vnames)#u", function ($m) use ($is_int, $froms, $modifier, $cond2, $param, $vcolumns, &$cols, &$params) {
+                            $vname = $m[2] ?? null;
+                            if ($vname === null) {
+                                if ($cols) {
+                                    $params[] = array_shift($cols);
+                                }
+                                return '?';
+                            }
+                            $vcol = $vcolumns[$vname] ?? null;
+                            if (is_string($vcol)) {
+                                return sprintf($vcol, $modifier);
+                            }
+                            elseif ($vcol instanceof Queryable) {
+                                $vcolq = clone $vcol;
+                                if ($vcolq instanceof QueryBuilder && ($submethod = $vcolq->getSubmethod()) !== null) {
+                                    foreach ($froms as $from) {
+                                        if ($vcolq->setSubwhere($from['table'], $from['alias'])) {
+                                            break;
+                                        }
+                                    }
+                                }
+                                $params[] = $vcolq;
+                                $comment = "/* vcolumn: $vname */";
+                                if (!$is_int && strpos($cond2, '?') === false) {
+                                    return "$comment ? " . (is_array($param) ? "IN(?)" : "= ?");
+                                }
+                                return "$comment ?";
+                            }
+                        }, $cond2);
+
+                        if ($params) {
+                            $param = array_merge($params, $cols);
+                        }
+                        elseif ($is_int) {
+                            $param = $expr;
+                            return null;
+                        }
+                        return $expr;
+                    }
+                }
             }
             // サブクエリビルダ(subexists, submax, sub...)
             if ($param instanceof QueryBuilder && ($submethod = $param->getSubmethod()) !== null) {
@@ -1292,6 +1363,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
      * |  1 | `"**"`                                           | 子テーブルを含めた全テーブル全列を取得
      * |  2 | `null`                                           | null を与えると「何も取得しない」を明示
      * |  4 | `"!hoge"`                                        | hoge 列**以外**を取得
+     * |  5 | `"!"`                                            | 仮想カラムを含めたテーブルの全列を取得（これは「空文字カラム以外を全て」を意味するので結局全てのカラムが得られる、ということになる）
      * |  8 | `"..hoge"`                                       | subtable 時において親のカラムを表す
      * | 10 | `"+prefix.column_name"`                          | JOIN 記号＋ドットを含む文字列は prefix テーブルと JOIN してそのカラムを取得
      * | 11 | `new Expression("NOW()")`                        | {@link Expression} を与えると一切加工せずそのまま文字列を表す

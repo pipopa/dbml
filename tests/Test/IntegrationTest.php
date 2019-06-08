@@ -182,6 +182,13 @@ class IntegrationTest extends AbstractUnitTestCase
         ], $row);
         $this->assertEquals('[prefix] dummy title', $row['title4']('[prefix] '));
 
+        $this->assertEquals([
+            'article_id' => '9',
+            'title'      => 'dummy title',
+            'checks'     => [1, 2, 3],
+            'title5'     => 'DUMMY TITLE',
+        ], $database->t_article->as('A')->select('!', $pk)->tuple());
+
         $where = (string) $database->t_article->where([
             '*' => 'aaa'
         ]);

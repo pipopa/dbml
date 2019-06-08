@@ -190,17 +190,18 @@ use function ryunosuke\dbml\throws;
  *
  * ### 仮想カラム
  *
- * {@link addVirtualColumn()} で「あたかもテーブルにあるかのように振る舞うカラム」を定義できる。
- * いまのところ select でのみ使用できる。
- * 将来的には where/orderBy でも使用できるようにするかもしれない。
+ * {@link setVirtualColumn()} で「あたかもテーブルにあるかのように振る舞うカラム」を定義できる。
  *
- * つまり現在の実装では実質的に「カラムだけの、かつ細切れにできるクエリスコープ」という扱いに近い。
- * あるいは「何らかのカラム表現に名前をつけて持ち回せる機能」といったところか。
- *
- * ありがちな例だが「姓」「名」を持つテーブルに対して `addVirtualColumn(['fullname' => new Expression('CONCAT(sei, mei)')]);` すると、あたかもフルネームカラムがあるように振る舞わせることができる。
+ * ありがちな例だが「姓」「名」を持つテーブルに対して `setVirtualColumn(['fullname' => new Expression('CONCAT(sei, mei)')]);` すると、あたかもフルネームカラムがあるように振る舞わせることができる。
  * 使用例などはメソッドを参照。
  *
- * 仮想カラムを引っ張るためには常に明示的な指定が必要で、 `*` や `!ignore` で引っ張ったとしても取得列に含まれることはない。
+ * 原則として仮想カラムを引っ張るためには明示的な指定が必要で、 `*` や `!ignore` で引っ張ったとしても取得列に含まれることはない。
+ * ただし `defaultImplicitVirtual` を true にすると取得列に含まれるようになる（それでも `*` は不可）。
+ * 仮想カラムを含めた全てを取得したい場合は '!' とする（{@link QueryBuilder::column()} を参照）。
+ * `defaultImplicitVirtual` は Gateway ごとのデフォルト値があり、各仮想カラムごとの設定も可能。
+ *
+ * 明示使用の場合でも今のところ select, where, having でのみ使用可能。
+ * orderBy は select に含めて指定すれば実現できるし、having も mysql であれば（設定次第で）直接式を指定することができるので、実質的には select, where でのみの使用となることが多いはず。
  *
  * ### JOIN
  *
@@ -270,6 +271,12 @@ use function ryunosuke\dbml\throws;
  *     デフォルトのデフォルトは "AUTO" なので、何も考えずに JOIN すると最も良い感じに JOIN される。
  *
  *     @param string $string {@link Database::JOIN_MAPPER} のいずれかのキー
+ * }
+ * @method bool                   getDefaultImplicitVirtual() {デフォルト仮想カラム包含フラグを返す}
+ * @method $this                  setDefaultImplicitVirtual($bool) {
+ *     デフォルト仮想カラム包含フラグを設定する
+ *
+ *     true にすると仮想カラムが '!notcolumn' の取得列に含まれるようになる。
  * }
  *
  * @method $this                  joinOn(TableGateway $table, $on) {
@@ -749,6 +756,9 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
     /** @var string デフォルト JOIN メソッド */
     protected $defaultJoinMethod = '';
 
+    /** @var bool 仮想カラム包含フラグ */
+    protected $defaultImplicitVirtual = false;
+
     /** @var Database Database オブジェクト */
     private $database;
 
@@ -792,11 +802,13 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
     {
         return [
             // 直接回した場合のフェッチモード
-            'defaultIteration'  => 'array',
+            'defaultIteration'       => 'array',
             // マジック JOIN 時のデフォルトモード
-            'defaultJoinMethod' => 'auto',
+            'defaultJoinMethod'      => 'auto',
+            // 仮想カラムを暗黙的に利用するか
+            'defaultImplicitVirtual' => false,
             // offsetGet したときに find するか pk するか（後方互換性のための設定であり、いずれ削除され pk に統一される）
-            'offsetGetFind'     => true,
+            'offsetGetFind'          => true,
         ];
     }
 
@@ -1895,7 +1907,7 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
      *
      * ```php
      * # 仮想カラムを追加する
-     * $gw->addVirtualColumn([
+     * $gw->setVirtualColumn([
      *     // 単純なエイリアス。ほぼ意味はない
      *     'hoge'      => 'fuga',
      *     // 姓・名を結合してフルネームとする
@@ -1909,7 +1921,10 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
      *         'expression' => null, // 仮想カラムの実定義（文字列や Expression やクエリビルダなど全て使用できる）
      *         'type'       => null, // 仮想カラムの型
      *         'anywhere'   => [],   // 仮想カラムの anywhere オプション
+     *         'implicit'   => $this->defaultImplicitVirtual, // !column などの一括取得に含めるか
      *     ],
+     *     // null を渡すと仮想カラムの削除になる
+     *     'deletedVcolumn' => null,
      * ]);
      *
      * # 追加した仮想カラムをあたかもテーブルカラムのように使用できる
@@ -1934,7 +1949,7 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
      *
      * ```php
      * # 仮想ではなく実カラムを指定
-     * $gw->addVirtualColumn([
+     * $gw->setVirtualColumn([
      *     // checkd_option という実際に存在するカラムの型を simple_array に上書きできる
      *     'checkd_option'      => [
      *         'type'  => Type::getType('simple_array')
@@ -1951,9 +1966,13 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
      * @param array $definition 仮想カラム定義
      * @return $this 自分自身
      */
-    public function addVirtualColumn($definition)
+    public function setVirtualColumn($definition)
     {
         foreach ($definition as $cname => $def) {
+            if ($def === null) {
+                unset($this->column[$cname]);
+                continue;
+            }
             if (!is_array($def)) {
                 $def = ['expression' => $def];
             }
@@ -1961,11 +1980,24 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
                 'expression' => null,
                 'type'       => null,
                 'anywhere'   => [],
+                'implicit'   => $this->getUnsafeOption('defaultImplicitVirtual'),
             ];
+            if (is_array($def['expression'])) {
+                $def['expression'] = $this->database->operator($def['expression']);
+            }
             $this->column[$cname] = $def;
         }
         return $this;
     }
+
+    /**
+     * メソッド名を変えたので互換性のためのプロキシメソッド
+     *
+     * @deprecated use setVirtualColumn()
+     * @ignore
+     * @inheritdoc setVirtualColumn()
+     */
+    public function addVirtualColumn($definition) { return $this->setVirtualColumn($definition); }
 
     /**
      * 仮想カラム定義を取得する

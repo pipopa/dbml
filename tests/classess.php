@@ -187,7 +187,7 @@ namespace ryunosuke\Test\Gateway {
                 ];
             });
 
-            $this->addVirtualColumn([
+            $this->setVirtualColumn([
                 'title'         => [
                     'anywhere' => [
                         'enable'  => true,
@@ -205,6 +205,10 @@ namespace ryunosuke\Test\Gateway {
                         return $prefix . $this->title;
                     };
                 },
+                'title5'        => [
+                    'expression' => 'UPPER(%s.title)',
+                    'implicit'   => true,
+                ],
                 'checks'        => [
                     'type' => Type::getType('simple_array'),
                 ],
