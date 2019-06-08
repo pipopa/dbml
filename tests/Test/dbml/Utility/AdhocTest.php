@@ -157,17 +157,36 @@ valid3=ok3  ;行末OK
         ]));
     }
 
+    function test_containQueryable()
+    {
+        $e = self::getDummyDatabase()->raw('column');
+        $this->assertFalse(Adhoc::containQueryable(null));
+        $this->assertFalse(Adhoc::containQueryable('hoge'));
+        $this->assertFalse(Adhoc::containQueryable([]));
+        $this->assertFalse(Adhoc::containQueryable(['hoge']));
+        $this->assertFalse(Adhoc::containQueryable($e));
+        $this->assertTrue(Adhoc::containQueryable([$e]));
+        $this->assertTrue(Adhoc::containQueryable([$e, $e]));
+        $this->assertTrue(Adhoc::containQueryable([null, $e, 'hoge']));
+    }
+
     function test_modifier()
     {
         $this->assertEquals(['column'], Adhoc::modifier('', ['column']));
         $this->assertEquals(['c' => 'column'], Adhoc::modifier('', ['c' => 'column']));
 
         $this->assertEquals(['column'], Adhoc::modifier('T', ['column']));
-        $this->assertEquals(['' => 'column'], Adhoc::modifier('T', ['' => 'column']));
+        $this->assertEquals(['UPPER(column)' => 'hoge'], Adhoc::modifier('T', ['UPPER(column)' => 'hoge']));
+        $this->assertEquals(['!T.c' => 'column'], Adhoc::modifier('T', ['!c' => 'column']));
         $this->assertEquals(['T.c' => 'column'], Adhoc::modifier('T', ['c' => 'column']));
         $this->assertEquals(['!T.c' => 'column'], Adhoc::modifier('T', ['!c' => 'column']));
+
         $qb = self::getDummyDatabase()->subexists('t', ['id' => 1]);
         $this->assertEquals(['c' => $qb], Adhoc::modifier('T', ['c' => $qb]));
+
+        $e = self::getDummyDatabase()->raw('column');
+        $this->assertEquals(['T.c' => $e], Adhoc::modifier('T', ['c' => $e]));
+        $this->assertEquals(['c' => [$e]], Adhoc::modifier('T', ['c' => [$e]]));
     }
 
     function test_parseYmdHis_full()

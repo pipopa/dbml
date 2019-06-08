@@ -2,6 +2,7 @@
 
 namespace ryunosuke\dbml\Utility;
 
+use ryunosuke\dbml\Query\Queryable;
 use ryunosuke\dbml\Query\QueryBuilder;
 use function ryunosuke\dbml\array_nest;
 use function ryunosuke\dbml\array_unset;
@@ -119,7 +120,6 @@ class Adhoc
         return false;
     }
 
-
     /**
      * 値が「空」なら true を返す
      *
@@ -195,6 +195,26 @@ class Adhoc
     }
 
     /**
+     * 配列が Queryable を含むなら true を返す
+     *
+     * @param mixed $array 対象配列
+     * @return bool Queryable を含むなら true
+     */
+    public static function containQueryable($array)
+    {
+        if (!is_array($array)) {
+            return false;
+        }
+
+        foreach ($array as $k => $v) {
+            if ($v instanceof Queryable) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * テーブル修飾子を付与する
      *
      * @param string $tablename テーブル名
@@ -211,6 +231,16 @@ class Adhoc
         foreach ($array as $key => $val) {
             // QueryBuilder で submethod ならプレフィックスを付けない
             if ($val instanceof QueryBuilder && $val->getSubmethod() !== null) {
+                $result[$key] = $val;
+                continue;
+            }
+            // 同上。配列の中に Queryable が紛れている場合
+            if (Adhoc::containQueryable($val)) {
+                $result[$key] = $val;
+                continue;
+            }
+            // ( を含む場合は大抵の場合不要なのでプレフィックスを付けない
+            if (is_string($key) && strpos($key, '(') !== false) {
                 $result[$key] = $val;
                 continue;
             }
