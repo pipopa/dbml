@@ -258,6 +258,9 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
     /** @var null|bool submethod(null で無効、true で有効、false で否定有効、文字列で集約関数) */
     private $submethod;
 
+    /** @var null|string submethod の対象テーブル（複数回呼ぶと複数回設定される不具合があったので暫定対応） */
+    private $subwhere;
+
     /** @var bool|int クエリを投げると同時に limit を外した件数を取得するか */
     private $rowcount = false;
 
@@ -1174,6 +1177,10 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
             return false;
         }
 
+        if ($this->subwhere === "$table:$fkeyname") {
+            return false;
+        }
+        $this->subwhere = "$table:$fkeyname";
         $pre_p = $alias ?: $table;
         $pre_c = $from['alias'];
         $this->andWhere(array_sprintf($mapper, "$pre_c.%2\$s = $pre_p.%1\$s"));
@@ -3114,6 +3121,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
         // 同上（where）
         if ($queryPartName === 'where') {
             $this->submethod = null;
+            $this->subwhere = null;
             $this->emptyCondition = null;
         }
 
