@@ -38,7 +38,10 @@
   "autoload-dev": {
     "psr-4": {
       "ryunosuke\\Test\\": "tests/Test"
-    }
+    },
+    "files": [
+      "src/functions-dev.php"
+    ]
   },
   "scripts": {
     "build": [
