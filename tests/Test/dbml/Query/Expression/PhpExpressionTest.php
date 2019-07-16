@@ -27,6 +27,9 @@ class PhpExpressionTest extends \ryunosuke\Test\AbstractUnitTestCase
         $phpe = PhpExpression::forge(function ($hoge = ['a' => 'c']) { });
         $this->assertEquals(['a' => new Alias('a', 'c')], $phpe->getDependColumns());
 
+        $phpe = PhpExpression::forge(function ($hoge = null) { }, 'hoge');
+        $this->assertEquals([], $phpe->getDependColumns());
+
         $phpe = PhpExpression::forge(123);
         $this->assertEquals(123, $phpe);
 

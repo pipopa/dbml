@@ -3,8 +3,8 @@
 namespace ryunosuke\dbml\Query\Expression;
 
 use function ryunosuke\dbml\array_each;
+use function ryunosuke\dbml\date_convert;
 use function ryunosuke\dbml\first_keyvalue;
-use function ryunosuke\dbml\ifelse;
 use function ryunosuke\dbml\split_noempty;
 
 /**
@@ -128,6 +128,17 @@ class PhpExpression
     private $dependAliases = [];
 
     /**
+     * クロージャを定義する
+     *
+     * @param string $name 定義名
+     * @param callable||null $callback 処理実体
+     */
+    public static function define($name, $callback)
+    {
+        self::$registereds[$name] = $callback;
+    }
+
+    /**
      * 値を PhpExpression 化して返す
      *
      * 変換できなそうならそのまま返す。
@@ -162,17 +173,6 @@ class PhpExpression
     }
 
     /**
-     * クロージャを定義する
-     *
-     * @param string $name 定義名
-     * @param callable||null $callback 処理実体
-     */
-    public static function define($name, $callback)
-    {
-        self::$registereds[$name] = $callback;
-    }
-
-    /**
      * 単一引数のシンプルなクロージャを返す
      *
      * @param string $name 定義名
@@ -195,15 +195,15 @@ class PhpExpression
         switch ($name) {
             case 'explode':
                 return function ($v = null) use ($arguments) {
-                    return ifelse($v, null, null, split_noempty($arguments[0], $v));
+                    return $v === null ? null : split_noempty($arguments[0], $v);
                 };
             case 'sprintf':
                 return function ($v = null) use ($arguments) {
-                    return ifelse($v, null, null, sprintf($arguments[0], $v));
+                    return $v === null ? null : sprintf($arguments[0], $v);
                 };
             case 'date':
                 return function ($v = null) use ($arguments) {
-                    return ifelse($v, null, null, date($arguments[0], is_numeric($v) ? $v : strtotime($v)));
+                    return $v === null ? null : date_convert($arguments[0], $v);
                 };
         }
 
