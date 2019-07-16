@@ -118,7 +118,6 @@ class SequencerTest extends \ryunosuke\Test\AbstractUnitTestCase
     /**
      * @dataProvider provideSequencer
      * @param Sequencer $sequencer
-     * @param Database $database
      */
     function test_direction_null($sequencer)
     {

@@ -264,7 +264,7 @@ class TransactionTest extends \ryunosuke\Test\AbstractUnitTestCase
         $transaction->main(function () {
             throw new \Exception('error');
         });
-        $transaction->catch(function ($ex) use (&$receiver) {
+        $transaction->catch(function (\Throwable $ex) use (&$receiver) {
             $receiver['catch'] = $ex->getMessage();
         });
         $transaction->finish(function () use (&$receiver) {

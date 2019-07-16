@@ -1547,7 +1547,6 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
      */
     function test_whereInto_flipflop($database)
     {
-        $params = [];
         $whereInto = function ($conds, $andor = 'OR') use ($database, &$params) {
             $params = [];
             return $database->whereInto(is_array($conds) ? $conds : [$conds], $params, $andor);
