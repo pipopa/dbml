@@ -3,7 +3,7 @@
 <head>	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/styles/zenburn.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/styles/foundation.min.css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js-bootstrap-css/1.2.1/typeaheadjs.min.css">
 	<link rel="stylesheet" type="text/css" data-href="common.css">
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -34,9 +34,9 @@
         })();
 	</script>
     </head>
-<body>
+<body class="typespace">
 <a id="anchor" href="./" style="display: none"></a>
-<h1 class="ellipsis">
+<h1 class="ellipsis fixed">
 	<span class="pull-left">
 	Structure
 	<small class="ellipsis-text">(ryunosuke\dbml\Query\Expression\Operator)</small>
@@ -61,7 +61,7 @@
 
 	<div class="description"><p>演算子を表すクラス</p>
 <p>内部的に使用されるだけで、明示的に使用する箇所はほとんど無い。<br />
-ただし、下記の演算子登録を使用する場合は <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\Expression\Operator::define()' data-type-array='0' data-description='define()'>define()</tag_link> で登録する必要がある。</p>
+ただし、下記の演算子登録を使用する場合は <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\Expression\Operator::define()' data-type-array='0' data-description='ryunosuke\dbml\Query\Expression\Operator::define()'>ryunosuke\dbml\Query\Expression\Operator::define()</tag_link> で登録する必要がある。</p>
 <p>組み込みの演算子は下記。これらは何もしなくても whereInto で使用することができる。</p>
 <table>
 <thead>
@@ -113,7 +113,7 @@ $db-&gt;whereInto(['col:FISOR' =&gt; [1, 2]]);
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\Expression\Operator::RAW" tabindex="-1" class="structure-title">
 						<small>string</small>
-                        RAW						<var> = &#039;__RAW__&#039;</var>
+                        RAW						<var> = &quot;__RAW__&quot;</var>
 					</h4>
 					<div class="inner-item">
 						<div class="description"></div>
@@ -127,7 +127,7 @@ $db-&gt;whereInto(['col:FISOR' =&gt; [1, 2]]);
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\Expression\Operator::COLVAL" tabindex="-1" class="structure-title">
 						<small>string</small>
-                        COLVAL						<var> = &#039;__COLVAL__&#039;</var>
+                        COLVAL						<var> = &quot;__COLVAL__&quot;</var>
 					</h4>
 					<div class="inner-item">
 						<div class="description"></div>
@@ -141,7 +141,7 @@ $db-&gt;whereInto(['col:FISOR' =&gt; [1, 2]]);
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\Expression\Operator::OP_SPACESHIP" tabindex="-1" class="structure-title">
 						<small>string</small>
-                        OP_SPACESHIP						<var> = &#039;&lt;=&gt;&#039;</var>
+                        OP_SPACESHIP						<var> = &quot;&lt;=&gt;&quot;</var>
 					</h4>
 					<div class="inner-item">
 						<div class="description"></div>
@@ -155,7 +155,7 @@ $db-&gt;whereInto(['col:FISOR' =&gt; [1, 2]]);
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\Expression\Operator::OP_IS_NULL" tabindex="-1" class="structure-title">
 						<small>string</small>
-                        OP_IS_NULL						<var> = &#039;IS NULL&#039;</var>
+                        OP_IS_NULL						<var> = &quot;IS NULL&quot;</var>
 					</h4>
 					<div class="inner-item">
 						<div class="description"></div>
@@ -169,7 +169,7 @@ $db-&gt;whereInto(['col:FISOR' =&gt; [1, 2]]);
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\Expression\Operator::OP_BETWEEN" tabindex="-1" class="structure-title">
 						<small>string</small>
-                        OP_BETWEEN						<var> = &#039;BETWEEN&#039;</var>
+                        OP_BETWEEN						<var> = &quot;BETWEEN&quot;</var>
 					</h4>
 					<div class="inner-item">
 						<div class="description"></div>
@@ -183,7 +183,7 @@ $db-&gt;whereInto(['col:FISOR' =&gt; [1, 2]]);
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\Expression\Operator::OP_IN" tabindex="-1" class="structure-title">
 						<small>string</small>
-                        OP_IN						<var> = &#039;IN&#039;</var>
+                        OP_IN						<var> = &quot;IN&quot;</var>
 					</h4>
 					<div class="inner-item">
 						<div class="description"></div>
@@ -197,7 +197,7 @@ $db-&gt;whereInto(['col:FISOR' =&gt; [1, 2]]);
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\Expression\Operator::OP_RIGHT_LIKE" tabindex="-1" class="structure-title">
 						<small>string</small>
-                        OP_RIGHT_LIKE						<var> = &#039;LIKE%&#039;</var>
+                        OP_RIGHT_LIKE						<var> = &quot;LIKE%&quot;</var>
 					</h4>
 					<div class="inner-item">
 						<div class="description"></div>
@@ -211,7 +211,7 @@ $db-&gt;whereInto(['col:FISOR' =&gt; [1, 2]]);
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\Expression\Operator::OP_LEFT_LIKE" tabindex="-1" class="structure-title">
 						<small>string</small>
-                        OP_LEFT_LIKE						<var> = &#039;%LIKE&#039;</var>
+                        OP_LEFT_LIKE						<var> = &quot;%LIKE&quot;</var>
 					</h4>
 					<div class="inner-item">
 						<div class="description"></div>
@@ -225,7 +225,7 @@ $db-&gt;whereInto(['col:FISOR' =&gt; [1, 2]]);
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\Expression\Operator::OP_BOTH_LIKE" tabindex="-1" class="structure-title">
 						<small>string</small>
-                        OP_BOTH_LIKE						<var> = &#039;%LIKE%&#039;</var>
+                        OP_BOTH_LIKE						<var> = &quot;%LIKE%&quot;</var>
 					</h4>
 					<div class="inner-item">
 						<div class="description"></div>
@@ -239,7 +239,7 @@ $db-&gt;whereInto(['col:FISOR' =&gt; [1, 2]]);
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\Expression\Operator::OP_NULLIN" tabindex="-1" class="structure-title">
 						<small>string</small>
-                        OP_NULLIN						<var> = &#039;NULLIN&#039;</var>
+                        OP_NULLIN						<var> = &quot;NULLIN&quot;</var>
 					</h4>
 					<div class="inner-item">
 						<div class="description"></div>
@@ -253,7 +253,7 @@ $db-&gt;whereInto(['col:FISOR' =&gt; [1, 2]]);
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\Expression\Operator::OP_RIGHT_LIKEIN" tabindex="-1" class="structure-title">
 						<small>string</small>
-                        OP_RIGHT_LIKEIN						<var> = &#039;LIKEIN%&#039;</var>
+                        OP_RIGHT_LIKEIN						<var> = &quot;LIKEIN%&quot;</var>
 					</h4>
 					<div class="inner-item">
 						<div class="description"></div>
@@ -267,7 +267,7 @@ $db-&gt;whereInto(['col:FISOR' =&gt; [1, 2]]);
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\Expression\Operator::OP_LEFT_LIKEIN" tabindex="-1" class="structure-title">
 						<small>string</small>
-                        OP_LEFT_LIKEIN						<var> = &#039;%LIKEIN&#039;</var>
+                        OP_LEFT_LIKEIN						<var> = &quot;%LIKEIN&quot;</var>
 					</h4>
 					<div class="inner-item">
 						<div class="description"></div>
@@ -281,7 +281,7 @@ $db-&gt;whereInto(['col:FISOR' =&gt; [1, 2]]);
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\Expression\Operator::OP_BOTH_LIKEIN" tabindex="-1" class="structure-title">
 						<small>string</small>
-                        OP_BOTH_LIKEIN						<var> = &#039;%LIKEIN%&#039;</var>
+                        OP_BOTH_LIKEIN						<var> = &quot;%LIKEIN%&quot;</var>
 					</h4>
 					<div class="inner-item">
 						<div class="description"></div>
@@ -295,7 +295,7 @@ $db-&gt;whereInto(['col:FISOR' =&gt; [1, 2]]);
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\Expression\Operator::OP_RANGE" tabindex="-1" class="structure-title">
 						<small>string</small>
-                        OP_RANGE						<var> = &#039;(~)&#039;</var>
+                        OP_RANGE						<var> = &quot;(~)&quot;</var>
 					</h4>
 					<div class="inner-item">
 						<div class="description"></div>
@@ -309,7 +309,7 @@ $db-&gt;whereInto(['col:FISOR' =&gt; [1, 2]]);
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\Expression\Operator::OP_RANGE_LTE" tabindex="-1" class="structure-title">
 						<small>string</small>
-                        OP_RANGE_LTE						<var> = &#039;[~)&#039;</var>
+                        OP_RANGE_LTE						<var> = &quot;[~)&quot;</var>
 					</h4>
 					<div class="inner-item">
 						<div class="description"></div>
@@ -323,7 +323,7 @@ $db-&gt;whereInto(['col:FISOR' =&gt; [1, 2]]);
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\Expression\Operator::OP_RANGE_GTE" tabindex="-1" class="structure-title">
 						<small>string</small>
-                        OP_RANGE_GTE						<var> = &#039;(~]&#039;</var>
+                        OP_RANGE_GTE						<var> = &quot;(~]&quot;</var>
 					</h4>
 					<div class="inner-item">
 						<div class="description"></div>
@@ -337,7 +337,7 @@ $db-&gt;whereInto(['col:FISOR' =&gt; [1, 2]]);
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\Expression\Operator::OP_RANGE_BETWEEN" tabindex="-1" class="structure-title">
 						<small>string</small>
-                        OP_RANGE_BETWEEN						<var> = &#039;[~]&#039;</var>
+                        OP_RANGE_BETWEEN						<var> = &quot;[~]&quot;</var>
 					</h4>
 					<div class="inner-item">
 						<div class="description"></div>
@@ -367,7 +367,7 @@ $db-&gt;whereInto(['col:FISOR' =&gt; [1, 2]]);
 					</h4>
 					<div class="inner-item">
 						<div class="description"><p>演算子を定義する</p>
-<p>返り値として「カラム, 値を受け取り、[式 =&gt; パラメータ] を返すクロージャ」を返さなければならない。<br />
+<p>設定値として「カラム, 値を受け取り、[式 =&gt; パラメータ] を返すクロージャ」を与えなければならない。<br />
 （クラス冒頭のサンプルを参照）。</p>
 </div>
                         	<table class="table">

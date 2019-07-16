@@ -3,7 +3,7 @@
 <head>	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/styles/zenburn.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/styles/foundation.min.css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js-bootstrap-css/1.2.1/typeaheadjs.min.css">
 	<link rel="stylesheet" type="text/css" data-href="common.css">
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -34,9 +34,9 @@
         })();
 	</script>
     </head>
-<body>
+<body class="namespace">
 <a id="anchor" href="./" style="display: none"></a>
-<h1 class="ellipsis">
+<h1 class="ellipsis fixed">
 	Structure
 	<small class="ellipsis-text">(ryunosuke\dbml\Gateway\)</small>
 	<span class="pull-right">
@@ -61,7 +61,7 @@
 							<span class="label label-info"></span>
 							<span class="label label-info">iterateable</span>
 							<span class="label label-deprecated"></span>
-                            			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Gateway/TableGateway.php#L25-L1950" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                            			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Gateway/TableGateway.php#L25-L2316" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
             						</div>
 						<h4 id="ryunosuke\dbml\Gateway\TableGateway" tabindex="-1" class="structure-title ">
 							<a href="ryunosuke-dbml-Gateway-TableGateway$typespace.html#ryunosuke\dbml\Gateway\TableGateway">TableGateway</a>
@@ -204,23 +204,24 @@ foreach ($gw-&gt;scope('active') as $item) {
 $gw-&gt;count();
 </code></pre>
 <p>foreach で回すときのメソッドはデフォルトで array。 これは $defaultIteration で変更できる。<br />
-$defaultIteration は設定できる箇所があるが、下記の優先順位となる。</p>
+$defaultIteration は複数設定できる箇所があるが、下記の優先順位となる。</p>
 <ul>
 <li>Database の defaultIteration オプション</li>
 <li>クラスの <code>$defaultIteration</code> プロパティ</li>
 <li>明示的に設定した <code>$defaultIteration</code> プロパティ</li>
 </ul>
 <p>下に行くほど優先される。要するに単純に個別で指定するほど強い。</p>
-<p>count() は <code>count($gw)</code> と <code>$gw-&gt;count('*')</code> で挙動が異なる（<tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Gateway\TableGateway::count()' data-type-array='0' data-description='count()'>count()</tag_link> を参照）</p>
+<p>count() は <code>count($gw)</code> と <code>$gw-&gt;count('*')</code> で挙動が異なる（<tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Gateway\TableGateway::count()' data-type-array='0' data-description='ryunosuke\dbml\Gateway\TableGateway::count()'>ryunosuke\dbml\Gateway\TableGateway::count()</tag_link> を参照）</p>
 <h3>仮想カラム</h3>
-<p><tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Gateway\TableGateway::addVirtualColumn()' data-type-array='0' data-description='addVirtualColumn()'>addVirtualColumn()</tag_link> で「あたかもテーブルにあるかのように振る舞うカラム」を定義できる。<br />
-いまのところ select でのみ使用できる。<br />
-将来的には where/orderBy でも使用できるようにするかもしれない。</p>
-<p>つまり現在の実装では実質的に「カラムだけの、かつ細切れにできるクエリスコープ」という扱いに近い。<br />
-あるいは「何らかのカラム表現に名前をつけて持ち回せる機能」といったところか。</p>
-<p>ありがちな例だが「姓」「名」を持つテーブルに対して <code>addVirtualColumn(['fullname' =&gt; new Expression('CONCAT(sei, mei)')]);</code> すると、あたかもフルネームカラムがあるように振る舞わせることができる。<br />
+<p><tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Gateway\TableGateway::setVirtualColumn()' data-type-array='0' data-description='ryunosuke\dbml\Gateway\TableGateway::setVirtualColumn()'>ryunosuke\dbml\Gateway\TableGateway::setVirtualColumn()</tag_link> で「あたかもテーブルにあるかのように振る舞うカラム」を定義できる。</p>
+<p>ありがちな例だが「姓」「名」を持つテーブルに対して <code>setVirtualColumn(['fullname' =&gt; new Expression('CONCAT(sei, mei)')]);</code> すると、あたかもフルネームカラムがあるように振る舞わせることができる。<br />
 使用例などはメソッドを参照。</p>
-<p>仮想カラムを引っ張るためには常に明示的な指定が必要で、 <code>*</code> や <code>!ignore</code> で引っ張ったとしても取得列に含まれることはない。</p>
+<p>原則として仮想カラムを引っ張るためには明示的な指定が必要で、 <code>*</code> や <code>!ignore</code> で引っ張ったとしても取得列に含まれることはない。<br />
+ただし <code>defaultImplicitVirtual</code> を true にすると取得列に含まれるようになる（それでも <code>*</code> は不可）。<br />
+仮想カラムを含めた全てを取得したい場合は '!' とする（<tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::column()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::column()'>ryunosuke\dbml\Query\QueryBuilder::column()</tag_link> を参照）。<br />
+<code>defaultImplicitVirtual</code> は Gateway ごとのデフォルト値があり、各仮想カラムごとの設定も可能。</p>
+<p>明示使用の場合でも今のところ select, where, having でのみ使用可能。<br />
+orderBy は select に含めて指定すれば実現できるし、having も mysql であれば（設定次第で）直接式を指定することができるので、実質的には select, where でのみの使用となることが多いはず。</p>
 <h3>JOIN</h3>
 <p>メソッドコール or マジックゲット or マジックコールを使用して JOIN を行うことができる。<br />
 それぞれできる範囲と記法が異なり、特色がある（メソッドコールは冗長、マジックゲットは end がウザイ、マジックコールはエイリアスが張れない など）。</p>

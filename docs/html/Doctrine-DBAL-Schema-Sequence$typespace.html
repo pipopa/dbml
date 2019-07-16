@@ -3,7 +3,7 @@
 <head>	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/styles/zenburn.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/styles/foundation.min.css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js-bootstrap-css/1.2.1/typeaheadjs.min.css">
 	<link rel="stylesheet" type="text/css" data-href="common.css">
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -34,9 +34,9 @@
         })();
 	</script>
     </head>
-<body>
+<body class="typespace">
 <a id="anchor" href="./" style="display: none"></a>
-<h1 class="ellipsis">
+<h1 class="ellipsis fixed">
 	<span class="pull-left">
 	Structure
 	<small class="ellipsis-text">(Doctrine\DBAL\Schema\Sequence)</small>
@@ -1184,7 +1184,7 @@ return the plain unquoted value as inserted.</p>
                         			<a href="https://github.com/doctrine/dbal/blob/v2.9.2/lib/Doctrine/DBAL/Schema/AbstractAsset.php#L189-L209" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="Doctrine\DBAL\Schema\Sequence::_generateIdentifierName()" tabindex="-1" class="structure-title ">
-                        _generateIdentifierName						<small>($columnNames, $prefix = &#039;&#039;, $maxSize = 30)</small>
+                        _generateIdentifierName						<small>($columnNames, $prefix = &quot;&quot;, $maxSize = 30)</small>
 					</h4>
 					<div class="inner-item">
 						<div class="description"><p>Generates an identifier from a list of column names obeying a certain string length.</p>
@@ -1202,7 +1202,7 @@ very long names.</p>
 			</tr>
         			<tr>
 				<td class="type">string</td>
-				<td class="rest">$prefix = &#039;&#039;</td>
+				<td class="rest">$prefix = &quot;&quot;</td>
 				<td class="desc"></td>
 			</tr>
         			<tr>

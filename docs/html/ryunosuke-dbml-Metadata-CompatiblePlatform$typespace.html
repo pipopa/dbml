@@ -3,7 +3,7 @@
 <head>	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/styles/zenburn.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/styles/foundation.min.css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js-bootstrap-css/1.2.1/typeaheadjs.min.css">
 	<link rel="stylesheet" type="text/css" data-href="common.css">
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -34,9 +34,9 @@
         })();
 	</script>
     </head>
-<body>
+<body class="typespace">
 <a id="anchor" href="./" style="display: none"></a>
-<h1 class="ellipsis">
+<h1 class="ellipsis fixed">
 	<span class="pull-left">
 	Structure
 	<small class="ellipsis-text">(ryunosuke\dbml\Metadata\CompatiblePlatform)</small>
@@ -799,7 +799,7 @@
                         			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Metadata/CompatiblePlatform.php#L275-L312" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Metadata\CompatiblePlatform::escapeLike()" tabindex="-1" class="structure-title ">
-                        escapeLike						<small>($word, $escaper = &#039;\\&#039;)</small>
+                        escapeLike						<small>($word, $escaper = &quot;\\&quot;)</small>
 					</h4>
 					<div class="inner-item">
 						<div class="description"><p>LIKE エスケープする</p>
@@ -815,7 +815,7 @@
 			</tr>
         			<tr>
 				<td class="type">string</td>
-				<td class="rest">$escaper = &#039;\\&#039;</td>
+				<td class="rest">$escaper = &quot;\\&quot;</td>
 				<td class="desc"><p>LIKE のエスケープ文字</p>
 </td>
 			</tr>
@@ -1187,7 +1187,7 @@
                         			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Metadata/CompatiblePlatform.php#L425-L446" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Metadata\CompatiblePlatform::getIndexHintSQL()" tabindex="-1" class="structure-title ">
-                        getIndexHintSQL						<small>($index_name, $mode = &#039;FORCE&#039;)</small>
+                        getIndexHintSQL						<small>($index_name, $mode = &quot;FORCE&quot;)</small>
 					</h4>
 					<div class="inner-item">
 						<div class="description"><p>インデックスヒント構文を返す</p>
@@ -1203,7 +1203,7 @@
 			</tr>
         			<tr>
 				<td class="type">string</td>
-				<td class="rest">$mode = &#039;FORCE&#039;</td>
+				<td class="rest">$mode = &quot;FORCE&quot;</td>
 				<td class="desc"><p>HINT/FORCE などのモード名</p>
 </td>
 			</tr>
@@ -1299,7 +1299,7 @@
                         			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Metadata/CompatiblePlatform.php#L479-L533" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Metadata\CompatiblePlatform::getPrimaryCondition()" tabindex="-1" class="structure-title ">
-                        getPrimaryCondition						<small>($wheres, $prefix = &#039;&#039;)</small>
+                        getPrimaryCondition						<small>($wheres, $prefix = &quot;&quot;)</small>
 					</h4>
 					<div class="inner-item">
 						<div class="description"><p>条件配列を結合した Expression を返す</p>
@@ -1316,7 +1316,7 @@
 			</tr>
         			<tr>
 				<td class="type">string</td>
-				<td class="rest">$prefix = &#039;&#039;</td>
+				<td class="rest">$prefix = &quot;&quot;</td>
 				<td class="desc"><p>修飾子</p>
 </td>
 			</tr>

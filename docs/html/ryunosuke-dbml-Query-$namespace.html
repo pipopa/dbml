@@ -3,7 +3,7 @@
 <head>	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/styles/zenburn.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/styles/foundation.min.css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js-bootstrap-css/1.2.1/typeaheadjs.min.css">
 	<link rel="stylesheet" type="text/css" data-href="common.css">
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -34,9 +34,9 @@
         })();
 	</script>
     </head>
-<body>
+<body class="namespace">
 <a id="anchor" href="./" style="display: none"></a>
-<h1 class="ellipsis">
+<h1 class="ellipsis fixed">
 	Structure
 	<small class="ellipsis-text">(ryunosuke\dbml\Query\)</small>
 	<span class="pull-right">
@@ -115,7 +115,7 @@
 							<span class="label label-info"></span>
 							<span class="label label-info">iterateable</span>
 							<span class="label label-deprecated"></span>
-                            			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L49-L3212" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                            			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L48-L3352" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
             						</div>
 						<h4 id="ryunosuke\dbml\Query\QueryBuilder" tabindex="-1" class="structure-title ">
 							<a href="ryunosuke-dbml-Query-QueryBuilder$typespace.html#ryunosuke\dbml\Query\QueryBuilder">QueryBuilder</a>
@@ -133,7 +133,7 @@ foreach ($qb as $row) {
 echo count($qb); // t_article の件数を返す
 </code></pre>
 <h3>プリペアードステートメント</h3>
-<p>明示的に prepare のようなメソッドを呼ばない限り内部のプリペアードステートメントでは名前付きパラメータを一切使用しない（<tag_link data-kind='fqsen' data-type-category='class' data-type-fqsen='ryunosuke\dbml\Query\Statement' data-type-array='0' data-description='Statement'>Statement</tag_link> も参照）。<br />
+<p>明示的に prepare のようなメソッドを呼ばない限り内部のプリペアードステートメントでは名前付きパラメータを一切使用しない（<tag_link data-kind='fqsen' data-type-category='class' data-type-fqsen='ryunosuke\dbml\Query\Statement' data-type-array='0' data-description='ryunosuke\dbml\Query\Statement'>ryunosuke\dbml\Query\Statement</tag_link> も参照）。<br />
 したがってメソッド呼び出し順によってはパラメータ順が「ズレ」ることがある。<br />
 基本的にはズレないようにはしてある（ズレるのはかなり特殊な条件）が、怖い場合は <code>queryInto</code> で文字列化してから結合したりサブクエリで使用したりした方が確実。</p>
 </div>
@@ -174,7 +174,7 @@ echo count($qb); // t_article の件数を返す
 							<span class="label label-info"></span>
 							<span class="label label-info"></span>
 							<span class="label label-deprecated"></span>
-                            			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/Statement.php#L9-L143" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                            			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/Statement.php#L8-L140" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
             						</div>
 						<h4 id="ryunosuke\dbml\Query\Statement" tabindex="-1" class="structure-title ">
 							<a href="ryunosuke-dbml-Query-Statement$typespace.html#ryunosuke\dbml\Query\Statement">Statement</a>
@@ -182,7 +182,7 @@ echo count($qb); // t_article の件数を返す
 						<div class="inner-item">
 							<div class="description"><p>Statement をラップして扱いやすくしたクラス</p>
 <p>主にプリペアドステートメントのために存在する。よってエミュレーションモードがオンだとほとんど意味を為さない。<br />
-が、 <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::insert()' data-type-array='0' data-description='Database::insert()'>Database::insert()</tag_link> や <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::update()' data-type-array='0' data-description='Database::update()'>Database::update()</tag_link> などはそれ自体にそれなりの付随処理があるので、使うことに意味がないわけではない。</p>
+が、 <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::insert()' data-type-array='0' data-description='ryunosuke\dbml\Database::insert()'>ryunosuke\dbml\Database::insert()</tag_link> や <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::update()' data-type-array='0' data-description='ryunosuke\dbml\Database::update()'>ryunosuke\dbml\Database::update()</tag_link> などはそれ自体にそれなりの付随処理があるので、使うことに意味がないわけではない。</p>
 <p>クエリビルダは疑問符プレースホルダが大量に埋め込まれる可能性があるので、全部パラメータにするのが大変。<br />
 ので、「prepare した時点で固定し、残り（名前付き）のみ後から指定する」という仕様になっている。</p>
 <pre><code class="language-php">$qb = $db-&gt;select('t_table.*', [':id', 'opt1' =&gt; 1, 'opt2' =&gt; 2])-&gt;prepare();

@@ -3,7 +3,7 @@
 <head>	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/styles/zenburn.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/styles/foundation.min.css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js-bootstrap-css/1.2.1/typeaheadjs.min.css">
 	<link rel="stylesheet" type="text/css" data-href="common.css">
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -34,9 +34,9 @@
         })();
 	</script>
     </head>
-<body>
+<body class="namespace">
 <a id="anchor" href="./" style="display: none"></a>
-<h1 class="ellipsis">
+<h1 class="ellipsis fixed">
 	Structure
 	<small class="ellipsis-text">(ryunosuke\)</small>
 	<span class="pull-right">
@@ -61,14 +61,14 @@
 						<div class="description"><p>特定のクラスに依存しない全体仕様を以下に記す。</p>
 <h3>データベーススキーマ</h3>
 <p>まず大前提として<strong>別スキーマへのクエリは一切サポートしない</strong>。<br />
-ただし、 <tag_link data-kind='fqsen' data-type-category='class' data-type-fqsen='ryunosuke\dbml\Gateway\TableGateway' data-type-array='0' data-description='TableGateway'>TableGateway</tag_link> や <tag_link data-kind='fqsen' data-type-category='class' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder' data-type-array='0' data-description='QueryBuilder'>QueryBuilder</tag_link> の話であり、 <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::fetchArray()' data-type-array='0' data-description='Database::fetchArray'>Database::fetchArray</tag_link> などで直接クエリを投げる場合はこの限りではない。</p>
+ただし、 <tag_link data-kind='fqsen' data-type-category='class' data-type-fqsen='ryunosuke\dbml\Gateway\TableGateway' data-type-array='0' data-description='ryunosuke\dbml\Gateway\TableGateway'>ryunosuke\dbml\Gateway\TableGateway</tag_link> や <tag_link data-kind='fqsen' data-type-category='class' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder'>ryunosuke\dbml\Query\QueryBuilder</tag_link> の話であり、 <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::fetchArray()' data-type-array='0' data-description='ryunosuke\dbml\Database::fetchArray()'>ryunosuke\dbml\Database::fetchArray()</tag_link> などで直接クエリを投げる場合はこの限りではない。</p>
 <p>テーブルやカラムのコメントにはメタ情報として ini 形式の文字列を埋め込むことができる。<br />
-これに関しては <tag_link data-kind='fqsen' data-type-category='class' data-type-fqsen='ryunosuke\dbml\Metadata\Schema' data-type-array='0' data-description='Schema'>Schema</tag_link> も参照。</p>
+これに関しては <tag_link data-kind='fqsen' data-type-category='class' data-type-fqsen='ryunosuke\dbml\Metadata\Schema' data-type-array='0' data-description='ryunosuke\dbml\Metadata\Schema'>ryunosuke\dbml\Metadata\Schema</tag_link> も参照。</p>
 <p>上記のようなメタ情報やスキーマ情報はキャッシュに保存される。<br />
-このキャッシュは <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::__construct()' data-type-array='0' data-description='Database::__construct()'>Database::__construct()</tag_link> のオプションで指定する。<br />
+このキャッシュは <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::__construct()' data-type-array='0' data-description='ryunosuke\dbml\Database::__construct()'>ryunosuke\dbml\Database::__construct()</tag_link> のオプションで指定する。<br />
 結構な勢いでスキーマを漁るので、何らかの永続キャッシュ（FilesystemCache や ApcuCache など）を使用したほうが良い。</p>
 <h3>テーブル記法</h3>
-<p>各クラスの各メソッドで引数名が <code>$tableDescriptor</code> となっているものは下記の記法を受け入れる（<tag_link data-kind='fqsen' data-type-category='class' data-type-fqsen='ryunosuke\dbml\Query\Expression\TableDescriptor' data-type-array='0' data-description='TableDescriptor'>TableDescriptor</tag_link> から抜粋）。</p>
+<p>各クラスの各メソッドで引数名が <code>$tableDescriptor</code> となっているものは下記の記法を受け入れる（<tag_link data-kind='fqsen' data-type-category='class' data-type-fqsen='ryunosuke\dbml\Query\Expression\TableDescriptor' data-type-array='0' data-description='ryunosuke\dbml\Query\Expression\TableDescriptor'>ryunosuke\dbml\Query\Expression\TableDescriptor</tag_link> から抜粋）。</p>
 <ul>
 <li>base: <code>'(joinsign)tablename(pkval)@scope:fkeyname[condition]+order-by#offset-limit AS Alias.col1, col2 AS C2'</code></li>
 </ul>
@@ -267,7 +267,7 @@ $db-&gt;t_article-&gt;as('A')-&gt;scope('latest')-&gt;column([
 // 2つとも右記と同じ: $db-&gt;selectArray('t_article@latest[delete_flg=0] AS A.article_id/t_comment AS C.comment');
 </code></pre>
 <p>ここまで来ると文字列ではなくほぼ php 構文になるのでかなり直感的になる。<br />
-テーブル記法については <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::column()' data-type-array='0' data-description='QueryBuilder::column()'>QueryBuilder::column()</tag_link> や <tag_link data-kind='fqsen' data-type-category='class' data-type-fqsen='ryunosuke\dbml\Query\Expression\TableDescriptor' data-type-array='0' data-description='TableDescriptor'>TableDescriptor</tag_link> にも記載があるのでそちらも参照。</p>
+テーブル記法については <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::column()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::column()'>ryunosuke\dbml\Query\QueryBuilder::column()</tag_link> や <tag_link data-kind='fqsen' data-type-category='class' data-type-fqsen='ryunosuke\dbml\Query\Expression\TableDescriptor' data-type-array='0' data-description='ryunosuke\dbml\Query\Expression\TableDescriptor'>ryunosuke\dbml\Query\Expression\TableDescriptor</tag_link> にも記載があるのでそちらも参照。</p>
 <h3>テーブル名 ⇔ エンティティ名の自動変換</h3>
 <pre><code class="language-php">$db = new Database($connection, [
     // テーブル名 ⇔ エンティティの変換を行うクロージャを指定する
@@ -301,7 +301,7 @@ $db-&gt;insert('t_article', $dataarray);
 <tbody>
 <tr><td align="left">t_article で select すると キーが Article で返ってくる</td><td align="left">単に返ってくるキーの違いであり、 自動でエンティティ化したりはしない。エンティティで欲しい場合は常に <code>cast()</code> を呼ぶ</td></tr>
 <tr><td align="left">t_ancestor.*** で取得する子供列がエンティティ名になる</td><td align="left">上記の派生。テーブル名を指定できない以上、エンティティで返すしかないため</td></tr>
-<tr><td align="left"><code>$qb-&gt;cast(null)</code> するとエンティティインスタンスを返す</td><td align="left"><tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::cast()' data-type-array='0' data-description='QueryBuilder::cast()'>QueryBuilder::cast()</tag_link> を参照</td></tr>
+<tr><td align="left"><code>$qb-&gt;cast(null)</code> するとエンティティインスタンスを返す</td><td align="left"><tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::cast()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::cast()'>ryunosuke\dbml\Query\QueryBuilder::cast()</tag_link> を参照</td></tr>
 <tr><td align="left"><code>$db-&gt;Article</code> が取得可能になる</td><td align="left"><code>Article</code> にあたるものは本来テーブル名だが、エンティティ名でも TableGateway が取得できるようになる</td></tr>
 </tbody>
 </table>
@@ -353,7 +353,7 @@ $db-&gt;tableA()-&gt;tableC()-&gt;array();
 <h3>カラムキャストについて</h3>
 <p>カラムエイリアスに <code>id@integer</code> のような指定をするとその値は integer にキャストされて取得することができる。その際、キーの <code>@integer</code> は取り除かれる。<br />
 使用できる型名は <code>Doctrine\DBAL\Types\Type</code> を参照。</p>
-<p>なお、 <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::fetchValue()' data-type-array='0' data-description='Database::fetchValue()'>Database::fetchValue()</tag_link> は行が存在しなかったときに <code>false</code> を返すので、その <code>false</code> と変換値の見分けがつかなくなるため <code>@boolean</code> を <code>fetchValue</code> で使うことはできない。</p>
+<p>なお、 <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::fetchValue()' data-type-array='0' data-description='ryunosuke\dbml\Database::fetchValue()'>ryunosuke\dbml\Database::fetchValue()</tag_link> は行が存在しなかったときに <code>false</code> を返すので、その <code>false</code> と変換値の見分けがつかなくなるため <code>@boolean</code> を <code>fetchValue</code> で使うことはできない。</p>
 <p>区切り文字の <code>@</code> は autoCastSuffix オプションで指定する。 null 指定でキャストを行わなくなる。<br />
 パフォーマンス上の理由でデフォルトは null になっている。</p>
 <p>キャストは得られた全行全列に対して実行する。<br />

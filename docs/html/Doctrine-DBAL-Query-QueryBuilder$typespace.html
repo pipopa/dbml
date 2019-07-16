@@ -3,7 +3,7 @@
 <head>	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/styles/zenburn.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/styles/foundation.min.css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js-bootstrap-css/1.2.1/typeaheadjs.min.css">
 	<link rel="stylesheet" type="text/css" data-href="common.css">
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -34,9 +34,9 @@
         })();
 	</script>
     </head>
-<body>
+<body class="typespace">
 <a id="anchor" href="./" style="display: none"></a>
-<h1 class="ellipsis">
+<h1 class="ellipsis fixed">
 	<span class="pull-left">
 	Structure
 	<small class="ellipsis-text">(Doctrine\DBAL\Query\QueryBuilder)</small>
@@ -398,7 +398,7 @@ builder object in a local variable.</p>
 					</h4>
 					<div class="inner-item">
 						<div class="description"><p>Executes this query using the bound parameters and their types.</p>
-<p>Uses <tag_see data-kind='fqsen' data-type-category='method' data-type-fqsen='Doctrine\DBAL\Connection::executeQuery()' data-type-array='0' data-description='Connection::executeQuery'></tag_see> for select statements and <tag_see data-kind='fqsen' data-type-category='method' data-type-fqsen='Doctrine\DBAL\Connection::executeUpdate()' data-type-array='0' data-description='Connection::executeUpdate'></tag_see><br />
+<p>Uses <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='Doctrine\DBAL\Connection::executeQuery()' data-type-array='0' data-description='Doctrine\DBAL\Connection::executeQuery()'>Doctrine\DBAL\Connection::executeQuery()</tag_link> for select statements and <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='Doctrine\DBAL\Connection::executeUpdate()' data-type-array='0' data-description='Doctrine\DBAL\Connection::executeUpdate()'>Doctrine\DBAL\Connection::executeUpdate()</tag_link><br />
 for insert, update and delete statements.</p>
 </div>
                         	<table class="table">
@@ -422,12 +422,12 @@ for insert, update and delete statements.</p>
         			<tr>
 				<td class="type">
                                             <a href="Doctrine-DBAL-Connection$typespace.html#Doctrine\DBAL\Connection::executeQuery()" class="fqsen "><small>Doctrine\DBAL\</small><wbr>Connection::executeQuery()</a>                    				</td>
-				<td class="desc">Connection::executeQuery</td>
+				<td class="desc"></td>
 			</tr>
         			<tr>
 				<td class="type">
                                             <a href="Doctrine-DBAL-Connection$typespace.html#Doctrine\DBAL\Connection::executeUpdate()" class="fqsen "><small>Doctrine\DBAL\</small><wbr>Connection::executeUpdate()</a>                    				</td>
-				<td class="desc">Connection::executeUpdate</td>
+				<td class="desc"></td>
 			</tr>
         		</tbody>
 	</table>
@@ -530,7 +530,7 @@ echo $qb-&gt;getSQL(); // SELECT u FROM User u
         			<tr>
 				<td class="type">string<span class="type-separator"></span><wbr>int<span class="type-separator"></span><wbr>null</td>
 				<td class="rest">$type = null</td>
-				<td class="desc"><p>One of the <tag_link data-kind='fqsen' data-type-category='class' data-type-fqsen='Doctrine\DBAL\ParameterType' data-type-array='0' data-description='\Doctrine\DBAL\ParameterType'>\Doctrine\DBAL\ParameterType</tag_link> constants.</p>
+				<td class="desc"><p>One of the <tag_link data-kind='fqsen' data-type-category='class' data-type-fqsen='Doctrine\DBAL\ParameterType' data-type-array='0' data-description='Doctrine\DBAL\ParameterType'>Doctrine\DBAL\ParameterType</tag_link> constants.</p>
 </td>
 			</tr>
         		</tbody>
@@ -2652,7 +2652,7 @@ when using prepared statements.</p>
 $placeholder is not provided bindValue() will automatically create a<br />
 placeholder for you. An automatic placeholder will be of the name<br />
 ':dcValue1', ':dcValue2' etc.</p>
-<p>For more information see <tag_link data-kind='uri' data-type='http://php.net/pdostatement-bindparam' data-description='http://php.net/pdostatement-bindparam'><a href="http://php.net/pdostatement-bindparam">http://php.net/pdostatement-bindparam</a></tag_link></p>
+<p>For more information see <tag_link data-kind='uri' data-type='http://php.net/pdostatement-bindparam' data-description=''></tag_link></p>
 <p>Example:<br />
 <code><br />
 $value = 2;<br />

@@ -3,7 +3,7 @@
 <head>	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/styles/zenburn.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/styles/foundation.min.css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js-bootstrap-css/1.2.1/typeaheadjs.min.css">
 	<link rel="stylesheet" type="text/css" data-href="common.css">
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -34,9 +34,9 @@
         })();
 	</script>
     </head>
-<body>
+<body class="typespace">
 <a id="anchor" href="./" style="display: none"></a>
-<h1 class="ellipsis">
+<h1 class="ellipsis fixed">
 	<span class="pull-left">
 	Structure
 	<small class="ellipsis-text">(ryunosuke\dbml\Query\QueryBuilder)</small>
@@ -54,7 +54,7 @@
 		<span class="label label-info"></span>
 		<span class="label label-info">iterateable</span>
 		<span class="label label-deprecated"></span>
-        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L49-L3212" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L48-L3352" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                     	</div>
 
 	<h2>class <span class="category-name">ryunosuke\dbml\Query\QueryBuilder</span></h2>
@@ -71,7 +71,7 @@ foreach ($qb as $row) {
 echo count($qb); // t_article の件数を返す
 </code></pre>
 <h3>プリペアードステートメント</h3>
-<p>明示的に prepare のようなメソッドを呼ばない限り内部のプリペアードステートメントでは名前付きパラメータを一切使用しない（<tag_link data-kind='fqsen' data-type-category='class' data-type-fqsen='ryunosuke\dbml\Query\Statement' data-type-array='0' data-description='Statement'>Statement</tag_link> も参照）。<br />
+<p>明示的に prepare のようなメソッドを呼ばない限り内部のプリペアードステートメントでは名前付きパラメータを一切使用しない（<tag_link data-kind='fqsen' data-type-category='class' data-type-fqsen='ryunosuke\dbml\Query\Statement' data-type-array='0' data-description='ryunosuke\dbml\Query\Statement'>ryunosuke\dbml\Query\Statement</tag_link> も参照）。<br />
 したがってメソッド呼び出し順によってはパラメータ順が「ズレ」ることがある。<br />
 基本的にはズレないようにはしてある（ズレるのはかなり特殊な条件）が、怖い場合は <code>queryInto</code> で文字列化してから結合したりサブクエリで使用したりした方が確実。</p>
 </div>
@@ -109,10 +109,6 @@ echo count($qb); // t_article の件数を返す
 				<td class="type"><a href="ryunosuke-dbml-Mixin-IteratorTrait$typespace.html#ryunosuke\dbml\Mixin\IteratorTrait" class="fqsen "><small>ryunosuke\dbml\Mixin\</small><wbr>IteratorTrait</a></td>
 				<td class="desc">イテレータ（主に結果セット）を利用しやすくするための trait</td>
 			</tr>
-        			<tr>
-				<td class="type"><a href="ryunosuke-dbml-Mixin-DebugInfoTrait$typespace.html#ryunosuke\dbml\Mixin\DebugInfoTrait" class="fqsen "><small>ryunosuke\dbml\Mixin\</small><wbr>DebugInfoTrait</a></td>
-				<td class="desc">var_dump で不必要なプロパティを伏せる trait</td>
-			</tr>
         		</tbody>
 	</table>
         
@@ -134,11 +130,11 @@ echo count($qb); // t_article の件数を返す
             				<li class="structure-item">
 					<div class="attribute">
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L150-L157" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L182-L189" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\QueryBuilder::CLAUSES" tabindex="-1" class="structure-title">
 						<small>array</small>
-                        CLAUSES						<var> = [&#039;column&#039;, &#039;where&#039;, &#039;orderBy&#039;, &#039;limit&#039;, &#039;groupBy&#039;, &#039;having&#039;]</var>
+                        CLAUSES						<var> = [&quot;column&quot;, &quot;where&quot;, &quot;orderBy&quot;, &quot;limit&quot;, &quot;groupBy&quot;, &quot;having&quot;]</var>
 					</h4>
 					<div class="inner-item">
 						<div class="description"></div>
@@ -161,7 +157,7 @@ echo count($qb); // t_article の件数を返す
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L243-L255" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L279-L291" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\QueryBuilder::getDefaultOptions()" tabindex="-1" class="structure-title ">
                         getDefaultOptions						<small>()</small>
@@ -212,7 +208,7 @@ echo count($qb); // t_article の件数を返す
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L257-L269" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L293-L305" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\QueryBuilder::__construct()" tabindex="-1" class="structure-title ">
                         __construct						<small>($database)</small>
@@ -258,7 +254,7 @@ echo count($qb); // t_article の件数を返す
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L329-L344" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L365-L380" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\QueryBuilder::__toString()" tabindex="-1" class="structure-title ">
                         __toString						<small>()</small>
@@ -299,7 +295,7 @@ echo count($qb); // t_article の件数を返す
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L755-L763" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L1036-L1044" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\QueryBuilder::getDatabase()" tabindex="-1" class="structure-title ">
                         getDatabase						<small>()</small>
@@ -340,7 +336,7 @@ echo count($qb); // t_article の件数を返す
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L765-L860" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L1046-L1141" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\QueryBuilder::cast()" tabindex="-1" class="structure-title ">
                         cast						<small>($classname = null)</small>
@@ -436,7 +432,7 @@ $qb-&gt;column('table_name')-&gt;cast("array");
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L976-L1012" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L1261-L1297" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\QueryBuilder::build()" tabindex="-1" class="structure-title ">
                         build						<small>($queryParts, $append = false)</small>
@@ -444,12 +440,12 @@ $qb-&gt;column('table_name')-&gt;cast("array");
 					<div class="inner-item">
 						<div class="description"><p>各種設定メソッドへのプロクシメソッド</p>
 <ul>
-<li>see <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::column()' data-type-array='0' data-description='column()'>column()</tag_link></li>
-<li>see <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::where()' data-type-array='0' data-description='where()'>where()</tag_link></li>
-<li>see <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::orderBy()' data-type-array='0' data-description='orderBy()'>orderBy()</tag_link></li>
-<li>see <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::limit()' data-type-array='0' data-description='limit()'>limit()</tag_link></li>
-<li>see <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::groupBy()' data-type-array='0' data-description='groupBy()'>groupBy()</tag_link></li>
-<li>see <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::having()' data-type-array='0' data-description='having()'>having()</tag_link></li>
+<li>see <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::column()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::column()'>ryunosuke\dbml\Query\QueryBuilder::column()</tag_link></li>
+<li>see <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::where()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::where()'>ryunosuke\dbml\Query\QueryBuilder::where()</tag_link></li>
+<li>see <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::orderBy()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::orderBy()'>ryunosuke\dbml\Query\QueryBuilder::orderBy()</tag_link></li>
+<li>see <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::limit()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::limit()'>ryunosuke\dbml\Query\QueryBuilder::limit()</tag_link></li>
+<li>see <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::groupBy()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::groupBy()'>ryunosuke\dbml\Query\QueryBuilder::groupBy()</tag_link></li>
+<li>see <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::having()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::having()'>ryunosuke\dbml\Query\QueryBuilder::having()</tag_link></li>
 </ul>
 </div>
                         	<table class="table">
@@ -497,7 +493,7 @@ $qb-&gt;column('table_name')-&gt;cast("array");
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L1014-L1038" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L1299-L1323" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\QueryBuilder::addSelectOption()" tabindex="-1" class="structure-title ">
                         addSelectOption						<small>($option)</small>
@@ -549,7 +545,7 @@ $qb-&gt;column('table_name')-&gt;cast("array");
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L1040-L1225" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L1325-L1520" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\QueryBuilder::column()" tabindex="-1" class="structure-title ">
                         column						<small>($tableDescriptor)</small>
@@ -591,23 +587,25 @@ $qb-&gt;column('table_name')-&gt;cast("array");
 <tr><td align="right">1</td><td align="left"><code>"**"</code></td><td align="left">子テーブルを含めた全テーブル全列を取得</td></tr>
 <tr><td align="right">2</td><td align="left"><code>null</code></td><td align="left">null を与えると「何も取得しない」を明示</td></tr>
 <tr><td align="right">4</td><td align="left"><code>"!hoge"</code></td><td align="left">hoge 列<strong>以外</strong>を取得</td></tr>
+<tr><td align="right">5</td><td align="left"><code>"!"</code></td><td align="left">仮想カラムを含めたテーブルの全列を取得（これは「空文字カラム以外を全て」を意味するので結局全てのカラムが得られる、ということになる）</td></tr>
 <tr><td align="right">8</td><td align="left"><code>"..hoge"</code></td><td align="left">subtable 時において親のカラムを表す</td></tr>
 <tr><td align="right">10</td><td align="left"><code>"+prefix.column_name"</code></td><td align="left">JOIN 記号＋ドットを含む文字列は prefix テーブルと JOIN してそのカラムを取得</td></tr>
-<tr><td align="right">11</td><td align="left"><code>new Expression("NOW()")</code></td><td align="left"><tag_link data-kind='fqsen' data-type-category='class' data-type-fqsen='ryunosuke\dbml\Query\Expression\Expression' data-type-array='0' data-description='Expression'>Expression</tag_link> を与えると一切加工せずそのまま文字列を表す</td></tr>
-<tr><td align="right">12</td><td align="left"><code>"NOW()"</code></td><td align="left">上と同じ。 <code>()</code> を含む文字列は自動で <tag_link data-kind='fqsen' data-type-category='class' data-type-fqsen='ryunosuke\dbml\Query\Expression\Expression' data-type-array='0' data-description='Expression'>Expression</tag_link> 化される</td></tr>
-<tr><td align="right">20</td><td align="left"><code>new PhpExpression($val)</code></td><td align="left">列の値として <tag_link data-kind='fqsen' data-type-category='class' data-type-fqsen='ryunosuke\dbml\Query\Expression\PhpExpression' data-type-array='0' data-description='PhpExpression'>PhpExpression</tag_link> でラップされた値をそのまま返す</td></tr>
-<tr><td align="right">21</td><td align="left"><code>new PhpExpression(function($row){})</code></td><td align="left">列の値として <tag_link data-kind='fqsen' data-type-category='class' data-type-fqsen='ryunosuke\dbml\Query\Expression\PhpExpression' data-type-array='0' data-description='PhpExpression'>PhpExpression</tag_link> でラップされたクロージャの返り値を返す。クロージャの引数は行配列</td></tr>
-<tr><td align="right">22</td><td align="left"><code>function($row){}</code></td><td align="left">上と同じ。クロージャは自動で <tag_link data-kind='fqsen' data-type-category='class' data-type-fqsen='ryunosuke\dbml\Query\Expression\PhpExpression' data-type-array='0' data-description='PhpExpression'>PhpExpression</tag_link> 化される</td></tr>
-<tr><td align="right">23</td><td align="left"><code>new PhpExpression(function($cname){}, 'cname')</code></td><td align="left">PhpExpression に第2引数を指定すると列の値として <tag_link data-kind='fqsen' data-type-category='class' data-type-fqsen='ryunosuke\dbml\Query\Expression\PhpExpression' data-type-array='0' data-description='PhpExpression'>PhpExpression</tag_link> でラップされたクロージャの返り値を返す。引数は<strong>第2引数で指定された列の値</strong></td></tr>
+<tr><td align="right">11</td><td align="left"><code>new Expression("NOW()")</code></td><td align="left">{@link Expression} を与えると一切加工せずそのまま文字列を表す</td></tr>
+<tr><td align="right">12</td><td align="left"><code>"NOW()"</code></td><td align="left">上と同じ。 <code>()</code> を含む文字列は自動で {@link Expression} 化される</td></tr>
+<tr><td align="right">20</td><td align="left"><code>new PhpExpression($val)</code></td><td align="left">列の値として {@link PhpExpression} でラップされた値をそのまま返す</td></tr>
+<tr><td align="right">21</td><td align="left"><code>new PhpExpression(function($row){})</code></td><td align="left">列の値として {@link PhpExpression} でラップされたクロージャの返り値を返す。クロージャの引数は行配列</td></tr>
+<tr><td align="right">22</td><td align="left"><code>function($row){}</code></td><td align="left">上と同じ。クロージャは自動で {@link PhpExpression} 化される</td></tr>
+<tr><td align="right">23</td><td align="left"><code>new PhpExpression(function($cname){}, 'cname')</code></td><td align="left">PhpExpression に第2引数を指定すると列の値として <tag_link data-kind='fqsen' data-type-category='class' data-type-fqsen='ryunosuke\dbml\Query\Expression\PhpExpression' data-type-array='0' data-description='ryunosuke\dbml\Query\Expression\PhpExpression'>ryunosuke\dbml\Query\Expression\PhpExpression</tag_link> でラップされたクロージャの返り値を返す。引数は<strong>第2引数で指定された列の値</strong></td></tr>
 <tr><td align="right">24</td><td align="left"><code>function($cname = 'cname'){}</code></td><td align="left">上と同じ。引数にデフォルト値が指定されている場合はそのデフォルト値が上で言う「指定された列」に相当する。</td></tr>
 <tr><td align="right">25</td><td align="left"><code>['cname' =&gt; function($value = null){}]</code></td><td align="left">上と同じ。引数のデフォルト値が null の場合はキーの値が使用される</td></tr>
 <tr><td align="right">26</td><td align="left"><code>function(){return function($v){return $v;};}</code></td><td align="left">クロージャの亜種。クロージャを返すクロージャはそのままクロージャとして活きるのでメソッドのような扱いにできる</td></tr>
-<tr><td align="right">30</td><td align="left"><code>Gateway object</code></td><td align="left">Gateway の表すテーブルとの <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::subtable()' data-type-array='0' data-description='Database::subtable()'>Database::subtable()</tag_link> 相当の動作</td></tr>
+<tr><td align="right">30</td><td align="left"><code>Gateway object</code></td><td align="left">Gateway の表すテーブルとの {@link Database::subtable()} 相当の動作</td></tr>
 <tr><td align="right">31</td><td align="left"><code>['+alias' =&gt; Gateway object]</code></td><td align="left">Gateway の表すテーブルとの JOIN を表す</td></tr>
 <tr><td align="right">50</td><td align="left"><code>'TableDescriptor'</code></td><td align="left">「テーブル名」を書く場所にはテーブル記法が使用できる（駆動表）</td></tr>
 <tr><td align="right">51</td><td align="left"><code>['+TableDescriptor' =&gt; ['*']]</code></td><td align="left">「テーブル名」を書く場所にはテーブル記法が使用できる（JOIN）</td></tr>
 <tr><td align="right">80</td><td align="left"><code>SelectOption::DISTINCT()</code></td><td align="left">SelectOption インスタンスを与えると <code>addSelectOption</code> と同等の効果を示す</td></tr>
-<tr><td align="right">99</td><td align="left"><code>['' =&gt; ['expression']]</code></td><td align="left">空キーは「テーブルに紐付かないカラム指定」を表す</td></tr>
+<tr><td align="right">98</td><td align="left"><code>['' =&gt; ['expression']]</code></td><td align="left">空キーは「テーブルに紐付かないカラム指定」を表す</td></tr>
+<tr><td align="right">99</td><td align="left"><code>['alias' =&gt; 'expression']</code></td><td align="left">上と同じ。存在しないテーブルは「テーブルに紐付かないカラム指定」とみなされる（notableAsColumn オプションが必要）</td></tr>
 </tbody>
 </table>
 <p>上記の通り、尋常ではないほど複雑なのでサンプルコードを以下に記す。</p>
@@ -717,7 +715,7 @@ $qb-&gt;column([
     ],
 ]);
 
-# No.99： テーブルに紐付かないカラム指定（勝手に修飾されたり JOIN されたりせず、シンプルに SELECT 句に追加される）
+# No.98： 空文字キーによるテーブルに紐付かないカラム指定（勝手に修飾されたり JOIN されたりせず、シンプルに SELECT 句に追加される）
 $qb-&gt;column([
     't_table' =&gt; '*',
     '' =&gt; [
@@ -725,6 +723,14 @@ $qb-&gt;column([
         'ttc' =&gt; 't_table.colA',                 // 修飾子として動作する
         'ope' =&gt; ['column_name:LIKE' =&gt; 'hoge'], // operator として動作する
     ],
+]);
+
+# No.99： フラット指定によるテーブルに紐付かないカラム指定（同上。ただし、 now,ttc,ope のようなテーブルが存在しないことが条件）
+$qb-&gt;column([
+    't_table' =&gt; '*',
+    'now' =&gt; 'NOW()',
+    'ttc' =&gt; 't_table.colA',                 // 修飾子として動作する
+    'ope' =&gt; ['column_name:LIKE' =&gt; 'hoge'], // operator として動作する
 ]);
 </code></pre>
 </div>
@@ -767,13 +773,13 @@ $qb-&gt;column([
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L1227-L1467" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L1522-L1598" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\QueryBuilder::addColumn()" tabindex="-1" class="structure-title ">
                         addColumn						<small>($tableDescriptor, $parent = null)</small>
 					</h4>
 					<div class="inner-item">
-						<div class="description"><p>[table =&gt; [col1, col2]] のような指定を出来るようにする（<tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::column()' data-type-array='0' data-description='column()'>column()</tag_link> の追加版）</p>
+						<div class="description"><p>[table =&gt; [col1, col2]] のような指定を出来るようにする（<tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::column()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::column()'>ryunosuke\dbml\Query\QueryBuilder::column()</tag_link> の追加版）</p>
 </div>
                         	<table class="table">
 		<caption>Parameters</caption>
@@ -819,7 +825,7 @@ $qb-&gt;column([
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L1469-L1479" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L1600-L1610" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\QueryBuilder::select()" tabindex="-1" class="structure-title ">
                         select						<small>(...$selects)</small>
@@ -866,13 +872,13 @@ $qb-&gt;column([
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L1481-L1493" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L1612-L1624" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\QueryBuilder::addSelect()" tabindex="-1" class="structure-title ">
                         addSelect						<small>(...$selects)</small>
 					</h4>
 					<div class="inner-item">
-						<div class="description"><p>select 列を設定する（<tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::select()' data-type-array='0' data-description='select()'>select()</tag_link> の追加版）</p>
+						<div class="description"><p>select 列を設定する（<tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::select()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::select()'>ryunosuke\dbml\Query\QueryBuilder::select()</tag_link> の追加版）</p>
 </div>
                         	<table class="table">
 		<caption>Parameters</caption>
@@ -913,14 +919,14 @@ $qb-&gt;column([
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L1495-L1638" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L1626-L1769" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\QueryBuilder::from()" tabindex="-1" class="structure-title ">
                         from						<small>($table, $alias = null, $type = null, $condition = [], $fkeyname = null, $fromAlias = null)</small>
 					</h4>
 					<div class="inner-item">
 						<div class="description"><p>FROM 句（JOIN 込）を構成する</p>
-<p>結合タイプや結合条件をまとめて指定して FROM, JOIN を構成できるが、複雑極まりないので使用は非推奨（FROM 句の設定は <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::column()' data-type-array='0' data-description='column()'>column()</tag_link> を使用すれば基本的に不要）。</p>
+<p>結合タイプや結合条件をまとめて指定して FROM, JOIN を構成できるが、複雑極まりないので使用は非推奨（FROM 句の設定は <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::column()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::column()'>ryunosuke\dbml\Query\QueryBuilder::column()</tag_link> を使用すれば基本的に不要）。</p>
 </div>
                         	<table class="table">
 		<caption>Parameters</caption>
@@ -946,7 +952,7 @@ $qb-&gt;column([
         			<tr>
 				<td class="type">array<span class="type-separator"></span><wbr>string</td>
 				<td class="rest">$condition = []</td>
-				<td class="desc"><p>結合条件。 <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::where()' data-type-array='0' data-description='where()'>where()</tag_link> と同じ形式が使える</p>
+				<td class="desc"><p>結合条件。 <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::where()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::where()'>ryunosuke\dbml\Query\QueryBuilder::where()</tag_link> と同じ形式が使える</p>
 </td>
 			</tr>
         			<tr>
@@ -991,7 +997,7 @@ $qb-&gt;column([
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L1640-L1683" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L1771-L1814" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\QueryBuilder::join()" tabindex="-1" class="structure-title ">
                         join						<small>($type, $table, $on, $fkeyname = null, $from = null)</small>
@@ -999,7 +1005,7 @@ $qb-&gt;column([
 					<div class="inner-item">
 						<div class="description"><p>結合タイプや結合条件、外部キーを指定して JOIN する</p>
 <p>実際は下記のようなエイリアスメソッドが定義されているのでそちらを使うことが多く、明示的に呼ぶことはほとんどない。<br />
-さらに単純な JOIN であれば <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::column()' data-type-array='0' data-description='column()'>column()</tag_link> でも可能なため、ますます出番はない。</p>
+さらに単純な JOIN であれば <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::column()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::column()'>ryunosuke\dbml\Query\QueryBuilder::column()</tag_link> でも可能なため、ますます出番はない。</p>
 <pre><code class="language-php"># 指定条件で ON して JOIN
 $qb-&gt;from('t_from')-&gt;innerJoinOn('t_join', ['hoge = fuga']);
 // SELECT  FROM t_from INNER JOIN t_join ON hoge = fuga
@@ -1032,7 +1038,7 @@ $qb-&gt;from('t_from')-&gt;innerJoinForeignOn('t_join', ['hoge = fuga'], 'Foreig
         			<tr>
 				<td class="type">string<span class="type-separator"></span><wbr>array</td>
 				<td class="rest">$on</td>
-				<td class="desc"><p>結合条件。 <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::where()' data-type-array='0' data-description='where()'>where()</tag_link> と同じ形式が使える</p>
+				<td class="desc"><p>結合条件。 <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::where()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::where()'>ryunosuke\dbml\Query\QueryBuilder::where()</tag_link> と同じ形式が使える</p>
 </td>
 			</tr>
         			<tr>
@@ -1077,13 +1083,13 @@ $qb-&gt;from('t_from')-&gt;innerJoinForeignOn('t_join', ['hoge = fuga'], 'Foreig
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L122-L122" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L121-L121" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\QueryBuilder::innerJoinOn()" tabindex="-1" class="structure-title ">
                         innerJoinOn						<small>($table, $on, $from = null)</small>
 					</h4>
 					<div class="inner-item">
-						<div class="description"><p>結合方法が INNER で結合条件指定の <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::join()' data-type-array='0' data-description='join()'>join()</tag_link></p>
+						<div class="description"><p>結合方法が INNER で結合条件指定の <tag_link data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::join()' data-type-array='0' data-description='join()'>join()</tag_link></p>
 </div>
                         	<table class="table">
 		<caption>Parameters</caption>
@@ -1097,65 +1103,7 @@ $qb-&gt;from('t_from')-&gt;innerJoinForeignOn('t_join', ['hoge = fuga'], 'Foreig
         			<tr>
 				<td class="type">string<span class="type-separator"></span><wbr>array</td>
 				<td class="rest">$on</td>
-				<td class="desc"><p>結合条件。 <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::where()' data-type-array='0' data-description='where()'>where()</tag_link> と同じ形式が使える</p>
-</td>
-			</tr>
-        			<tr>
-				<td class="type">string</td>
-				<td class="rest">$from = null</td>
-				<td class="desc"><p>結合させるテーブル。省略時は自動判別</p>
-</td>
-			</tr>
-        		</tbody>
-	</table>
-                            	<table class="table">
-		<caption>Return</caption>
-		<tbody>
-		<tr>
-			<td class="type"><a href="ryunosuke-dbml-Query-QueryBuilder$typespace.html#ryunosuke\dbml\Query\QueryBuilder" class="fqsen "><small>ryunosuke\dbml\Query\</small><wbr>QueryBuilder</a></td>
-			<td class="desc"></td>
-			<td class="rest"></td>
-		</tr>
-		</tbody>
-	</table>
-                                                                            					</div>
-					<div class="attribute">
-						<span class="label label-default"></span>
-						<span class="label label-default"></span>
-					</div>
-					<div class="clearfix"></div>
-				</li>
-            				<li class="structure-item">
-					<div class="attribute">
-						<span class="label label-danger"></span>
-						<span class="label label-default"></span>
-						<span class="label label-magic">magic</span>
-						<span class="label label-danger"></span>
-						<span class="label label-default"></span>
-						<span class="label label-default"></span>
-						<span class="label label-deprecated"></span>
-						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L123-L123" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
-                                    					</div>
-					<h4 id="ryunosuke\dbml\Query\QueryBuilder::leftJoinOn()" tabindex="-1" class="structure-title ">
-                        leftJoinOn						<small>($table, $on, $from = null)</small>
-					</h4>
-					<div class="inner-item">
-						<div class="description"><p>結合方法が LEFT で結合条件指定の <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::join()' data-type-array='0' data-description='join()'>join()</tag_link></p>
-</div>
-                        	<table class="table">
-		<caption>Parameters</caption>
-		<tbody>
-        			<tr>
-				<td class="type">string<span class="type-separator"></span><wbr>array<span class="type-separator"></span><wbr><a href="ryunosuke-dbml-Query-QueryBuilder$typespace.html#ryunosuke\dbml\Query\QueryBuilder" class="fqsen "><small>ryunosuke\dbml\Query\</small><wbr>QueryBuilder</a></td>
-				<td class="rest">$table</td>
-				<td class="desc"><p>結合するテーブル</p>
-</td>
-			</tr>
-        			<tr>
-				<td class="type">string<span class="type-separator"></span><wbr>array</td>
-				<td class="rest">$on</td>
-				<td class="desc"><p>結合条件。 <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::where()' data-type-array='0' data-description='where()'>where()</tag_link> と同じ形式が使える</p>
+				<td class="desc"><p>結合条件。 <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::where()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::where()'>ryunosuke\dbml\Query\QueryBuilder::where()</tag_link> と同じ形式が使える</p>
 </td>
 			</tr>
         			<tr>
@@ -1195,11 +1143,11 @@ $qb-&gt;from('t_from')-&gt;innerJoinForeignOn('t_join', ['hoge = fuga'], 'Foreig
 						<span class="label label-public">public</span>
                         			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L124-L124" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
-					<h4 id="ryunosuke\dbml\Query\QueryBuilder::rightJoinOn()" tabindex="-1" class="structure-title ">
-                        rightJoinOn						<small>($table, $on, $from = null)</small>
+					<h4 id="ryunosuke\dbml\Query\QueryBuilder::leftJoinOn()" tabindex="-1" class="structure-title ">
+                        leftJoinOn						<small>($table, $on, $from = null)</small>
 					</h4>
 					<div class="inner-item">
-						<div class="description"><p>結合方法が RIGHT で結合条件指定の <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::join()' data-type-array='0' data-description='join()'>join()</tag_link></p>
+						<div class="description"><p>結合方法が LEFT で結合条件指定の <tag_link data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::join()' data-type-array='0' data-description='join()'>join()</tag_link></p>
 </div>
                         	<table class="table">
 		<caption>Parameters</caption>
@@ -1213,65 +1161,7 @@ $qb-&gt;from('t_from')-&gt;innerJoinForeignOn('t_join', ['hoge = fuga'], 'Foreig
         			<tr>
 				<td class="type">string<span class="type-separator"></span><wbr>array</td>
 				<td class="rest">$on</td>
-				<td class="desc"><p>結合条件。 <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::where()' data-type-array='0' data-description='where()'>where()</tag_link> と同じ形式が使える</p>
-</td>
-			</tr>
-        			<tr>
-				<td class="type">string</td>
-				<td class="rest">$from = null</td>
-				<td class="desc"><p>結合させるテーブル。省略時は自動判別</p>
-</td>
-			</tr>
-        		</tbody>
-	</table>
-                            	<table class="table">
-		<caption>Return</caption>
-		<tbody>
-		<tr>
-			<td class="type"><a href="ryunosuke-dbml-Query-QueryBuilder$typespace.html#ryunosuke\dbml\Query\QueryBuilder" class="fqsen "><small>ryunosuke\dbml\Query\</small><wbr>QueryBuilder</a></td>
-			<td class="desc"></td>
-			<td class="rest"></td>
-		</tr>
-		</tbody>
-	</table>
-                                                                            					</div>
-					<div class="attribute">
-						<span class="label label-default"></span>
-						<span class="label label-default"></span>
-					</div>
-					<div class="clearfix"></div>
-				</li>
-            				<li class="structure-item">
-					<div class="attribute">
-						<span class="label label-danger"></span>
-						<span class="label label-default"></span>
-						<span class="label label-magic">magic</span>
-						<span class="label label-danger"></span>
-						<span class="label label-default"></span>
-						<span class="label label-default"></span>
-						<span class="label label-deprecated"></span>
-						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L126-L126" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
-                                    					</div>
-					<h4 id="ryunosuke\dbml\Query\QueryBuilder::autoJoinForeign()" tabindex="-1" class="structure-title ">
-                        autoJoinForeign						<small>($table, $fkeyname = null, $from = null)</small>
-					</h4>
-					<div class="inner-item">
-						<div class="description"><p>結合方法が AUTO で外部キー指定の <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::join()' data-type-array='0' data-description='join()'>join()</tag_link></p>
-</div>
-                        	<table class="table">
-		<caption>Parameters</caption>
-		<tbody>
-        			<tr>
-				<td class="type">string<span class="type-separator"></span><wbr>array<span class="type-separator"></span><wbr><a href="ryunosuke-dbml-Query-QueryBuilder$typespace.html#ryunosuke\dbml\Query\QueryBuilder" class="fqsen "><small>ryunosuke\dbml\Query\</small><wbr>QueryBuilder</a></td>
-				<td class="rest">$table</td>
-				<td class="desc"><p>結合するテーブル</p>
-</td>
-			</tr>
-        			<tr>
-				<td class="type">string</td>
-				<td class="rest">$fkeyname = null</td>
-				<td class="desc"><p>外部キー名称。省略時は唯一の外部キーを使用（無かったり2個以上ある場合は例外）</p>
+				<td class="desc"><p>結合条件。 <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::where()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::where()'>ryunosuke\dbml\Query\QueryBuilder::where()</tag_link> と同じ形式が使える</p>
 </td>
 			</tr>
         			<tr>
@@ -1311,11 +1201,11 @@ $qb-&gt;from('t_from')-&gt;innerJoinForeignOn('t_join', ['hoge = fuga'], 'Foreig
 						<span class="label label-public">public</span>
                         			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L127-L127" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
-					<h4 id="ryunosuke\dbml\Query\QueryBuilder::innerJoinForeign()" tabindex="-1" class="structure-title ">
-                        innerJoinForeign						<small>($table, $fkeyname = null, $from = null)</small>
+					<h4 id="ryunosuke\dbml\Query\QueryBuilder::rightJoinOn()" tabindex="-1" class="structure-title ">
+                        rightJoinOn						<small>($table, $on, $from = null)</small>
 					</h4>
 					<div class="inner-item">
-						<div class="description"><p>結合方法が INNER で外部キー指定の <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::join()' data-type-array='0' data-description='join()'>join()</tag_link></p>
+						<div class="description"><p>結合方法が RIGHT で結合条件指定の <tag_link data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::join()' data-type-array='0' data-description='join()'>join()</tag_link></p>
 </div>
                         	<table class="table">
 		<caption>Parameters</caption>
@@ -1327,125 +1217,9 @@ $qb-&gt;from('t_from')-&gt;innerJoinForeignOn('t_join', ['hoge = fuga'], 'Foreig
 </td>
 			</tr>
         			<tr>
-				<td class="type">string</td>
-				<td class="rest">$fkeyname = null</td>
-				<td class="desc"><p>外部キー名称。省略時は唯一の外部キーを使用（無かったり2個以上ある場合は例外）</p>
-</td>
-			</tr>
-        			<tr>
-				<td class="type">string</td>
-				<td class="rest">$from = null</td>
-				<td class="desc"><p>結合させるテーブル。省略時は自動判別</p>
-</td>
-			</tr>
-        		</tbody>
-	</table>
-                            	<table class="table">
-		<caption>Return</caption>
-		<tbody>
-		<tr>
-			<td class="type"><a href="ryunosuke-dbml-Query-QueryBuilder$typespace.html#ryunosuke\dbml\Query\QueryBuilder" class="fqsen "><small>ryunosuke\dbml\Query\</small><wbr>QueryBuilder</a></td>
-			<td class="desc"></td>
-			<td class="rest"></td>
-		</tr>
-		</tbody>
-	</table>
-                                                                            					</div>
-					<div class="attribute">
-						<span class="label label-default"></span>
-						<span class="label label-default"></span>
-					</div>
-					<div class="clearfix"></div>
-				</li>
-            				<li class="structure-item">
-					<div class="attribute">
-						<span class="label label-danger"></span>
-						<span class="label label-default"></span>
-						<span class="label label-magic">magic</span>
-						<span class="label label-danger"></span>
-						<span class="label label-default"></span>
-						<span class="label label-default"></span>
-						<span class="label label-deprecated"></span>
-						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L128-L128" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
-                                    					</div>
-					<h4 id="ryunosuke\dbml\Query\QueryBuilder::leftJoinForeign()" tabindex="-1" class="structure-title ">
-                        leftJoinForeign						<small>($table, $fkeyname = null, $from = null)</small>
-					</h4>
-					<div class="inner-item">
-						<div class="description"><p>結合方法が LEFT で外部キー指定の <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::join()' data-type-array='0' data-description='join()'>join()</tag_link></p>
-</div>
-                        	<table class="table">
-		<caption>Parameters</caption>
-		<tbody>
-        			<tr>
-				<td class="type">string<span class="type-separator"></span><wbr>array<span class="type-separator"></span><wbr><a href="ryunosuke-dbml-Query-QueryBuilder$typespace.html#ryunosuke\dbml\Query\QueryBuilder" class="fqsen "><small>ryunosuke\dbml\Query\</small><wbr>QueryBuilder</a></td>
-				<td class="rest">$table</td>
-				<td class="desc"><p>結合するテーブル</p>
-</td>
-			</tr>
-        			<tr>
-				<td class="type">string</td>
-				<td class="rest">$fkeyname = null</td>
-				<td class="desc"><p>外部キー名称。省略時は唯一の外部キーを使用（無かったり2個以上ある場合は例外）</p>
-</td>
-			</tr>
-        			<tr>
-				<td class="type">string</td>
-				<td class="rest">$from = null</td>
-				<td class="desc"><p>結合させるテーブル。省略時は自動判別</p>
-</td>
-			</tr>
-        		</tbody>
-	</table>
-                            	<table class="table">
-		<caption>Return</caption>
-		<tbody>
-		<tr>
-			<td class="type"><a href="ryunosuke-dbml-Query-QueryBuilder$typespace.html#ryunosuke\dbml\Query\QueryBuilder" class="fqsen "><small>ryunosuke\dbml\Query\</small><wbr>QueryBuilder</a></td>
-			<td class="desc"></td>
-			<td class="rest"></td>
-		</tr>
-		</tbody>
-	</table>
-                                                                            					</div>
-					<div class="attribute">
-						<span class="label label-default"></span>
-						<span class="label label-default"></span>
-					</div>
-					<div class="clearfix"></div>
-				</li>
-            				<li class="structure-item">
-					<div class="attribute">
-						<span class="label label-danger"></span>
-						<span class="label label-default"></span>
-						<span class="label label-magic">magic</span>
-						<span class="label label-danger"></span>
-						<span class="label label-default"></span>
-						<span class="label label-default"></span>
-						<span class="label label-deprecated"></span>
-						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L129-L129" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
-                                    					</div>
-					<h4 id="ryunosuke\dbml\Query\QueryBuilder::rightJoinForeign()" tabindex="-1" class="structure-title ">
-                        rightJoinForeign						<small>($table, $fkeyname = null, $from = null)</small>
-					</h4>
-					<div class="inner-item">
-						<div class="description"><p>結合方法が RIGHT で外部キー指定の <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::join()' data-type-array='0' data-description='join()'>join()</tag_link></p>
-</div>
-                        	<table class="table">
-		<caption>Parameters</caption>
-		<tbody>
-        			<tr>
-				<td class="type">string<span class="type-separator"></span><wbr>array<span class="type-separator"></span><wbr><a href="ryunosuke-dbml-Query-QueryBuilder$typespace.html#ryunosuke\dbml\Query\QueryBuilder" class="fqsen "><small>ryunosuke\dbml\Query\</small><wbr>QueryBuilder</a></td>
-				<td class="rest">$table</td>
-				<td class="desc"><p>結合するテーブル</p>
-</td>
-			</tr>
-        			<tr>
-				<td class="type">string</td>
-				<td class="rest">$fkeyname = null</td>
-				<td class="desc"><p>外部キー名称。省略時は唯一の外部キーを使用（無かったり2個以上ある場合は例外）</p>
+				<td class="type">string<span class="type-separator"></span><wbr>array</td>
+				<td class="rest">$on</td>
+				<td class="desc"><p>結合条件。 <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::where()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::where()'>ryunosuke\dbml\Query\QueryBuilder::where()</tag_link> と同じ形式が使える</p>
 </td>
 			</tr>
         			<tr>
@@ -1485,11 +1259,11 @@ $qb-&gt;from('t_from')-&gt;innerJoinForeignOn('t_join', ['hoge = fuga'], 'Foreig
 						<span class="label label-public">public</span>
                         			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L131-L131" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
-					<h4 id="ryunosuke\dbml\Query\QueryBuilder::autoJoinForeignOn()" tabindex="-1" class="structure-title ">
-                        autoJoinForeignOn						<small>($table, $on, $fkeyname = null, $from = null)</small>
+					<h4 id="ryunosuke\dbml\Query\QueryBuilder::autoJoinForeign()" tabindex="-1" class="structure-title ">
+                        autoJoinForeign						<small>($table, $fkeyname = null, $from = null)</small>
 					</h4>
 					<div class="inner-item">
-						<div class="description"><p>結合方法が AUTO で結合条件・外部キー指定の <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::join()' data-type-array='0' data-description='join()'>join()</tag_link></p>
+						<div class="description"><p>結合方法が AUTO で外部キー指定の <tag_link data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::join()' data-type-array='0' data-description='join()'>join()</tag_link></p>
 </div>
                         	<table class="table">
 		<caption>Parameters</caption>
@@ -1498,140 +1272,6 @@ $qb-&gt;from('t_from')-&gt;innerJoinForeignOn('t_join', ['hoge = fuga'], 'Foreig
 				<td class="type">string<span class="type-separator"></span><wbr>array<span class="type-separator"></span><wbr><a href="ryunosuke-dbml-Query-QueryBuilder$typespace.html#ryunosuke\dbml\Query\QueryBuilder" class="fqsen "><small>ryunosuke\dbml\Query\</small><wbr>QueryBuilder</a></td>
 				<td class="rest">$table</td>
 				<td class="desc"><p>結合するテーブル</p>
-</td>
-			</tr>
-        			<tr>
-				<td class="type">string<span class="type-separator"></span><wbr>array</td>
-				<td class="rest">$on</td>
-				<td class="desc"><p>結合条件。 <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::where()' data-type-array='0' data-description='where()'>where()</tag_link> と同じ形式が使える</p>
-</td>
-			</tr>
-        			<tr>
-				<td class="type">string</td>
-				<td class="rest">$fkeyname = null</td>
-				<td class="desc"><p>外部キー名称。省略時は唯一の外部キーを使用（無かったり2個以上ある場合は例外）</p>
-</td>
-			</tr>
-        			<tr>
-				<td class="type">string</td>
-				<td class="rest">$from = null</td>
-				<td class="desc"><p>結合させるテーブル。省略時は自動判別</p>
-</td>
-			</tr>
-        		</tbody>
-	</table>
-                            	<table class="table">
-		<caption>Return</caption>
-		<tbody>
-		<tr>
-			<td class="type"><a href="ryunosuke-dbml-Query-QueryBuilder$typespace.html#ryunosuke\dbml\Query\QueryBuilder" class="fqsen "><small>ryunosuke\dbml\Query\</small><wbr>QueryBuilder</a></td>
-			<td class="desc"></td>
-			<td class="rest"></td>
-		</tr>
-		</tbody>
-	</table>
-                                                                            					</div>
-					<div class="attribute">
-						<span class="label label-default"></span>
-						<span class="label label-default"></span>
-					</div>
-					<div class="clearfix"></div>
-				</li>
-            				<li class="structure-item">
-					<div class="attribute">
-						<span class="label label-danger"></span>
-						<span class="label label-default"></span>
-						<span class="label label-magic">magic</span>
-						<span class="label label-danger"></span>
-						<span class="label label-default"></span>
-						<span class="label label-default"></span>
-						<span class="label label-deprecated"></span>
-						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L132-L132" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
-                                    					</div>
-					<h4 id="ryunosuke\dbml\Query\QueryBuilder::innerJoinForeignOn()" tabindex="-1" class="structure-title ">
-                        innerJoinForeignOn						<small>($table, $on, $fkeyname = null, $from = null)</small>
-					</h4>
-					<div class="inner-item">
-						<div class="description"><p>結合方法が INNER で結合条件・外部キー指定の <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::join()' data-type-array='0' data-description='join()'>join()</tag_link></p>
-</div>
-                        	<table class="table">
-		<caption>Parameters</caption>
-		<tbody>
-        			<tr>
-				<td class="type">string<span class="type-separator"></span><wbr>array<span class="type-separator"></span><wbr><a href="ryunosuke-dbml-Query-QueryBuilder$typespace.html#ryunosuke\dbml\Query\QueryBuilder" class="fqsen "><small>ryunosuke\dbml\Query\</small><wbr>QueryBuilder</a></td>
-				<td class="rest">$table</td>
-				<td class="desc"><p>結合するテーブル</p>
-</td>
-			</tr>
-        			<tr>
-				<td class="type">string<span class="type-separator"></span><wbr>array</td>
-				<td class="rest">$on</td>
-				<td class="desc"><p>結合条件。 <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::where()' data-type-array='0' data-description='where()'>where()</tag_link> と同じ形式が使える</p>
-</td>
-			</tr>
-        			<tr>
-				<td class="type">string</td>
-				<td class="rest">$fkeyname = null</td>
-				<td class="desc"><p>外部キー名称。省略時は唯一の外部キーを使用（無かったり2個以上ある場合は例外）</p>
-</td>
-			</tr>
-        			<tr>
-				<td class="type">string</td>
-				<td class="rest">$from = null</td>
-				<td class="desc"><p>結合させるテーブル。省略時は自動判別</p>
-</td>
-			</tr>
-        		</tbody>
-	</table>
-                            	<table class="table">
-		<caption>Return</caption>
-		<tbody>
-		<tr>
-			<td class="type"><a href="ryunosuke-dbml-Query-QueryBuilder$typespace.html#ryunosuke\dbml\Query\QueryBuilder" class="fqsen "><small>ryunosuke\dbml\Query\</small><wbr>QueryBuilder</a></td>
-			<td class="desc"></td>
-			<td class="rest"></td>
-		</tr>
-		</tbody>
-	</table>
-                                                                            					</div>
-					<div class="attribute">
-						<span class="label label-default"></span>
-						<span class="label label-default"></span>
-					</div>
-					<div class="clearfix"></div>
-				</li>
-            				<li class="structure-item">
-					<div class="attribute">
-						<span class="label label-danger"></span>
-						<span class="label label-default"></span>
-						<span class="label label-magic">magic</span>
-						<span class="label label-danger"></span>
-						<span class="label label-default"></span>
-						<span class="label label-default"></span>
-						<span class="label label-deprecated"></span>
-						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L133-L133" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
-                                    					</div>
-					<h4 id="ryunosuke\dbml\Query\QueryBuilder::leftJoinForeignOn()" tabindex="-1" class="structure-title ">
-                        leftJoinForeignOn						<small>($table, $on, $fkeyname = null, $from = null)</small>
-					</h4>
-					<div class="inner-item">
-						<div class="description"><p>結合方法が LEFT で結合条件・外部キー指定の <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::join()' data-type-array='0' data-description='join()'>join()</tag_link></p>
-</div>
-                        	<table class="table">
-		<caption>Parameters</caption>
-		<tbody>
-        			<tr>
-				<td class="type">string<span class="type-separator"></span><wbr>array<span class="type-separator"></span><wbr><a href="ryunosuke-dbml-Query-QueryBuilder$typespace.html#ryunosuke\dbml\Query\QueryBuilder" class="fqsen "><small>ryunosuke\dbml\Query\</small><wbr>QueryBuilder</a></td>
-				<td class="rest">$table</td>
-				<td class="desc"><p>結合するテーブル</p>
-</td>
-			</tr>
-        			<tr>
-				<td class="type">string<span class="type-separator"></span><wbr>array</td>
-				<td class="rest">$on</td>
-				<td class="desc"><p>結合条件。 <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::where()' data-type-array='0' data-description='where()'>where()</tag_link> と同じ形式が使える</p>
 </td>
 			</tr>
         			<tr>
@@ -1677,11 +1317,185 @@ $qb-&gt;from('t_from')-&gt;innerJoinForeignOn('t_join', ['hoge = fuga'], 'Foreig
 						<span class="label label-public">public</span>
                         			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L134-L134" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
-					<h4 id="ryunosuke\dbml\Query\QueryBuilder::rightJoinForeignOn()" tabindex="-1" class="structure-title ">
-                        rightJoinForeignOn						<small>($table, $on, $fkeyname = null, $from = null)</small>
+					<h4 id="ryunosuke\dbml\Query\QueryBuilder::innerJoinForeign()" tabindex="-1" class="structure-title ">
+                        innerJoinForeign						<small>($table, $fkeyname = null, $from = null)</small>
 					</h4>
 					<div class="inner-item">
-						<div class="description"><p>結合方法が RIGHT で結合条件・外部キー指定の <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::join()' data-type-array='0' data-description='join()'>join()</tag_link></p>
+						<div class="description"><p>結合方法が INNER で外部キー指定の <tag_link data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::join()' data-type-array='0' data-description='join()'>join()</tag_link></p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">string<span class="type-separator"></span><wbr>array<span class="type-separator"></span><wbr><a href="ryunosuke-dbml-Query-QueryBuilder$typespace.html#ryunosuke\dbml\Query\QueryBuilder" class="fqsen "><small>ryunosuke\dbml\Query\</small><wbr>QueryBuilder</a></td>
+				<td class="rest">$table</td>
+				<td class="desc"><p>結合するテーブル</p>
+</td>
+			</tr>
+        			<tr>
+				<td class="type">string</td>
+				<td class="rest">$fkeyname = null</td>
+				<td class="desc"><p>外部キー名称。省略時は唯一の外部キーを使用（無かったり2個以上ある場合は例外）</p>
+</td>
+			</tr>
+        			<tr>
+				<td class="type">string</td>
+				<td class="rest">$from = null</td>
+				<td class="desc"><p>結合させるテーブル。省略時は自動判別</p>
+</td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="ryunosuke-dbml-Query-QueryBuilder$typespace.html#ryunosuke\dbml\Query\QueryBuilder" class="fqsen "><small>ryunosuke\dbml\Query\</small><wbr>QueryBuilder</a></td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic">magic</span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L137-L137" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="ryunosuke\dbml\Query\QueryBuilder::leftJoinForeign()" tabindex="-1" class="structure-title ">
+                        leftJoinForeign						<small>($table, $fkeyname = null, $from = null)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>結合方法が LEFT で外部キー指定の <tag_link data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::join()' data-type-array='0' data-description='join()'>join()</tag_link></p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">string<span class="type-separator"></span><wbr>array<span class="type-separator"></span><wbr><a href="ryunosuke-dbml-Query-QueryBuilder$typespace.html#ryunosuke\dbml\Query\QueryBuilder" class="fqsen "><small>ryunosuke\dbml\Query\</small><wbr>QueryBuilder</a></td>
+				<td class="rest">$table</td>
+				<td class="desc"><p>結合するテーブル</p>
+</td>
+			</tr>
+        			<tr>
+				<td class="type">string</td>
+				<td class="rest">$fkeyname = null</td>
+				<td class="desc"><p>外部キー名称。省略時は唯一の外部キーを使用（無かったり2個以上ある場合は例外）</p>
+</td>
+			</tr>
+        			<tr>
+				<td class="type">string</td>
+				<td class="rest">$from = null</td>
+				<td class="desc"><p>結合させるテーブル。省略時は自動判別</p>
+</td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="ryunosuke-dbml-Query-QueryBuilder$typespace.html#ryunosuke\dbml\Query\QueryBuilder" class="fqsen "><small>ryunosuke\dbml\Query\</small><wbr>QueryBuilder</a></td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic">magic</span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L140-L140" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="ryunosuke\dbml\Query\QueryBuilder::rightJoinForeign()" tabindex="-1" class="structure-title ">
+                        rightJoinForeign						<small>($table, $fkeyname = null, $from = null)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>結合方法が RIGHT で外部キー指定の <tag_link data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::join()' data-type-array='0' data-description='join()'>join()</tag_link></p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">string<span class="type-separator"></span><wbr>array<span class="type-separator"></span><wbr><a href="ryunosuke-dbml-Query-QueryBuilder$typespace.html#ryunosuke\dbml\Query\QueryBuilder" class="fqsen "><small>ryunosuke\dbml\Query\</small><wbr>QueryBuilder</a></td>
+				<td class="rest">$table</td>
+				<td class="desc"><p>結合するテーブル</p>
+</td>
+			</tr>
+        			<tr>
+				<td class="type">string</td>
+				<td class="rest">$fkeyname = null</td>
+				<td class="desc"><p>外部キー名称。省略時は唯一の外部キーを使用（無かったり2個以上ある場合は例外）</p>
+</td>
+			</tr>
+        			<tr>
+				<td class="type">string</td>
+				<td class="rest">$from = null</td>
+				<td class="desc"><p>結合させるテーブル。省略時は自動判別</p>
+</td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="ryunosuke-dbml-Query-QueryBuilder$typespace.html#ryunosuke\dbml\Query\QueryBuilder" class="fqsen "><small>ryunosuke\dbml\Query\</small><wbr>QueryBuilder</a></td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic">magic</span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L144-L144" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="ryunosuke\dbml\Query\QueryBuilder::autoJoinForeignOn()" tabindex="-1" class="structure-title ">
+                        autoJoinForeignOn						<small>($table, $on, $fkeyname = null, $from = null)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>結合方法が AUTO で結合条件・外部キー指定の <tag_link data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::join()' data-type-array='0' data-description='join()'>join()</tag_link></p>
 </div>
                         	<table class="table">
 		<caption>Parameters</caption>
@@ -1695,7 +1509,199 @@ $qb-&gt;from('t_from')-&gt;innerJoinForeignOn('t_join', ['hoge = fuga'], 'Foreig
         			<tr>
 				<td class="type">string<span class="type-separator"></span><wbr>array</td>
 				<td class="rest">$on</td>
-				<td class="desc"><p>結合条件。 <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::where()' data-type-array='0' data-description='where()'>where()</tag_link> と同じ形式が使える</p>
+				<td class="desc"><p>結合条件。 <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::where()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::where()'>ryunosuke\dbml\Query\QueryBuilder::where()</tag_link> と同じ形式が使える</p>
+</td>
+			</tr>
+        			<tr>
+				<td class="type">string</td>
+				<td class="rest">$fkeyname = null</td>
+				<td class="desc"><p>外部キー名称。省略時は唯一の外部キーを使用（無かったり2個以上ある場合は例外）</p>
+</td>
+			</tr>
+        			<tr>
+				<td class="type">string</td>
+				<td class="rest">$from = null</td>
+				<td class="desc"><p>結合させるテーブル。省略時は自動判別</p>
+</td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="ryunosuke-dbml-Query-QueryBuilder$typespace.html#ryunosuke\dbml\Query\QueryBuilder" class="fqsen "><small>ryunosuke\dbml\Query\</small><wbr>QueryBuilder</a></td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic">magic</span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L147-L147" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="ryunosuke\dbml\Query\QueryBuilder::innerJoinForeignOn()" tabindex="-1" class="structure-title ">
+                        innerJoinForeignOn						<small>($table, $on, $fkeyname = null, $from = null)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>結合方法が INNER で結合条件・外部キー指定の <tag_link data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::join()' data-type-array='0' data-description='join()'>join()</tag_link></p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">string<span class="type-separator"></span><wbr>array<span class="type-separator"></span><wbr><a href="ryunosuke-dbml-Query-QueryBuilder$typespace.html#ryunosuke\dbml\Query\QueryBuilder" class="fqsen "><small>ryunosuke\dbml\Query\</small><wbr>QueryBuilder</a></td>
+				<td class="rest">$table</td>
+				<td class="desc"><p>結合するテーブル</p>
+</td>
+			</tr>
+        			<tr>
+				<td class="type">string<span class="type-separator"></span><wbr>array</td>
+				<td class="rest">$on</td>
+				<td class="desc"><p>結合条件。 <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::where()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::where()'>ryunosuke\dbml\Query\QueryBuilder::where()</tag_link> と同じ形式が使える</p>
+</td>
+			</tr>
+        			<tr>
+				<td class="type">string</td>
+				<td class="rest">$fkeyname = null</td>
+				<td class="desc"><p>外部キー名称。省略時は唯一の外部キーを使用（無かったり2個以上ある場合は例外）</p>
+</td>
+			</tr>
+        			<tr>
+				<td class="type">string</td>
+				<td class="rest">$from = null</td>
+				<td class="desc"><p>結合させるテーブル。省略時は自動判別</p>
+</td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="ryunosuke-dbml-Query-QueryBuilder$typespace.html#ryunosuke\dbml\Query\QueryBuilder" class="fqsen "><small>ryunosuke\dbml\Query\</small><wbr>QueryBuilder</a></td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic">magic</span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L150-L150" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="ryunosuke\dbml\Query\QueryBuilder::leftJoinForeignOn()" tabindex="-1" class="structure-title ">
+                        leftJoinForeignOn						<small>($table, $on, $fkeyname = null, $from = null)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>結合方法が LEFT で結合条件・外部キー指定の <tag_link data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::join()' data-type-array='0' data-description='join()'>join()</tag_link></p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">string<span class="type-separator"></span><wbr>array<span class="type-separator"></span><wbr><a href="ryunosuke-dbml-Query-QueryBuilder$typespace.html#ryunosuke\dbml\Query\QueryBuilder" class="fqsen "><small>ryunosuke\dbml\Query\</small><wbr>QueryBuilder</a></td>
+				<td class="rest">$table</td>
+				<td class="desc"><p>結合するテーブル</p>
+</td>
+			</tr>
+        			<tr>
+				<td class="type">string<span class="type-separator"></span><wbr>array</td>
+				<td class="rest">$on</td>
+				<td class="desc"><p>結合条件。 <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::where()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::where()'>ryunosuke\dbml\Query\QueryBuilder::where()</tag_link> と同じ形式が使える</p>
+</td>
+			</tr>
+        			<tr>
+				<td class="type">string</td>
+				<td class="rest">$fkeyname = null</td>
+				<td class="desc"><p>外部キー名称。省略時は唯一の外部キーを使用（無かったり2個以上ある場合は例外）</p>
+</td>
+			</tr>
+        			<tr>
+				<td class="type">string</td>
+				<td class="rest">$from = null</td>
+				<td class="desc"><p>結合させるテーブル。省略時は自動判別</p>
+</td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="ryunosuke-dbml-Query-QueryBuilder$typespace.html#ryunosuke\dbml\Query\QueryBuilder" class="fqsen "><small>ryunosuke\dbml\Query\</small><wbr>QueryBuilder</a></td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic">magic</span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L153-L153" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="ryunosuke\dbml\Query\QueryBuilder::rightJoinForeignOn()" tabindex="-1" class="structure-title ">
+                        rightJoinForeignOn						<small>($table, $on, $fkeyname = null, $from = null)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>結合方法が RIGHT で結合条件・外部キー指定の <tag_link data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::join()' data-type-array='0' data-description='join()'>join()</tag_link></p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">string<span class="type-separator"></span><wbr>array<span class="type-separator"></span><wbr><a href="ryunosuke-dbml-Query-QueryBuilder$typespace.html#ryunosuke\dbml\Query\QueryBuilder" class="fqsen "><small>ryunosuke\dbml\Query\</small><wbr>QueryBuilder</a></td>
+				<td class="rest">$table</td>
+				<td class="desc"><p>結合するテーブル</p>
+</td>
+			</tr>
+        			<tr>
+				<td class="type">string<span class="type-separator"></span><wbr>array</td>
+				<td class="rest">$on</td>
+				<td class="desc"><p>結合条件。 <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::where()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::where()'>ryunosuke\dbml\Query\QueryBuilder::where()</tag_link> と同じ形式が使える</p>
 </td>
 			</tr>
         			<tr>
@@ -1739,14 +1745,14 @@ $qb-&gt;from('t_from')-&gt;innerJoinForeignOn('t_join', ['hoge = fuga'], 'Foreig
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L1685-L1735" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L1816-L1866" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\QueryBuilder::where()" tabindex="-1" class="structure-title ">
                         where						<small>(...$predicates)</small>
 					</h4>
 					<div class="inner-item">
 						<div class="description"><p>引数内では AND、引数間では OR する where（クリア版）</p>
-<p>基本は <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::whereInto()' data-type-array='0' data-description='Database::whereInto()'>Database::whereInto()</tag_link> の where 記法と同じ。加えて下記の記法が使用できる。</p>
+<p>基本は <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::whereInto()' data-type-array='0' data-description='ryunosuke\dbml\Database::whereInto()'>ryunosuke\dbml\Database::whereInto()</tag_link> の where 記法と同じ。加えて下記の記法が使用できる。</p>
 <table>
 <thead>
 <tr><th align="right">No</th><th align="left">where</th><th align="left">説明</th></tr>
@@ -1756,7 +1762,7 @@ $qb-&gt;from('t_from')-&gt;innerJoinForeignOn('t_join', ['hoge = fuga'], 'Foreig
 <tr><td align="right">31</td><td align="left"><code>['C' =&gt; 'childwhere']</code></td><td align="left">サブビルダの名前をキーにして配列を渡すと「その子供ビルダの where」を意味する</td></tr>
 <tr><td align="right">32</td><td align="left"><code>['C/childwhere']</code></td><td align="left">サブビルダの名前を "/" で区切ると「その子供ビルダの where」を意味する</td></tr>
 <tr><td align="right">33</td><td align="left"><code>['*.delete_flg' =&gt; 1]</code></td><td align="left">テーブル部分に <code>*</code> を指定すると「あらゆるテーブルのそのカラム」を意味する</td></tr>
-<tr><td align="right">34</td><td align="left"><code>['*' =&gt; "hoge"]</code></td><td align="left"><code>*</code> を指定すると「よしなに検索」となる。<tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::anywhere()' data-type-array='0' data-description='Database::anywhere()'>Database::anywhere()</tag_link> も参照</td></tr>
+<tr><td align="right">34</td><td align="left"><code>['*' =&gt; "hoge"]</code></td><td align="left"><code>*</code> を指定すると「よしなに検索」となる。{@link Database::anywhere()} も参照</td></tr>
 </tbody>
 </table>
 <pre><code class="language-php"># 引数配列内では AND、引数間では OR される
@@ -1828,14 +1834,14 @@ $qb-&gt;column('table1 t1, table2 t2, table3 t3')-&gt;where(['t2.*' =&gt; 'hoge'
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L1737-L1747" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L1868-L1878" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\QueryBuilder::notWhere()" tabindex="-1" class="structure-title ">
                         notWhere						<small>(...$predicates)</small>
 					</h4>
 					<div class="inner-item">
 						<div class="description"><p>NOT つきで引数内では AND、引数間では OR する where（クリア版）</p>
-<p>NOT が付くこと以外は <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::where()' data-type-array='0' data-description='where()'>where()</tag_link> と同じ。</p>
+<p>NOT が付くこと以外は <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::where()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::where()'>ryunosuke\dbml\Query\QueryBuilder::where()</tag_link> と同じ。</p>
 </div>
                         	<table class="table">
 		<caption>Parameters</caption>
@@ -1876,14 +1882,14 @@ $qb-&gt;column('table1 t1, table2 t2, table3 t3')-&gt;where(['t2.*' =&gt; 'hoge'
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L1749-L1759" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L1880-L1890" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\QueryBuilder::andWhere()" tabindex="-1" class="structure-title ">
                         andWhere						<small>(...$predicates)</small>
 					</h4>
 					<div class="inner-item">
-						<div class="description"><p>引数内では AND、引数間では OR する（<tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::where()' data-type-array='0' data-description='where()'>where()</tag_link> の追加版）</p>
-<p>クリアされずに追加されること以外は <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::where()' data-type-array='0' data-description='where()'>where()</tag_link> と同じ。</p>
+						<div class="description"><p>引数内では AND、引数間では OR する（<tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::where()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::where()'>ryunosuke\dbml\Query\QueryBuilder::where()</tag_link> の追加版）</p>
+<p>クリアされずに追加されること以外は <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::where()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::where()'>ryunosuke\dbml\Query\QueryBuilder::where()</tag_link> と同じ。</p>
 </div>
                         	<table class="table">
 		<caption>Parameters</caption>
@@ -1924,14 +1930,14 @@ $qb-&gt;column('table1 t1, table2 t2, table3 t3')-&gt;where(['t2.*' =&gt; 'hoge'
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L1761-L1771" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L1892-L1902" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\QueryBuilder::andNotWhere()" tabindex="-1" class="structure-title ">
                         andNotWhere						<small>(...$predicates)</small>
 					</h4>
 					<div class="inner-item">
-						<div class="description"><p>NOT つきで引数内では AND、引数間では OR する（<tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::notWhere()' data-type-array='0' data-description='notWhere()'>notWhere()</tag_link> の追加版）</p>
-<p>クリアされずに追加されること以外は <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::notWhere()' data-type-array='0' data-description='notWhere()'>notWhere()</tag_link> と同じ。</p>
+						<div class="description"><p>NOT つきで引数内では AND、引数間では OR する（<tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::notWhere()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::notWhere()'>ryunosuke\dbml\Query\QueryBuilder::notWhere()</tag_link> の追加版）</p>
+<p>クリアされずに追加されること以外は <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::notWhere()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::notWhere()'>ryunosuke\dbml\Query\QueryBuilder::notWhere()</tag_link> と同じ。</p>
 </div>
                         	<table class="table">
 		<caption>Parameters</caption>
@@ -1972,14 +1978,14 @@ $qb-&gt;column('table1 t1, table2 t2, table3 t3')-&gt;where(['t2.*' =&gt; 'hoge'
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L1773-L1783" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L1904-L1914" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\QueryBuilder::having()" tabindex="-1" class="structure-title ">
                         having						<small>(...$predicates)</small>
 					</h4>
 					<div class="inner-item">
 						<div class="description"><p>引数内では AND、引数間では OR する having（クリア版）</p>
-<p>WHERE ではなく HAVING である点を除いて引数体系などは <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::where()' data-type-array='0' data-description='where()'>where()</tag_link> と同じ。</p>
+<p>WHERE ではなく HAVING である点を除いて引数体系などは <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::where()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::where()'>ryunosuke\dbml\Query\QueryBuilder::where()</tag_link> と同じ。</p>
 </div>
                         	<table class="table">
 		<caption>Parameters</caption>
@@ -2020,14 +2026,14 @@ $qb-&gt;column('table1 t1, table2 t2, table3 t3')-&gt;where(['t2.*' =&gt; 'hoge'
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L1785-L1795" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L1916-L1926" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\QueryBuilder::notHaving()" tabindex="-1" class="structure-title ">
                         notHaving						<small>(...$predicates)</small>
 					</h4>
 					<div class="inner-item">
 						<div class="description"><p>NOT つきで引数内では AND、引数間では OR する having（クリア版）</p>
-<p>NOT が付くこと以外は <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::having()' data-type-array='0' data-description='having()'>having()</tag_link> と同じ。</p>
+<p>NOT が付くこと以外は <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::having()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::having()'>ryunosuke\dbml\Query\QueryBuilder::having()</tag_link> と同じ。</p>
 </div>
                         	<table class="table">
 		<caption>Parameters</caption>
@@ -2068,14 +2074,14 @@ $qb-&gt;column('table1 t1, table2 t2, table3 t3')-&gt;where(['t2.*' =&gt; 'hoge'
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L1797-L1807" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L1928-L1938" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\QueryBuilder::andHaving()" tabindex="-1" class="structure-title ">
                         andHaving						<small>(...$predicates)</small>
 					</h4>
 					<div class="inner-item">
-						<div class="description"><p>引数内では AND、引数間では OR する（<tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::having()' data-type-array='0' data-description='having()'>having()</tag_link> の追加版）</p>
-<p>クリアされずに追加されること以外は <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::having()' data-type-array='0' data-description='having()'>having()</tag_link> と同じ。</p>
+						<div class="description"><p>引数内では AND、引数間では OR する（<tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::having()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::having()'>ryunosuke\dbml\Query\QueryBuilder::having()</tag_link> の追加版）</p>
+<p>クリアされずに追加されること以外は <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::having()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::having()'>ryunosuke\dbml\Query\QueryBuilder::having()</tag_link> と同じ。</p>
 </div>
                         	<table class="table">
 		<caption>Parameters</caption>
@@ -2116,14 +2122,14 @@ $qb-&gt;column('table1 t1, table2 t2, table3 t3')-&gt;where(['t2.*' =&gt; 'hoge'
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L1809-L1819" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L1940-L1950" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\QueryBuilder::andNotHaving()" tabindex="-1" class="structure-title ">
                         andNotHaving						<small>(...$predicates)</small>
 					</h4>
 					<div class="inner-item">
-						<div class="description"><p>NOT つきで引数内では AND、引数間では OR する（<tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::notHaving()' data-type-array='0' data-description='notHaving()'>notHaving()</tag_link> の追加版）</p>
-<p>クリアされずに追加されること以外は <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::notHaving()' data-type-array='0' data-description='notHaving()'>notHaving()</tag_link> と同じ。</p>
+						<div class="description"><p>NOT つきで引数内では AND、引数間では OR する（<tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::notHaving()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::notHaving()'>ryunosuke\dbml\Query\QueryBuilder::notHaving()</tag_link> の追加版）</p>
+<p>クリアされずに追加されること以外は <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::notHaving()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::notHaving()'>ryunosuke\dbml\Query\QueryBuilder::notHaving()</tag_link> と同じ。</p>
 </div>
                         	<table class="table">
 		<caption>Parameters</caption>
@@ -2164,7 +2170,7 @@ $qb-&gt;column('table1 t1, table2 t2, table3 t3')-&gt;where(['t2.*' =&gt; 'hoge'
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L1821-L1888" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L1952-L2019" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\QueryBuilder::orderBy()" tabindex="-1" class="structure-title ">
                         orderBy						<small>($sort, $order = null)</small>
@@ -2268,13 +2274,13 @@ $qb-&gt;orderBy([
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L1890-L1936" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L2021-L2075" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\QueryBuilder::addOrderBy()" tabindex="-1" class="structure-title ">
                         addOrderBy						<small>($sort, $order = null)</small>
 					</h4>
 					<div class="inner-item">
-						<div class="description"><p>[col =&gt; ASC] のように指定できるように拡張した <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::orderBy()' data-type-array='0' data-description='orderBy()'>orderBy()</tag_link>（追加版）</p>
+						<div class="description"><p>[col =&gt; ASC] のように指定できるように拡張した <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::orderBy()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::orderBy()'>ryunosuke\dbml\Query\QueryBuilder::orderBy()</tag_link>（追加版）</p>
 </div>
                         	<table class="table">
 		<caption>Parameters</caption>
@@ -2321,7 +2327,7 @@ $qb-&gt;orderBy([
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L1938-L1990" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L2077-L2129" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\QueryBuilder::orderBySecure()" tabindex="-1" class="structure-title ">
                         orderBySecure						<small>($sort, $order = null)</small>
@@ -2397,7 +2403,7 @@ $db-&gt;select('test.id as hoge')-&gt;orderBySecure('fuga');
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L1992-L2018" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L2131-L2157" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\QueryBuilder::orderByPrimary()" tabindex="-1" class="structure-title ">
                         orderByPrimary						<small>($is_asc = true)</small>
@@ -2444,13 +2450,13 @@ $db-&gt;select('test.id as hoge')-&gt;orderBySecure('fuga');
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L2020-L2052" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L2159-L2191" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\QueryBuilder::groupBy()" tabindex="-1" class="structure-title ">
                         groupBy						<small>($groupBy)</small>
 					</h4>
 					<div class="inner-item">
-						<div class="description"><p>[table =&gt; array(col1, col2)] のように指定できるように拡張した <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::groupBy()' data-type-array='0' data-description='groupBy()'>groupBy()</tag_link>（クリア版）</p>
+						<div class="description"><p>[table =&gt; array(col1, col2)] のように指定できるように拡張した <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::groupBy()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::groupBy()'>ryunosuke\dbml\Query\QueryBuilder::groupBy()</tag_link>（クリア版）</p>
 <pre><code class="language-php"> # シンプルにカラムを指定
 $qb-&gt;groupBy('id1');          // GROUP BY id1
 $qb-&gt;groupBy('id1', 'id2');   // GROUP BY id1, id2
@@ -2512,13 +2518,13 @@ $qb-&gt;column('t_parent P/t_child C')-&gt;groupBy([
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L2054-L2082" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L2193-L2221" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\QueryBuilder::addGroupBy()" tabindex="-1" class="structure-title ">
                         addGroupBy						<small>($groupBy)</small>
 					</h4>
 					<div class="inner-item">
-						<div class="description"><p>[table =&gt; [col1, col2]] のように指定できるように拡張した <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::groupBy()' data-type-array='0' data-description='groupBy()'>groupBy()</tag_link>（追加版）</p>
+						<div class="description"><p>[table =&gt; [col1, col2]] のように指定できるように拡張した <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::groupBy()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::groupBy()'>ryunosuke\dbml\Query\QueryBuilder::groupBy()</tag_link>（追加版）</p>
 </div>
                         	<table class="table">
 		<caption>Parameters</caption>
@@ -2559,7 +2565,7 @@ $qb-&gt;column('t_parent P/t_child C')-&gt;groupBy([
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L2084-L2145" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L2223-L2284" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\QueryBuilder::limit()" tabindex="-1" class="structure-title ">
                         limit						<small>($count, $offset = null)</small>
@@ -2632,17 +2638,17 @@ $qb-&gt;column('t_parent P/t_child C')-&gt;limit([
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L2147-L2177" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L2286-L2316" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\QueryBuilder::page()" tabindex="-1" class="structure-title ">
                         page						<small>($page, $limit = null)</small>
 					</h4>
 					<div class="inner-item">
 						<div class="description"><p>ページ単位として LIMIT OFFSET する</p>
-<p>できることは <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::limit()' data-type-array='0' data-description='limit()'>limit()</tag_link> と同じ。指定の仕方が異なるだけ。<br />
+<p>できることは <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::limit()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::limit()'>ryunosuke\dbml\Query\QueryBuilder::limit()</tag_link> と同じ。指定の仕方が異なるだけ。<br />
 limit() は LIMIT, OFFSET をダイレクトに指定するが、こちらは一定の単位（ページ）で設定する。<br />
 「LIMIT ありきで、それを元に OFFSET する」とも言える。</p>
-<p>※ <tag_link data-kind='fqsen' data-type-category='class' data-type-fqsen='ryunosuke\dbml\Query\Pagination\Paginator' data-type-array='0' data-description='Paginator'>Paginator</tag_link> は全く関係ない</p>
+<p>※ <tag_link data-kind='fqsen' data-type-category='class' data-type-fqsen='ryunosuke\dbml\Query\Pagination\Paginator' data-type-array='0' data-description='ryunosuke\dbml\Query\Pagination\Paginator'>ryunosuke\dbml\Query\Pagination\Paginator</tag_link> は全く関係ない</p>
 <pre><code class="language-php"># 10 件ごと 5 ページ目を設定
 $qb-&gt;page(5, 10);        // LIMIT 10 OFFSET 50
 
@@ -2695,7 +2701,7 @@ $qb-&gt;limit(10)-&gt;page(5); // LIMIT 10 OFFSET 50
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L2179-L2215" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L2318-L2354" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\QueryBuilder::comment()" tabindex="-1" class="structure-title ">
                         comment						<small>($comment)</small>
@@ -2760,7 +2766,7 @@ echo $qb-&gt;column('test')-&gt;comment([]);
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L2217-L2260" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L2356-L2399" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\QueryBuilder::union()" tabindex="-1" class="structure-title ">
                         union						<small>($query)</small>
@@ -2828,14 +2834,14 @@ echo $qb;
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L2262-L2273" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L2401-L2412" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\QueryBuilder::unionAll()" tabindex="-1" class="structure-title ">
                         unionAll						<small>($query)</small>
 					</h4>
 					<div class="inner-item">
 						<div class="description"><p>UNION ALL する</p>
-<p>ALL で UNION される以外は <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::union()' data-type-array='0' data-description='union()'>union()</tag_link> と全く同じ。</p>
+<p>ALL で UNION される以外は <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::union()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::union()'>ryunosuke\dbml\Query\QueryBuilder::union()</tag_link> と全く同じ。</p>
 </div>
                         	<table class="table">
 		<caption>Parameters</caption>
@@ -2875,10 +2881,10 @@ echo $qb;
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L2288-L2334" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L2427-L2473" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\QueryBuilder::countize()" tabindex="-1" class="structure-title ">
-                        countize						<small>($column = &#039;*&#039;)</small>
+                        countize						<small>($column = &quot;*&quot;)</small>
 					</h4>
 					<div class="inner-item">
 						<div class="description"><p>COUNT(*) クエリ化（厳密に言えば limit なしの COUNT(*) 化）</p>
@@ -2892,7 +2898,7 @@ $qb-&gt;column('t_article')-&gt;where(['status' =&gt; 'active'])-&gt;countize();
 		<tbody>
         			<tr>
 				<td class="type">string</td>
-				<td class="rest">$column = &#039;*&#039;</td>
+				<td class="rest">$column = &quot;*&quot;</td>
 				<td class="desc"><p>COUNT 対象カラム</p>
 </td>
 			</tr>
@@ -2926,14 +2932,14 @@ $qb-&gt;column('t_article')-&gt;where(['status' =&gt; 'active'])-&gt;countize();
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L2336-L2352" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L2475-L2491" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\QueryBuilder::paginate()" tabindex="-1" class="structure-title ">
                         paginate						<small>($currentpage, $countperpage, $shownpage = null)</small>
 					</h4>
 					<div class="inner-item">
 						<div class="description"><p>new Paginator へのプロキシメソッド</p>
-<p>引数が与えられている場合は <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\Pagination\Paginator::paginate()' data-type-array='0' data-description='Paginator::paginate()'>Paginator::paginate()</tag_link> も同時に行う。</p>
+<p>引数が与えられている場合は <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\Pagination\Paginator::paginate()' data-type-array='0' data-description='ryunosuke\dbml\Query\Pagination\Paginator::paginate()'>ryunosuke\dbml\Query\Pagination\Paginator::paginate()</tag_link> も同時に行う。</p>
 </div>
                         	<table class="table">
 		<caption>Parameters</caption>
@@ -2986,14 +2992,14 @@ $qb-&gt;column('t_article')-&gt;where(['status' =&gt; 'active'])-&gt;countize();
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L2354-L2370" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L2493-L2509" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\QueryBuilder::sequence()" tabindex="-1" class="structure-title ">
                         sequence						<small>($condition, $count, $orderbyasc = null, $bidirection = true)</small>
 					</h4>
 					<div class="inner-item">
 						<div class="description"><p>new Sequencer へのプロキシメソッド</p>
-<p>引数が与えられている場合は <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\Pagination\Sequencer::sequence()' data-type-array='0' data-description='Sequencer::sequence()'>Sequencer::sequence()</tag_link> も同時に行う。</p>
+<p>引数が与えられている場合は <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\Pagination\Sequencer::sequence()' data-type-array='0' data-description='ryunosuke\dbml\Query\Pagination\Sequencer::sequence()'>ryunosuke\dbml\Query\Pagination\Sequencer::sequence()</tag_link> も同時に行う。</p>
 </div>
                         	<table class="table">
 		<caption>Parameters</caption>
@@ -3051,7 +3057,7 @@ $qb-&gt;column('t_article')-&gt;where(['status' =&gt; 'active'])-&gt;countize();
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L2372-L2416" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L2511-L2555" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\QueryBuilder::chunk()" tabindex="-1" class="structure-title ">
                         chunk						<small>($chunk, $column = null)</small>
@@ -3122,7 +3128,7 @@ foreach ($qb-&gt;where(['status' =&gt; 'active'])-&gt;chunk(100) as $row) {
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L2418-L2488" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L2557-L2627" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\QueryBuilder::neighbor()" tabindex="-1" class="structure-title ">
                         neighbor						<small>($predicates, $limit = 1)</small>
@@ -3203,7 +3209,7 @@ $qb-&gt;neighbor(['id' =&gt; 99999], 2);
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L2524-L2614" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L2663-L2753" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\QueryBuilder::postselect()" tabindex="-1" class="structure-title ">
                         postselect						<small>($parents, $continuity = false)</small>
@@ -3257,10 +3263,10 @@ $qb-&gt;neighbor(['id' =&gt; 99999], 2);
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L2616-L2646" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L2755-L2785" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\QueryBuilder::wrap()" tabindex="-1" class="structure-title ">
-                        wrap						<small>($keyword1, $keyword2 = &#039;&#039;, $name = null)</small>
+                        wrap						<small>($keyword1, $keyword2 = &quot;&quot;, $name = null)</small>
 					</h4>
 					<div class="inner-item">
 						<div class="description"><p>特定文字列でラップする</p>
@@ -3290,7 +3296,7 @@ $qb-&gt;column('t_article')-&gt;wrap('A', 'B', 'hoge')-&gt;wrap('C', 'D', 'hoge'
 			</tr>
         			<tr>
 				<td class="type">string</td>
-				<td class="rest">$keyword2 = &#039;&#039;</td>
+				<td class="rest">$keyword2 = &quot;&quot;</td>
 				<td class="desc"><p>ラップする文字列2</p>
 </td>
 			</tr>
@@ -3330,14 +3336,14 @@ $qb-&gt;column('t_article')-&gt;wrap('A', 'B', 'hoge')-&gt;wrap('C', 'D', 'hoge'
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L2648-L2659" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L2787-L2798" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\QueryBuilder::exists()" tabindex="-1" class="structure-title ">
                         exists						<small>()</small>
 					</h4>
 					<div class="inner-item">
 						<div class="description"><p>EXISTS でラップして返す</p>
-<p><tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::wrap()' data-type-array='0' data-description='wrap()'>wrap()</tag_link> の特化メソッド。</p>
+<p><tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::wrap()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::wrap()'>ryunosuke\dbml\Query\QueryBuilder::wrap()</tag_link> の特化メソッド。</p>
 </div>
                         	<table class="table">
 		<caption>Parameters</caption>
@@ -3372,14 +3378,14 @@ $qb-&gt;column('t_article')-&gt;wrap('A', 'B', 'hoge')-&gt;wrap('C', 'D', 'hoge'
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L2661-L2672" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L2800-L2811" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\QueryBuilder::notExists()" tabindex="-1" class="structure-title ">
                         notExists						<small>()</small>
 					</h4>
 					<div class="inner-item">
 						<div class="description"><p>NOT EXISTS でラップして返す</p>
-<p><tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::wrap()' data-type-array='0' data-description='wrap()'>wrap()</tag_link> の特化メソッド。</p>
+<p><tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::wrap()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::wrap()'>ryunosuke\dbml\Query\QueryBuilder::wrap()</tag_link> の特化メソッド。</p>
 </div>
                         	<table class="table">
 		<caption>Parameters</caption>
@@ -3414,14 +3420,14 @@ $qb-&gt;column('t_article')-&gt;wrap('A', 'B', 'hoge')-&gt;wrap('C', 'D', 'hoge'
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L2674-L2743" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L2813-L2882" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\QueryBuilder::aggregate()" tabindex="-1" class="structure-title ">
                         aggregate						<small>($aggregations, $select_limit = ryunosuke\dbml\Query\PHP_INT_MAX)</small>
 					</h4>
 					<div class="inner-item">
 						<div class="description"><p>集約関数化する</p>
-<p><tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::aggregate()' data-type-array='0' data-description='Database::aggregate()'>Database::aggregate()</tag_link> のためのヘルパーメソッドで、明示的には呼ばれないし呼ばない。</p>
+<p><tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::aggregate()' data-type-array='0' data-description='ryunosuke\dbml\Database::aggregate()'>ryunosuke\dbml\Database::aggregate()</tag_link> のためのヘルパーメソッドで、明示的には呼ばれないし呼ばない。</p>
 </div>
                         	<table class="table">
 		<caption>Parameters</caption>
@@ -3468,7 +3474,7 @@ $qb-&gt;column('t_article')-&gt;wrap('A', 'B', 'hoge')-&gt;wrap('C', 'D', 'hoge'
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L2745-L2773" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L2884-L2912" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\QueryBuilder::hint()" tabindex="-1" class="structure-title ">
                         hint						<small>($hint, $talias = null)</small>
@@ -3477,7 +3483,7 @@ $qb-&gt;column('t_article')-&gt;wrap('A', 'B', 'hoge')-&gt;wrap('C', 'D', 'hoge'
 						<div class="description"><p>ヒント句を追加する</p>
 <p>第2引数で紐づくテーブルを指定できるが、省略すると（その時点の）駆動表と紐づく。</p>
 <p>RDBMS の方言は吸収しないのでダイレクトに与える必要がある。<br />
-（一応 <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Metadata\CompatiblePlatform::getIndexHintSQL()' data-type-array='0' data-description='\ryunosuke\dbml\Metadata\CompatiblePlatform::getIndexHintSQL()'>\ryunosuke\dbml\Metadata\CompatiblePlatform::getIndexHintSQL()</tag_link> に実装がある）。</p>
+（一応 <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Metadata\CompatiblePlatform::getIndexHintSQL()' data-type-array='0' data-description='ryunosuke\dbml\Metadata\CompatiblePlatform::getIndexHintSQL()'>ryunosuke\dbml\Metadata\CompatiblePlatform::getIndexHintSQL()</tag_link> に実装がある）。</p>
 <pre><code class="language-php">// SELECT * FROM tablename FORCE INDEX (PRIMARY)
 $qb-&gt;column('tablename')-&gt;hint('FORCE INDEX (PRIMARY)');
 </code></pre>
@@ -3527,7 +3533,7 @@ $qb-&gt;column('tablename')-&gt;hint('FORCE INDEX (PRIMARY)');
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L2775-L2796" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L2914-L2935" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\QueryBuilder::lockInShare()" tabindex="-1" class="structure-title ">
                         lockInShare						<small>($lockoption = null)</small>
@@ -3581,7 +3587,7 @@ $qb-&gt;column('t_article')-&gt;lockInShare();
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L2798-L2823" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L2937-L2962" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\QueryBuilder::lockForUpdate()" tabindex="-1" class="structure-title ">
                         lockForUpdate						<small>($lockoption = null)</small>
@@ -3639,14 +3645,14 @@ $qb-&gt;column('t_article')-&gt;lockForUpdate('SKIP LOCKED');
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L2825-L2849" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L2964-L2988" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\QueryBuilder::unlock()" tabindex="-1" class="structure-title ">
                         unlock						<small>()</small>
 					</h4>
 					<div class="inner-item">
 						<div class="description"><p>ロックを解除する</p>
-<p><tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::lockInShare()' data-type-array='0' data-description='lockInShare()'>lockInShare()</tag_link> や <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::lockForUpdate()' data-type-array='0' data-description='lockForUpdate()'>lockForUpdate()</tag_link> で追加したロック構文を解除する。</p>
+<p><tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::lockInShare()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::lockInShare()'>ryunosuke\dbml\Query\QueryBuilder::lockInShare()</tag_link> や <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::lockForUpdate()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::lockForUpdate()'>ryunosuke\dbml\Query\QueryBuilder::lockForUpdate()</tag_link> で追加したロック構文を解除する。</p>
 <pre><code class="language-php">$qb-&gt;column('t_article');
 
 # 排他ロック
@@ -3691,7 +3697,7 @@ $qb-&gt;unlock();
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L2851-L2882" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L2990-L3021" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\QueryBuilder::detectAutoOrder()" tabindex="-1" class="structure-title ">
                         detectAutoOrder						<small>($use)</small>
@@ -3748,7 +3754,7 @@ JOIN を含めて ORDER したい場合は明示的に <code>orderBy</code> す�
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L2899-L2933" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L3038-L3072" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\QueryBuilder::getSubbuilder()" tabindex="-1" class="structure-title ">
                         getSubbuilder						<small>($name = null)</small>
@@ -3809,14 +3815,14 @@ $qb-&gt;getSubbuilder('children')-&gt;where(['delete_time' =&gt; 0])-&gt;orderBy
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L2935-L2992" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L3074-L3131" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\QueryBuilder::getFromPart()" tabindex="-1" class="structure-title ">
                         getFromPart						<small>()</small>
 					</h4>
 					<div class="inner-item">
 						<div class="description"><p>FROM 句(from,join)を返す</p>
-<p><tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::getQueryPart()' data-type-array='0' data-description='getQueryPart()'>getQueryPart()</tag_link> でも得られるが、 FROM は JOIN も兼ねており、ややこしい構造になっているのでそれを補正しつつシンプルな構造で返す。</p>
+<p><tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::getQueryPart()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::getQueryPart()'>ryunosuke\dbml\Query\QueryBuilder::getQueryPart()</tag_link> でも得られるが、 FROM は JOIN も兼ねており、ややこしい構造になっているのでそれを補正しつつシンプルな構造で返す。</p>
 <pre><code class="language-php">$qb-&gt;column('t_article A + t_comment C');
 $qb-&gt;getFromPart();
 // result:
@@ -3872,7 +3878,7 @@ $qb-&gt;getFromPart();
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L2994-L3003" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L3133-L3142" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\QueryBuilder::getQueryPart()" tabindex="-1" class="structure-title ">
                         getQueryPart						<small>($queryPartName)</small>
@@ -3919,7 +3925,7 @@ $qb-&gt;getFromPart();
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L3005-L3076" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L3144-L3216" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\QueryBuilder::resetQueryPart()" tabindex="-1" class="structure-title ">
                         resetQueryPart						<small>($queryPartName = null)</small>
@@ -3983,7 +3989,7 @@ $qb-&gt;resetQueryPart('orderBy');
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L3078-L3100" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L3218-L3240" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\QueryBuilder::reset()" tabindex="-1" class="structure-title ">
                         reset						<small>()</small>
@@ -4024,7 +4030,7 @@ $qb-&gt;resetQueryPart('orderBy');
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L3102-L3126" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L3242-L3266" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\QueryBuilder::prepare()" tabindex="-1" class="structure-title ">
                         prepare						<small>()</small>
@@ -4032,7 +4038,7 @@ $qb-&gt;resetQueryPart('orderBy');
 					<div class="inner-item">
 						<div class="description"><p>現在のビルダの状態で固定して prepare する</p>
 <p>「peparedStatement を返す」のではなく「prepare 状態にするだけ」なのに注意。<br />
-peparedStatement は <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::getPreparedStatement()' data-type-array='0' data-description='getPreparedStatement()'>getPreparedStatement()</tag_link> で取得する。</p>
+peparedStatement は <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::getPreparedStatement()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::getPreparedStatement()'>ryunosuke\dbml\Query\QueryBuilder::getPreparedStatement()</tag_link> で取得する。</p>
 <pre><code class="language-php">$qb-&gt;column('t_article', ['state' =&gt; 'active', 'id = :id']);
 # 現在の状態で prepare する
 $qb-&gt;prepare();
@@ -4077,14 +4083,14 @@ $stmt-&gt;executeQuery(['id' =&gt; 2]); // SELECT t_article.* FROM t_article WHE
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L3128-L3138" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L3268-L3278" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\QueryBuilder::getPreparedStatement()" tabindex="-1" class="structure-title ">
                         getPreparedStatement						<small>()</small>
 					</h4>
 					<div class="inner-item">
 						<div class="description"><p>prepare したステートメントを返す</p>
-<p><tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::prepare()' data-type-array='0' data-description='prepare()'>prepare()</tag_link> の例も参照。</p>
+<p><tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::prepare()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::prepare()'>ryunosuke\dbml\Query\QueryBuilder::prepare()</tag_link> の例も参照。</p>
 </div>
                         	<table class="table">
 		<caption>Parameters</caption>
@@ -4119,7 +4125,7 @@ $stmt-&gt;executeQuery(['id' =&gt; 2]); // SELECT t_article.* FROM t_article WHE
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L3140-L3148" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L3280-L3288" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\QueryBuilder::queryInto()" tabindex="-1" class="structure-title ">
                         queryInto						<small>()</small>
@@ -4160,7 +4166,7 @@ $stmt-&gt;executeQuery(['id' =&gt; 2]); // SELECT t_article.* FROM t_article WHE
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L3150-L3166" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L3290-L3306" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\QueryBuilder::addParam()" tabindex="-1" class="structure-title ">
                         addParam						<small>($params, $position = null)</small>
@@ -4213,7 +4219,7 @@ $stmt-&gt;executeQuery(['id' =&gt; 2]); // SELECT t_article.* FROM t_article WHE
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L3168-L3180" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L3308-L3320" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\QueryBuilder::setParams()" tabindex="-1" class="structure-title ">
                         setParams						<small>($params)</small>
@@ -4261,7 +4267,7 @@ $stmt-&gt;executeQuery(['id' =&gt; 2]); // SELECT t_article.* FROM t_article WHE
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L3182-L3185" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L3322-L3325" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\QueryBuilder::getQuery()" tabindex="-1" class="structure-title ">
                         getQuery						<small>()</small>
@@ -4312,7 +4318,7 @@ $stmt-&gt;executeQuery(['id' =&gt; 2]); // SELECT t_article.* FROM t_article WHE
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L3187-L3203" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L3327-L3343" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\QueryBuilder::getParams()" tabindex="-1" class="structure-title ">
                         getParams						<small>($queryPartName = null)</small>
@@ -4368,7 +4374,7 @@ $stmt-&gt;executeQuery(['id' =&gt; 2]); // SELECT t_article.* FROM t_article WHE
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L3205-L3211" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L3345-L3351" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\QueryBuilder::merge()" tabindex="-1" class="structure-title ">
                         merge						<small>(&amp;$params)</small>
@@ -4426,7 +4432,7 @@ $stmt-&gt;executeQuery(['id' =&gt; 2]); // SELECT t_article.* FROM t_article WHE
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L73-L73" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L72-L72" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\QueryBuilder::getAutoOrder()" tabindex="-1" class="structure-title ">
                         getAutoOrder						<small>()</small>
@@ -4465,13 +4471,13 @@ $stmt-&gt;executeQuery(['id' =&gt; 2]); // SELECT t_article.* FROM t_article WHE
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L74-L74" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L73-L73" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\QueryBuilder::setAutoOrder()" tabindex="-1" class="structure-title ">
                         setAutoOrder						<small>($bool)</small>
 					</h4>
 					<div class="inner-item">
-						<div class="description"><p>自動で主キー順にするか（<tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::detectAutoOrder()' data-type-array='0' data-description='detectAutoOrder()'>detectAutoOrder()</tag_link> を参照）</p>
+						<div class="description"><p>自動で主キー順にするか（<tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::detectAutoOrder()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::detectAutoOrder()'>ryunosuke\dbml\Query\QueryBuilder::detectAutoOrder()</tag_link> を参照）</p>
 </div>
                         	<table class="table">
 		<caption>Parameters</caption>
@@ -4510,7 +4516,7 @@ $stmt-&gt;executeQuery(['id' =&gt; 2]); // SELECT t_article.* FROM t_article WHE
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L75-L75" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L74-L74" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\QueryBuilder::getPrimarySeparator()" tabindex="-1" class="structure-title ">
                         getPrimarySeparator						<small>()</small>
@@ -4549,7 +4555,7 @@ $stmt-&gt;executeQuery(['id' =&gt; 2]); // SELECT t_article.* FROM t_article WHE
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L76-L76" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L75-L75" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\QueryBuilder::setPrimarySeparator()" tabindex="-1" class="structure-title ">
                         setPrimarySeparator						<small>($string)</small>
@@ -4606,7 +4612,7 @@ $stmt-&gt;executeQuery(['id' =&gt; 2]); // SELECT t_article.* FROM t_article WHE
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L94-L94" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L93-L93" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\QueryBuilder::getAggregationDelimiter()" tabindex="-1" class="structure-title ">
                         getAggregationDelimiter						<small>()</small>
@@ -4645,7 +4651,7 @@ $stmt-&gt;executeQuery(['id' =&gt; 2]); // SELECT t_article.* FROM t_article WHE
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L95-L95" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L94-L94" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\QueryBuilder::setAggregationDelimiter()" tabindex="-1" class="structure-title ">
                         setAggregationDelimiter						<small>($string)</small>
@@ -4707,7 +4713,7 @@ $db-&gt;aggregate(['min', 'max'], 'table.id', [], 'table.group_id');
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L119-L119" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L118-L118" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\QueryBuilder::getInjectChildColumn()" tabindex="-1" class="structure-title ">
                         getInjectChildColumn						<small>()</small>
@@ -4746,7 +4752,7 @@ $db-&gt;aggregate(['min', 'max'], 'table.id', [], 'table.group_id');
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L120-L120" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L119-L119" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\QueryBuilder::setInjectChildColumn()" tabindex="-1" class="structure-title ">
                         setInjectChildColumn						<small>($bool)</small>
@@ -4790,13 +4796,13 @@ $db-&gt;aggregate(['min', 'max'], 'table.id', [], 'table.group_id');
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L136-L136" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L157-L157" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\QueryBuilder::array()" tabindex="-1" class="structure-title ">
                         array						<small>($params = [])</small>
 					</h4>
 					<div class="inner-item">
-						<div class="description"><p>自身が保持しているクエリでレコードの配列を返す（<tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::fetchArray()' data-type-array='0' data-description='Database::fetchArray()'>Database::fetchArray()</tag_link> 参照）</p>
+						<div class="description"><p>自身が保持しているクエリでレコードの配列を返す（<tag_link data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::fetchArray()' data-type-array='0' data-description='ryunosuke\dbml\Database::fetchArray()'>ryunosuke\dbml\Database::fetchArray()</tag_link> 参照）</p>
 </div>
                         	<table class="table">
 		<caption>Parameters</caption>
@@ -4804,7 +4810,8 @@ $db-&gt;aggregate(['min', 'max'], 'table.id', [], 'table.group_id');
         			<tr>
 				<td class="type">array</td>
 				<td class="rest">$params = []</td>
-				<td class="desc"></td>
+				<td class="desc"><p>bind パラメータ</p>
+</td>
 			</tr>
         		</tbody>
 	</table>
@@ -4835,13 +4842,13 @@ $db-&gt;aggregate(['min', 'max'], 'table.id', [], 'table.group_id');
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L137-L137" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L160-L160" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\QueryBuilder::assoc()" tabindex="-1" class="structure-title ">
                         assoc						<small>($params = [])</small>
 					</h4>
 					<div class="inner-item">
-						<div class="description"><p>自身が保持しているクエリでレコードの連想配列を返す（<tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::fetchAssoc()' data-type-array='0' data-description='Database::fetchAssoc()'>Database::fetchAssoc()</tag_link> 参照）</p>
+						<div class="description"><p>自身が保持しているクエリでレコードの連想配列を返す（<tag_link data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::fetchAssoc()' data-type-array='0' data-description='ryunosuke\dbml\Database::fetchAssoc()'>ryunosuke\dbml\Database::fetchAssoc()</tag_link> 参照）</p>
 </div>
                         	<table class="table">
 		<caption>Parameters</caption>
@@ -4849,7 +4856,8 @@ $db-&gt;aggregate(['min', 'max'], 'table.id', [], 'table.group_id');
         			<tr>
 				<td class="type">array</td>
 				<td class="rest">$params = []</td>
-				<td class="desc"></td>
+				<td class="desc"><p>bind パラメータ</p>
+</td>
 			</tr>
         		</tbody>
 	</table>
@@ -4880,13 +4888,13 @@ $db-&gt;aggregate(['min', 'max'], 'table.id', [], 'table.group_id');
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L138-L138" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L163-L163" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\QueryBuilder::lists()" tabindex="-1" class="structure-title ">
                         lists						<small>($params = [])</small>
 					</h4>
 					<div class="inner-item">
-						<div class="description"><p>自身が保持しているクエリでレコード[1列目]の配列を返す（<tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::fetchLists()' data-type-array='0' data-description='Database::fetchLists()'>Database::fetchLists()</tag_link> 参照）</p>
+						<div class="description"><p>自身が保持しているクエリでレコード[1列目]の配列を返す（<tag_link data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::fetchLists()' data-type-array='0' data-description='ryunosuke\dbml\Database::fetchLists()'>ryunosuke\dbml\Database::fetchLists()</tag_link> 参照）</p>
 </div>
                         	<table class="table">
 		<caption>Parameters</caption>
@@ -4894,7 +4902,8 @@ $db-&gt;aggregate(['min', 'max'], 'table.id', [], 'table.group_id');
         			<tr>
 				<td class="type">array</td>
 				<td class="rest">$params = []</td>
-				<td class="desc"></td>
+				<td class="desc"><p>bind パラメータ</p>
+</td>
 			</tr>
         		</tbody>
 	</table>
@@ -4925,13 +4934,13 @@ $db-&gt;aggregate(['min', 'max'], 'table.id', [], 'table.group_id');
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L139-L139" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L166-L166" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\QueryBuilder::pairs()" tabindex="-1" class="structure-title ">
                         pairs						<small>($params = [])</small>
 					</h4>
 					<div class="inner-item">
-						<div class="description"><p>自身が保持しているクエリでレコード[1列目=&gt;2列目]の連想配列を返す（<tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::fetchPairs()' data-type-array='0' data-description='Database::fetchPairs()'>Database::fetchPairs()</tag_link> 参照）</p>
+						<div class="description"><p>自身が保持しているクエリでレコード[1列目=&gt;2列目]の連想配列を返す（<tag_link data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::fetchPairs()' data-type-array='0' data-description='ryunosuke\dbml\Database::fetchPairs()'>ryunosuke\dbml\Database::fetchPairs()</tag_link> 参照）</p>
 </div>
                         	<table class="table">
 		<caption>Parameters</caption>
@@ -4939,7 +4948,8 @@ $db-&gt;aggregate(['min', 'max'], 'table.id', [], 'table.group_id');
         			<tr>
 				<td class="type">array</td>
 				<td class="rest">$params = []</td>
-				<td class="desc"></td>
+				<td class="desc"><p>bind パラメータ</p>
+</td>
 			</tr>
         		</tbody>
 	</table>
@@ -4970,13 +4980,13 @@ $db-&gt;aggregate(['min', 'max'], 'table.id', [], 'table.group_id');
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L140-L140" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L169-L169" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\QueryBuilder::tuple()" tabindex="-1" class="structure-title ">
                         tuple						<small>($params = [])</small>
 					</h4>
 					<div class="inner-item">
-						<div class="description"><p>自身が保持しているクエリでレコードを返す（<tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::fetchTuple()' data-type-array='0' data-description='Database::fetchTuple()'>Database::fetchTuple()</tag_link> 参照）</p>
+						<div class="description"><p>自身が保持しているクエリでレコードを返す（<tag_link data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::fetchTuple()' data-type-array='0' data-description='ryunosuke\dbml\Database::fetchTuple()'>ryunosuke\dbml\Database::fetchTuple()</tag_link> 参照）</p>
 </div>
                         	<table class="table">
 		<caption>Parameters</caption>
@@ -4984,7 +4994,8 @@ $db-&gt;aggregate(['min', 'max'], 'table.id', [], 'table.group_id');
         			<tr>
 				<td class="type">array</td>
 				<td class="rest">$params = []</td>
-				<td class="desc"></td>
+				<td class="desc"><p>bind パラメータ</p>
+</td>
 			</tr>
         		</tbody>
 	</table>
@@ -5015,13 +5026,13 @@ $db-&gt;aggregate(['min', 'max'], 'table.id', [], 'table.group_id');
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L141-L141" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L172-L172" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\QueryBuilder::value()" tabindex="-1" class="structure-title ">
                         value						<small>($params = [])</small>
 					</h4>
 					<div class="inner-item">
-						<div class="description"><p>自身が保持しているクエリでレコード[1列目]を返す（<tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::fetchValue()' data-type-array='0' data-description='Database::fetchValue()'>Database::fetchValue()</tag_link> 参照）</p>
+						<div class="description"><p>自身が保持しているクエリでレコード[1列目]を返す（<tag_link data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::fetchValue()' data-type-array='0' data-description='ryunosuke\dbml\Database::fetchValue()'>ryunosuke\dbml\Database::fetchValue()</tag_link> 参照）</p>
 </div>
                         	<table class="table">
 		<caption>Parameters</caption>
@@ -5029,7 +5040,8 @@ $db-&gt;aggregate(['min', 'max'], 'table.id', [], 'table.group_id');
         			<tr>
 				<td class="type">array</td>
 				<td class="rest">$params = []</td>
-				<td class="desc"></td>
+				<td class="desc"><p>bind パラメータ</p>
+</td>
 			</tr>
         		</tbody>
 	</table>

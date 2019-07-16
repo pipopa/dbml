@@ -3,7 +3,7 @@
 <head>	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/styles/zenburn.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/styles/foundation.min.css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js-bootstrap-css/1.2.1/typeaheadjs.min.css">
 	<link rel="stylesheet" type="text/css" data-href="common.css">
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -34,9 +34,9 @@
         })();
 	</script>
     </head>
-<body>
+<body class="typespace">
 <a id="anchor" href="./" style="display: none"></a>
-<h1 class="ellipsis">
+<h1 class="ellipsis fixed">
 	<span class="pull-left">
 	Structure
 	<small class="ellipsis-text">(ryunosuke\dbml\Query\Expression\PhpExpression)</small>
@@ -168,7 +168,59 @@ $db-&gt;selectTuple([
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/Expression/PhpExpression.php#L130-L162" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/Expression/PhpExpression.php#L130-L139" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="ryunosuke\dbml\Query\Expression\PhpExpression::define()" tabindex="-1" class="structure-title ">
+                        define						<small>($name, $callback)</small>
+					</h4>
+					<div class="inner-item">
+						<div class="description"><p>クロージャを定義する</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">string</td>
+				<td class="rest">$name</td>
+				<td class="desc"><p>定義名</p>
+</td>
+			</tr>
+        			<tr>
+				<td class="type">callable<span class="type-separator"></span><wbr>null</td>
+				<td class="rest">$callback</td>
+				<td class="desc"><p>処理実体</p>
+</td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">void</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default">static</span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/Expression/PhpExpression.php#L141-L173" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\Expression\PhpExpression::forge()" tabindex="-1" class="structure-title ">
                         forge						<small>($expr, $key = null)</small>
@@ -201,58 +253,6 @@ $db-&gt;selectTuple([
 			<td class="type"><a href="ryunosuke-dbml-Query-Expression-PhpExpression$typespace.html#ryunosuke\dbml\Query\Expression\PhpExpression" class="fqsen "><small>ryunosuke\dbml\Query\Expression\</small><wbr>PhpExpression</a><span class="type-separator"></span><wbr>mixed</td>
 			<td class="desc"><p>PhpExpression インスタンス</p>
 </td>
-			<td class="rest"></td>
-		</tr>
-		</tbody>
-	</table>
-                                                                            					</div>
-					<div class="attribute">
-						<span class="label label-default"></span>
-						<span class="label label-default"></span>
-					</div>
-					<div class="clearfix"></div>
-				</li>
-            				<li class="structure-item">
-					<div class="attribute">
-						<span class="label label-danger"></span>
-						<span class="label label-default">static</span>
-						<span class="label label-magic"></span>
-						<span class="label label-danger"></span>
-						<span class="label label-default"></span>
-						<span class="label label-default"></span>
-						<span class="label label-deprecated"></span>
-						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/Expression/PhpExpression.php#L164-L173" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
-                                    					</div>
-					<h4 id="ryunosuke\dbml\Query\Expression\PhpExpression::define()" tabindex="-1" class="structure-title ">
-                        define						<small>($name, $callback)</small>
-					</h4>
-					<div class="inner-item">
-						<div class="description"><p>クロージャを定義する</p>
-</div>
-                        	<table class="table">
-		<caption>Parameters</caption>
-		<tbody>
-        			<tr>
-				<td class="type">string</td>
-				<td class="rest">$name</td>
-				<td class="desc"><p>定義名</p>
-</td>
-			</tr>
-        			<tr>
-				<td class="type">callable<span class="type-separator"></span><wbr>null</td>
-				<td class="rest">$callback</td>
-				<td class="desc"><p>処理実体</p>
-</td>
-			</tr>
-        		</tbody>
-	</table>
-                            	<table class="table">
-		<caption>Return</caption>
-		<tbody>
-		<tr>
-			<td class="type">void</td>
-			<td class="desc"></td>
 			<td class="rest"></td>
 		</tr>
 		</tbody>

@@ -3,7 +3,7 @@
 <head>	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/styles/zenburn.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/styles/foundation.min.css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js-bootstrap-css/1.2.1/typeaheadjs.min.css">
 	<link rel="stylesheet" type="text/css" data-href="common.css">
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -34,9 +34,9 @@
         })();
 	</script>
     </head>
-<body>
+<body class="namespace">
 <a id="anchor" href="./" style="display: none"></a>
-<h1 class="ellipsis">
+<h1 class="ellipsis fixed">
 	Structure
 	<small class="ellipsis-text">(ryunosuke\dbml\Mixin\)</small>
 	<span class="pull-right">
@@ -90,29 +90,6 @@ $that-&gt;context(['hoge' =&gt; 3])-&gt;doSomething(); // この処理は hoge:3
 </code></pre>
 <p>stack/context の併用は出来ない（併用したときの動作は未定義）が、併用さえしなければどちらもネスト可能。<br />
 ただし、 <code>context</code> は自身を clone するのでループ内での使用は控えること。</p>
-</div>
-						</div>
-						<div class="attribute">
-							<span class="label label-default"></span>
-							<span class="label label-default"></span>
-						</div>
-						<div class="clearfix"></div>
-					</li>
-                					<li class="structure-item">
-						<div class="attribute">
-							<span class="label label-danger"></span>
-							<span class="label label-warning"></span>
-							<span class="label label-info"></span>
-							<span class="label label-info"></span>
-							<span class="label label-deprecated"></span>
-                            			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Mixin/DebugInfoTrait.php#L7-L32" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
-            						</div>
-						<h4 id="ryunosuke\dbml\Mixin\DebugInfoTrait" tabindex="-1" class="structure-title ">
-							<a href="ryunosuke-dbml-Mixin-DebugInfoTrait$typespace.html#ryunosuke\dbml\Mixin\DebugInfoTrait">DebugInfoTrait</a>
-						</h4>
-						<div class="inner-item">
-							<div class="description"><p>var_dump で不必要なプロパティを伏せる trait</p>
-<p>これを use すると（現在の実装では） Database が var_dump に出現しなくなる。</p>
 </div>
 						</div>
 						<div class="attribute">

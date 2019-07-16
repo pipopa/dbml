@@ -3,7 +3,7 @@
 <head>	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/styles/zenburn.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/styles/foundation.min.css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js-bootstrap-css/1.2.1/typeaheadjs.min.css">
 	<link rel="stylesheet" type="text/css" data-href="common.css">
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -34,9 +34,9 @@
         })();
 	</script>
     </head>
-<body>
+<body class="typespace">
 <a id="anchor" href="./" style="display: none"></a>
-<h1 class="ellipsis">
+<h1 class="ellipsis fixed">
 	<span class="pull-left">
 	Structure
 	<small class="ellipsis-text">(ryunosuke\dbml\Query\Expression\TableDescriptor)</small>
@@ -54,7 +54,7 @@
 		<span class="label label-info"></span>
 		<span class="label label-info"></span>
 		<span class="label label-deprecated"></span>
-        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/Expression/TableDescriptor.php#L19-L569" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/Expression/TableDescriptor.php#L19-L580" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                     	</div>
 
 	<h2>class <span class="category-name">ryunosuke\dbml\Query\Expression\TableDescriptor</span></h2>
@@ -62,7 +62,7 @@
 	<div class="description"><p>テーブル記法の実装クラス</p>
 <p>テーブル記法の概念については <tag_link data-kind='fqsen' data-type-category='type' data-type-fqsen='ryunosuke\dbml\' data-type-array='0' data-description='dbml'>dbml</tag_link> を参照。<br />
 なお、内部的に使用されるだけで能動的に new したり活用されたりするようなクラスではない。</p>
-<p>下記に記法としての定義を記載する。組み合わせた場合の使用例は <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::column()' data-type-array='0' data-description='QueryBuilder::column()'>QueryBuilder::column()</tag_link> を参照。</p>
+<p>下記に記法としての定義を記載する。組み合わせた場合の使用例は <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::column()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::column()'>ryunosuke\dbml\Query\QueryBuilder::column()</tag_link> を参照。</p>
 <p><code>'(joinsign)tablename(pkval)@scope:fkeyname[condition]+order-by#offset-limit AS Alias.col1, col2 AS C2'</code></p>
 <table>
 <thead>
@@ -151,7 +151,7 @@
 <ul>
 <li>e.g. <code>tablename#150-200</code> （<code>LIMIT 50 OFFSET 150</code> となり範囲を表す）</li>
 <li>e.g. <code>tablename#100</code> （<code>LIMIT 1 OFFSET 100</code> となり単一の1行を表す）</li>
-<li>e.g. <code>tablename#-100</code> （`LIMIT 100 となる（M を省略した場合、 OFFSET は設定されない））</li>
+<li>e.g. <code>tablename#-100</code> （<code>LIMIT 100</code> となる（M を省略した場合、 OFFSET は設定されない））</li>
 </ul>
 <h4>AS Alias</h4>
 <p>テーブルにエイリアスをつける。<br />
@@ -202,7 +202,7 @@
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\Expression\TableDescriptor::META_CHARACTORS" tabindex="-1" class="structure-title">
 						<small>string[]</small>
-                        META_CHARACTORS						<var> = [&#039;(&#039;, &#039;)&#039;, &#039;@&#039;, &#039;[&#039;, &#039;]&#039;, &#039;{&#039;, &#039;}&#039;, &#039;+&#039;, &#039;-&#039;, &#039;#&#039;]</var>
+                        META_CHARACTORS						<var> = [&quot;(&quot;, &quot;)&quot;, &quot;@&quot;, &quot;[&quot;, &quot;]&quot;, &quot;{&quot;, &quot;}&quot;, &quot;+&quot;, &quot;-&quot;, &quot;#&quot;]</var>
 					</h4>
 					<div class="inner-item">
 						<div class="description"><p>テーブル記法を表すメタ文字</p>
@@ -486,7 +486,7 @@
                         			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/Expression/TableDescriptor.php#L313-L355" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\Expression\TableDescriptor::forge()" tabindex="-1" class="structure-title ">
-                        forge						<small>($database, $descriptor, $columnIfString = [&#039;*&#039;])</small>
+                        forge						<small>($database, $descriptor, $columnIfString = [&quot;*&quot;])</small>
 					</h4>
 					<div class="inner-item">
 						<div class="description"><p>文字列や配列からインスタンスの配列を生成する</p>
@@ -508,7 +508,7 @@
 			</tr>
         			<tr>
 				<td class="type">array</td>
-				<td class="rest">$columnIfString = [&#039;*&#039;]</td>
+				<td class="rest">$columnIfString = [&quot;*&quot;]</td>
 				<td class="desc"><p>テーブルのみ指定時のデフォルトカラム</p>
 </td>
 			</tr>
@@ -542,7 +542,7 @@
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/Expression/TableDescriptor.php#L357-L546" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/Expression/TableDescriptor.php#L357-L557" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\Expression\TableDescriptor::__construct()" tabindex="-1" class="structure-title ">
                         __construct						<small>($database, $descriptor, $cols)</small>
@@ -600,7 +600,7 @@
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/Expression/TableDescriptor.php#L548-L568" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/Expression/TableDescriptor.php#L559-L579" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\Expression\TableDescriptor::__get()" tabindex="-1" class="structure-title ">
                         __get						<small>($name)</small>

@@ -3,7 +3,7 @@
 <head>	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/styles/zenburn.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/8.6/styles/foundation.min.css">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js-bootstrap-css/1.2.1/typeaheadjs.min.css">
 	<link rel="stylesheet" type="text/css" data-href="common.css">
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -34,9 +34,9 @@
         })();
 	</script>
     </head>
-<body>
+<body class="typespace">
 <a id="anchor" href="./" style="display: none"></a>
-<h1 class="ellipsis">
+<h1 class="ellipsis fixed">
 	<span class="pull-left">
 	Structure
 	<small class="ellipsis-text">(Doctrine\DBAL\Statement)</small>
@@ -687,7 +687,7 @@ being bound.</p>
         			<tr>
 				<td class="type">int</td>
 				<td class="rest">$fetchMode</td>
-				<td class="desc"><p>The fetch mode must be one of the <tag_link data-kind='fqsen' data-type-category='class' data-type-fqsen='Doctrine\DBAL\FetchMode' data-type-array='0' data-description='\Doctrine\DBAL\FetchMode'>\Doctrine\DBAL\FetchMode</tag_link> constants.</p>
+				<td class="desc"><p>The fetch mode must be one of the <tag_link data-kind='fqsen' data-type-category='class' data-type-fqsen='Doctrine\DBAL\FetchMode' data-type-array='0' data-description='Doctrine\DBAL\FetchMode'>Doctrine\DBAL\FetchMode</tag_link> constants.</p>
 </td>
 			</tr>
         			<tr>
@@ -805,8 +805,8 @@ being bound.</p>
 				<td class="type">int<span class="type-separator"></span><wbr>null</td>
 				<td class="rest">$fetchMode = null</td>
 				<td class="desc"><p>Controls how the next row will be returned to the caller.</p>
-<pre><code>                               The value must be one of the &lt;tag_link data-kind='fqsen' data-type-category='class' data-type-fqsen='Doctrine\DBAL\FetchMode' data-type-array='0' data-description='\Doctrine\DBAL\FetchMode'&gt;\Doctrine\DBAL\FetchMode&lt;/tag_link&gt; constants,
-                               defaulting to &lt;tag_link data-kind='fqsen' data-type-category='constant' data-type-fqsen='Doctrine\DBAL\FetchMode::MIXED' data-type-array='0' data-description='\Doctrine\DBAL\FetchMode::MIXED'&gt;\Doctrine\DBAL\FetchMode::MIXED&lt;/tag_link&gt;.
+<pre><code>                               The value must be one of the {@link \Doctrine\DBAL\FetchMode} constants,
+                               defaulting to {@link \Doctrine\DBAL\FetchMode::MIXED}.
 </code></pre>
 </td>
 			</tr>
@@ -894,8 +894,8 @@ being bound.</p>
 				<td class="type">int<span class="type-separator"></span><wbr>null</td>
 				<td class="rest">$fetchMode = null</td>
 				<td class="desc"><p>Controls how the next row will be returned to the caller.</p>
-<pre><code>                               The value must be one of the &lt;tag_link data-kind='fqsen' data-type-category='class' data-type-fqsen='Doctrine\DBAL\FetchMode' data-type-array='0' data-description='\Doctrine\DBAL\FetchMode'&gt;\Doctrine\DBAL\FetchMode&lt;/tag_link&gt; constants,
-                               defaulting to &lt;tag_link data-kind='fqsen' data-type-category='constant' data-type-fqsen='Doctrine\DBAL\FetchMode::MIXED' data-type-array='0' data-description='\Doctrine\DBAL\FetchMode::MIXED'&gt;\Doctrine\DBAL\FetchMode::MIXED&lt;/tag_link&gt;.
+<pre><code>                               The value must be one of the {@link \Doctrine\DBAL\FetchMode} constants,
+                               defaulting to {@link \Doctrine\DBAL\FetchMode::MIXED}.
 </code></pre>
 </td>
 			</tr>
@@ -903,9 +903,9 @@ being bound.</p>
 				<td class="type">int<span class="type-separator"></span><wbr>null</td>
 				<td class="rest">$fetchArgument = null</td>
 				<td class="desc"><p>This argument has a different meaning depending on the value of the $fetchMode parameter:</p>
-<pre><code>                               * &lt;tag_link data-kind='fqsen' data-type-category='constant' data-type-fqsen='Doctrine\DBAL\FetchMode::COLUMN' data-type-array='0' data-description='\Doctrine\DBAL\FetchMode::COLUMN'&gt;\Doctrine\DBAL\FetchMode::COLUMN&lt;/tag_link&gt;:
+<pre><code>                               * {@link \Doctrine\DBAL\FetchMode::COLUMN}:
                                  Returns the indicated 0-indexed column.
-                               * &lt;tag_link data-kind='fqsen' data-type-category='constant' data-type-fqsen='Doctrine\DBAL\FetchMode::CUSTOM_OBJECT' data-type-array='0' data-description='\Doctrine\DBAL\FetchMode::CUSTOM_OBJECT'&gt;\Doctrine\DBAL\FetchMode::CUSTOM_OBJECT&lt;/tag_link&gt;:
+                               * {@link \Doctrine\DBAL\FetchMode::CUSTOM_OBJECT}:
                                  Returns instances of the specified class, mapping the columns of each row
                                  to named properties in the class.
                                * \PDO::FETCH_FUNC: Returns the results of calling the specified function, using each row's
@@ -917,8 +917,8 @@ being bound.</p>
 				<td class="type">mixed[]<span class="type-separator"></span><wbr>null</td>
 				<td class="rest">$ctorArgs = null</td>
 				<td class="desc"><p>Controls how the next row will be returned to the caller.</p>
-<pre><code>                               The value must be one of the &lt;tag_link data-kind='fqsen' data-type-category='class' data-type-fqsen='Doctrine\DBAL\FetchMode' data-type-array='0' data-description='\Doctrine\DBAL\FetchMode'&gt;\Doctrine\DBAL\FetchMode&lt;/tag_link&gt; constants,
-                               defaulting to &lt;tag_link data-kind='fqsen' data-type-category='constant' data-type-fqsen='Doctrine\DBAL\FetchMode::MIXED' data-type-array='0' data-description='\Doctrine\DBAL\FetchMode::MIXED'&gt;\Doctrine\DBAL\FetchMode::MIXED&lt;/tag_link&gt;.
+<pre><code>                               The value must be one of the {@link \Doctrine\DBAL\FetchMode} constants,
+                               defaulting to {@link \Doctrine\DBAL\FetchMode::MIXED}.
 </code></pre>
 </td>
 			</tr>
