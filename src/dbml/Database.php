@@ -2795,7 +2795,7 @@ class Database
                         if ($v instanceof Queryable) {
                             $subparams = [];
                             $subquerys[$k] = $v->merge($subparams);
-                            foreach($subparams as $sp){
+                            foreach ($subparams as $sp) {
                                 $subvalues[] = $sp;
                             }
                         }
