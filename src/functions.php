@@ -875,9 +875,10 @@ if (!isset($excluded_functions["array_map_key"]) && (!function_exists("ryunosuke
      */
     function array_map_key($array, $callback)
     {
+        $callback = func_user_func_array($callback);
         $result = [];
         foreach ($array as $k => $v) {
-            $k2 = $callback($k);
+            $k2 = $callback($k, $v);
             if ($k2 !== null) {
                 $result[$k2] = $v;
             }
@@ -1351,6 +1352,7 @@ if (!isset($excluded_functions["array_order"]) && (!function_exists("ryunosuke\\
      * その場合 $orders に配列ではなく直値を渡せば良い。
      *
      * $orders には下記のような配列を渡す。
+     * キーに空文字を渡すとそれは「キー自体」を意味する。
      *
      * ```php
      * $orders = [
@@ -1561,29 +1563,11 @@ if (!isset($excluded_functions["array_lookup"]) && (!function_exists("ryunosuke\
      */
     function array_lookup($array, $column_key = null, $index_key = null)
     {
+        $array = arrayval($array, false);
         if (func_num_args() === 3) {
-            return array_column(arrayval($array, false), $column_key, $index_key);
+            return array_column($array, $column_key, $index_key);
         }
-
-        // null 対応できないし、php7 からオブジェクトに対応してるらしいので止め。ベタにやる
-        // return array_map(array_of($column_keys), $array);
-
-        // 実質的にはこれで良いはずだが、オブジェクト対応が救えないので止め。ベタにやる
-        // return array_combine(array_keys($array), array_column($array, $column_key));
-
-        $result = [];
-        foreach ($array as $k => $v) {
-            if ($column_key === null) {
-                $result[$k] = $v;
-            }
-            elseif (is_array($v) && array_key_exists($column_key, $v)) {
-                $result[$k] = $v[$column_key];
-            }
-            elseif (is_object($v) && (isset($v->$column_key) || property_exists($v, $column_key))) {
-                $result[$k] = $v->$column_key;
-            }
-        }
-        return $result;
+        return array_combine(array_keys($array), array_column($array, $column_key));
     }
 }
 if (function_exists("ryunosuke\\dbml\\array_lookup") && !defined("ryunosuke\\dbml\\array_lookup")) {
@@ -2355,55 +2339,55 @@ if (!isset($excluded_functions["delegate"]) && (!function_exists("ryunosuke\\dbm
      * @param \Closure $invoker クロージャを実行するためのクロージャ（実処理）
      * @param callable $callable 最終的に実行したいクロージャ
      * @param int $arity 引数の数
-     * @return \Closure $callable を実行するクロージャ
+     * @return callable $callable を実行するクロージャ
      */
     function delegate($invoker, $callable, $arity = null)
     {
-        // 「delegate 経由で作成されたクロージャ」であることをマーキングするための use 変数
-        $__rfunc_delegate_marker = true;
-        assert($__rfunc_delegate_marker === true); // phpstorm の警告解除
+        $arity = $arity ?? parameter_length($callable, true, true);
 
-        if ($arity === null) {
-            $arity = parameter_length($callable, true, true);
-        }
+        if (reflect_callable($callable)->isInternal()) {
+            static $cache = [];
+            $cache[$arity] = $cache[$arity] ?? evaluate('return new class()
+            {
+                private $invoker, $callable;
 
-        if (is_infinite($arity)) {
-            return eval('return function (...$_) use ($__rfunc_delegate_marker, $invoker, $callable) {
-                return $invoker($callable, func_get_args());
+                public function spawn($invoker, $callable)
+                {
+                    $that = clone($this);
+                    $that->invoker = $invoker;
+                    $that->callable = $callable;
+                    return $that;
+                }
+
+                public function __invoke(' . implode(',', is_infinite($arity)
+                        ? ['...$_']
+                        : array_map(function ($v) { return '$_' . $v; }, array_keys(array_fill(1, $arity, null)))
+                    ) . ')
+                {
+                    return ($this->invoker)($this->callable, func_get_args());
+                }
             };');
+            return $cache[$arity]->spawn($invoker, $callable);
         }
 
-        $arity = abs($arity);
-        switch ($arity) {
-            case 0:
-                return function () use ($__rfunc_delegate_marker, $invoker, $callable) {
-                    return $invoker($callable, func_get_args());
-                };
-            case 1:
-                return function ($_1) use ($__rfunc_delegate_marker, $invoker, $callable) {
-                    return $invoker($callable, func_get_args());
-                };
-            case 2:
-                return function ($_1, $_2) use ($__rfunc_delegate_marker, $invoker, $callable) {
-                    return $invoker($callable, func_get_args());
-                };
-            case 3:
-                return function ($_1, $_2, $_3) use ($__rfunc_delegate_marker, $invoker, $callable) {
-                    return $invoker($callable, func_get_args());
-                };
-            case 4:
-                return function ($_1, $_2, $_3, $_4) use ($__rfunc_delegate_marker, $invoker, $callable) {
-                    return $invoker($callable, func_get_args());
-                };
-            case 5:
-                return function ($_1, $_2, $_3, $_4, $_5) use ($__rfunc_delegate_marker, $invoker, $callable) {
-                    return $invoker($callable, func_get_args());
-                };
+        switch (true) {
+            case $arity === 0:
+                return function () use ($invoker, $callable) { return $invoker($callable, func_get_args()); };
+            case $arity === 1:
+                return function ($_1) use ($invoker, $callable) { return $invoker($callable, func_get_args()); };
+            case $arity === 2:
+                return function ($_1, $_2) use ($invoker, $callable) { return $invoker($callable, func_get_args()); };
+            case $arity === 3:
+                return function ($_1, $_2, $_3) use ($invoker, $callable) { return $invoker($callable, func_get_args()); };
+            case $arity === 4:
+                return function ($_1, $_2, $_3, $_4) use ($invoker, $callable) { return $invoker($callable, func_get_args()); };
+            case $arity === 5:
+                return function ($_1, $_2, $_3, $_4, $_5) use ($invoker, $callable) { return $invoker($callable, func_get_args()); };
+            case is_infinite($arity):
+                return function (...$_) use ($invoker, $callable) { return $invoker($callable, func_get_args()); };
             default:
-                $argstring = array_map(function ($v) { return '$_' . $v; }, range(1, $arity));
-                return eval('return function (' . implode(', ', $argstring) . ') use ($__rfunc_delegate_marker, $invoker, $callable) {
-                    return $invoker($callable, func_get_args());
-                };');
+                $args = implode(',', array_map(function ($v) { return '$_' . $v; }, array_keys(array_fill(1, $arity, null))));
+                return eval('return function (' . $args . ') use ($invoker, $callable) { return $invoker($callable, func_get_args()); };');
         }
     }
 }
@@ -2424,13 +2408,13 @@ if (!isset($excluded_functions["nbind"]) && (!function_exists("ryunosuke\\dbml\\
      * @param callable $callable 対象 callable
      * @param int $n 挿入する引数位置
      * @param mixed $variadic 本来の引数（可変引数）
-     * @return \Closure 束縛したクロージャ
+     * @return callable 束縛したクロージャ
      */
     function nbind($callable, $n, ...$variadic)
     {
         return delegate(function ($callable, $args) use ($variadic, $n) {
             return $callable(...array_insert($args, $variadic, $n));
-        }, $callable, parameter_length($callable, true) - count($variadic));
+        }, $callable, parameter_length($callable, true, true) - count($variadic));
     }
 }
 if (function_exists("ryunosuke\\dbml\\nbind") && !defined("ryunosuke\\dbml\\nbind")) {
@@ -2449,7 +2433,7 @@ if (!isset($excluded_functions["rbind"]) && (!function_exists("ryunosuke\\dbml\\
      *
      * @param callable $callable 対象 callable
      * @param mixed $variadic 本来の引数（可変引数）
-     * @return \Closure 束縛したクロージャ
+     * @return callable 束縛したクロージャ
      */
     function rbind($callable, ...$variadic)
     {
@@ -2600,7 +2584,6 @@ if (!isset($excluded_functions["func_user_func_array"]) && (!function_exists("ry
      * パラメータ定義数に応じて呼び出し引数を可変にしてコールする
      *
      * デフォルト引数はカウントされない。必須パラメータの数で呼び出す。
-     * もちろん可変引数は未対応。
      *
      * $callback に null を与えると例外的に「第1引数を返すクロージャ」を返す。
      *
@@ -2614,7 +2597,7 @@ if (!isset($excluded_functions["func_user_func_array"]) && (!function_exists("ry
      * ```
      *
      * @param callable $callback 呼び出すクロージャ
-     * @return \Closure 引数ぴったりで呼び出すクロージャ
+     * @return callable 引数ぴったりで呼び出すクロージャ
      */
     function func_user_func_array($callback)
     {
@@ -2624,9 +2607,8 @@ if (!isset($excluded_functions["func_user_func_array"]) && (!function_exists("ry
         }
         // クロージャはユーザ定義しかありえないので調べる必要がない
         if ($callback instanceof \Closure) {
-            // が、組み込みをバイパスする delegate はクロージャなのでそれだけは除外
-            $uses = reflect_callable($callback)->getStaticVariables();
-            if (!isset($uses['__rfunc_delegate_marker'])) {
+            // と思ったが、\Closure::fromCallable で作成されたクロージャは内部属性が伝播されるようなので除外
+            if (reflect_callable($callback)->isUserDefined()) {
                 return $callback;
             }
         }
@@ -2799,6 +2781,8 @@ if (!isset($excluded_functions["quoteexplode"]) && (!function_exists("ryunosuke\
      *
      * $enclosures は配列で開始・終了文字が別々に指定できるが、実装上の都合で今のところ1文字ずつのみ。
      *
+     * 歴史的な理由により第3引数は $limit でも $enclosures でもどちらでも渡すことができる。
+     *
      * Example:
      * ```php
      * // シンプルな例
@@ -2815,16 +2799,37 @@ if (!isset($excluded_functions["quoteexplode"]) && (!function_exists("ryunosuke\
      *     'b', // 普通に分割される
      *     '{e,f}', // { } で囲まれているので区切り文字とみなされない
      * ]);
+     *
+     * // このように第3引数に $limit 引数を差し込むことができる
+     * assertSame(quoteexplode(',', 'a,b,{e,f}', 2, ['{' => '}']), [
+     *     'a',
+     *     'b,{e,f}',
+     * ]);
      * ```
      *
      * @param string|array $delimiter 分割文字列
      * @param string $string 対象文字列
+     * @param int $limit 分割数。負数未対応
      * @param array|string $enclosures 囲い文字。 ["start" => "end"] で開始・終了が指定できる
      * @param string $escape エスケープ文字
      * @return array 分割された配列
      */
-    function quoteexplode($delimiter, $string, $enclosures = "'\"", $escape = '\\')
+    function quoteexplode($delimiter, $string, $limit = null, $enclosures = "'\"", $escape = '\\')
     {
+        // for compatible 1.3.x
+        if (!is_int($limit) && $limit !== null) {
+            if (func_num_args() > 3) {
+                $escape = $enclosures;
+            }
+            $enclosures = $limit;
+            $limit = PHP_INT_MAX;
+        }
+
+        if ($limit === null) {
+            $limit = PHP_INT_MAX;
+        }
+        $limit = max(1, $limit);
+
         if (is_string($enclosures)) {
             $chars = str_split($enclosures);
             $enclosures = array_combine($chars, $chars);
@@ -2859,9 +2864,12 @@ if (!isset($excluded_functions["quoteexplode"]) && (!function_exists("ryunosuke\
                         break;
                     }
                 }
+                if (count($result) === $limit - 1) {
+                    break;
+                }
             }
         }
-        $result[] = substr($string, $current, $i);
+        $result[] = substr($string, $current, $l);
         return $result;
     }
 }
@@ -3135,6 +3143,134 @@ if (function_exists("ryunosuke\\dbml\\str_between") && !defined("ryunosuke\\dbml
     define("ryunosuke\\dbml\\str_between", "ryunosuke\\dbml\\str_between");
 }
 
+if (!isset($excluded_functions["paml_import"]) && (!function_exists("ryunosuke\\dbml\\paml_import") || (!false && (new \ReflectionFunction("ryunosuke\\dbml\\paml_import"))->isInternal()))) {
+    /**
+     * paml 的文字列をパースする
+     *
+     * paml とは yaml を簡易化したような独自フォーマットを指す。
+     * ざっくりと下記のような特徴がある。
+     *
+     * - ほとんど yaml と同じだがフロースタイルのみでキーコロンの後のスペースは不要
+     * - yaml のアンカーや複数ドキュメントのようなややこしい仕様はすべて未対応
+     * - 配列を前提にしているので、トップレベルの `[]` `{}` は不要
+     * - 配列・連想配列の区別はなし。 `[]` でいわゆる php の配列、 `{}` で stdClass を表す
+     * - bare string で php の定数を表す
+     *
+     * 簡易的な設定の注入に使える（yaml は標準で対応していないし、json や php 配列はクオートの必要やケツカンマ問題がある）。
+     * なお、かなり緩くパースしてるので基本的にエラーにはならない。
+     *
+     * 早見表：
+     *
+     * - php:  `["n" => null, "f" => false, "i" => 123, "d" => 3.14, "s" => "this is string", "a" => [1, 2, "x" => "X"]]`
+     *     - ダブルアローとキーのクオートが冗長
+     * - json: `{"n":null, "f":false, "i":123, "d":3.14, "s":"this is string", "a":{"0": 1, "1": 2, "x": "X"}}`
+     *     - キーのクオートが冗長だしケツカンマ非許容
+     * - yaml: `{n: null, f: false, i: 123, d: 3.14, s: "this is string", a: {0: 1, 1: 2, x: X}}`
+     *     - 理想に近いが、コロンの後にスペースが必要だし連想配列が少々難。なにより拡張や外部ライブラリが必要
+     * - paml: `n:null, f:false, i:123, d:3.14, s:"this is string", a:[1, 2, x:X]`
+     *     - シンプルイズベスト
+     *
+     * Example:
+     * ```php
+     * // こういったスカラー型はほとんど yaml と一緒だが、コロンの後のスペースは不要（あってもよい）
+     * assertSame(paml_import('n:null, f:false, i:123, d:3.14, s:"this is string"'), [
+     *     'n' => null,
+     *     'f' => false,
+     *     'i' => 123,
+     *     'd' => 3.14,
+     *     's' => 'this is string',
+     * ]);
+     * // 配列が使える（キーは連番なら不要）。ネストも可能
+     * assertSame(paml_import('a:[1,2,x:X,3], nest:[a:[b:[c:[X]]]]'), [
+     *     'a'    => [1, 2, 'x' => 'X', 3],
+     *     'nest' => [
+     *         'a' => [
+     *             'b' => [
+     *                 'c' => ['X']
+     *             ],
+     *         ],
+     *     ],
+     * ]);
+     * // bare 文字列で定数が使える
+     * assertSame(paml_import('pv:PHP_VERSION, ao:ArrayObject::STD_PROP_LIST'), [
+     *     'pv' => \PHP_VERSION,
+     *     'ao' => \ArrayObject::STD_PROP_LIST,
+     * ]);
+     * ```
+     *
+     * @param string $pamlstring PAML 文字列
+     * @param array $options オプション配列
+     * @return array php 配列
+     */
+    function paml_import($pamlstring, $options = [])
+    {
+        $options += [
+            'cache'          => true,
+            'trailing-comma' => true,
+        ];
+
+        static $caches = [];
+        if ($options['cache']) {
+            return $caches[$pamlstring] = $caches[$pamlstring] ?? paml_import($pamlstring, ['cache' => false] + $options);
+        }
+
+        $escapers = ['"' => '"', "'" => "'", '[' => ']', '{' => '}'];
+
+        $values = array_map('trim', quoteexplode(',', $pamlstring, null, $escapers));
+        if ($options['trailing-comma'] && end($values) === '') {
+            array_pop($values);
+        }
+
+        $result = [];
+        foreach ($values as $value) {
+            $key = null;
+            $kv = array_map('trim', quoteexplode(':', $value, 2, $escapers));
+            if (count($kv) === 2) {
+                list($key, $value) = $kv;
+            }
+
+            $prefix = $value[0] ?? null;
+            $suffix = $value[-1] ?? null;
+
+            if ($prefix === '[' && $suffix === ']') {
+                $value = (array) paml_import(substr($value, 1, -1), $options);
+            }
+            elseif ($prefix === '{' && $suffix === '}') {
+                $value = (object) paml_import(substr($value, 1, -1), $options);
+            }
+            elseif ($prefix === '"' && $suffix === '"') {
+                //$value = stripslashes(substr($value, 1, -1));
+                $value = json_decode($value);
+            }
+            elseif ($prefix === "'" && $suffix === "'") {
+                $value = substr($value, 1, -1);
+            }
+            elseif (defined($value)) {
+                $value = constant($value);
+            }
+            elseif (is_numeric($value)) {
+                if (ctype_digit(ltrim($value, '+-'))) {
+                    $value = (int) $value;
+                }
+                else {
+                    $value = (double) $value;
+                }
+            }
+
+            if ($key === null) {
+                $result[] = $value;
+            }
+            else {
+                $result[$key] = $value;
+            }
+        }
+        return $result;
+    }
+}
+if (function_exists("ryunosuke\\dbml\\paml_import") && !defined("ryunosuke\\dbml\\paml_import")) {
+    define("ryunosuke\\dbml\\paml_import", "ryunosuke\\dbml\\paml_import");
+}
+
 if (!isset($excluded_functions["preg_splice"]) && (!function_exists("ryunosuke\\dbml\\preg_splice") || (!false && (new \ReflectionFunction("ryunosuke\\dbml\\preg_splice"))->isInternal()))) {
     /**
      * キャプチャも行える preg_replace
@@ -3181,6 +3317,79 @@ if (!isset($excluded_functions["preg_splice"]) && (!function_exists("ryunosuke\\
 }
 if (function_exists("ryunosuke\\dbml\\preg_splice") && !defined("ryunosuke\\dbml\\preg_splice")) {
     define("ryunosuke\\dbml\\preg_splice", "ryunosuke\\dbml\\preg_splice");
+}
+
+if (!isset($excluded_functions["evaluate"]) && (!function_exists("ryunosuke\\dbml\\evaluate") || (!false && (new \ReflectionFunction("ryunosuke\\dbml\\evaluate"))->isInternal()))) {
+    /**
+     * eval のプロキシ関数
+     *
+     * 一度ファイルに吐いてから require した方が opcache が効くので抜群に速い。
+     * また、素の eval は ParseError が起こったときの表示がわかりにくすぎるので少し見やすくしてある。
+     *
+     * 関数化してる以上 eval におけるコンテキストの引き継ぎはできない。
+     * ただし、引数で変数配列を渡せるようにしてあるので get_defined_vars を併用すれば基本的には同じ（$this はどうしようもない）。
+     *
+     * 短いステートメントだと opcode が少ないのでファイルを経由せず直接 eval したほうが速いことに留意。
+     * 一応引数で指定できるようにはしてある。
+     *
+     * Example:
+     * ```php
+     * $a = 1;
+     * $b = 2;
+     * $phpcode = ';
+     * $c = $a + $b;
+     * return $c * 3;
+     * ';
+     * assertSame(evaluate($phpcode, get_defined_vars()), 9);
+     * ```
+     *
+     * @param string $phpcode 実行する php コード
+     * @param array $contextvars コンテキスト変数配列
+     * @param int $cachesize キャッシュするサイズ
+     * @return mixed eval の return 値
+     */
+    function evaluate($phpcode, $contextvars = [], $cachesize = 256)
+    {
+        $cachefile = null;
+        if ($cachesize && strlen($phpcode) >= $cachesize) {
+            $cachefile = cachedir() . '/' . rawurlencode(__FUNCTION__) . '-' . sha1($phpcode) . '.php';
+            if (!file_exists($cachefile)) {
+                file_put_contents($cachefile, "<?php $phpcode", LOCK_EX);
+            }
+        }
+
+        try {
+            if ($cachefile) {
+                return (static function () {
+                    extract(func_get_arg(1));
+                    return require func_get_arg(0);
+                })($cachefile, $contextvars);
+            }
+            else {
+                return (static function () {
+                    extract(func_get_arg(1));
+                    return eval(func_get_arg(0));
+                })($phpcode, $contextvars);
+            }
+        }
+        catch (\ParseError $ex) {
+            $errline = $ex->getLine();
+            $errline_1 = $errline - 1;
+            $codes = preg_split('#\\R#u', $phpcode);
+            $codes[$errline_1] = '>>> ' . $codes[$errline_1];
+
+            $N = 5; // 前後の行数
+            $message = $ex->getMessage();
+            $message .= "\n" . implode("\n", array_slice($codes, max(0, $errline_1 - $N), $N * 2 + 1));
+            if ($cachefile) {
+                $message .= "\n in " . realpath($cachefile) . " on line " . $errline . "\n";
+            }
+            throw new \ParseError($message, $ex->getCode(), $ex);
+        }
+    }
+}
+if (function_exists("ryunosuke\\dbml\\evaluate") && !defined("ryunosuke\\dbml\\evaluate")) {
+    define("ryunosuke\\dbml\\evaluate", "ryunosuke\\dbml\\evaluate");
 }
 
 if (!isset($excluded_functions["optional"]) && (!function_exists("ryunosuke\\dbml\\optional") || (!false && (new \ReflectionFunction("ryunosuke\\dbml\\optional"))->isInternal()))) {
@@ -3383,8 +3592,13 @@ if (!isset($excluded_functions["cachedir"]) && (!function_exists("ryunosuke\\dbm
     function cachedir($dirname = null)
     {
         static $cachedir;
+        if ($cachedir === null) {
+            $cachedir = sys_get_temp_dir() . DIRECTORY_SEPARATOR . strtr(__NAMESPACE__, ['\\' => '%']);
+            cachedir($cachedir); // for mkdir
+        }
+
         if ($dirname === null) {
-            return $cachedir = $cachedir ?? sys_get_temp_dir();
+            return $cachedir;
         }
 
         if (!file_exists($dirname)) {
@@ -3624,7 +3838,6 @@ if (!isset($excluded_functions["is_empty"]) && (!function_exists("ryunosuke\\dbm
      * assertTrue(is_empty(''));
      * // この辺だけが異なる
      * assertFalse(is_empty('0'));
-     * assertFalse(is_empty(new \SimpleXMLElement('<foo></foo>')));
      * // 第2引数に true を渡すと空の stdClass も empty 判定される
      * $stdclass = new \stdClass();
      * assertTrue(is_empty($stdclass, true));
@@ -3695,35 +3908,6 @@ if (!isset($excluded_functions["is_primitive"]) && (!function_exists("ryunosuke\
 }
 if (function_exists("ryunosuke\\dbml\\is_primitive") && !defined("ryunosuke\\dbml\\is_primitive")) {
     define("ryunosuke\\dbml\\is_primitive", "ryunosuke\\dbml\\is_primitive");
-}
-
-if (!isset($excluded_functions["is_iterable"]) && (!function_exists("ryunosuke\\dbml\\is_iterable") || (!true && (new \ReflectionFunction("ryunosuke\\dbml\\is_iterable"))->isInternal()))) {
-    /**
-     * 変数が foreach で回せるか調べる
-     *
-     * オブジェクトの場合は \Traversable のみ。
-     * 要するに {@link http://php.net/manual/function.is-iterable.php is_iterable} の polyfill。
-     *
-     * Example:
-     * ```php
-     * assertTrue(is_iterable([1, 2, 3]));
-     * assertTrue(is_iterable((function () { yield 1; })()));
-     * assertFalse(is_iterable(1));
-     * assertFalse(is_iterable(new \stdClass()));
-     * ```
-     *
-     * @polyfill
-     *
-     * @param mixed $var 調べる値
-     * @return bool foreach で回せるなら true
-     */
-    function is_iterable($var)
-    {
-        return is_array($var) || $var instanceof \Traversable;
-    }
-}
-if (function_exists("ryunosuke\\dbml\\is_iterable") && !defined("ryunosuke\\dbml\\is_iterable")) {
-    define("ryunosuke\\dbml\\is_iterable", "ryunosuke\\dbml\\is_iterable");
 }
 
 if (!isset($excluded_functions["is_countable"]) && (!function_exists("ryunosuke\\dbml\\is_countable") || (!true && (new \ReflectionFunction("ryunosuke\\dbml\\is_countable"))->isInternal()))) {
