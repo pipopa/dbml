@@ -21,6 +21,14 @@
 - Entity 消したい。使わない…
 - QueryBuilder が直接 param を持つのではなく、 param を持った Queryable を持つことで妙なパラメータ順などは不要にできる
 
+## 1.0.6
+
+- [refactor] 依存ライブラリの整理
+- [feature][Database] subquery メソッドを追加
+- [change][Database] upsert のデフォルト引数を統一
+- [feature][TableGateway] affect 系メソッドのオーバーライドに対応
+- [feature][Schema] 外部キーの遅延追加を実装
+
 ## 1.0.5
 
 - [feature][Database] anywhere のクオート対応
