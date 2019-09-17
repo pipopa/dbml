@@ -41,15 +41,11 @@
   "scripts": {
     "build": [
       "@export",
-      "@phpcs",
       "@test",
       "@document"
     ],
     "export": [
       "@php bin/export.php"
-    ],
-    "phpcs": [
-      "@php bin/php-cs-fixer.phar fix src/dbml --dry-run --diff -v --ansi"
     ],
     "test": [
       "vendor/bin/phpunit --configuration=tests/phpunit.xml"
