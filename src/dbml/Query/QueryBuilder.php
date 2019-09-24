@@ -1255,6 +1255,12 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
         $pre_p = $alias ?: $table;
         $pre_c = $from['alias'];
         $this->andWhere(array_sprintf($mapper, "$pre_c.%2\$s = $pre_p.%1\$s"));
+
+        if ($this->submethod === 'query') {
+            if (!$this->sqlParts['select']) {
+                $this->select(...array_sprintf($mapper, "$pre_c.%2\$s"));
+            }
+        }
         return true;
     }
 
@@ -1526,7 +1532,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
      */
     public function addColumn($tableDescriptor, $parent = null)
     {
-        foreach (TableDescriptor::forge($this->database, $tableDescriptor) as $descriptor) {
+        foreach (TableDescriptor::forge($this->database, $tableDescriptor, $this->getSubmethod() === 'query' ? [] : ['*']) as $descriptor) {
             $this->_buildColumn($descriptor->column, $descriptor->table, $descriptor->alias);
 
             // テーブル未指定ならカラムが確定したこの時点で終わり

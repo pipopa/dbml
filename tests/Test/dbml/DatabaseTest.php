@@ -540,8 +540,8 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
     {
         // パース可能
         $this->assertEquals(['a', 'b', 'c'], $database->parseYaml('[a, b, c]', false));
-        $this->assertEquals((object)['a' => 'A'], $database->parseYaml('{a: A}', false));
-        $this->assertEquals(['a' => 1,'b' => 2], $database->parseYaml('[a: 1, b: 2]', false));
+        $this->assertEquals((object) ['a' => 'A'], $database->parseYaml('{a: A}', false));
+        $this->assertEquals(['a' => 1, 'b' => 2], $database->parseYaml('[a: 1, b: 2]', false));
 
         if (function_exists('yaml_parse')) {
             $database = $database->context()->setYamlParser('yaml_parse');
@@ -4458,6 +4458,52 @@ AND (g_parent.ancestor_id = g_ancestor.ancestor_id)))
      * @dataProvider provideDatabase
      * @param Database $database
      */
+    function test_subquery($database)
+    {
+        $cplatform = $database->getCompatiblePlatform();
+        if ($cplatform->getWrappedPlatform() instanceof SQLServerPlatform) {
+            return;
+        }
+
+        $rows = $database->selectArray([
+            't_article' => [
+                'comment_ids' => $database->subquery('t_comment.' . $cplatform->getGroupConcatSyntax('comment_id', ',')),
+            ]
+        ], ['article_id' => [1, 2]]);
+        $this->assertEquals([
+            [
+                'comment_ids' => '1,2,3',
+            ],
+            [
+                'comment_ids' => null,
+            ],
+        ], $rows);
+
+        $rows = $database->selectArray([
+            't_article' => [
+                'article_id',
+            ]
+        ], [
+            'article_id' => $database->subquery('t_comment')
+        ]);
+        $this->assertEquals([
+            [
+                'article_id' => '1',
+            ],
+        ], $rows);
+
+        $row = $database->entityTuple([
+            'Article' => [
+                'comment_ids' => $database->subquery('t_comment.' . $cplatform->getGroupConcatSyntax('comment_id', ',')),
+            ]
+        ], ['article_id' => 1]);
+        $this->assertEquals('1,2,3', $row->{"comment_ids"});
+    }
+
+    /**
+     * @dataProvider provideDatabase
+     * @param Database $database
+     */
     function test_subexists($database)
     {
         $database->setAutoCastSuffix('@');
@@ -5112,7 +5158,7 @@ anywhere.enable = 1
      * @dataProvider provideDatabase
      * @param Database $database
      */
-    function test_subquery_method($database)
+    function test_subselect_method($database)
     {
         $select = $database->select([
             'test1',
@@ -5216,7 +5262,7 @@ anywhere.enable = 1
      * @dataProvider provideDatabase
      * @param Database $database
      */
-    function test_subquery($database)
+    function test_subselect($database)
     {
         $normalize = function ($something) {
             return json_decode(json_encode($something), true);
@@ -5358,7 +5404,7 @@ anywhere.enable = 1
      * @dataProvider provideDatabase
      * @param Database $database
      */
-    function test_subquery_nest($database)
+    function test_subselect_nest($database)
     {
         $database->insert('foreign_p', ['id' => 1, 'name' => 'name1']);
         $database->insert('foreign_c1', ['id' => 1, 'seq' => 11, 'name' => 'c1name1']);

@@ -3597,6 +3597,56 @@ class Database
     }
 
     /**
+     * 相関サブクエリ表すビルダを返す
+     *
+     * 単純に相関のあるテーブルとの外部キーを追加するだけの動作となる。
+     * subexists や subcount, submin などはこのメソッドの特殊化と言える。
+     *
+     * ```php
+     * // SELECT 句での使用例
+     * $db->select([
+     *     't_article' => [
+     *         // 各 t_article に紐づく t_comment の ID を結合する
+     *         'comment_ids' => $db->subquery('t_comment.GROUP_CONCAT(comment_id)'),
+     *     ],
+     * ]);
+     * // SELECT
+     * //   (SELECT GROUP_CONCAT(comment_id) FROM t_comment WHERE t_comment.article_id = t_article.article_id) AS comment_ids
+     * // FROM t_article
+     *
+     * // WHERE 句での使用例
+     * $db->select('t_article', [
+     *     // active な t_comment を持つ t_article を取得する（ただし、この例なら EXISTS で十分）
+     *     'article_id' => $db->subquery('t_comment', ['status' => 'active']),
+     * ]);
+     * // SELECT
+     * //   t_article.*
+     * // FROM t_article
+     * // WHERE
+     * //   article_id IN(
+     * //     SELECT t_comment.article_id FROM t_comment WHERE
+     * //       t_comment.status = 'active' AND
+     * //       t_comment.article_id = t_article.article_id
+     * //   )
+     * ```
+     *
+     * @param array|string $tableDescriptor 取得テーブルとカラム（{@link TableDescriptor}）
+     * @param array|string $where WHERE 条件（{@link QueryBuilder::where()}）
+     * @param array|string $orderBy 並び順（{@link QueryBuilder::orderBy()}）
+     * @param array|int $limit 取得件数（{@link QueryBuilder::limit()}）
+     * @param array|string $groupBy グルーピング（{@link QueryBuilder::groupBy()}）
+     * @param array|string $having HAVING 条件（{@link QueryBuilder::having()}）
+     * @return QueryBuilder クエリビルダオブジェクト
+     */
+    public function subquery($tableDescriptor, $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
+    {
+        // build 前にあらかじめ setSubmethod して分岐する必要がある
+        $builder = $this->createQueryBuilder();
+        $builder->setSubmethod('query');
+        return $builder->build(array_combine(QueryBuilder::CLAUSES, [$tableDescriptor, $where, $orderBy, $limit, $groupBy, $having]), true);
+    }
+
+    /**
      * 相関サブクエリの EXISTS を表すビルダを返す
      *
      * ```php

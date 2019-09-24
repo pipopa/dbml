@@ -1587,6 +1587,24 @@ AND ((flag=1))", "$gw");
      * @param TableGateway $gateway
      * @param Database $database
      */
+    function test_subquery($gateway, $database)
+    {
+        $Article = new TableGateway($database, 't_article', 'Article');
+        $t_comment = new TableGateway($database, 't_comment');
+
+        $this->assertStringIgnoreBreak("SELECT Article.article_id,
+(SELECT t_comment.article_id FROM t_comment WHERE t_comment.article_id = Article.article_id) AS has_comment
+FROM t_article Article", $Article->column([
+            'article_id',
+            'has_comment' => $t_comment->subquery(),
+        ]));
+    }
+
+    /**
+     * @dataProvider provideGateway
+     * @param TableGateway $gateway
+     * @param Database $database
+     */
     function test_subexists($gateway, $database)
     {
         $Article = new TableGateway($database, 't_article', 'Article');

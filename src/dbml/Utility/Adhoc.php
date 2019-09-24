@@ -230,7 +230,7 @@ class Adhoc
         $result = [];
         foreach ($array as $key => $val) {
             // QueryBuilder で submethod ならプレフィックスを付けない
-            if ($val instanceof QueryBuilder && $val->getSubmethod() !== null) {
+            if ($val instanceof QueryBuilder && ($val->getSubmethod() !== null && $val->getSubmethod() !== 'query')) {
                 $result[$key] = $val;
                 continue;
             }

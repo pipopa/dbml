@@ -547,6 +547,9 @@ use function ryunosuke\dbml\throws;
  * @method QueryBuilder           select($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
  *     駆動表を省略できる <@uses Database::select()>
  * }
+ * @method QueryBuilder           subquery($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
+ *     駆動表を省略できる <@uses Database::subquery()>
+ * }
  * @method QueryBuilder           subexists($tableDescriptor = [], $where = []) {
  *     駆動表を省略できる <@uses Database::subexists()>
  * }
@@ -963,7 +966,7 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
 
         // スコープを当てた後に Database への移譲で済むもの系
         $methods = implode('|', array_keys(Database::METHODS));
-        if (preg_match("#^((prepare)?select|select(count|min|max|sum|avg)|sub($methods)|(not)?subexists|sub(count|min|max|sum|avg)|_count|min|max|sum|avg)$#ui", $name)) {
+        if (preg_match("#^((prepare)?select|select(count|min|max|sum|avg)|sub($methods)|(not)?subexists|sub(query|count|min|max|sum|avg)|_count|min|max|sum|avg)$#ui", $name)) {
             // Countable のために別メソッドにしているので読み替え
             if (strcasecmp($name, '_count') === 0) {
                 $name = 'count';
