@@ -262,7 +262,6 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
 
             if ($database->getPlatform() instanceof MySqlPlatform) {
                 $this->assertEquals(['id' => 1], $database->deleteIgnore('foreign_p', ['id' => 1]));
-                $this->assertEquals([], $database->deleteIgnore('foreign_p', ['id' => 2]));
             }
         }
 
@@ -2644,6 +2643,9 @@ IGNORE 0 LINES
         if (!$database->getPlatform() instanceof MySqlPlatform) {
             return;
         }
+
+        // for mysql 8.0
+        $database->executeUpdate('SET GLOBAL local_infile= 1');
 
         $csvfile = sys_get_temp_dir() . '/load.csv';
 
