@@ -709,8 +709,14 @@ class Database
             'convertEmptyToNull'   => true,
             // 取得時にサフィックス(columnname@integer)で自動キャストする時の区切り文字
             'autoCastSuffix'       => null,
-            // 埋め込み条件の yaml パーサ（デフォルトで symfony の物を使う。拡張が入っているなら "yaml_parse" でも良い）
-            'yamlParser'           => '\Symfony\\Component\\Yaml\\Yaml::parse',
+            // 埋め込み条件の yaml パーサ
+            'yamlParser'           => (function () {
+                // for compatible 1.0
+                if (class_exists('\\Symfony\\Component\\Yaml\\Yaml')) {
+                    return '\\Symfony\\Component\\Yaml\\Yaml::parse'; // @codeCoverageIgnoreStart
+                }
+                return function ($yaml) { return paml_import($yaml)[0]; };
+            })(),
             // DB型で自動キャストする型設定。select,affect 要素を持つ（多少無駄になるがサンプルも兼ねて冗長に記述してある）
             'autoCastType'         => [
                 // 正式な与え方。select は取得（SELECT）時、affect は設定（INSERT/UPDATE）時を表す

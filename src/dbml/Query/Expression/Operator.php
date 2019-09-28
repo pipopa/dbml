@@ -11,7 +11,6 @@ use function ryunosuke\dbml\array_flatten;
 use function ryunosuke\dbml\array_nmap;
 use function ryunosuke\dbml\arrayize;
 use function ryunosuke\dbml\first_keyvalue;
-use function ryunosuke\dbml\is_iterable;
 use function ryunosuke\dbml\str_subreplace;
 use const ryunosuke\dbml\strcat;
 

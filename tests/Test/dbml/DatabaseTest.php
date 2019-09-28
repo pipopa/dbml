@@ -540,10 +540,8 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
     {
         // パース可能
         $this->assertEquals(['a', 'b', 'c'], $database->parseYaml('[a, b, c]', false));
-        $this->assertEquals(['a' => 'A'], $database->parseYaml('{a: A}', false));
-        $this->assertEquals([['a' => 1], ['b' => 2]], $database->parseYaml('[a: 1, b: 2]', false));
-        // 不正なシンタックス
-        $this->assertException('Malformed inline YAML', L($database)->parseYaml('[a,b,c', false));
+        $this->assertEquals((object)['a' => 'A'], $database->parseYaml('{a: A}', false));
+        $this->assertEquals(['a' => 1,'b' => 2], $database->parseYaml('[a: 1, b: 2]', false));
 
         if (function_exists('yaml_parse')) {
             $database = $database->context()->setYamlParser('yaml_parse');

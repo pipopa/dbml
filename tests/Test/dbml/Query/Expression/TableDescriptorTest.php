@@ -6,7 +6,6 @@ use ryunosuke\dbml\Query\Expression\Expression;
 use ryunosuke\dbml\Query\Expression\TableDescriptor;
 use ryunosuke\dbml\Query\QueryBuilder;
 use ryunosuke\Test\Database;
-use function ryunosuke\dbml\array_lookup;
 use function ryunosuke\dbml\stdclass;
 
 class TableDescriptorTest extends \ryunosuke\Test\AbstractUnitTestCase
@@ -84,18 +83,19 @@ class TableDescriptorTest extends \ryunosuke\Test\AbstractUnitTestCase
      */
     function test_forge($database)
     {
-        $this->assertEquals(['test'], array_lookup(TableDescriptor::forge($database, 'test'), 'descriptor'));
-        $this->assertEquals(['test1', 'test2'], array_lookup(TableDescriptor::forge($database, 'test1,test2'), 'descriptor'));
-        $this->assertEquals(['test1', '+test2'], array_lookup(TableDescriptor::forge($database, 'test1+test2'), 'descriptor'));
-        $this->assertEquals(['test1', '+test2'], array_lookup(TableDescriptor::forge($database, [
+        $of = function ($v) { return $v->descriptor; };
+        $this->assertEquals(['test'], array_map($of, TableDescriptor::forge($database, 'test')));
+        $this->assertEquals(['test1', 'test2'], array_map($of, TableDescriptor::forge($database, 'test1,test2')));
+        $this->assertEquals(['test1', '+test2'], array_map($of, TableDescriptor::forge($database, 'test1+test2')));
+        $this->assertEquals(['test1', '+test2'], array_map($of, TableDescriptor::forge($database, [
             'test1'  => [],
             '+test2' => [],
-        ]), 'descriptor'));
-        $this->assertEquals(['test', null], array_lookup(TableDescriptor::forge($database, [
+        ])));
+        $this->assertEquals(['test', null], array_map($of, TableDescriptor::forge($database, [
             null,
             'test',
             ['c',],
-        ]), 'descriptor'));
+        ])));
     }
 
     /**
