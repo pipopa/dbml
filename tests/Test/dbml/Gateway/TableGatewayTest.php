@@ -1267,7 +1267,7 @@ AND ((flag=1))", "$gw");
         $this->assertEquals($count, $count = $gateway->count());
         $this->assertEquals('ZZZ', $gateway->value('name', $pri));
 
-        // 主キー無しで upsert すると更新されるはず
+        // 主キー無しで upsert すると挿入されるはず
         $pri = $gateway->upsertOrThrow(['name' => 'KKK']);
         $this->assertEquals($count + 1, $count = $gateway->count());
         $this->assertEquals('KKK', $gateway->value('name', $pri));
@@ -1343,6 +1343,113 @@ AND ((flag=1))", "$gw");
         $this->assertEquals([], $gateway->insertConditionally(['id' => 11], ['name' => 'hoge']));
         $this->assertEquals([], $gateway->upsertConditionally(['id' => 12], ['name' => 'fuga']));
         $this->assertEquals([], $gateway->modifyConditionally(['id' => 13], ['name' => 'piyo']));
+    }
+
+    /**
+     * @dataProvider provideGateway
+     * @param TableGateway $gateway
+     * @param Database $database
+     */
+    function test_affect_override($gateway, $database)
+    {
+        if (!$database->getCompatiblePlatform()->supportsIgnore()) {
+            return;
+        }
+
+        $gateway = new class($database, 'test') extends TableGateway
+        {
+            public $called = [];
+
+            public function insert($data)
+            {
+                $this->called[] = __FUNCTION__;
+                return parent::{__FUNCTION__}(...func_get_args());
+            }
+
+            public function update($data, array $identifier = [])
+            {
+                $this->called[] = __FUNCTION__;
+                return parent::{__FUNCTION__}(...func_get_args());
+            }
+
+            public function delete(array $identifier = [])
+            {
+                $this->called[] = __FUNCTION__;
+                return parent::{__FUNCTION__}(...func_get_args());
+            }
+
+            public function remove(array $identifier = [])
+            {
+                $this->called[] = __FUNCTION__;
+                return parent::{__FUNCTION__}(...func_get_args());
+            }
+
+            public function destroy(array $identifier = [])
+            {
+                $this->called[] = __FUNCTION__;
+                return parent::{__FUNCTION__}(...func_get_args());
+            }
+
+            public function reduce($limit = null, $orderBy = [], $groupBy = [], $identifier = [])
+            {
+                $this->called[] = __FUNCTION__;
+                return parent::{__FUNCTION__}(...func_get_args());
+            }
+
+            public function upsert($insertData, $updateData = [])
+            {
+                $this->called[] = __FUNCTION__;
+                return parent::{__FUNCTION__}(...func_get_args());
+            }
+
+            public function modify($insertData, $updateData = [])
+            {
+                $this->called[] = __FUNCTION__;
+                return parent::{__FUNCTION__}(...func_get_args());
+            }
+
+            public function replace($insertData)
+            {
+                $this->called[] = __FUNCTION__;
+                return parent::{__FUNCTION__}(...func_get_args());
+            }
+
+            public function truncate($cascade = false)
+            {
+                $this->called[] = __FUNCTION__;
+                return parent::{__FUNCTION__}(...func_get_args());
+            }
+        };
+        $gateway->truncate();
+        $gateway->insertOrThrow(['id' => 1]);
+        $gateway->upsertOrThrow(['id' => 2]);
+        $gateway->modifyConditionally(['id' => 3], ['id' => 3]);
+        $gateway->insertIgnore(['id' => 4]);
+        $gateway->insertConditionally(['id' => 5], ['id' => 5]);
+        $gateway->updateIgnore(['name' => 'aaa'], ['id' => 1]);
+        $gateway->updateOrThrow(['name' => 'aaa'], ['id' => 2]);
+        $gateway->replaceOrThrow(['id' => 3, 'name' => 'aaa']);
+        $gateway->deleteOrThrow(['id' => 1]);
+        $gateway->removeOrThrow(['id' => 2]);
+        $gateway->destroyOrThrow(['id' => 3]);
+        $gateway->reduceOrThrow(1, 'id');
+
+        // サフィックス付きでもオーバーライドしたメソッドが呼ばれている
+        $this->assertEquals([
+            'truncate',
+            'insert',
+            'upsert',
+            'modify',
+            'insert',
+            'insert',
+            'update',
+            'update',
+            'replace',
+            'delete',
+            'remove',
+            'destroy',
+            'reduce',
+        ], $gateway->called);
     }
 
     /**

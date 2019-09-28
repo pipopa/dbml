@@ -19,6 +19,7 @@ use function ryunosuke\dbml\concat;
 use function ryunosuke\dbml\parameter_length;
 use function ryunosuke\dbml\split_noempty;
 use function ryunosuke\dbml\throws;
+use function ryunosuke\dbml\try_finally;
 
 // @formatter:off
 /**
@@ -628,36 +629,6 @@ use function ryunosuke\dbml\throws;
  * @method array                  changeArray($dataarray, $identifier) {
  *     駆動表を省略できる <@uses Database::changeArray()>
  * }
- * @method int                    insert($data) {
- *     駆動表を省略できる <@uses Database::insert()>
- * }
- * @method int                    update($data, array $identifier = []) {
- *     駆動表を省略できる <@uses Database::update()>
- * }
- * @method int                    delete(array $identifier = []) {
- *     駆動表を省略できる <@uses Database::delete()>
- * }
- * @method int                    remove(array $identifier = []) {
- *     駆動表を省略できる <@uses Database::remove()>
- * }
- * @method int                    destroy(array $identifier = []) {
- *     駆動表を省略できる <@uses Database::destroy()>
- * }
- * @method int                    reduce($limit = null, $orderBy = [], $groupBy = [], $identifier = []) {
- *     駆動表を省略できる <@uses Database::reduce()>
- * }
- * @method int                    upsert($insertData, $updateData = null) {
- *     駆動表を省略できる <@uses Database::upsert()>
- * }
- * @method int                    modify($insertData, $updateData = null) {
- *     駆動表を省略できる <@uses Database::modify()>
- * }
- * @method int                    replace($insertData, $updateData = null) {
- *     駆動表を省略できる <@uses Database::replace()>
- * }
- * @method int                    truncate() {
- *     駆動表を省略できる <@uses Database::truncate()>
- * }
  *
  * @method array                  insertOrThrow($data) {
  *     <@uses TableGateway::insert()> の例外送出版
@@ -677,10 +648,10 @@ use function ryunosuke\dbml\throws;
  * @method array                  reduceOrThrow($limit = null, $orderBy = [], $groupBy = [], $identifier = []) {
  *     <@uses TableGateway::reduce()> の例外送出版
  * }
- * @method array                  upsertOrThrow($insertData, $updateData = null) {
+ * @method array                  upsertOrThrow($insertData, $updateData = []) {
  *     <@uses TableGateway::upsert()> の例外送出版
  * }
- * @method array                  modifyOrThrow($insertData, $updateData = null) {
+ * @method array                  modifyOrThrow($insertData, $updateData = []) {
  *     <@uses TableGateway::modify()> の例外送出版
  * }
  * @method array                  replaceOrThrow($data) {
@@ -702,17 +673,17 @@ use function ryunosuke\dbml\throws;
  * @method array                  destroyIgnore(array $identifier = []) {
  *     駆動表を省略できる <@uses Database::destroyIgnore()>
  * }
- * @method array                  modifyIgnore($insertData, $updateData = null) {
+ * @method array                  modifyIgnore($insertData, $updateData = []) {
  *     駆動表を省略できる <@uses Database::modifyIgnore()>
  * }
  *
  * @method array                  insertConditionally($condition, $data) {
  *     駆動表を省略できる <@uses Database::insertConditionally()>
  * }
- * @method array                  upsertConditionally($condition, $insertData, $updateData = null) {
+ * @method array                  upsertConditionally($condition, $insertData, $updateData = []) {
  *     駆動表を省略できる <@uses Database::upsertConditionally()>
  * }
- * @method array                  modifyConditionally($condition, $insertData, $updateData = null) {
+ * @method array                  modifyConditionally($condition, $insertData, $updateData = []) {
  *     駆動表を省略できる <@uses Database::modifyConditionally()>
  * }
  *
@@ -728,7 +699,7 @@ use function ryunosuke\dbml\throws;
  * @method Statement              prepareDelete(array $identifier = []) {
  *     駆動表を省略できる <@uses Database::prepareDelete()>
  * }
- * @method Statement              prepareModify($insertData, $updateData = null) {
+ * @method Statement              prepareModify($insertData, $updateData = []) {
  *     駆動表を省略できる <@uses Database::prepareModify()>
  * }
  * @method Statement              prepareReplace($data) {
@@ -911,59 +882,6 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
             return $this->join($matches[1] ?? '' ?: 'auto', array_shift($arguments), array_get($arguments, 0, []), array_get($arguments, 1, null));
         }
 
-        // 更新系メソッド
-        if (preg_match('#^(prepare)?(insert|update|delete|remove|destroy|reduce|upsert|modify|replace|changeArray|truncate).*?(OrThrow)?#ui', $name, $match)) {
-            $method = strtolower($match[2]);
-            $this->resetResult();
-
-            // 第1引数は必ずテーブル名
-            array_unshift($arguments, $this->tableName);
-
-            // 更新・削除系メソッドの where 引数の位置（兼作用系メソッドの判定に使う）
-            $where_index = [
-                'update'  => 2,
-                'delete'  => 1,
-                'remove'  => 1,
-                'destroy' => 1,
-            ];
-
-            // insert で複雑なクエリになるなら insertSelect へ移譲する（自分自身を利用した行の複製のような動作になる）
-            if ($method === 'insert') {
-                $sp = $this->getScopeParams([]);
-                if (false
-                    || 1 < count($sp['column'])
-                    || 0 < count($sp['where'])
-                    || 0 < count($sp['orderBy'])
-                    || 0 < count($sp['limit'])
-                    || 0 < count($sp['groupBy'])
-                    || 0 < count($sp['having'])
-                ) {
-                    $name = 'insertSelect';
-                    $arguments[1] = $this->database->select(...array_values($sp));
-                }
-            }
-            // 作用系は自身のスコープで色々やる
-            elseif (isset($where_index[$method])) {
-                $sp = $this->getScopeParams([], array_get($arguments, $where_index[$method], []));
-                $arguments[$where_index[$method]] = $sp['where'];
-                $sp['where'] = [];
-
-                // 順序・制限系クエリなら（mysql なら）それを活かした update/delete が実行できるのでそのようにする
-                if (count($sp['column']) > 1 || count($sp['orderBy']) > 0 || count($sp['limit']) > 0) {
-                    $arguments[0] = $this->database->select(...array_values($sp));
-                }
-                // 集約系はどうしようもないので例外（集約を利用した update/delete なんて考慮したくない）
-                if (count($sp['groupBy']) > 0 || count($sp['having']) > 0) {
-                    throw new \UnexpectedValueException('group or having is not allow affect query.');
-                }
-            }
-            // reduce は色々と特殊
-            elseif ($method === 'reduce') {
-                $arguments[0] = $this->select();
-            }
-            return $this->database->$name(...$arguments);
-        }
-
         // スコープを当てた後に Database への移譲で済むもの系
         $methods = implode('|', array_keys(Database::METHODS));
         if (preg_match("#^((prepare)?select|select(count|min|max|sum|avg)|sub($methods)|(not)?subexists|sub(query|count|min|max|sum|avg)|_count|min|max|sum|avg)$#ui", $name)) {
@@ -1033,6 +951,40 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
         if (isset($this->database->$tname)) {
             $method = $this->getUnsafeOption('defaultJoinMethod') . 'join';
             return $this->$method($this->database->$name(...$arguments));
+        }
+
+        // affect 複数系
+        if (preg_match('/^(insertSelect|insertArray|updateArray|modifyArray|changeArray)$/ui', $name, $matches)) {
+            $this->resetResult();
+            $method = strtolower($matches[1]);
+            return $this->database->$method($this->tableName, ...$arguments);
+        }
+        // prepare～affect 系
+        if (preg_match('/^prepare(.+)/ui', $name, $matches)) {
+            $method = strtolower($matches[1]);
+            $restorer = $this->database->storeOptions(['preparing' => true]);
+            return try_finally([$this, $method], $restorer, ...$arguments);
+        }
+        // affect～OrThrow 系
+        if (preg_match('/^(insert|update|delete|remove|destroy|reduce|upsert|modify|replace|truncate)OrThrow$/ui', $name, $matches)) {
+            $method = strtolower($matches[1]);
+            Adhoc::reargument($arguments, [$this, $method], []);
+            $arguments[] = ['primary' => 1, 'throw' => true];
+            return $this->$method(...$arguments);
+        }
+        // affect～Ignore 系
+        if (preg_match('/^(insert|update|delete|remove|destroy|modify)Ignore$/ui', $name, $matches)) {
+            $method = strtolower($matches[1]);
+            Adhoc::reargument($arguments, [$this, $method], []);
+            $arguments[] = ['primary' => 2, 'ignore' => true];
+            return $this->$method(...$arguments);
+        }
+        // affect～Conditionally 系
+        if (preg_match('/^(insert|upsert|modify)Conditionally$/ui', $name, $matches)) {
+            $method = strtolower($matches[1]);
+            $opt = Adhoc::reargument($arguments, [$this, $method], [0 => 'where']);
+            $arguments[] = ['primary' => 2] + $opt;
+            return $this->$method(...$arguments);
         }
 
         // 上記以外はすべて fetch 系メソッドとする（例外は Database 側で投げてくれるはず）
@@ -1113,6 +1065,23 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
         $that = $this->clone();
         $that->$name = $value;
         return $that;
+    }
+
+    private function _rewhere(&$where)
+    {
+        $sp = $this->getScopeParams([], $where);
+        $where = $sp['where'];
+
+        // 集約系はどうしようもないので例外（集約を利用した update/delete なんて考慮したくない）
+        if (count($sp['groupBy']) > 0 || count($sp['having']) > 0) {
+            throw new \UnexpectedValueException('group or having is not allow affect query.');
+        }
+        // 順序・制限系クエリなら（mysql なら）それを活かした update/delete が実行できるのでそのようにする
+        if (count($sp['column']) > 1 || count($sp['orderBy']) > 0 || count($sp['limit']) > 0) {
+            $sp['where'] = [];
+            return $this->database->select(...array_values($sp));
+        }
+        return $this->tableName;
     }
 
     /**
@@ -2291,6 +2260,127 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
     {
         $sp = $this->getScopeParams([], $wheres);
         return $this->database->gather($this->tableName, $sp['where'], $other_wheres, $parentive);
+    }
+
+    /**
+     * 駆動表を省略できる <@uses Database::insert()>
+     *
+     * @inheritdoc Database::insert()
+     */
+    public function insert($data)
+    {
+        $this->resetResult();
+        $sp = $this->getScopeParams([]);
+        if (false
+            || 1 < count($sp['column'])
+            || 0 < count($sp['where'])
+            || 0 < count($sp['orderBy'])
+            || 0 < count($sp['limit'])
+            || 0 < count($sp['groupBy'])
+            || 0 < count($sp['having'])
+        ) {
+            return $this->database->insertSelect($this->tableName, $this->database->select(...array_values($sp)));
+        }
+        return $this->database->insert($this->tableName, ...func_get_args());
+    }
+
+    /**
+     * 駆動表を省略できる <@uses Database::update()>
+     *
+     * @inheritdoc Database::update()
+     */
+    public function update($data, array $identifier = [])
+    {
+        $this->resetResult();
+        return $this->database->update($this->_rewhere($identifier), $data, $identifier, ...array_slice(func_get_args(), 2));
+    }
+
+    /**
+     * 駆動表を省略できる <@uses Database::delete()>
+     *
+     * @inheritdoc Database::delete()
+     */
+    public function delete(array $identifier = [])
+    {
+        $this->resetResult();
+        return $this->database->delete($this->_rewhere($identifier), $identifier, ...array_slice(func_get_args(), 1));
+    }
+
+    /**
+     * 駆動表を省略できる <@uses Database::remove()>
+     *
+     * @inheritdoc Database::remove()
+     */
+    public function remove(array $identifier = [])
+    {
+        $this->resetResult();
+        return $this->database->remove($this->_rewhere($identifier), $identifier, ...array_slice(func_get_args(), 1));
+    }
+
+    /**
+     * 駆動表を省略できる <@uses Database::destroy()>
+     *
+     * @inheritdoc Database::destroy()
+     */
+    public function destroy(array $identifier = [])
+    {
+        $this->resetResult();
+        return $this->database->destroy($this->_rewhere($identifier), $identifier, ...array_slice(func_get_args(), 1));
+    }
+
+    /**
+     * 駆動表を省略できる <@uses Database::reduce()>
+     *
+     * @inheritdoc Database::reduce()
+     */
+    public function reduce($limit = null, $orderBy = [], $groupBy = [], $identifier = [])
+    {
+        $this->resetResult();
+        return $this->database->reduce($this->select(), $limit, $orderBy, $groupBy, $identifier, ...array_slice(func_get_args(), 4));
+    }
+
+    /**
+     * 駆動表を省略できる <@uses Database::upsert()>
+     *
+     * @inheritdoc Database::upsert()
+     */
+    public function upsert($insertData, $updateData = [])
+    {
+        $this->resetResult();
+        return $this->database->upsert($this->tableName, $insertData, $updateData, ...array_slice(func_get_args(), 2));
+    }
+
+    /**
+     * 駆動表を省略できる <@uses Database::modify()>
+     *
+     * @inheritdoc Database::modify()
+     */
+    public function modify($insertData, $updateData = [])
+    {
+        $this->resetResult();
+        return $this->database->modify($this->tableName, $insertData, $updateData, ...array_slice(func_get_args(), 2));
+    }
+
+    /**
+     * 駆動表を省略できる <@uses Database::replace()>
+     *
+     * @inheritdoc Database::replace()
+     */
+    public function replace($insertData)
+    {
+        $this->resetResult();
+        return $this->database->replace($this->tableName, $insertData, ...array_slice(func_get_args(), 1));
+    }
+
+    /**
+     * 駆動表を省略できる <@uses Database::truncate()>
+     *
+     * @inheritdoc Database::truncate()
+     */
+    public function truncate($cascade = false)
+    {
+        $this->resetResult();
+        return $this->database->truncate($this->tableName, $cascade);
     }
 
     /**
