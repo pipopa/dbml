@@ -560,10 +560,10 @@ use ryunosuke\dbml\Utility\Adhoc;
  * @method array                  reduceOrThrow($tableName, $limit = null, $orderBy = [], $groupBy = [], $identifier = []) {
  *     <@uses Database::reduce()> の例外送出版
  * }
- * @method array                  upsertOrThrow($tableName, $insertData, $updateData = null) {
+ * @method array                  upsertOrThrow($tableName, $insertData, $updateData = []) {
  *     <@uses Database::upsert()> の例外送出版
  * }
- * @method array                  modifyOrThrow($tableName, $insertData, $updateData = null) {
+ * @method array                  modifyOrThrow($tableName, $insertData, $updateData = []) {
  *     <@uses Database::modify()> の例外送出版
  * }
  * @method array                  replaceOrThrow($tableName, $data) {
@@ -585,7 +585,7 @@ use ryunosuke\dbml\Utility\Adhoc;
  * @method array                  destroyIgnore($tableName, array $identifier = []) {
  *     IGNORE 付き <@uses Database::destroy()>
  * }
- * @method array                  modifyIgnore($tableName, $insertData, $updateData = null) {
+ * @method array                  modifyIgnore($tableName, $insertData, $updateData = []) {
  *     IGNORE 付き <@uses Database::modify()>
  * }
  *
@@ -599,7 +599,7 @@ use ryunosuke\dbml\Utility\Adhoc;
  *
  *     @param QueryBuilder|string|array $condition WHERE 条件 or Select オブジェクト
  * }
- * @method array                  upsertConditionally($tableName, $condition, $insertData, $updateData = null) {
+ * @method array                  upsertConditionally($tableName, $condition, $insertData, $updateData = []) {
  *     条件付き <@uses Database::upsert()>
  *
  *     $condition が WHERE 的判定され、合致しないときは upsert が行われない。
@@ -609,7 +609,7 @@ use ryunosuke\dbml\Utility\Adhoc;
  *
  *     @param QueryBuilder|string|array $condition WHERE 条件 or Select オブジェクト
  * }
- * @method array                  modifyConditionally($tableName, $condition, $insertData, $updateData = null) {
+ * @method array                  modifyConditionally($tableName, $condition, $insertData, $updateData = []) {
  *     条件付き <@uses Database::modify()>
  *
  *     $condition が WHERE 的判定され、合致しないときは modify が行われない。
@@ -632,7 +632,7 @@ use ryunosuke\dbml\Utility\Adhoc;
  * @method Statement              prepareDelete($tableName, array $identifier = []) {
  *     クエリビルダ構文で DELETE 用プリペアドステートメント取得する（<@uses Database::prepare()>, <@uses Database::delete()> も参照）
  * }
- * @method Statement              prepareModify($tableName, $insertData, $updateData = null) {
+ * @method Statement              prepareModify($tableName, $insertData, $updateData = []) {
  *     クエリビルダ構文で MODIFY 用プリペアドステートメント取得する（<@uses Database::prepare()>, <@uses Database::modify()> も参照）
  * }
  * @method Statement              prepareReplace($tableName, $data) {
@@ -5736,7 +5736,7 @@ class Database
      * @param mixed $updateData UPDATE データ配列
      * @return int|array affected rows. if update return 0 or 2, else insert return 1
      */
-    public function upsert($tableName, $insertData, $updateData = null)
+    public function upsert($tableName, $insertData, $updateData = [])
     {
         // 隠し引数 $opt
         $opt = func_num_args() === 4 ? func_get_arg(3) : [];
@@ -5748,7 +5748,7 @@ class Database
         }
         if (is_array($tableName)) {
             list($tableName, $insertData) = first_keyvalue($tableName);
-            if ($updateData !== null && !is_hasharray($updateData)) {
+            if ($updateData && !is_hasharray($updateData)) {
                 $updateData = array_combine(array_keys($insertData), $updateData);
             }
         }
@@ -5785,7 +5785,7 @@ class Database
         }
 
         if ($this->exists($tableName, $wheres, true)) {
-            if ($updateData === null) {
+            if (!$updateData) {
                 $updateData = array_diff_key($insertData, $pcols);
             }
             $affected = $this->update($originalName, $updateData, $wheres, $opt);
