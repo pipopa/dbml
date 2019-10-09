@@ -85,7 +85,7 @@ class Schema
     private $tableColumnMetadata = [];
 
     /** @var ForeignKeyConstraint[][] */
-    private $foreignKeys = [];
+    private $foreignKeys = [], $lazyForeignKeys = [];
 
     /** @var array */
     private $relations = [];
@@ -123,6 +123,7 @@ class Schema
         $this->tableColumns = [];
         $this->tableColumnMetadata = [];
         $this->foreignKeys = [];
+        $this->lazyForeignKeys = [];
         $this->relations = [];
 
         $this->cache->flushAll();
@@ -309,6 +310,11 @@ class Schema
                 $fkeys[$fkey->getName()] = $fkey;
             }, []);
         }
+        $lazykeys = $this->lazyForeignKeys[$table_name] ?? [];
+        $this->lazyForeignKeys[$table_name] = [];
+        foreach ($lazykeys ?? [] as $fkname => $fk) {
+            $this->addForeignKey($fk());
+        }
         return $this->foreignKeys[$table_name];
     }
 
@@ -442,6 +448,29 @@ class Schema
             $vals = $fkey->getLocalColumns();
         }
         return array_combine($keys, $vals);
+    }
+
+    /**
+     * テーブルに外部キーを追加する
+     *
+     * このメソッドで追加された外部キーはできるだけ遅延して追加され、必要になるまでは実行されない。
+     *
+     * @param string $localTable 外部キー定義テーブル名
+     * @param string $foreignTable 参照先テーブル名
+     * @param string|array $columnsMap 外部キーカラム
+     * @param string|null $fkname 外部キー名。省略時は自動命名
+     * @return string 追加する外部キー名
+     */
+    public function addForeignKeyLazy($localTable, $foreignTable, $columnsMap, $fkname = null)
+    {
+        $fkname = $fkname ?? ($localTable . '_' . $foreignTable . '_' . count($this->lazyForeignKeys[$localTable] ?? []));
+        $this->lazyForeignKeys[$localTable][$fkname] = function () use ($localTable, $foreignTable, $columnsMap, $fkname) {
+            $columnsMap = Adhoc::to_hash($columnsMap);
+            $fk = new ForeignKeyConstraint(array_keys($columnsMap), $foreignTable, array_values($columnsMap), $fkname);
+            $fk->setLocalTable($this->getTable($localTable));
+            return $fk;
+        };
+        return $fkname;
     }
 
     /**

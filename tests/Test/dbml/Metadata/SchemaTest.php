@@ -324,6 +324,24 @@ class SchemaTest extends \ryunosuke\Test\AbstractUnitTestCase
      * @dataProvider provideSchema
      * @param Schema $schema
      */
+    function test_addForeignKeyLazy($schema)
+    {
+        $schema->addTable($this->getDummyTable('foreign1'));
+        $schema->addTable($this->getDummyTable('foreign2'));
+
+        $this->assertEquals('fk_hogera', $schema->addForeignKeyLazy('foreign1', 'foreign2', 'id', 'fk_hogera'));
+        $this->assertEquals('foreign1_foreign2_1', $schema->addForeignKeyLazy('foreign1', 'foreign2', ['foreign1' => 'foreign2']));
+        $this->assertEquals(['fk_hogera', 'foreign1_foreign2_1'], array_keys($schema->getTableForeignKeys('foreign1')));
+        $schema->refresh();
+        $schema->addTable($this->getDummyTable('foreign1'));
+        $schema->addTable($this->getDummyTable('foreign2'));
+        $this->assertEquals([], array_keys($schema->getTableForeignKeys('foreign1')));
+    }
+
+    /**
+     * @dataProvider provideSchema
+     * @param Schema $schema
+     */
     function test_addForeignKey($schema)
     {
         $newFK = function ($name, $lt, $lc, $ft, $fc) use ($schema) {

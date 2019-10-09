@@ -2158,6 +2158,9 @@ class Database
      * 外部キーをまとめて追加する
      *
      * addForeignKey を複数呼ぶのとほぼ等しい。
+     * $lazy に true を与えると遅延実行され、必要になったときに追加される。
+     * あまり大量に追加するのであれば true にしたほうが良い。
+     * また、 $lazy のデフォルト値は将来 true 変更される。
      *
      * ```php
      * # 下記のような配列を与える
@@ -2177,16 +2180,24 @@ class Database
      * ```
      *
      * @param array $relations 外部キー定義
-     * @return ForeignKeyConstraint[] 追加した外部キーオブジェクト
+     * @param bool $lazy 遅延追加するか（デフォルト false だが、このデフォルト値はバージョンアップで true に変更される）
+     * @return ForeignKeyConstraint[] 追加した外部キーオブジェクト。$lazy の場合は名前だけで実体はなし
      */
-    public function addRelation($relations)
+    public function addRelation($relations, $lazy = false)
     {
         $result = [];
         foreach ($relations as $localTable => $foreignTables) {
             foreach ($foreignTables as $foreignTable => $relation) {
                 foreach ($relation as $fkname => $columnsMap) {
-                    $fkey = $this->addForeignKey($localTable, $foreignTable, $columnsMap, is_int($fkname) ? null : $fkname);
-                    $result[$fkey->getName()] = $fkey;
+                    $fkname = is_int($fkname) ? null : $fkname;
+                    if ($lazy) {
+                        $fkname = $this->getSchema()->addForeignKeyLazy($localTable, $foreignTable, $columnsMap, $fkname);
+                        $result[$fkname] = null;
+                    }
+                    else {
+                        $fkey = $this->addForeignKey($localTable, $foreignTable, $columnsMap, $fkname);
+                        $result[$fkey->getName()] = $fkey;
+                    }
                 }
             }
         }

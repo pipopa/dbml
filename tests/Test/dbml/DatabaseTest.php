@@ -614,14 +614,31 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
                 ],
             ],
         ]);
-        $this->assertArrayHasKey('auto_fk1', $fkeys);
-        $this->assertArrayHasKey('test2_test_0', $fkeys);
+        $this->assertEquals(['auto_fk1', 'test2_test_0'], array_keys($fkeys));
 
         $this->assertEquals('SELECT test.*, test1.* FROM test INNER JOIN test1 ON test1.id = test.id', (string) $database->select('test+test1'));
         $this->assertEquals('SELECT test.*, test2.* FROM test INNER JOIN test2 ON test2.id = test.id', (string) $database->select('test+test2'));
 
+        $fkeys = $database->addRelation([
+            't_comment' => [
+                't_article' => [
+                    [
+                        'comment_id' => 'article_id',
+                    ],
+                ],
+            ],
+        ], true);
+        $this->assertEquals(['t_comment_t_article_0'], array_keys($fkeys));
+        $this->assertEquals([
+            'fk_articlecomment',
+            't_comment_t_article_0'
+        ], array_keys($database->getSchema()->getTableForeignKeys('t_comment')));
+
         // 後処理
         $database->getSchema()->refresh();
+
+        $fkeys = $database->getSchema()->getTableForeignKeys('t_comment');
+        $this->assertEquals(['fk_articlecomment'], array_keys($fkeys));
     }
 
     /**
