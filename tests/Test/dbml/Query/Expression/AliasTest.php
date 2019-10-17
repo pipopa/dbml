@@ -52,7 +52,9 @@ class AliasTest extends \ryunosuke\Test\AbstractUnitTestCase
 
     function test___toString()
     {
-        $this->assertEquals('actual AS alias', Alias::forge('alias', 'actual'));
-        $this->assertEquals('actual', Alias::forge('', 'actual'));
+        $this->assertEquals('T.actual AS alias', (string) Alias::forge('alias', 'T.actual'));
+        $this->assertEquals('T.actual', (string) Alias::forge('actual', 'T.actual'));
+        $this->assertEquals('actual AS alias', (string) Alias::forge('alias', 'actual'));
+        $this->assertEquals('actual', (string) Alias::forge('', 'actual'));
     }
 }

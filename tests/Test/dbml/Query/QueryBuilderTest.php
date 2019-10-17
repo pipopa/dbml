@@ -1477,7 +1477,7 @@ SQL
         // value のみ見るので IN になるのは正しい動作
         $this->assertEquals("SELECT A.*, A.article_id FROM t_article A WHERE A.article_id IN (NULL)", $builder->queryInto());
         // 子供である C 条件が現れるのはインジェクションの危険性がある
-        $this->assertEquals("SELECT C.comment_id AS comment_id, C.* FROM t_comment C", $builder->getSubbuilder('C')->queryInto());
+        $this->assertEquals("SELECT C.comment_id, C.* FROM t_comment C", $builder->getSubbuilder('C')->queryInto());
     }
 
     /**
@@ -3255,7 +3255,7 @@ INNER JOIN t_leaf ON (t_leaf.leaf_root_id = t_root.root_id) AND (t_leaf.leaf_roo
         $added = $addPrimary('alias', ['test.id'], true);
         $selects = $builder->getQueryPart('select');
         $this->assertEquals('id', $added);
-        $this->assertEquals('test.id AS id', $selects[0]);
+        $this->assertEquals('test.id', $selects[0]);
         $this->assertEquals('test.*', $selects[1]);
 
         $builder->reset()->column('test.id');
@@ -3375,7 +3375,7 @@ INNER JOIN t_leaf ON (t_leaf.leaf_root_id = t_root.root_id) AND (t_leaf.leaf_roo
             ]
         ]);
         $query = $builder->queryInto();
-        $this->assertContains('-- (SELECT C1.seq AS seq, C1.* FROM foreign_c1 C1 WHERE C1.id IN ([parent.id])) AS C1', $query);
+        $this->assertContains('-- (SELECT C1.seq, C1.* FROM foreign_c1 C1 WHERE C1.id IN ([parent.id])) AS C1', $query);
         $this->assertContains("-- (SELECT C2.seq, NOW('1') AS now FROM foreign_c2 C2 WHERE (C2.seq = '1') AND (C2.cid IN ([parent.id]))) AS C2", $query);
 
         $builder->getDatabase()->insert('g_ancestor', [

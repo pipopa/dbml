@@ -102,7 +102,12 @@ class Alias
      */
     public function __toString()
     {
-        return $this->actual . concat(' AS ', $this->alias);
+        $alias = $this->alias;
+        if (is_string($this->actual) && (explode('.', $this->actual, 2)[1] ?? '') === $alias) {
+            $alias = '';
+        }
+
+        return $this->actual . concat(' AS ', $alias);
     }
 
     /**
