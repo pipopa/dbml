@@ -20,6 +20,12 @@
 
 - Entity 消したい。使わない…
 - QueryBuilder が直接 param を持つのではなく、 param を持った Queryable を持つことで妙なパラメータ順などは不要にできる
+- 仮想カラムは Gateway が握るのではなく Schema が握れば色々シンプルにできるはず（mysql の generated column と親和性も高くなる）
+
+## 1.0.7
+
+- [change] 内部処理をいくつか変更
+- [change][QueryBuilder] 存在するカラムのクロージャを自動で SELECT 句に加えるオプションを用意
 
 ## 1.0.6
 
