@@ -114,6 +114,8 @@ use function ryunosuke\dbml\throws;
  *
  *     @param string $string  集約関数の区切り文字
  * }
+ * @method bool                   getAutoSelectClosure()
+ * @method $this                  setAutoSelectClosure($bool)
  * @method bool                   getInjectChildColumn()
  * @method $this                  setInjectChildColumn($bool)
  *
@@ -285,6 +287,8 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
             'primarySeparator'     => "\x1F",
             // aggregate 時（columnname@sum）の区切り文字
             'aggregationDelimiter' => '@',
+            // 型宣言付きクロージャをキー付きとみなすか否か
+            'autoSelectClosure'    => false,
             // サブクエリをコメント化して親のクエリに埋め込むか否か
             'injectChildColumn'    => false,
         ];
@@ -576,6 +580,8 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
             }
         }
 
+        $autoSelectClosure = $this->getUnsafeOption('autoSelectClosure');
+
         foreach ($columns as $key => $column) {
             // 仮想カラム
             if ($schema->hasTable($table) && $column !== null) {
@@ -588,8 +594,14 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
             }
 
             // Expression 化出来そうならする
+            $exists_colums = is_string($key) && $schema->hasTable($table) && $schema->getTable($table)->hasColumn($key);
+            if ($column instanceof \Closure && $exists_colums) {
+                $column = function ($value = null) use ($column) {
+                    return $column($value);
+                };
+            }
             $column = Expression::forge($column);
-            $column = PhpExpression::forge($column, $key);
+            $column = PhpExpression::forge($column, $key, $autoSelectClosure ? $accessor : null);
 
             // テーブルに紐付かない列指定で配列指定は operator(Expression 化) する
             if (!$table && is_array($column)) {
@@ -1380,7 +1392,8 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
      * | 23 | `new PhpExpression(function($cname){}, 'cname')` | PhpExpression に第2引数を指定すると列の値として {@link PhpExpression} でラップされたクロージャの返り値を返す。引数は**第2引数で指定された列の値**
      * | 24 | `function($cname = 'cname'){}`                   | 上と同じ。引数にデフォルト値が指定されている場合はそのデフォルト値が上で言う「指定された列」に相当する。
      * | 25 | `['cname' => function($value = null){}]`         | 上と同じ。引数のデフォルト値が null の場合はキーの値が使用される
-     * | 26 | `function(){return function($v){return $v;};}`   | クロージャの亜種。クロージャを返すクロージャはそのままクロージャとして活きるのでメソッドのような扱いにできる
+     * | 26 | `['cname' => function($value){}]`                | 上と同じ。autoSelectClosure オプションが true だとキーの値が使用されて 'cname' が SELECT 句に追加される
+     * | 27 | `function(){return function($v){return $v;};}`   | クロージャの亜種。クロージャを返すクロージャはそのままクロージャとして活きるのでメソッドのような扱いにできる
      * | 30 | `Gateway object`                                 | Gateway の表すテーブルとの {@link Database::subtable()} 相当の動作
      * | 31 | `['+alias' => Gateway object]`                   | Gateway の表すテーブルとの JOIN を表す
      * | 50 | `'TableDescriptor'`                              | 「テーブル名」を書く場所にはテーブル記法が使用できる（駆動表）
@@ -1450,13 +1463,26 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
      *     ],
      * ]);
      *
-     * # No.20 ～ 25： PhpExpression（他の用法は PhpExpression クラスのリファレンスを参照）
+     * # No.20 ～ 24： PhpExpression（他の用法は PhpExpression クラスのリファレンスを参照）
      * $qb->column([
      *     't_article' => [
      *         'phpval' => new PhpExpression('hoge'), // "hoge" という文字列を取得
      *     ],
      * ]);
-     * # No.26： クロージャを返すクロージャ
+     *
+     * # No.25, 26： PhpExpression（キーのカラム値を受け取るクロージャ）
+     * $qb->column([
+     *     't_article' => [
+     *         // No.25 デフォルト引数を null にするとキーで指定した値を単一で受け取るクロージャになる
+     *         'idmul10'      => function($id = null){return $id * 10;},
+     *         'article_id', // ただし、自動でカラムが追加されないので明示的に SELECT 句への追加が必要
+     *         // No.26 上とほぼ同じ。キーが実際に存在するカラム名の場合は「SELECT 句への追加しつつキーで指定した値を単一で受け取るクロージャ」となる
+     *         'article_name' => function($name){return strtoupper($name);},
+     *         // 'article_name' のような明示的な追加は不要
+     *     ],
+     * ]);
+     *
+     * # No.27： クロージャを返すクロージャ
      * $tuple = $qb->column([
      *     't_article.*' => [
      *         // クロージャ内の $this は行そのものを表す ArrayAccess なオブジェクトで bind される

@@ -338,6 +338,23 @@ FROM foreign_p INNER JOIN foreign_c1 ON foreign_c1.id = foreign_p.id
             'id'    => '1',
             'name1' => 'A',
         ], $builder->limit(1)->tuple());
+
+        $builder->setAutoSelectClosure(true);
+        $builder->reset()->column([
+            'test1' => [
+                'name1' => function (string $v) { return 'ss_' . $v; },
+            ],
+        ]);
+        $this->assertEquals([
+            'name1' => 'ss_a',
+        ], $builder->limit(1)->tuple());
+
+        $builder->setAutoSelectClosure(false);
+        $builder->reset()->column([
+            'test1' => [
+                'name1' => function (string $v) { return 'ss_' . $v; },
+            ],
+        ]);
     }
 
     /**

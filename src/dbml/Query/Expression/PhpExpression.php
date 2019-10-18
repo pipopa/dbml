@@ -3,6 +3,7 @@
 namespace ryunosuke\dbml\Query\Expression;
 
 use function ryunosuke\dbml\array_each;
+use function ryunosuke\dbml\concat;
 use function ryunosuke\dbml\date_convert;
 use function ryunosuke\dbml\first_keyvalue;
 use function ryunosuke\dbml\split_noempty;
@@ -145,16 +146,17 @@ class PhpExpression
      *
      * @param mixed $expr 値
      * @param string $key 元キー
+     * @param string $alias テーブルエイリアス
      * @return $this|mixed PhpExpression インスタンス
      */
-    public static function forge($expr, $key = null)
+    public static function forge($expr, $key = null, $alias = null)
     {
         if ($expr instanceof \Closure) {
             $params = (new \ReflectionFunction($expr))->getParameters();
             $pc = count($params);
             // 引数が1つでデフォルト引数が null の場合はキーを使う、という仕様がある
             if ($pc === 1 && $params[0]->isDefaultValueAvailable() && $params[0]->getDefaultValue() === null) {
-                return new PhpExpression($expr, Alias::forge($key, ''));
+                return new PhpExpression($expr, Alias::forge($key, concat($alias, '.', is_int($key) ? '' : $key)));
             }
             // 引数のデフォルト値は依存カラムにする、という仕様がある
             $depends = array_each($params, function (&$carry, \ReflectionParameter $param, $n) {
