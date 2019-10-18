@@ -1278,9 +1278,8 @@ class Database
         /** @var QueryBuilder $data_source */
         $data_source = optional($data_source, QueryBuilder::class);
         $alias_table = array_lookup($data_source->getFromPart() ?: [], 'table');
-        $rowconverter = $data_source->getCaster();
 
-        return function ($row) use ($platform, $cast_suffix, $cast_type, $table_columns, $alias_table, $rowconverter, $samecheck_method, $samecheck) {
+        return function ($row) use ($platform, $cast_suffix, $cast_type, $table_columns, $alias_table, $samecheck_method, $samecheck) {
             $newrow = [];
             foreach ($row as $c => $v) {
                 if ($samecheck_method && is_array($v)) {
@@ -1337,9 +1336,6 @@ class Database
                 }
 
                 $newrow[$c] = $v;
-            }
-            if ($rowconverter) {
-                $newrow = $rowconverter($newrow);
             }
             return $newrow;
         };

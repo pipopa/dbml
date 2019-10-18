@@ -2719,6 +2719,8 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
             }
         }
 
+        $caster = $this->getCaster();
+
         // evalute
         foreach ($parents as $n => $parent_row) {
             $row_class = null;
@@ -2742,6 +2744,9 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
                 else {
                     $parents[$n][$name] = $excol;
                 }
+            }
+            if (!$is_scalar && $caster) {
+                $parents[$n] = $caster($parents[$n]);
             }
         }
 
