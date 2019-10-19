@@ -28488,7 +28488,8 @@ $qb-&gt;column('table_name')-&gt;cast("array");
 <tr><td align="right">23</td><td align="left"><code>new PhpExpression(function($cname){}, 'cname')</code></td><td align="left">PhpExpression に第2引数を指定すると列の値として <tag_link data-kind='fqsen' data-type-category='class' data-type-fqsen='ryunosuke\dbml\Query\Expression\PhpExpression' data-type-array='0' data-description='ryunosuke\dbml\Query\Expression\PhpExpression'>ryunosuke\dbml\Query\Expression\PhpExpression</tag_link> でラップされたクロージャの返り値を返す。引数は<strong>第2引数で指定された列の値</strong></td></tr>
 <tr><td align="right">24</td><td align="left"><code>function($cname = 'cname'){}</code></td><td align="left">上と同じ。引数にデフォルト値が指定されている場合はそのデフォルト値が上で言う「指定された列」に相当する。</td></tr>
 <tr><td align="right">25</td><td align="left"><code>['cname' =&gt; function($value = null){}]</code></td><td align="left">上と同じ。引数のデフォルト値が null の場合はキーの値が使用される</td></tr>
-<tr><td align="right">26</td><td align="left"><code>function(){return function($v){return $v;};}</code></td><td align="left">クロージャの亜種。クロージャを返すクロージャはそのままクロージャとして活きるのでメソッドのような扱いにできる</td></tr>
+<tr><td align="right">26</td><td align="left"><code>['cname' =&gt; function($value){}]</code></td><td align="left">上と同じ。autoSelectClosure オプションが true だとキーの値が使用されて 'cname' が SELECT 句に追加される</td></tr>
+<tr><td align="right">27</td><td align="left"><code>function(){return function($v){return $v;};}</code></td><td align="left">クロージャの亜種。クロージャを返すクロージャはそのままクロージャとして活きるのでメソッドのような扱いにできる</td></tr>
 <tr><td align="right">30</td><td align="left"><code>Gateway object</code></td><td align="left">Gateway の表すテーブルとの {@link Database::subtable()} 相当の動作</td></tr>
 <tr><td align="right">31</td><td align="left"><code>['+alias' =&gt; Gateway object]</code></td><td align="left">Gateway の表すテーブルとの JOIN を表す</td></tr>
 <tr><td align="right">50</td><td align="left"><code>'TableDescriptor'</code></td><td align="left">「テーブル名」を書く場所にはテーブル記法が使用できる（駆動表）</td></tr>
@@ -28557,13 +28558,26 @@ $qb-&gt;column([
     ],
 ]);
 
-# No.20 ～ 25： PhpExpression（他の用法は PhpExpression クラスのリファレンスを参照）
+# No.20 ～ 24： PhpExpression（他の用法は PhpExpression クラスのリファレンスを参照）
 $qb-&gt;column([
     't_article' =&gt; [
         'phpval' =&gt; new PhpExpression('hoge'), // "hoge" という文字列を取得
     ],
 ]);
-# No.26： クロージャを返すクロージャ
+
+# No.25, 26： PhpExpression（キーのカラム値を受け取るクロージャ）
+$qb-&gt;column([
+    't_article' =&gt; [
+        // No.25 デフォルト引数を null にするとキーで指定した値を単一で受け取るクロージャになる
+        'idmul10'      =&gt; function($id = null){return $id * 10;},
+        'article_id', // ただし、自動でカラムが追加されないので明示的に SELECT 句への追加が必要
+        // No.26 上とほぼ同じ。キーが実際に存在するカラム名の場合は「SELECT 句への追加しつつキーで指定した値を単一で受け取るクロージャ」となる
+        'article_name' =&gt; function($name){return strtoupper($name);},
+        // 'article_name' のような明示的な追加は不要
+    ],
+]);
+
+# No.27： クロージャを返すクロージャ
 $tuple = $qb-&gt;column([
     't_article.*' =&gt; [
         // クロージャ内の $this は行そのものを表す ArrayAccess なオブジェクトで bind される
@@ -29268,6 +29282,10 @@ $db-&gt;aggregate(['min', 'max'], 'table.id', [], 'table.group_id');
 ]
 </code></pre>
 </div>
+    	<h4 class="fqsen-title">method<a href="ryunosuke-dbml-Query-QueryBuilder$typespace.html#ryunosuke\dbml\Query\QueryBuilder::getAutoSelectClosure()"> ryunosuke\dbml\Query\QueryBuilder::getAutoSelectClosure()</a></h4>
+	<div class="description"></div>
+    	<h4 class="fqsen-title">method<a href="ryunosuke-dbml-Query-QueryBuilder$typespace.html#ryunosuke\dbml\Query\QueryBuilder::setAutoSelectClosure()"> ryunosuke\dbml\Query\QueryBuilder::setAutoSelectClosure()</a></h4>
+	<div class="description"></div>
     	<h4 class="fqsen-title">method<a href="ryunosuke-dbml-Query-QueryBuilder$typespace.html#ryunosuke\dbml\Query\QueryBuilder::getInjectChildColumn()"> ryunosuke\dbml\Query\QueryBuilder::getInjectChildColumn()</a></h4>
 	<div class="description"></div>
     	<h4 class="fqsen-title">method<a href="ryunosuke-dbml-Query-QueryBuilder$typespace.html#ryunosuke\dbml\Query\QueryBuilder::setInjectChildColumn()"> ryunosuke\dbml\Query\QueryBuilder::setInjectChildColumn()</a></h4>
