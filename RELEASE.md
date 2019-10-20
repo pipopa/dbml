@@ -19,8 +19,42 @@
 ## x.y.z
 
 - Entity 消したい。使わない…
-- QueryBuilder が直接 param を持つのではなく、 param を持った Queryable を持つことで妙なパラメータ順などは不要にできる
-- 仮想カラムは Gateway が握るのではなく Schema が握れば色々シンプルにできるはず（mysql の generated column と親和性も高くなる）
+- phpstorm と相性が悪いのでマジックメソッドを撲滅したい
+
+## 2.0.0
+
+- [feature][all] 各所で iterable を受けられるように修正
+- [feature][Database] binder メソッドの追加
+- [feature][Database] ゲッター/セッターの強化
+  - getConnections を追加してコネクション単位の取得を可能にした
+  - setLogger を追加してコネクション毎にロガーの設定を可能にした
+  - compatiblePlatform をインジェクション可能にした
+- [feature][CompatiblePlatform] getPrimaryCondition の行値式対応
+- [feature][TableDescriptor] `{id}` が `{id: id}` になるような短縮構文を導入
+- [feature][SubqueryBuilder] lazy mode に batch/yield を新設
+- [feature][Entity] エンティティのコンストラクタを自由化
+- [fixbug][CompatiblePlatform] postgresql で php と db のキーが異なる不具合を修正
+- [fixbug][QueryBuilder] 同名テーブルを自動 JOIN したときに統合されない不具合を修正
+- [fixbug][Operator] オペレータが大文字化されてしまう不具合を修正
+- [fixbug][Operator] LIKEIN で エスケープが行われていない不具合を修正
+- [*change][Database] テーブル名 <=> エンティティ名の1対1制限を撤廃
+- [*change][Database] autoCastSuffix を削除
+- [*change][Transaction] Logger のシンプル化
+  - 文字列化系オプションをすべて callback にまとめた
+  - バッファリングを有効にしてログが直列化されるようにした
+- [*change][QueryBuilder] PhpExpression の廃止
+- [*change][QueryBuilder] groupBy 可変引数に変更
+- [*change][QueryBuilder] autoSelectClosure を削除
+- [*change][QueryBuilder] 直接 param を持つのではなく、 param を持った Queryable を持つようにした
+- [*change][QueryBuilder] SubqueryBuilder を削除して機能マージした
+- [*change][all] 仮想カラムは Gateway が握るのではなく Schema が握るように変更
+  - Gateway 周りから仮想カラム関係を全て削除
+  - 代わりに Database, Schema で仮想カラムを追加・変更できるようになった
+- [*change][all] 互換用に残っていたコード・設定を削除
+  - Database::addRelation の lazy フラグを削除
+  - Database::notableAsColumn を削除
+  - Gateway::offsetGetFind を削除
+  - Gateway::addVirtualColumn() を削除
 
 ## 1.0.7
 
