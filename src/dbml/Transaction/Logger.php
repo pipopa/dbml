@@ -4,6 +4,10 @@ namespace ryunosuke\dbml\Transaction;
 
 use Doctrine\DBAL\Logging\SQLLogger;
 use ryunosuke\dbml\Mixin\OptionTrait;
+use function ryunosuke\dbml\is_stringable;
+use function ryunosuke\dbml\sql_bind;
+use function ryunosuke\dbml\sql_format;
+use function ryunosuke\dbml\str_ellipsis;
 
 /**
  * スタンダードな SQL ロガー
@@ -34,36 +38,120 @@ use ryunosuke\dbml\Mixin\OptionTrait;
  * Transaction 名前空間に居るのは少し小細工をしているから（癒着している）＋「クエリログは膨大なのでログらない（RDBMS のログに任せる）がトランザクションログはアプリで取っておきたい」という要件が多いため。
  * 別にグローバルなロガーとして設定しても問題はない。
  *
- * @package ryunosuke\dbml\Transaction
+ * ### buffer オプションについて
+ *
+ * コンストラクタオプションで buffer を渡すと下記のような動作モードになる。
+ * fastcgi_finish_request など、クライアントに速度を意識させない方法があるなら基本的には true を推奨する。
+ * BLOB INSERT が多いとか、軽めのクエリの数が多いとか、要件に応じて適時変更したほうが良い。
+ *
+ * #### int
+ *
+ * 指定されたサイズでバッファリングして終了時に書き込む（超えた分は一時ファイル書き出し）。
+ *
+ * メモリには優しいが、逐次ログの変換処理が発生するため、場合によっては動作速度があまりよろしくない。
+ * 終了時にロックして書き込むので**ログがリクエスト単位になる**（別リクエストの割り込みログが発生しない）。
+ *
+ * #### true
+ *
+ * 配列に溜め込んで終了時に書き込む。
+ *
+ * ログの変換処理が逐次行われず、終了時に変換と書き込みを行うので、 fastcgi_finish_request があるなら（クライアントの）動作速度に一切の影響を与えない。
+ * ただし、 長大なクエリや BLOB INSERT などもすべて蓄えるのでメモリには優しくない。
+ * 終了時にロックして書き込むので**ログがリクエスト単位になる**（別リクエストの割り込みログが発生しない）。
+ *
+ * #### false
+ *
+ * 逐次書き込む。
+ *
+ * 逐次変換処理は行われるがメモリは一切消費しないし、ロックも伴わない。
+ * ただし、逐次書き込むので**ログがリクエスト単位にならない**（別リクエストの割り込みログが発生する）。
  */
 class Logger implements SQLLogger
 {
     use OptionTrait;
 
-    /** @var array アンクオート対象 DCL */
-    private static $DCLMAP = [
-        '"START TRANSACTION"'     => 'START TRANSACTION',
-        '"SAVEPOINT"'             => 'SAVEPOINT',
-        '"COMMIT"'                => 'COMMIT',
-        '"RELEASE SAVEPOINT"'     => 'RELEASE SAVEPOINT',
-        '"ROLLBACK"'              => 'ROLLBACK',
-        '"ROLLBACK TO SAVEPOINT"' => 'ROLLBACK TO SAVEPOINT',
-    ];
+    /** @var resource|\Closure ログハンドル */
+    private $handle;
+
+    /** @var resource|array|null ログバッファ */
+    private $buffer;
 
     public static function getDefaultOptions()
     {
         return [
-            // 出力場所（string/resource/ArrayObject/null）。ArrayObject を与えるとログを蓄えられるがテストや preview 用
+            // 出力場所（string/resource/Closure/null）。null はログらない
             'destination' => null,
-            // ロックモード（true にすると flock で書き込む。 NFS などではないローカルファイルなどなら不要）
-            'lockmode'    => false,
-            // プレフィックス（各ログに付与されるプレフィックス。クロージャを渡すと書き込み時点で都度呼び出される）
-            'prefix'      => null,
-            // フォーマッタ（出力前にクエリ文字列が通される。フォーマットしたり改行を削除して1行化したり）
-            'format'      => null,
-            // 出力モード（文字列ならメソッドが、クロージャなら任意の処理が呼び出される）
-            'method'      => 'escape',
+            // $sql, $params, $types の文字列化コールバック
+            'callback'    => self::simple(),
+            // バッファリングモード（true だと 配列に溜め込む。数値だとバッファサイズになる。destination が Closure の場合は無効）
+            'buffer'      => false,
+            // flock するか否か
+            'lockmode'    => true,
         ];
+    }
+
+    /**
+     * シンプルに値の埋め込みだけを行うコールバックを返す
+     *
+     * @param int|null $trimsize bind パラメータの切り詰めサイズ
+     * @return \Closure 文字列化コールバック
+     */
+    public static function simple($trimsize = null)
+    {
+        return function ($sql, $params, $types) use ($trimsize) {
+            if ($trimsize !== null) {
+                foreach ($params as $k => $param) {
+                    if (is_string($param) || (is_object($param) && is_stringable($param))) {
+                        $params[$k] = str_ellipsis($param, $trimsize);
+                    }
+                }
+            }
+            return sql_bind(trim($sql), $params);
+        };
+    }
+
+    /**
+     * 値を埋め込んだ上で sql フォーマットするコールバックを返す
+     *
+     * @param int|null $trimsize bind パラメータの切り詰めサイズ
+     * @return \Closure 文字列化コールバック
+     */
+    public static function pretty($trimsize = null)
+    {
+        $simple = self::simple($trimsize);
+        return function ($sql, $params, $types) use ($simple) {
+            return sql_format($simple($sql, $params, $types));
+        };
+    }
+
+    /**
+     * 連続する空白をまとめて1行化するコールバックを返す
+     *
+     * @param int|null $trimsize bind パラメータの切り詰めサイズ
+     * @return \Closure 文字列化コールバック
+     */
+    public static function oneline($trimsize = null)
+    {
+        $simple = self::simple($trimsize);
+        return function ($sql, $params, $types) use ($simple) {
+            // ログ目的なので token_get_all で雑にやる（"" も '' も `` も php 的にはクオーティングなのでリテラルが保護される）
+            // SqlServer はなんか特殊なクオートがあった気がするが考慮しない
+            $tokens = token_get_all("<?php " . $sql);
+            unset($tokens[0]);
+
+            $stripsql = '';
+            foreach ($tokens as $token) {
+                if (is_string($token)) {
+                    $stripsql .= $token;
+                    continue;
+                }
+                if ($token[0] === T_WHITESPACE) {
+                    $token[1] = ' ';
+                }
+                $stripsql .= $token[1];
+            }
+            return $simple($stripsql, $params, $types);
+        };
     }
 
     /**
@@ -81,111 +169,80 @@ class Logger implements SQLLogger
             $options['destination'] = $destination;
         }
         $this->setDefault($options);
+
+        $destination = $this->getUnsafeOption('destination');
+        $buffer = $this->getUnsafeOption('buffer');
+        if ($destination === null) {
+            $destination = function () { };
+        }
+        if ($destination instanceof \Closure) {
+            $buffer = false;
+        }
+
+        $this->handle = is_string($destination) ? fopen($destination, 'ab') : $destination;
+
+        if (is_numeric($buffer)) {
+            $this->buffer = fopen("php://temp/maxmemory:{$buffer}", 'r+b');
+        }
+        elseif ($buffer) {
+            $this->buffer = [];
+        }
     }
 
-    private function _write($destination, $log)
+    public function __destruct()
     {
-        // ArrayObjet は特別扱いでリソースに書き込むのではなく配列に格納する
-        if ($destination instanceof \ArrayObject) {
-            $destination[] = $log;
-            return;
-        }
+        $this->OptionTrait__destruct();
 
-        // クロージャは後段のようなややこしいことは抜きに単純に渡せば良い
-        if ($destination instanceof \Closure) {
-            $destination($log);
-            return;
-        }
-
-        // ファイル名の場合は開くが閉じない
-        static $persistences = [];
-        if (is_string($destination)) {
-            if (!isset($persistences[$destination])) {
-                $persistences[$destination] = fopen($destination, 'a');
-            }
-            $destination = $persistences[$destination];
-        }
-
-        // 配列とかオブジェクトなどが与えられた時。所詮ログなので例外を投げたりせずスルー
-        if (!is_resource($destination)) {
+        if ($this->buffer === null) {
             return;
         }
 
         $locking = $this->getUnsafeOption('lockmode');
 
         if ($locking) {
-            flock($destination, LOCK_EX);
+            flock($this->handle, LOCK_EX);
         }
-        fwrite($destination, $log . "\n");
+
+        if (is_array($this->buffer)) {
+            foreach ($this->buffer as $log) {
+                fwrite($this->handle, $this->_stringify(...$log) . "\n");
+            }
+        }
+        else {
+            rewind($this->buffer);
+            stream_copy_to_stream($this->buffer, $this->handle);
+            fclose($this->buffer);
+        }
+
         if ($locking) {
-            flock($destination, LOCK_UN);
+            flock($this->handle, LOCK_UN);
         }
     }
 
-    protected function _escape($sql, $params)
+    private function _stringify($sql, $params, $types)
     {
-        // 所詮ログなのでざっくりとエスケープ
-        $n = 0;
-        return preg_replace_callback('/(\?)|(:([a-z_][a-z_0-9]*))/ui', function ($m) use ($params, &$n) {
-            $name = $m[1] === '?' ? $n++ : $m[3];
-            if (!array_key_exists($name, $params)) {
-                return $m[0];
-            }
-            if ($params[$name] === null) {
-                return 'NULL';
-            }
-            if (is_numeric($params[$name])) {
-                return $params[$name];
-            }
-            return '"' . addslashes((string) $params[$name]) . '"';
-        }, $sql);
+        $sql = trim($sql, '"'); // DBAL\Connection がクォートするので外す
+        $sql = $this->getUnsafeOption('callback')($sql, $params, $types);
+        return $sql;
     }
 
-    protected function _keyvalue($sql, $params)
+    public function log($sql, array $params = [], array $types = [])
     {
-        return $sql . ':' . json_encode($params, JSON_UNESCAPED_UNICODE);
+        if (is_array($this->buffer)) {
+            $this->buffer[] = [$sql, $params, $types];
+        }
+        elseif (is_resource($this->buffer)) {
+            fwrite($this->buffer, $this->_stringify($sql, $params, $types) . "\n");
+        }
+        elseif (is_resource($this->handle)) {
+            fwrite($this->handle, $this->_stringify($sql, $params, $types) . "\n");
+        }
+        else {
+            ($this->handle)($this->_stringify($sql, $params, $types));
+        }
     }
 
-    public function log($sql, array $params = [])
-    {
-        // Connection がクォートするので外す
-        if (isset(self::$DCLMAP[$sql])) {
-            $sql = self::$DCLMAP[$sql];
-        }
-
-        // フォーマット
-        $format = $this->getUnsafeOption('format');
-        if ($format instanceof \Closure) {
-            $sql = $format($sql);
-        }
-
-        // コンバート
-        $method = $this->getUnsafeOption('method');
-        if (is_string($method)) {
-            $method = function ($sql, $params) use ($method) { return $this->{"_$method"}($sql, $params); };
-        }
-        $sql = $method($sql, $params);
-
-        // プレフィックス
-        $prefix = $this->getUnsafeOption('prefix');
-        if ($prefix instanceof \Closure) {
-            $prefix = $prefix();
-        }
-        $sql = $prefix . $sql;
-
-        $this->_write($this->getUnsafeOption('destination'), $sql);
-    }
-
-    public function getLog()
-    {
-        $holder = $this->getUnsafeOption('destination');
-        if ($holder instanceof \ArrayObject) {
-            return (array) $holder;
-        }
-        return [];
-    }
-
-    public function startQuery($sql, array $params = null, array $types = null) { $this->log($sql, $params ?: []); }
+    public function startQuery($sql, array $params = null, array $types = null) { $this->log($sql, $params ?? [], $types ?? []); }
 
     public function stopQuery() { }
 }

@@ -178,9 +178,6 @@ class Transaction
     /** @var int リトライ回数 */
     private $retryCount;
 
-    /** @var \ArrayObject preview 用のログホルダ */
-    private $logs;
-
     public static function getDefaultOptions()
     {
         return [
@@ -224,7 +221,6 @@ class Transaction
     public function __construct(Database $database, $options = [])
     {
         $this->database = $database;
-        $this->logs = new \ArrayObject();
 
         $default = [];
         foreach ($database->getOptions() as $key => $value) {
@@ -302,10 +298,6 @@ class Transaction
         // ロガー設定
         $current_logger = null;
         if ($this->logger !== null) {
-            if ($this->logger instanceof Logger && $this->logger->getOption('destination') === $this->logs) {
-                $this->logs->exchangeArray([]);
-            }
-
             $current_logger = $connection->getConfiguration()->getSQLLogger();
             if ($previewMode) {
                 $connection->getConfiguration()->setSQLLogger($this->logger);
@@ -557,10 +549,9 @@ class Transaction
      */
     public function preview(&$queries = [])
     {
+        $logs = [];
         $cx = $this->context([
-            'logger' => new Logger([
-                'destination' => $this->logs,
-            ])
+            'logger' => new Logger(function ($log) use (&$logs) { $logs[] = $log; })
         ]);
 
         $finally = $cx->_ready(true);
@@ -569,23 +560,9 @@ class Transaction
             return $cx->_execute($this->database->getConnection(), true);
         }
         finally {
-            $queries = $this->getLog();
-            $this->_invokeArray($this->finish);
+            $queries = $logs;
+            $cx->_invokeArray($cx->finish);
             $finally();
         }
-    }
-
-    /**
-     * トランザクションログを返す
-     *
-     * @return array トランザクションログ
-     */
-    public function getLog()
-    {
-        // 今のところ Logger のみ対応
-        if ($this->logger instanceof Logger) {
-            return $this->logger->getLog();
-        }
-        return [];
     }
 }

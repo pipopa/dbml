@@ -5,7 +5,6 @@ namespace ryunosuke\Test\dbml\Transaction;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Logging\DebugStack;
-use ryunosuke\dbml\Transaction\Logger;
 use ryunosuke\dbml\Transaction\Transaction;
 use ryunosuke\Test\Database;
 
@@ -431,38 +430,6 @@ class TransactionTest extends \ryunosuke\Test\AbstractUnitTestCase
      * @param Transaction $transaction
      * @param Database $database
      */
-    function test_getLog($transaction, $database)
-    {
-        $logger = new Logger(['destination' => new \ArrayObject()]);
-        $transaction->logger($logger);
-
-        $transaction->main(function (Database $db) {
-            $db->delete('test', ['id' => 2]);
-            $db->delete('test', ['id' => 3]);
-            return $db->selectArray('test.name', ['id' => [1, 2]]);
-        });
-
-        // 実行しなければログは無い
-        $logs = $transaction->getLog();
-        $this->assertEmpty($logs);
-
-        // 実行するとログが取得できる
-        $transaction->perform();
-        $logs = $transaction->getLog();
-        $this->assertNotEmpty($logs);
-
-        // 実行してもロガー未設定なら取得できない
-        $transaction->logger(null);
-        $transaction->perform();
-        $logs = $transaction->getLog();
-        $this->assertEmpty($logs);
-    }
-
-    /**
-     * @dataProvider provideTransaction
-     * @param Transaction $transaction
-     * @param Database $database
-     */
     function test_preview($transaction, $database)
     {
         $loggerT = new DebugStack();
@@ -487,15 +454,25 @@ class TransactionTest extends \ryunosuke\Test\AbstractUnitTestCase
         $this->assertCount(1, $return);
         $this->assertEquals(['name' => 'a'], $return[0]);
         // $queries に実行ログが入っているはず
-        $subset = [
-            'START TRANSACTION',
-            'INSERT INTO test (name) VALUES ("HOGE")',
-            'INSERT INTO test (name) VALUES ("HOGE")',
-            'DELETE FROM test WHERE id = 2',
-            'SELECT test.name FROM test WHERE id IN (1,2) ORDER BY test.id ASC',
-            'ROLLBACK',
-        ];
-        $this->assertEquals($subset, array_values(array_intersect($subset, $queries)));
+        $this->assertEquals([
+            "START TRANSACTION",
+            "INSERT INTO test (name) VALUES ('HOGE')",
+            "INSERT INTO test (name) VALUES ('HOGE')",
+            "DELETE FROM test WHERE id = 2",
+            "SELECT test.name FROM test WHERE id IN (1,2) ORDER BY test.id ASC",
+            "ROLLBACK",
+        ], $queries);
+
+        $transaction->main([
+            function (Database $db) {
+                $db->delete('test', ['id' => 1]);
+            },
+        ])->preview($queries);
+        $this->assertEquals([
+            "START TRANSACTION",
+            "DELETE FROM test WHERE id = 1",
+            "ROLLBACK",
+        ], $queries);
 
         // あくまでプレビューなのでロールバックされてるはず
         $this->assertEquals(10, $database->count('test'));
@@ -508,7 +485,7 @@ class TransactionTest extends \ryunosuke\Test\AbstractUnitTestCase
      * @param Transaction $transaction
      * @param Database $database
      */
-    function test_preview_ex($transaction, $database)
+    function test_presview_ex($transaction, $database)
     {
         $loggerT = new DebugStack();
         $loggerC = new DebugStack();
@@ -529,11 +506,11 @@ class TransactionTest extends \ryunosuke\Test\AbstractUnitTestCase
         $this->assertCount(0, $loggerC->queries);
         // $queries に実行ログが入っているはず
         $subset = [
-            'START TRANSACTION',
-            'INSERT INTO test (name) VALUES ("HOGE")',
-            'INSERT INTO test (name) VALUES ("HOGE")',
-            'DELETE FROM test WHERE id = 2',
-            'ROLLBACK',
+            "START TRANSACTION",
+            "INSERT INTO test (name) VALUES ('HOGE')",
+            "INSERT INTO test (name) VALUES ('HOGE')",
+            "DELETE FROM test WHERE id = 2",
+            "ROLLBACK",
         ];
         $this->assertEquals($subset, array_values(array_intersect($subset, $queries)));
 

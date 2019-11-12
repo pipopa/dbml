@@ -101,6 +101,8 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
         ]);
         $db->getMasterConnection()->connect();
         $db->getSlaveConnection()->connect();
+        unset($db);
+        gc_collect_cycles();
         $this->assertStringEqualsFile("$tmpdir/log.txt", "PRAGMA cache_size = 1000\n");
         $this->assertFileExists("$tmpdir/cache");
 
@@ -557,6 +559,57 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
             // 不正でも@で抑制すれば例外は飛ばないようにしてある
             $this->assertEquals(false, @$database->parseYaml('[a,b,c', false));
         }
+    }
+
+    function test_setLogger()
+    {
+        $master = DriverManager::getConnection(['url' => 'sqlite:///:memory:']);
+        $slave = DriverManager::getConnection(['url' => 'sqlite:///:memory:']);
+
+        $master->exec('CREATE TABLE test(id integer)');
+        $slave->exec('CREATE TABLE test(id integer)');
+
+        $database = new Database([$master, $slave]);
+        $database->selectArray('test', ['id' => 1]); // スキーマ漁りの暖機運転
+
+        // master/slave 同時設定
+        $logs = [];
+        $database->setLogger(new Logger(function ($log) use (&$logs) { $logs[] = $log; }));
+
+        $database->begin();
+        $database->insert('test', ['id' => 1]);
+        $database->selectArray('test', ['id' => 1]);
+        $database->rollback();
+
+        $this->assertEquals([
+            'START TRANSACTION',
+            'INSERT INTO test (id) VALUES (1)',
+            'SELECT test.* FROM test WHERE id = 1',
+            'ROLLBACK'
+        ], $logs);
+
+        // master/slave 個別設定
+        $masterlogs = [];
+        $slavelogs = [];
+        $database->setLogger([
+            new Logger(function ($log) use (&$masterlogs) { $masterlogs[] = $log; }),
+            new Logger(function ($log) use (&$slavelogs) { $slavelogs[] = $log; }),
+        ]);
+
+        $database->begin();
+        $database->insert('test', ['id' => 1]);
+        $database->selectArray('test', ['id' => 1]);
+        $database->rollback();
+
+        $this->assertEquals([
+            'START TRANSACTION',
+            'INSERT INTO test (id) VALUES (1)',
+            'ROLLBACK'
+        ], $masterlogs);
+
+        $this->assertEquals([
+            'SELECT test.* FROM test WHERE id = 1'
+        ], $slavelogs);
     }
 
     /**
@@ -2862,12 +2915,12 @@ CSV
             $this->assertEquals(['c', 'b', 'a'], $database->fetchLists($namequery->limit($affected)));
         });
         $this->assertEquals([
-            'INSERT INTO test (name) VALUES ("a")',
-            'INSERT INTO test (name) VALUES ("b")',
-            'INSERT INTO test (name) VALUES ("c")',
-            'INSERT INTO test (name) VALUES ("a"), ("b")',
-            'INSERT INTO test (name) VALUES ("c")',
-            'INSERT INTO test (name) VALUES ("a"), ("b"), ("c")',
+            "INSERT INTO test (name) VALUES ('a')",
+            "INSERT INTO test (name) VALUES ('b')",
+            "INSERT INTO test (name) VALUES ('c')",
+            "INSERT INTO test (name) VALUES ('a'), ('b')",
+            "INSERT INTO test (name) VALUES ('c')",
+            "INSERT INTO test (name) VALUES ('a'), ('b'), ('c')",
         ], array_values(preg_grep('#^INSERT#', $logs)));
     }
 
@@ -3187,13 +3240,13 @@ INSERT INTO test (name) VALUES
             $this->assertEquals(['U', 'U1', 'U2', 'A1'], $database->selectLists('test.name', ['id' => [3, 4, 5, 96]]));
         });
         $this->assertEquals([
-            'INSERT INTO test (id, name) VALUES (1, "U1") ON DUPLICATE KEY UPDATE id = VALUES(id), name = VALUES(name)',
-            'INSERT INTO test (id, name) VALUES (2, "U2") ON DUPLICATE KEY UPDATE id = VALUES(id), name = VALUES(name)',
-            'INSERT INTO test (id, name) VALUES (93, "A1") ON DUPLICATE KEY UPDATE id = VALUES(id), name = VALUES(name)',
-            'INSERT INTO test (id, name) VALUES (3, "U1"), (4, "U2") ON DUPLICATE KEY UPDATE name = "U"',
-            'INSERT INTO test (id, name) VALUES (95, "A1") ON DUPLICATE KEY UPDATE name = "U"',
-            'INSERT INTO test (id, name) VALUES (3, "U"), (4, "U1"), (5, "U2") ON DUPLICATE KEY UPDATE id = VALUES(id), name = VALUES(name)',
-            'INSERT INTO test (id, name) VALUES (96, "A1") ON DUPLICATE KEY UPDATE id = VALUES(id), name = VALUES(name)',
+            "INSERT INTO test (id, name) VALUES (1, 'U1') ON DUPLICATE KEY UPDATE id = VALUES(id), name = VALUES(name)",
+            "INSERT INTO test (id, name) VALUES (2, 'U2') ON DUPLICATE KEY UPDATE id = VALUES(id), name = VALUES(name)",
+            "INSERT INTO test (id, name) VALUES (93, 'A1') ON DUPLICATE KEY UPDATE id = VALUES(id), name = VALUES(name)",
+            "INSERT INTO test (id, name) VALUES (3, 'U1'), (4, 'U2') ON DUPLICATE KEY UPDATE name = 'U'",
+            "INSERT INTO test (id, name) VALUES (95, 'A1') ON DUPLICATE KEY UPDATE name = 'U'",
+            "INSERT INTO test (id, name) VALUES (3, 'U'), (4, 'U1'), (5, 'U2') ON DUPLICATE KEY UPDATE id = VALUES(id), name = VALUES(name)",
+            "INSERT INTO test (id, name) VALUES (96, 'A1') ON DUPLICATE KEY UPDATE id = VALUES(id), name = VALUES(name)",
         ], array_values(preg_grep('#^INSERT#', $logs)));
     }
 
