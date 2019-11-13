@@ -823,6 +823,14 @@ GREATEST(1,2,3) FROM test1', $builder);
             ],
         ]);
         $this->assertQuery("SELECT C1.id AS id1, foreign_c2.cid AS id2 FROM foreign_p P INNER JOIN foreign_c1 C1 ON C1.id = P.id LEFT JOIN foreign_c2 ON foreign_c2.cid = P.id", $builder);
+
+        $builder->column([
+            'foreign_p P' => [
+                'id'  => '+foreign_c1 C1.id',
+                'seq' => '+foreign_c1 C1.seq',
+            ],
+        ]);
+        $this->assertQuery("SELECT C1.id, C1.seq FROM foreign_p P INNER JOIN foreign_c1 C1 ON C1.id = P.id", $builder);
     }
 
     /**

@@ -1703,6 +1703,11 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
         $fromTable = $froms[$fromAlias] ?? null;
         $joinAlias = $alias ?: $table;
 
+        // 既設定エイリアスならスルー
+        if (isset($froms[$joinAlias]) && $froms[$joinAlias] === $table) {
+            return $this;
+        }
+
         // 外部キーの解決
         $fcols = [];
         $direction = null;
