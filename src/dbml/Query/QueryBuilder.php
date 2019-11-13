@@ -1872,6 +1872,70 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
     }
 
     /**
+     * [table => array(col1, col2)] のように指定できるように拡張した {@link groupBy()}（クリア版）
+     *
+     * ```php
+     *  # シンプルにカラムを指定
+     * $qb->groupBy('id1');          // GROUP BY id1
+     * $qb->groupBy('id1', 'id2');   // GROUP BY id1, id2
+     *
+     * # 配列も指定できる。キーを与えるとテーブルプレフィックスになる
+     * $qb->groupBy(['id1', 'id2']);          // GROUP BY id1, id2
+     * $qb->groupBy(['T' => ['id1', 'id2']]); // GROUP BY T.id1, T.id2
+     *
+     * # 配列指定で子ビルダを設定
+     * $qb->column('t_parent P/t_child C')->groupBy([
+     *     // P(親)の GROUP BY
+     *     'parent_id',
+     *     // エイリアスキーを指定して配列でネストすると子ビルダの GROUP BY を意味する
+     *     'C'           => [
+     *         // C(子)の GROUP BY
+     *         'child_id',
+     *     ],
+     *      // "/" 区切り。上記と全く同じ
+     *     'C/child_id', // 修飾する場合は 'C/C.child_id'
+     * ]);
+     * ```
+     *
+     * @param mixed $groupBy GROUP BY 句
+     * @return $this 自分自身
+     */
+    public function groupBy(...$groupBy)
+    {
+        return $this->resetQueryPart('groupBy')->addGroupBy(...$groupBy);
+    }
+
+    /**
+     * [table => [col1, col2]] のように指定できるように拡張した {@link groupBy()}（追加版）
+     *
+     * @inheritdoc groupBy()
+     */
+    public function addGroupBy(...$groupBy)
+    {
+        foreach ($groupBy as $groups) {
+            foreach (arrayize($groups) as $tbl => $arg) {
+                foreach (arrayize($arg) as $col) {
+                    if (is_string($col) && strpos($col, '/') !== false) {
+                        list($t, $col) = explode('/', $col, 2);
+                        $this->getSubbuilder($t)->addGroupBy($col);
+                    }
+                    elseif (isset($this->subbuilders[$tbl])) {
+                        $this->getSubbuilder($tbl)->addGroupBy($col);
+                    }
+                    elseif (is_int($tbl)) {
+                        $this->sqlParts['groupBy'][] = $col;
+                    }
+                    else {
+                        $this->sqlParts['groupBy'][] = $tbl . '.' . $col;
+                    }
+                }
+            }
+        }
+
+        return $this->_dirty();
+    }
+
+    /**
      * 引数内では AND、引数間では OR する having（クリア版）
      *
      * WHERE ではなく HAVING である点を除いて引数体系などは {@link where()} と同じ。
@@ -2119,70 +2183,6 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
 
         $tablename = $fromtable['alias'] ?: $fromtable['table'];
         return $this->orderBy(array_strpad($columns, '', $tablename . '.'), $is_asc);
-    }
-
-    /**
-     * [table => array(col1, col2)] のように指定できるように拡張した {@link groupBy()}（クリア版）
-     *
-     * ```php
-     *  # シンプルにカラムを指定
-     * $qb->groupBy('id1');          // GROUP BY id1
-     * $qb->groupBy('id1', 'id2');   // GROUP BY id1, id2
-     *
-     * # 配列も指定できる。キーを与えるとテーブルプレフィックスになる
-     * $qb->groupBy(['id1', 'id2']);          // GROUP BY id1, id2
-     * $qb->groupBy(['T' => ['id1', 'id2']]); // GROUP BY T.id1, T.id2
-     *
-     * # 配列指定で子ビルダを設定
-     * $qb->column('t_parent P/t_child C')->groupBy([
-     *     // P(親)の GROUP BY
-     *     'parent_id',
-     *     // エイリアスキーを指定して配列でネストすると子ビルダの GROUP BY を意味する
-     *     'C'           => [
-     *         // C(子)の GROUP BY
-     *         'child_id',
-     *     ],
-     *      // "/" 区切り。上記と全く同じ
-     *     'C/child_id', // 修飾する場合は 'C/C.child_id'
-     * ]);
-     * ```
-     *
-     * @param mixed $groupBy GROUP BY 句
-     * @return $this 自分自身
-     */
-    public function groupBy($groupBy)
-    {
-        return $this->resetQueryPart('groupBy')->addGroupBy(...func_get_args());
-    }
-
-    /**
-     * [table => [col1, col2]] のように指定できるように拡張した {@link groupBy()}（追加版）
-     *
-     * @inheritdoc groupBy()
-     */
-    public function addGroupBy($groupBy)
-    {
-        $current_args = Adhoc::argumentize(func_get_args());
-
-        foreach ($current_args as $tbl => $arg) {
-            foreach (arrayize($arg) as $col) {
-                if (is_string($col) && strpos($col, '/') !== false) {
-                    list($t, $col) = explode('/', $col, 2);
-                    $this->getSubbuilder($t)->addGroupBy($col);
-                }
-                elseif (isset($this->subbuilders[$tbl])) {
-                    $this->getSubbuilder($tbl)->addGroupBy($col);
-                }
-                elseif (is_int($tbl)) {
-                    $this->sqlParts['groupBy'][] = $col;
-                }
-                else {
-                    $this->sqlParts['groupBy'][] = $tbl . '.' . $col;
-                }
-            }
-        }
-
-        return $this->_dirty();
     }
 
     /**

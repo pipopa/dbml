@@ -1637,6 +1637,21 @@ SQL
      * @dataProvider provideQueryBuilder
      * @param QueryBuilder $builder
      */
+    function test_groupBy($builder)
+    {
+        $builder->column('test');
+
+        $this->assertQuery('SELECT test.* FROM test GROUP BY id', $builder->groupBy('id'));
+        $this->assertQuery('SELECT test.* FROM test GROUP BY id1, id2', $builder->groupBy('id1', 'id2'));
+        $this->assertQuery('SELECT test.* FROM test GROUP BY id1, id2', $builder->groupBy(['id1', 'id2']));
+        $this->assertQuery('SELECT test.* FROM test GROUP BY ttt.id1, ttt.id2', $builder->groupBy(['ttt' => ['id1', 'id2']]));
+        $this->assertQuery('SELECT test.* FROM test GROUP BY ttt.id1, ttt.id2, id3', $builder->groupBy(['ttt' => ['id1', 'id2'], 'id3']));
+    }
+
+    /**
+     * @dataProvider provideQueryBuilder
+     * @param QueryBuilder $builder
+     */
     function test_havings($builder)
     {
         $builder->column('test');
@@ -1915,21 +1930,6 @@ SQL
 
         $builder->reset();
         $this->assertException(new \UnexpectedValueException('query builder is not set'), L($builder)->orderByPrimary());
-    }
-
-    /**
-     * @dataProvider provideQueryBuilder
-     * @param QueryBuilder $builder
-     */
-    function test_groupBy($builder)
-    {
-        $builder->column('test');
-
-        $this->assertQuery('SELECT test.* FROM test GROUP BY id', $builder->groupBy('id'));
-        $this->assertQuery('SELECT test.* FROM test GROUP BY id1, id2', $builder->groupBy('id1', 'id2'));
-        $this->assertQuery('SELECT test.* FROM test GROUP BY id1, id2', $builder->groupBy(['id1', 'id2']));
-        $this->assertQuery('SELECT test.* FROM test GROUP BY ttt.id1, ttt.id2', $builder->groupBy(['ttt' => ['id1', 'id2']]));
-        $this->assertQuery('SELECT test.* FROM test GROUP BY ttt.id1, ttt.id2, id3', $builder->groupBy(['ttt' => ['id1', 'id2'], 'id3']));
     }
 
     /**

@@ -6,13 +6,6 @@ use ryunosuke\dbml\Utility\Adhoc;
 
 class AdhocTest extends \ryunosuke\Test\AbstractUnitTestCase
 {
-    function test_argumentize()
-    {
-        $this->assertEquals([], Adhoc::argumentize([]));
-        $this->assertEquals([1, 2, 3], Adhoc::argumentize([1, 2, 3]));
-        $this->assertEquals([1, 2, 3], Adhoc::argumentize([[1, 2, 3]]));
-    }
-
     function test_reargument()
     {
         $closure = function ($a = 1, $b = 2, $c = 3) { };

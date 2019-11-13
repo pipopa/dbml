@@ -15,21 +15,6 @@ use function ryunosuke\dbml\reflect_callable;
 class Adhoc
 {
     /**
-     * 引数の配列化
-     *
-     * @param array $func_get_args
-     * @return array
-     */
-    public static function argumentize($func_get_args)
-    {
-        if (count($func_get_args) === 0) {
-            return [];
-        }
-        $first = $func_get_args[0];
-        return is_array($first) ? $first : $func_get_args;
-    }
-
-    /**
      * 配列から指定番目の要素を差っ引いて callable のデフォルト引数を埋め込む
      *
      * @param array $arguments
