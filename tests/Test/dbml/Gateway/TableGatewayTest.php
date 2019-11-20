@@ -5,7 +5,6 @@ namespace ryunosuke\Test\dbml\Gateway;
 use Doctrine\DBAL\Logging\DebugStack;
 use Doctrine\DBAL\Platforms\MySqlPlatform;
 use Doctrine\DBAL\Platforms\SQLServerPlatform;
-use Doctrine\DBAL\Types\Type;
 use ryunosuke\dbml\Entity\Entity;
 use ryunosuke\dbml\Exception\NonSelectedException;
 use ryunosuke\dbml\Gateway\TableGateway;
@@ -557,121 +556,6 @@ AND ((flag=1))", "$gw");
 
         $this->assertEquals('SELECT NOW(?) AS c, NOW(1), NOW(2) AS now FROM test T WHERE (1=1) AND (T.c3 = ?) AND ((T.c1 = ?) OR (T.c2 = ?)) ORDER BY T.name DESC, id ASC LIMIT 2', (string) $select);
         $this->assertEquals([9, 3, 1, 2], $select->getParams());
-    }
-
-    /**
-     * @dataProvider provideGateway
-     * @param TableGateway $gateway
-     */
-    function test_virtual($gateway)
-    {
-        $gateway->setVirtualColumn([
-            'hoge' => 'hoge expression',
-            'fuga' => [
-                'expression' => 'fuga expression',
-            ],
-            'piyo' => [
-                'type'     => Type::getType('integer'),
-                'anywhere' => [
-                    'enable' => false,
-                ],
-            ],
-            'auto' => [
-                'expression' => 'implicit vcol',
-                'implicit'   => true,
-            ],
-            'ope'  => [
-                'expression' => [
-                    'hogera' => 1,
-                    [
-                        'foo' => 2,
-                        'bar' => 3,
-                    ]
-                ],
-            ],
-        ]);
-
-        $this->assertNull($gateway->virtualColumn('__undefined__'));
-
-        $this->assertEquals([
-            'expression' => 'hoge expression',
-            'type'       => null,
-            'anywhere'   => [],
-            'implicit'   => false,
-        ], $gateway->virtualColumn('hoge'));
-
-        $this->assertEquals([
-            'expression' => 'fuga expression',
-            'type'       => null,
-            'anywhere'   => [],
-            'implicit'   => false,
-        ], $gateway->virtualColumn('fuga'));
-
-        $this->assertEquals([
-            'expression' => null,
-            'type'       => Type::getType('integer'),
-            'anywhere'   => [
-                'enable' => false,
-            ],
-            'implicit'   => false,
-        ], $gateway->virtualColumn('piyo'));
-
-        $this->assertEquals([
-            'hoge' => 'hoge expression',
-            'fuga' => 'fuga expression',
-            'piyo' => null,
-            'auto' => 'implicit vcol',
-            'ope'  => new Expression('((hogera = ?) AND ((foo = ?) OR (bar = ?)))', [1, 2, 3]),
-        ], $gateway->virtualColumn(null, 'expression'));
-
-        $this->assertEquals([
-            'hoge' => [],
-            'fuga' => [],
-            'piyo' => ['enable' => false],
-            'auto' => [],
-            'ope'  => [],
-        ], $gateway->virtualColumn(null, 'anywhere'));
-
-        $this->assertException('undefined virtual column', L($gateway)->virtualColumn('hoge', '__undefined__'));
-    }
-
-    /**
-     * @dataProvider provideGateway
-     * @param TableGateway $gateway
-     * @param Database $database
-     */
-    function test_virtual_clause($gateway, $database)
-    {
-        $gateway = $database->test;
-
-        $gateway->setVirtualColumn([
-            'hoge' => [
-                'expression' => 'UPPER(name)',
-                'implicit'   => true,
-            ],
-            'fuga' => [
-                'expression' => new Expression('UPPER(?)', ['a']),
-                'implicit'   => true,
-            ],
-            'piyo' => [
-                'expression' => 'UPPER(name)',
-                'implicit'   => false,
-            ],
-        ]);
-
-        $this->assertEquals(10, $gateway->where(['fuga' => 'A'])->count());
-
-        $this->assertEquals([
-            'id'   => 3,
-            'name' => 'c',
-            'data' => '',
-        ], $gateway->where(['hoge' => 'C'])->tuple());
-
-        $gateway->setVirtualColumn([
-            'hoge' => null,
-            'fuga' => null,
-            'piyo' => null,
-        ]);
     }
 
     /**

@@ -141,6 +141,7 @@ class IntegrationTest extends AbstractUnitTestCase
                 'comment'    => 'コメント1です',
             ],
         ], json_decode(json_encode(iterator_to_array($database->t_comment()->pk(1))), true));
+        $database->setDefaultIteration('array');
     }
 
     /**

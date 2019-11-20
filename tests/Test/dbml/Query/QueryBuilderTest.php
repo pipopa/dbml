@@ -1407,22 +1407,24 @@ AND
      */
     function test_wheres_vcolumn($builder, $database)
     {
-        $database->foreign_p->setVirtualColumn([
-            'raw1'        => [
-                'expression' => 'UPPER(%s.name)',
-                'implicit'   => true,
-            ],
-            'raw2'        => [
-                'expression' => $database->raw('id + 9 = ?', 10),
-                'implicit'   => true,
-            ],
-            'count_child' => [
-                'expression' => $database->foreign_c1->as('C1')->subcount('*', ['flag' => 0]),
-                'implicit'   => true,
-            ],
-            'has_child'   => [
-                'expression' => $database->foreign_c2->as('C2')->subexists('*', ['flag' => 0]),
-                'implicit'   => true,
+        $database->overrideColumns([
+            'foreign_p' => [
+                'raw1'        => [
+                    'expression' => 'UPPER(%s.name)',
+                    'implicit'   => true,
+                ],
+                'raw2'        => [
+                    'expression' => $database->raw('id + 9 = ?', 10),
+                    'implicit'   => true,
+                ],
+                'count_child' => [
+                    'expression' => $database->foreign_c1->as('C1')->subcount('*', ['flag' => 0]),
+                    'implicit'   => true,
+                ],
+                'has_child'   => [
+                    'expression' => $database->foreign_c2->as('C2')->subexists('*', ['flag' => 0]),
+                    'implicit'   => true,
+                ],
             ],
         ]);
 
@@ -1462,11 +1464,13 @@ AND /* vcolumn: has_child */ (EXISTS (SELECT * FROM foreign_c2 C2 WHERE (C2.flag
 SQL
             , $builder->queryInto());
 
-        $database->foreign_p->setVirtualColumn([
-            'raw1'        => null,
-            'raw2'        => null,
-            'count_child' => null,
-            'has_child'   => null,
+        $database->overrideColumns([
+            'foreign_p' => [
+                'raw1'        => null,
+                'raw2'        => null,
+                'count_child' => null,
+                'has_child'   => null,
+            ],
         ]);
     }
 

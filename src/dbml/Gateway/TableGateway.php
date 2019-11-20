@@ -189,21 +189,6 @@ use function ryunosuke\dbml\try_finally;
  *
  * count() は `count($gw)` と `$gw->count('*')` で挙動が異なる（{@link count()} を参照）
  *
- * ### 仮想カラム
- *
- * {@link setVirtualColumn()} で「あたかもテーブルにあるかのように振る舞うカラム」を定義できる。
- *
- * ありがちな例だが「姓」「名」を持つテーブルに対して `setVirtualColumn(['fullname' => new Expression('CONCAT(sei, mei)')]);` すると、あたかもフルネームカラムがあるように振る舞わせることができる。
- * 使用例などはメソッドを参照。
- *
- * 原則として仮想カラムを引っ張るためには明示的な指定が必要で、 `*` や `!ignore` で引っ張ったとしても取得列に含まれることはない。
- * ただし `defaultImplicitVirtual` を true にすると取得列に含まれるようになる（それでも `*` は不可）。
- * 仮想カラムを含めた全てを取得したい場合は '!' とする（{@link QueryBuilder::column()} を参照）。
- * `defaultImplicitVirtual` は Gateway ごとのデフォルト値があり、各仮想カラムごとの設定も可能。
- *
- * 明示使用の場合でも今のところ select, where, having でのみ使用可能。
- * orderBy は select に含めて指定すれば実現できるし、having も mysql であれば（設定次第で）直接式を指定することができるので、実質的には select, where でのみの使用となることが多いはず。
- *
  * ### JOIN
  *
  * メソッドコール or マジックゲット or マジックコールを使用して JOIN を行うことができる。
@@ -272,12 +257,6 @@ use function ryunosuke\dbml\try_finally;
  *     デフォルトのデフォルトは "AUTO" なので、何も考えずに JOIN すると最も良い感じに JOIN される。
  *
  *     @param string $string {@link Database::JOIN_MAPPER} のいずれかのキー
- * }
- * @method bool                   getDefaultImplicitVirtual() {デフォルト仮想カラム包含フラグを返す}
- * @method $this                  setDefaultImplicitVirtual($bool) {
- *     デフォルト仮想カラム包含フラグを設定する
- *
- *     true にすると仮想カラムが '!notcolumn' の取得列に含まれるようになる。
  * }
  *
  * @method $this                  joinOn(TableGateway $table, $on) {
@@ -731,9 +710,6 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
     /** @var string デフォルト JOIN メソッド */
     protected $defaultJoinMethod = '';
 
-    /** @var bool 仮想カラム包含フラグ */
-    protected $defaultImplicitVirtual = false;
-
     /** @var Database Database オブジェクト */
     private $database;
 
@@ -751,9 +727,6 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
 
     /** @var array 有効スコープ配列 */
     private $activeScopes = ['' => []];
-
-    /** @var \ArrayObject カラム定義 */
-    private $column;
 
     /** @var string 使用する外部キー */
     private $foreign;
@@ -777,11 +750,9 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
     {
         return [
             // 直接回した場合のフェッチモード
-            'defaultIteration'       => 'array',
+            'defaultIteration'  => 'array',
             // マジック JOIN 時のデフォルトモード
-            'defaultJoinMethod'      => 'auto',
-            // 仮想カラムを暗黙的に利用するか
-            'defaultImplicitVirtual' => false,
+            'defaultJoinMethod' => 'auto',
         ];
     }
 
@@ -800,7 +771,6 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
 
         $this->original = $this;
         $this->scopes = new \ArrayObject();
-        $this->column = new \ArrayObject();
 
         $default = [];
         if ($this->defaultIteration) {
@@ -1868,156 +1838,6 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
             Adhoc::modifier($alias, $groupBy),
             Adhoc::modifier($alias, $having),
         ]);
-    }
-
-    /**
-     * 仮想カラムを追加する
-     *
-     * ここで追加したカラムはあたかもテーブルにあるかのように select することができる。
-     * 仮想カラムは TableDescripter で使える記法すべてを使うことができる。
-     *
-     * ```php
-     * # 仮想カラムを追加する
-     * $gw->setVirtualColumn([
-     *     // 単純なエイリアス。ほぼ意味はない
-     *     'hoge'      => 'fuga',
-     *     // 姓・名を結合してフルネームとする
-     *     'fullname1' => function($row) { return $v['sei'] . $v['mei']; },
-     *     // 姓・名の SQL 版
-     *     'fullname2' => 'CONCAT(sei, mei)',
-     *     // 姓・名の SQL 版（修飾子）
-     *     'fullname3' => 'CONCAT(%1$s.sei, %1$s.mei)',
-     *     // 上記の例は実は簡易指定で本来は下記の配列を渡す（非配列を渡すと下記でいう expression が渡されたとみなす）
-     *     'misc'      => [
-     *         'expression' => null, // 仮想カラムの実定義（文字列や Expression やクエリビルダなど全て使用できる）
-     *         'type'       => null, // 仮想カラムの型
-     *         'anywhere'   => [],   // 仮想カラムの anywhere オプション
-     *         'implicit'   => $this->defaultImplicitVirtual, // !column などの一括取得に含めるか
-     *     ],
-     *     // null を渡すと仮想カラムの削除になる
-     *     'deletedVcolumn' => null,
-     * ]);
-     *
-     * # 追加した仮想カラムをあたかもテーブルカラムのように使用できる
-     * $gw->as('AAA')->array([
-     *     'hoge',
-     *     'fullname1', // php 的に文字列結合（$v['sei'] . $v['mei']）する
-     *     'fullname2', // SQL 的に文字列結合（CONCAT(sei, mei)）する
-     *     'fullname3', // 修飾子付きで SQL 的に文字列結合（CONCAT(AAA.sei, AAA.mei)）する
-     *     // さらにエイリアスも使用できる
-     *     'fullalias' => 'fullname1',
-     * ]);
-     * ```
-     *
-     * 'fullname3' について補足すると、 expression が文字列であるとき、その実値は `sprintf($expression, 修飾子)` となる。
-     * 仮想カラムはあらゆる箇所で使い回される想定なので、「その時のテーブル名・エイリアス（修飾子）」を決めることができない。
-     * かと言って修飾子を付けないと曖昧なカラムエラーが出ることがある。
-     * `%1$s` しておけば sprintf で「現在の修飾子」が埋め込まれるためある程度汎用的にできる。
-     * ただし、その弊害として素の % を使うときは %% のようにエスケープする必要があるので注意。
-     *
-     * また、仮想といいつつも厳密には実際に定義されているカラムも指定可能。
-     * これを利用するとカラムのメタ情報を上書きすることができる。
-     *
-     * ```php
-     * # 仮想ではなく実カラムを指定
-     * $gw->setVirtualColumn([
-     *     // checkd_option という実際に存在するカラムの型を simple_array に上書きできる
-     *     'checkd_option'      => [
-     *         'type'  => Type::getType('simple_array')
-     *     ],
-     * ]);
-     * ```
-     *
-     * なお、実際のデータベース上の型が変わるわけではない。あくまで「php が思い込んでいる型」の上書きである。
-     * php 側の型が活用される箇所はそう多くないが、例えば下記のような処理では上書きすると有用なことがある。
-     *
-     * - {@link Database::setAutoCastType()} による型による自動キャスト
-     * - {@link Database::anywhere()} によるよしなに検索
-     *
-     * @param array $definition 仮想カラム定義
-     * @return $this 自分自身
-     */
-    public function setVirtualColumn($definition)
-    {
-        foreach ($definition as $cname => $def) {
-            if ($def === null) {
-                unset($this->column[$cname]);
-                continue;
-            }
-            if (!is_array($def)) {
-                $def = ['expression' => $def];
-            }
-            $def += [
-                'expression' => null,
-                'type'       => null,
-                'anywhere'   => [],
-                'implicit'   => $this->getUnsafeOption('defaultImplicitVirtual'),
-            ];
-            if (is_array($def['expression'])) {
-                $def['expression'] = $this->database->operator($def['expression']);
-            }
-            $this->column[$cname] = $def;
-        }
-        return $this;
-    }
-
-    /**
-     * 仮想カラム定義を取得する
-     *
-     * $attrname に null を与えると特定の属性ではなく全ての属性を返す。
-     * $columnname に null を与えると特定の仮想カラムではなく全仮想カラムを返す。
-     *
-     * ```php
-     * # 両方与えているので「vcolumn の type 属性」を返す
-     * $gw->virtualColumn('vcolumn', 'type');
-     *
-     * # $attrname が null なので「vcolumn の全属性」を（[expression => '', type => type object, ...]）返す
-     * $gw->virtualColumn('vcolumn', null);
-     *
-     * # $columnname が null なので「全仮想カラムの type 属性」を（[vcolumn1 => type object, vcolumn2 => type object, ...]）返す
-     * $gw->virtualColumn(null, 'type');
-     *
-     * # ともに null なので「全仮想カラムの全属性」を（[vcolumn1 => [expression => '', type => type object, ...], ...]）返す
-     * $gw->virtualColumn(null, null);
-     * ```
-     *
-     * @param string $columnname カラム名
-     * @param string $attrname 属性名
-     * @return mixed 仮想カラム定義 or その属性
-     */
-    public function virtualColumn($columnname = null, $attrname = null)
-    {
-        if ($columnname === null) {
-            return array_each($this->column, function (&$carry, $v, $k) use ($attrname) {
-                $carry[$k] = $this->virtualColumn($k, $attrname);
-            }, []);
-        }
-
-        if (!is_string($columnname)) {
-            return null;
-        }
-        if (!isset($this->column[$columnname])) {
-            return null;
-        }
-
-        $clone = static function ($v) {
-            return is_object($v) ? clone $v : $v;
-        };
-
-        if ($attrname === null) {
-            // 仮想カラムは使い回されるので、呼び元でオブジェクトを変更されると困るため、多少のコストは掛かるが安全のため clone して返す
-            // それとも呼び元の責務として clone する？ 大部分で問題ないのでその方が無駄が少ないと思う
-            return array_map($clone, $this->column[$columnname]);
-        }
-        if (array_key_exists($attrname, $this->column[$columnname])) {
-            // ↑と同じ。しかし、ステートフルになり得るのは expression のみ
-            if ($attrname === 'expression') {
-                return $clone($this->column[$columnname][$attrname]);
-            }
-            return $this->column[$columnname][$attrname];
-        }
-
-        throw new \InvalidArgumentException("undefined virtual column attribute($columnname.$attrname).");
     }
 
     /**

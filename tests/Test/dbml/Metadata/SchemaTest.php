@@ -31,8 +31,15 @@ class SchemaTest extends \ryunosuke\Test\AbstractUnitTestCase
         ));
 
         return [
-            [new Schema(self::getDummyDatabase()->getConnection()->getSchemaManager(), new VoidCache())],
+            [self::getDummyDatabase()->getSchema(), self::getDummyDatabase()],
         ];
+    }
+
+    function setUp()
+    {
+        parent::setUp();
+
+        self::getDummyDatabase()->getSchema()->refresh();
     }
 
     function getDummyTable($name)
@@ -231,13 +238,66 @@ class SchemaTest extends \ryunosuke\Test\AbstractUnitTestCase
     /**
      * @dataProvider provideSchema
      * @param Schema $schema
+     * @param Database $database
      */
-    function test_setTableColumnType($schema)
+    function test_setTableColumn($schema, $database)
     {
-        $schema->setTableColumnType('metasample', 'id', Type::getType('string'));
+        // 実カラムの上書き
+        $column = $schema->setTableColumn('metasample', 'id', ['type' => 'string']);
+        $this->assertEquals([
+            'virtual'  => false,
+            'implicit' => true,
+        ], $column->getCustomSchemaOptions());
+        $this->assertEquals('string', $column->getType()->getName());
         $this->assertEquals('string', $schema->getTableColumns('metasample')['id']->getType()->getName());
 
-        $this->assertException('not defined', L($schema)->setTableColumnType('metasample', 'hoge', Type::getType('string')));
+        // 仮想カラムの追加
+        $column = $schema->setTableColumn('metasample', 'dummy', [
+            'type'       => 'integer',
+            'expression' => 'NOW()',
+            'implicit'   => false,
+            'others'     => [
+                'hoge' => 'HOGE',
+            ],
+        ]);
+        $this->assertEquals([
+            'virtual'    => true,
+            'expression' => 'NOW()',
+            'implicit'   => false,
+            'others'     => [
+                'hoge' => 'HOGE',
+            ],
+        ], $column->getCustomSchemaOptions());
+        $this->assertEquals('integer', $column->getType()->getName());
+        $this->assertEquals('integer', $schema->getTableColumns('metasample')['dummy']->getType()->getName());
+
+        // 仮想カラムの上書き
+        $column = $schema->setTableColumn('metasample', 'dummy', [
+            'type'       => 'string',
+            'expression' => 'NOW()',
+            'implicit'   => true,
+            'others'     => [
+                'fuga' => 'FUGA',
+            ]
+        ]);
+        $this->assertEquals([
+            'virtual'    => true,
+            'expression' => 'NOW()',
+            'implicit'   => true,
+            'others'     => [
+                'fuga' => 'FUGA',
+            ],
+        ], $column->getCustomSchemaOptions());
+        $this->assertEquals('string', $column->getType()->getName());
+        $this->assertEquals('string', $schema->getTableColumns('metasample')['dummy']->getType()->getName());
+
+        // キャッシュが効いていないか担保しておく
+        $this->assertEquals('SELECT metasample.id, NOW() AS dummy FROM metasample', $database->select('metasample.!')->queryInto());
+
+        // 仮想カラムの削除
+        $column = $schema->setTableColumn('metasample', 'dummy', null);
+        $this->assertNull($column);
+        $this->assertEquals(['id'], array_keys($schema->getTableColumns('metasample')));
     }
 
     /**

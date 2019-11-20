@@ -176,36 +176,6 @@ namespace ryunosuke\Test\Gateway {
                     ]
                 ];
             });
-
-            $this->setVirtualColumn([
-                'title'         => [
-                    'anywhere' => [
-                        'enable'  => true,
-                        'collate' => 'utf8_bin',
-                    ],
-                ],
-                'title2'        => 'UPPER(%s.title)',
-                'title3'        => [
-                    'expression' => function ($v = 'title') {
-                        return "a $v z";
-                    },
-                ],
-                'title4'        => function () {
-                    return function ($prefix) {
-                        return $prefix . $this->title;
-                    };
-                },
-                'title5'        => [
-                    'expression' => 'UPPER(%s.title)',
-                    'implicit'   => true,
-                ],
-                'checks'        => [
-                    'type' => Type::getType('simple_array'),
-                ],
-                'comment_count' => [
-                    'expression' => $database->subcount('t_comment')
-                ],
-            ]);
         }
     }
 

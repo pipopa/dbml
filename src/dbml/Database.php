@@ -1240,9 +1240,6 @@ class Database
             foreach ($this->getSchema()->getTableColumns($tname) as $cname => $column) {
                 $carry[$tname][$cname] = $column->getType();
             }
-            foreach ($this->$tname->virtualColumn(null, 'type') as $cname => $column) {
-                $carry[$tname][$cname] = $column;
-            }
         }, []) : [];
 
         /** @var QueryBuilder $data_source */
@@ -1385,7 +1382,10 @@ class Database
     private function _normalize($table, $row)
     {
         // これはメソッド冒頭に記述し、決して場所を移動しないこと
-        $columns = $this->getSchema()->getTableColumns($table);
+        /** @var Column[] $columns */
+        $columns = array_filter($this->getSchema()->getTableColumns($table), function (Column $column) {
+            return !($column->getCustomSchemaOptions()['virtual'] ?? false);
+        });
         $autocolumn = optional($this->getSchema()->getTableAutoIncrement($table))->getName();
 
         if ($row instanceof Entityable) {
@@ -1425,9 +1425,8 @@ class Database
         }
 
         if ($types = $this->getUnsafeOption('autoCastType')) {
-            $vtypes = $this->$table->virtualColumn(null, 'type');
             foreach ($columns as $cname => $column) {
-                $type = $vtypes[$cname] ?? $column->getType();
+                $type = $column->getType();
                 $typename = $type->getName();
                 if (isset($types[$typename]['affect'])) {
                     if ($converter = $types[$typename]['affect']) {
@@ -2117,6 +2116,101 @@ class Database
     {
         $map = $this->_entityMap()['TtoE'];
         return $map[$tablename] ?? $tablename;
+    }
+
+    /**
+     * 仮想カラムを追加する
+     *
+     * ここで追加したカラムはあたかもテーブルにあるかのように select, where することができる。
+     * 仮想カラムは TableDescripter で使える記法すべてを使うことができる。
+     *
+     * ```php
+     * # 仮想カラムを追加する
+     * $db->overrideColumns([
+     *     'table_name' => [
+     *         // 単純なエイリアス。ほぼ意味はない
+     *         'hoge'      => 'fuga',
+     *         // 姓・名を結合してフルネームとする（php 版）
+     *         'fullname1' => function($row) { return $v['sei'] . $v['mei']; },
+     *         // 姓・名の SQL 版
+     *         'fullname2' => 'CONCAT(sei, mei)',
+     *         // 姓・名の SQL 版（修飾子）
+     *         'fullname3' => 'CONCAT(%1$s.sei, %1$s.mei)',
+     *         // 上記の例は実は簡易指定で本来は下記の配列を渡す（非配列を渡すと下記でいう expression が渡されたとみなす）
+     *         'misc'      => [
+     *             'expression' => null,  // 仮想カラムの実定義（文字列や Expression やクエリビルダなど全て使用できる）
+     *             'type'       => null,  // 仮想カラムの型
+     *             'implicit'   => false, // !column などの一括取得に含めるか
+     *         ],
+     *         // null を渡すと仮想カラムの削除になる
+     *         'deletedVcolumn' => null,
+     *     ],
+     * ]);
+     *
+     * # 追加した仮想カラムをあたかもテーブルカラムのように使用できる
+     * $db->selectArray('table_name' => [
+     *     'hoge',
+     *     'fullname1', // php 的に文字列結合（$v['sei'] . $v['mei']）する
+     *     'fullname2', // SQL 的に文字列結合（CONCAT(sei, mei)）する
+     *     'fullname3', // 修飾子付きで SQL 的に文字列結合（CONCAT(AAA.sei, AAA.mei)）する
+     *     // さらにエイリアスも使用できる
+     *     'fullalias' => 'fullname1',
+     * ]);
+     * ```
+     *
+     * 'fullname3' について補足すると、 expression が文字列であるとき、その実値は `sprintf($expression, 修飾子)` となる。
+     * 仮想カラムはあらゆる箇所で使い回される想定なので、「その時のテーブル名・エイリアス（修飾子）」を決めることができない。
+     * かと言って修飾子を付けないと曖昧なカラムエラーが出ることがある。
+     * `%1$s` しておけば sprintf で「現在の修飾子」が埋め込まれるためある程度汎用的にできる。
+     * ただし、その弊害として素の % を使うときは %% のようにエスケープする必要があるので注意。
+     *
+     * また、仮想といいつつも厳密には実際に定義されているカラムも指定可能。
+     * これを利用するとカラムのメタ情報を上書きすることができる。
+     *
+     * ```php
+     * # 仮想ではなく実カラムを指定
+     * $db->overrideColumns([
+     *     'table_name' => [
+     *         'checkd_option'      => [
+     *             // checkd_option という実際に存在するカラムの型を simple_array に上書きできる
+     *             'type'     => Type::getType('simple_array'),
+     *             // カラムオプションを変更できる
+     *             'anywhere' => [],
+     *         ],
+     *     ],
+     * ]);
+     * ```
+     *
+     * なお、実際のデータベース上の型が変わるわけではない。あくまで「php が思い込んでいる型」の上書きである。
+     * php 側の型が活用される箇所はそう多くないが、例えば下記のような処理では上書きすると有用なことがある。
+     *
+     * - {@link Database::setAutoCastType()} による型による自動キャスト
+     * - {@link Database::anywhere()} によるよしなに検索
+     *
+     * @param array $definition 仮想カラム定義
+     * @return $this 自分自身
+     */
+    public function overrideColumns($definition)
+    {
+        $schema = $this->getSchema();
+        foreach ($definition as $tname => $columns) {
+            foreach ($columns as $cname => $def) {
+                if ($def !== null) {
+                    if (!is_array($def)) {
+                        $def = ['expression' => $def];
+                    }
+                    $def += [
+                        'type'       => null,
+                        'expression' => null,
+                    ];
+                    if (is_array($def['expression'])) {
+                        $def['expression'] = $this->operator($def['expression']);
+                    }
+                }
+                $schema->setTableColumn($tname, $cname, $def);
+            }
+        }
+        return $this;
     }
 
     /**
@@ -2893,22 +2987,19 @@ class Database
 
         $where = [];
         foreach ($schema->getTableColumns($tname) as $cname => $column) {
-            $voptions = $this->$tname->virtualColumn($cname);
             $coptions = $schema->getTableColumnMetadata($tname, $cname);
             $coptions = array_replace_recursive(
                 $goptions,
                 $toptions['anywhere'] ?? [],
                 $coptions['anywhere'] ?? [],
                 $goptions[$tname] ?? [],
-                $goptions[$tname][$cname] ?? [],
-                $voptions['anywhere'] ?? []
+                $goptions[$tname][$cname] ?? []
             );
             if (!$coptions['enable']) {
                 continue;
             }
             /** @noinspection PhpUndefinedMethodInspection */
-            $vtype = optional($voptions['type'])->getName() ?: null;
-            $type = $vtype ?: $coptions['type'] ?: $column->getType()->getName();
+            $type = $coptions['type'] ?: $column->getType()->getName();
             $comment = $coptions['comment'] ? $this->getCompatiblePlatform()->commentize($coptions['comment'], true) . ' ' : '';
             $key = $alias . '.' . $cname;
             switch ($type) {
@@ -4639,7 +4730,9 @@ class Database
             $file->setFlags(\SplFileObject::READ_CSV | \SplFileObject::READ_AHEAD | \SplFileObject::SKIP_EMPTY | \SplFileObject::DROP_NEW_LINE);
             $file->setCsvControl($options['delimiter'], $options['enclosure'], $options['escape']);
 
-            $columns = $column ?: array_keys($this->getSchema()->getTableColumns($tableName));
+            $columns = $column ?: array_keys(array_filter($this->getSchema()->getTableColumns($tableName), function (Column $column) {
+                return !($column->getCustomSchemaOptions()['virtual'] ?? false);
+            }));
             $colnames = array_filter(array_keys(Adhoc::to_hash($columns)), 'strlen');
             $template = "INSERT INTO $tableName (%s) VALUES %s";
 
@@ -5890,7 +5983,9 @@ class Database
         $sets = $this->bindInto($data, $params);
 
         $primary = $this->getSchema()->getTablePrimaryColumns($tableName);
-        $columns = $this->getSchema()->getTableColumns($tableName);
+        $columns = array_filter($this->getSchema()->getTableColumns($tableName), function (Column $column) {
+            return !($column->getCustomSchemaOptions()['virtual'] ?? false);
+        });
 
         $selects = [];
         foreach ($columns as $cname => $column) {
@@ -5945,7 +6040,9 @@ class Database
         $targetTable = $this->convertTableName($targetTable);
         $sourceTable = $this->convertTableName($sourceTable);
 
-        $metatarget = $this->getSchema()->getTableColumns($targetTable);
+        $metatarget = array_filter($this->getSchema()->getTableColumns($targetTable), function (Column $column) {
+            return !($column->getCustomSchemaOptions()['virtual'] ?? false);
+        });
         $metasource = $this->getSchema()->getTableColumns($sourceTable);
 
         // 主キーが指定されてないなんておかしい（必ず重複してしまう）

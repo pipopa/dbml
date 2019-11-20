@@ -598,6 +598,36 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
      * @dataProvider provideDatabase
      * @param Database $database
      */
+    function test_overrideColumns($database)
+    {
+        $database->overrideColumns([
+            'test1' => [
+                'lower_name' => [
+                    'type'       => 'string',
+                    'expression' => 'LOWER(%s.name1)',
+                ],
+            ],
+            'test2' => [
+                'lower_name' => 'LOWER(%s.name2)',
+                'is_a'       => [
+                    'expression' => ['name2' => 'A'],
+                ],
+            ],
+        ]);
+        $this->assertEquals('a', $database->selectValue('test1.lower_name', [], ['id'], 1));
+        $this->assertEquals('a', $database->selectValue('test2.lower_name', [], ['id'], 1));
+        if (!$database->getPlatform() instanceof SQLServerPlatform) {
+            $this->assertTrue(!!$database->selectValue('test2.is_a', [], ['id'], 1));
+            $this->assertFalse(!!$database->selectValue('test2.is_a', [], ['id' => false], 1));
+        }
+
+        $database->getSchema()->refresh();
+    }
+
+    /**
+     * @dataProvider provideDatabase
+     * @param Database $database
+     */
     function test_addRelation($database)
     {
         $fkeys = $database->addRelation([
@@ -2052,7 +2082,7 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
             ],
         ]);
 
-        $database->getSchema()->setTableColumnType('misctype', 'carray', Type::getType(Types::SIMPLE_ARRAY));
+        $database->getSchema()->setTableColumn('misctype', 'carray', ['type' => Types::SIMPLE_ARRAY]);
 
         $database->insert('misctype', [
             'cint'      => 1,

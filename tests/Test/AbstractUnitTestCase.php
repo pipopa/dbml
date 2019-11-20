@@ -22,6 +22,9 @@ abstract class AbstractUnitTestCase extends TestCase
     /** @var Connection[] */
     private static $connections = [];
 
+    /** @var Database[] */
+    private static $databases = [];
+
     /** @var Database 接続が必要なときに使う汎用インスタンス */
     protected static $database;
 
@@ -380,8 +383,7 @@ abstract class AbstractUnitTestCase extends TestCase
 
     public static function provideDatabase()
     {
-        static $dbs = [];
-        return $dbs ?: $dbs = array_map(function ($v) {
+        return self::$databases ?: self::$databases = array_map(function ($v) {
             return [
                 new Database($v[0], [
                     'entityMapper'  => static function ($tablename) {
@@ -405,7 +407,6 @@ abstract class AbstractUnitTestCase extends TestCase
             ];
         }, self::provideConnection());
     }
-
 
     public static function getConnections()
     {
@@ -603,6 +604,39 @@ abstract class AbstractUnitTestCase extends TestCase
             if (!$db->getConnection()->ping()) {
                 $db->getConnection()->close();
             }
+
+            $db->overrideColumns([
+                't_article' => [
+                    'title'         => [
+                        'anywhere' => [
+                            'enable'  => true,
+                            'collate' => 'utf8_bin',
+                        ],
+                    ],
+                    'title2'        => 'UPPER(%s.title)',
+                    'title3'        => [
+                        'expression' => static function ($v = 'title') {
+                            return "a $v z";
+                        },
+                    ],
+                    'title4'        => static function () {
+                        return function ($prefix) {
+                            /** @noinspection PhpUndefinedFieldInspection */
+                            return $prefix . $this->title;
+                        };
+                    },
+                    'title5'        => [
+                        'expression' => 'UPPER(%s.title)',
+                        'implicit'   => true,
+                    ],
+                    'checks'        => [
+                        'type' => Type::getType('simple_array'),
+                    ],
+                    'comment_count' => [
+                        'expression' => $db->subcount('t_comment')
+                    ],
+                ],
+            ]);
         }
 
         self::readyRecord();

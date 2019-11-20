@@ -560,23 +560,17 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
             }
 
             if ($ignores) {
-                $acolumns = $schema->getTableColumns($table);
-                $vcolumns = array_filter($this->database->$table->virtualColumn(null, null), function ($vcol) {
-                    return $vcol['implicit'];
+                $allcolumns = array_filter($schema->getTableColumns($table), function(Column $column){
+                    return !($column->getCustomSchemaOptions()['virtual'] ?? false) || $column->getCustomSchemaOptions()['implicit'];
                 });
                 foreach ($ignores as $ignore) {
                     // 無視しようとしているカラムが存在しない場合（テーブル定義を変更した時とかの対策）
-                    if (strlen($ignore) && !isset($acolumns[$ignore]) && !isset($vcolumns[$ignore])) {
+                    if (strlen($ignore) && !isset($allcolumns[$ignore])) {
                         throw new \UnexpectedValueException('some columns are not found (' . $ignore . ').');
                     }
-                    unset($acolumns[$ignore]);
-                    unset($vcolumns[$ignore]);
+                    unset($allcolumns[$ignore]);
                 }
-                $columns = array_merge(
-                    array_keys(array_diff_key($acolumns, $columns)),
-                    $columns,
-                    array_keys(array_diff_key($vcolumns, $columns))
-                );
+                $columns = array_merge(array_keys(array_diff_key($allcolumns, $columns)), $columns);
             }
         }
 
@@ -584,21 +578,24 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
 
         foreach ($columns as $key => $column) {
             // 仮想カラム
-            if ($schema->hasTable($table) && $column !== null) {
-                $vcolumn = $this->database->$table->virtualColumn($column, 'expression');
-                if ($vcolumn) {
+            if ($schema->hasTable($table) && is_string($column)) {
+                if (($acolumn = $schema->getTableColumns($table)[$column] ?? null) && $acolumn->hasCustomSchemaOption('expression')) {
                     $key = is_int($key) ? $column : $key;
                     // 仮想カラムは修飾子を付与するチャンスを与えなければ実質使い物にならない（エイリアスが動的だから）
+                    $vcolumn = $acolumn->getCustomSchemaOption('expression');
                     $column = is_string($vcolumn) ? sprintf($vcolumn, $accessor) : $vcolumn;
                 }
             }
 
             // Expression 化出来そうならする
-            $exists_colums = is_string($key) && $schema->hasTable($table) && $schema->getTable($table)->hasColumn($key);
-            if ($column instanceof \Closure && $exists_colums) {
-                $column = function ($value = null) use ($column) {
-                    return $column($value);
-                };
+            if ($column instanceof \Closure && is_string($key) && $schema->hasTable($table)) {
+                if ($acolumn = $schema->getTableColumns($table)[$key] ?? null) {
+                    if (!($acolumn->getCustomSchemaOptions()['virtual'] ?? false )) {
+                        $column = function ($value = null) use ($column) {
+                            return $column($value);
+                        };
+                    }
+                }
             }
             $column = Expression::forge($column);
             $column = PhpExpression::forge($column, $key, $autoSelectClosure ? $accessor : null);
@@ -824,9 +821,11 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
             if (is_string($cond2) && preg_match('#([a-z_][a-z0-9_]*)\.([a-z_][a-z0-9_]*)#ui', $cond2, $matches)) {
                 $modifier = $matches[1];
                 $tablename = $froms[$modifier]['table'] ?? $modifier;
-                if ($gateway = $this->database->$tablename) {
-                    $vcolumns = array_map_filter($gateway->virtualColumn(), function ($vcol) {
-                        return $vcol['implicit'] ? $vcol['expression'] : null;
+                if ($this->database->getSchema()->hasTable($tablename)) {
+                    $vcolumns = array_map_filter($this->database->getSchema()->getTableColumns($tablename), function (Column $col) {
+                        if ($col->hasCustomSchemaOption('virtual') && $col->hasCustomSchemaOption('expression')) {
+                            return $col->getCustomSchemaOption('expression');
+                        }
                     });
                     if ($vcolumns) {
                         if ($is_int) {

@@ -14,6 +14,7 @@ use Doctrine\DBAL\Types\Type;
 use ryunosuke\dbml\Utility\Adhoc;
 use function ryunosuke\dbml\array_each;
 use function ryunosuke\dbml\array_pickup;
+use function ryunosuke\dbml\array_unset;
 use function ryunosuke\dbml\arrayize;
 
 /**
@@ -146,6 +147,58 @@ class Schema
 
         $this->tableNames[] = $table_name;
         $this->tables[$table_name] = $table;
+    }
+
+    /**
+     * テーブルのカラムを変更する
+     *
+     * 存在しないカラムも指定できる。
+     * その場合、普通に追加されるので仮想カラムとして扱うことができる。
+     *
+     * @param string $table_name テーブル名
+     * @param string $column_name カラム名
+     * @param array|null $definitation カラム定義。 null を渡すと削除になる
+     * @return Column|null 定義されたカラム
+     */
+    public function setTableColumn($table_name, $column_name, ?array $definitation)
+    {
+        /// 一過性のものを想定しているのでこのメソッドで決してキャッシュ保存を行ってはならない
+
+        $table = $this->getTable($table_name);
+
+        if ($definitation === null) {
+            $table->dropColumn($column_name);
+            unset($this->tableColumns[$table_name][$column_name]);
+            unset($this->tableColumnMetadata["$table_name.$column_name"]);
+            return null;
+        }
+
+        if ($table->hasColumn($column_name)) {
+            $column = $table->getColumn($column_name);
+            $definitation['virtual'] = $column->getCustomSchemaOptions()['virtual'] ?? false;
+            $definitation['implicit'] = $definitation['virtual'] ? $definitation['implicit'] ?? false : true;
+        }
+        else {
+            $column = $table->addColumn($column_name, 'integer');
+            $definitation['virtual'] = true;
+            $definitation['implicit'] = $definitation['implicit'] ?? false;
+        }
+
+        $type = array_unset($definitation, 'type');
+        if ($type) {
+            $column->setType($type instanceof Type ? $type : Type::getType($type));
+        }
+        foreach ($definitation as $name => $value) {
+            $column->setCustomSchemaOption($name, $value);
+        }
+
+        // 再キャッシュ
+        $columns = $this->getTableColumns($table_name);
+        $metadata = $this->getTableColumnMetadata($table_name, $column_name);
+        $this->tableColumns[$table_name] = array_merge($columns, [$column_name => $column]);
+        $this->tableColumnMetadata["$table_name.$column_name"] = array_merge($metadata, $definitation);
+
+        return $column;
     }
 
     /**
@@ -316,24 +369,6 @@ class Schema
             $this->addForeignKey($fk());
         }
         return $this->foreignKeys[$table_name];
-    }
-
-    /**
-     * テーブルのカラム型を変更する
-     *
-     * @param string $table_name 変更したいテーブル名
-     * @param string $column_name 変更したいカラム名
-     * @param Type|string $type 変更する型
-     */
-    public function setTableColumnType($table_name, $column_name, $type)
-    {
-        $columns = $this->getTableColumns($table_name);
-        if (!isset($columns[$column_name])) {
-            throw new \InvalidArgumentException("$column_name is not defined in $table_name.");
-        }
-
-        $columns[$column_name]->setType($type instanceof Type ? $type : Type::getType($type));
-        $this->tableColumns[$table_name] = $columns;
     }
 
     /**
