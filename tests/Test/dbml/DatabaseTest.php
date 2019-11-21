@@ -1535,17 +1535,14 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
         $this->assertEquals(['(SELECT test.hoge FROM test)'], $whereInto([$database->select('test.hoge')]));
         $this->assertEquals([], $params);
 
-        $this->assertEquals(['(SELECT test.hoge FROM test)'], $whereInto([$database->select('test.hoge')->addParam(1)]));
-        $this->assertEquals([1], $params);
+        $this->assertEquals(['id = (SELECT test.id FROM test)'], $whereInto(['id = ?' => $database->select('test.id')]));
+        $this->assertEquals([], $params);
 
-        $this->assertEquals(['id = (SELECT test.id FROM test)'], $whereInto(['id = ?' => $database->select('test.id')->addParam(1)]));
-        $this->assertEquals([1], $params);
+        $this->assertEquals(['id IN((SELECT test.id FROM test))'], $whereInto(['id IN(?)' => $database->select('test.id')]));
+        $this->assertEquals([], $params);
 
-        $this->assertEquals(['id IN((SELECT test.id FROM test))'], $whereInto(['id IN(?)' => $database->select('test.id')->addParam(1)]));
-        $this->assertEquals([1], $params);
-
-        $this->assertEquals(['id IN (SELECT test.id FROM test)'], $whereInto(['id' => $database->select('test.id')->addParam(1)]));
-        $this->assertEquals([1], $params);
+        $this->assertEquals(['id IN (SELECT test.id FROM test)'], $whereInto(['id' => $database->select('test.id')]));
+        $this->assertEquals([], $params);
 
         $this->assertException(
             new \InvalidArgumentException('notfound search string'),
@@ -3396,7 +3393,7 @@ ON DUPLICATE KEY UPDATE id = VALUES(id), name = VALUES(name)", $affected);
         // 複数テーブル
         $this->assertEquals(2, $database->insert([
             'foreign_p P' => [
-                'id'   => 99,
+            'id'              => 99,
                 'name' => 'hoge',
             ],
             '+foreign_c1' => [
@@ -3414,7 +3411,7 @@ ON DUPLICATE KEY UPDATE id = VALUES(id), name = VALUES(name)", $affected);
 
         $sqls = $database->dryrun()->insert([
             'foreign_p P' => [
-                'id'   => 99,
+            'id'              => 99,
                 'name' => 'hoge',
             ],
             '+foreign_c1' => [

@@ -5288,7 +5288,7 @@ class Database
 
         // oracle には multiple insert なるものが有るらしいが・・・
         if ($tableName instanceof QueryBuilder) {
-            $data += $tableName->getQueryPart('colval');
+            $data += $tableName->getColval();
             $result = null;
             $affected = [];
             foreach ($tableName->getFromPart() as $table) {
@@ -5413,13 +5413,8 @@ class Database
         $tableName = $this->_preaffect($tableName, $data);
 
         if ($tableName instanceof QueryBuilder) {
-            $params = [];
-            $data += $tableName->getQueryPart('colval');
-            $set = $this->bindInto($data, $params);
-            $sets = array_sprintf($set, '%2$s = %1$s', ', ');
-            $tableName->addParam($params, 'join'); // クエリ順は from,join,set,where になるので join 位置に入れる
-            $tableName->andWhere($identifier);
-            return $this->executeUpdate($this->getCompatiblePlatform()->convertUpdateQuery($tableName, $sets), $tableName->getParams());
+            $tableName->set($data + $tableName->getColval())->andWhere($identifier);
+            return $this->executeUpdate($this->getCompatiblePlatform()->convertUpdateQuery($tableName), $tableName->getParams());
         }
         if (is_array($tableName)) {
             list($tableName, $data) = first_keyvalue($tableName);
@@ -5726,7 +5721,15 @@ class Database
             throw new \InvalidArgumentException("\$limit must be > 0 ($limit).");
         }
 
-        $orderBy = array_kmap($orderBy, function ($v, $k) use ($simplize) { return is_int($k) ? $simplize($v) : ($v ? '+' : '-') . $simplize($k); });
+        $orderBy = array_kmap($orderBy, function ($v, $k) use ($simplize) {
+            if (is_int($k)) {
+                if (is_array($v)) {
+                    return ($v[1] ? '+' : '-') . $simplize($v[0]);
+                }
+                return $simplize($v);
+            }
+            return ($v ? '+' : '-') . $simplize($k);
+        });
         if (count($orderBy) !== 1) {
             throw new \InvalidArgumentException("\$orderBy must be === 1.");
         }

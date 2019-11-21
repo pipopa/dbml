@@ -41,6 +41,7 @@ use function ryunosuke\dbml\preg_splice;
 use function ryunosuke\dbml\rbind;
 use function ryunosuke\dbml\split_noempty;
 use function ryunosuke\dbml\stdclass;
+use function ryunosuke\dbml\str_lchop;
 use function ryunosuke\dbml\throws;
 
 // @formatter:off
@@ -65,8 +66,7 @@ use function ryunosuke\dbml\throws;
  * ### プリペアードステートメント
  *
  * 明示的に prepare のようなメソッドを呼ばない限り内部のプリペアードステートメントでは名前付きパラメータを一切使用しない（{@link Statement} も参照）。
- * したがってメソッド呼び出し順によってはパラメータ順が「ズレ」ることがある。
- * 基本的にはズレないようにはしてある（ズレるのはかなり特殊な条件）が、怖い場合は `queryInto` で文字列化してから結合したりサブクエリで使用したりした方が確実。
+ * prepare を呼ぶと現時点のパラメータで固定することができ、その上で `:name` のような名前付きパラメータに値を渡すことができる。
  *
  * @method bool                   getAutoOrder()
  * @method $this                  setAutoOrder($bool) {自動で主キー順にするか（{@link detectAutoOrder()} を参照）}
@@ -192,43 +192,26 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
 
     private const COUNT_ALIAS = '__dbml_auto_cnt';
 
-    // パラメータオフセットのゲタ
-    private const PARAMETER_OFFSET = 1000000;
-
-    /** @var array bind パラメータのオフセット */
-    private const PARAMETER_OFFSETS = [
-        'select'  => 1 * self::PARAMETER_OFFSET,
-        'union'   => 2 * self::PARAMETER_OFFSET,
-        'from'    => 3 * self::PARAMETER_OFFSET,
-        'join'    => 4 * self::PARAMETER_OFFSET,
-        'where'   => 5 * self::PARAMETER_OFFSET,
-        'having'  => 6 * self::PARAMETER_OFFSET,
-        'orderBy' => 7 * self::PARAMETER_OFFSET,
-    ];
-
     /** @var array SQL の各句 */
     private $sqlParts = [
         'comment' => [],
         'option'  => [],
         'select'  => [],
+        'union'   => [],
         'from'    => [],
         'join'    => [],
         'hint'    => [],
+        'colval'  => [],
         'where'   => [],
         'groupBy' => [],
         'having'  => [],
         'orderBy' => [],
         'offset'  => null,
         'limit'   => null,
-        'union'   => [],
-        'colval'  => [],
     ];
 
     /** @var string 生成した SQL（キャッシュ） */
     private $sql;
-
-    /** @var array bind パラメータ */
-    private $params = [];
 
     /** @var PhpExpression[] php 式配列 */
     private $phpExpressions = [];
@@ -328,7 +311,6 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
             return $somthing;
         };
         $this->sqlParts = $clone($this->sqlParts);
-        $this->params = $clone($this->params);
         $this->subbuilders = $clone($this->subbuilders);
     }
 
@@ -489,6 +471,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
         foreach ($builder->joinOrders as $jorder) {
             $builder->addOrderBy($jorder);
         }
+        $builder->sqlParts['orderBy'] = array_unique(array_map(function ($v) { return "{$v[0]} " . ($v[1] ? 'ASC' : 'DESC'); }, $builder->sqlParts['orderBy']));
 
         // 色々手を加えたやつでクエリ文字列化
         $sql = 'SELECT'
@@ -498,7 +481,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
             . concat(' WHERE ', implode(' AND ', Adhoc::wrapParentheses($builder->sqlParts['where'])))
             . concat(' GROUP BY ', implode(', ', $builder->sqlParts['groupBy']))
             . concat(' HAVING ', implode(' AND ', Adhoc::wrapParentheses($builder->sqlParts['having'])))
-            . concat(' ORDER BY ', array_sprintf($builder->sqlParts['orderBy'], function ($v, $k) { return "$k " . ($v ? 'ASC' : 'DESC'); }, ', '));
+            . concat(' ORDER BY ', implode(', ', $builder->sqlParts['orderBy']));
 
         $sql = $platform->modifyLimitQuery($sql, $builder->sqlParts['limit'], $builder->sqlParts['offset']);
         $sql = $cplatform->appendLockSuffix($sql, $builder->lockMode, $builder->lockOption);
@@ -563,7 +546,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
             }
 
             if ($ignores) {
-                $allcolumns = array_filter($schema->getTableColumns($table), function(Column $column){
+                $allcolumns = array_filter($schema->getTableColumns($table), function (Column $column) {
                     return !($column->getCustomSchemaOptions()['virtual'] ?? false) || $column->getCustomSchemaOptions()['implicit'];
                 });
                 foreach ($ignores as $ignore) {
@@ -593,7 +576,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
             // Expression 化出来そうならする
             if ($column instanceof \Closure && is_string($key) && $schema->hasTable($table)) {
                 if ($acolumn = $schema->getTableColumns($table)[$key] ?? null) {
-                    if (!($acolumn->getCustomSchemaOptions()['virtual'] ?? false )) {
+                    if (!($acolumn->getCustomSchemaOptions()['virtual'] ?? false)) {
                         $column = function ($value = null) use ($column) {
                             return $column($value);
                         };
@@ -696,19 +679,12 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
                         $column = $this->database->getCompatiblePlatform()->convertSelectExistsQuery($column);
                     }
                 }
-                $result[] = Alias::forge($key, $column->getQuery());
-                $this->addParam($column->getParams(), 'select');
-                if (!is_int($key)) {
-                    $this->sqlParts['colval'][$prefix . $key] = $column->getQuery();
-                }
+                $expr = new Expression($column->getQuery(), $column->getParams());
+                $result[] = Alias::forge($key, $expr, $prefix);
             }
             // Expression なら文字列化したものをそのまま select
             elseif ($column instanceof Expression) {
-                $result[] = Alias::forge($key, $column);
-                $this->addParam($column->getParams(), 'select');
-                if (!is_int($key)) {
-                    $this->sqlParts['colval'][$prefix . $key] = $column;
-                }
+                $result[] = Alias::forge($key, $column, $prefix);
             }
             // .. プレフィクスなら「親カラムの参照」（識別のために $prefix を付与しないで追加する）
             elseif (is_string($column) && strpos($column, '..') === 0) {
@@ -719,10 +695,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
                 foreach (split_noempty(',', (string) $column) as $col) {
                     // エイリアスをバラす
                     list($key, $col) = Alias::split($col, $key);
-                    $result[] = Alias::forge($key, $prefix . $col);
-                    if (!is_int($key)) {
-                        $this->sqlParts['colval'][$prefix . $key] = $col;
-                    }
+                    $result[] = Alias::forge($key, $prefix . $col, $prefix);
                 }
             }
         }
@@ -912,9 +885,8 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
             if (!$ack) {
                 $ors = 'NOT (' . $ors . ')';
             }
-            $this->sqlParts[$type][] = $ors;
+            $this->sqlParts[$type][] = new Expression($ors, $params);
         }
-        $this->addParam($params, $type);
 
         return $this->_dirty();
     }
@@ -1757,9 +1729,6 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
         }
 
         $isfrom = $type === null || (empty($fromAlias) && empty($froms));
-        if ($table instanceof Queryable) {
-            $this->addParam($table->getParams(), $isfrom ? 'from' : 'join');
-        }
 
         if ($isfrom) {
             $this->sqlParts['from'][] = [
@@ -1777,13 +1746,12 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
         if (empty($qb->sqlParts['where'])) {
             throw new \InvalidArgumentException("can't nocondition join $table<->$fromTable.");
         }
-        $this->addParam($qb->params, 'join');
 
         $this->sqlParts['join'][$fromAlias][] = [
             'type'      => $type,
             'table'     => $table,
             'alias'     => $alias,
-            'condition' => implode(' AND ', Adhoc::wrapParentheses($qb->sqlParts['where'])),
+            'condition' => new Expression(implode(' AND ', Adhoc::wrapParentheses($qb->sqlParts['where'])), $qb->getParams('where')),
         ];
 
         return $this->_dirty();
@@ -2081,15 +2049,10 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
                 $order = $sort[0] !== '-';
                 $sort = ltrim($sort, '-+');
             }
-            if ($sort instanceof Queryable) {
-                $params = [];
-                $sort = $sort->merge($params);
-                $this->addParam($params, 'orderBy');
-            }
             if (is_bool($order)) {
                 $order = $order ? 'ASC' : 'DESC';
             }
-            $this->sqlParts['orderBy'][(string) $sort] = strtoupper($order) !== 'DESC';
+            $this->sqlParts['orderBy'][] = [$sort, strtoupper($order) !== 'DESC'];
         }
 
         return $this->_dirty();
@@ -2410,9 +2373,6 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
         $isall = func_num_args() === 2 ? func_get_arg(1) : false;
 
         foreach (arrayize($query) as $subq) {
-            if ($subq instanceof QueryBuilder) {
-                $this->addParam($subq->getParams(), 'union');
-            }
             $this->sqlParts['union'][] = [$this->sqlParts['union'] ? ($isall ? 'UNION ALL' : 'UNION') : '', $subq];
         }
 
@@ -2430,6 +2390,43 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
     public function unionAll($query)
     {
         return $this->union($query, true);
+    }
+
+    /**
+     * SET 句の設定
+     *
+     * ほぼ内部向け。
+     *
+     * @param array $sets SET 句
+     * @return $this 自分自身
+     */
+    public function set($sets = [])
+    {
+        foreach ($sets as $key => $set) {
+            $ps = [];
+            $this->sqlParts['colval'][$key] = new Expression($this->database->bindInto($set, $ps), $ps);
+        }
+
+        return $this->_dirty();
+    }
+
+    /**
+     * 設定されている SELECT 句から SET に流用できそうなカラムペアを返す
+     *
+     * @return array
+     */
+    public function getColval()
+    {
+        // Alias は SET に転用できる
+        return array_each($this->sqlParts['select'], function (&$carry, $v) {
+            if ($v instanceof Alias && $v->getModifier()) {
+                $actual = $v->getActual();
+                if (is_string($actual)) {
+                    $actual = str_lchop($actual, $v->getModifier());
+                }
+                $carry[$v->getModifier() . $v->getAlias()] = $actual;
+            }
+        }, []);
     }
 
     /**
@@ -2483,7 +2480,6 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
             $counter = $this->database->createQueryBuilder();
             $counter->select(new Alias(self::COUNT_ALIAS, "COUNT($column)"));
             $counter->from(['__dbml_auto_table' => $that]);
-            $counter->params = $that->params;
         }
         else {
             $that->resetQueryPart('select');
@@ -3228,16 +3224,6 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
             $this->phpOrders = null;
         }
 
-        // パラメータはゲタを履かせたオフセット値で識別して伏せる
-        if (isset(self::PARAMETER_OFFSETS[$queryPartName])) {
-            $offset = self::PARAMETER_OFFSETS[$queryPartName];
-            foreach ($this->params as $k => $v) {
-                if ($offset <= $k && $k < $offset + self::PARAMETER_OFFSET) {
-                    unset($this->params[$k]);
-                }
-            }
-        }
-
         return $this->_dirty();
     }
 
@@ -3260,7 +3246,6 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
         $this->rowcount = false;
 
         $this->resetQueryPart();
-        $this->params = [];
 
         return $this->_dirty();
     }
@@ -3313,38 +3298,6 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
         return $this->database->queryInto($this->__toString(), $this->getParams());
     }
 
-    /**
-     * bind 値を追加する
-     *
-     * @param mixed $params bind パラメータ
-     * @param int|string $position 追加インデックス。文字列を与えると句文字列を意味する
-     * @return $this 自分自身
-     */
-    public function addParam($params, $position = null)
-    {
-        // bind 順のズレを極力防ぐために句毎にゲタを履かせて取得時（getParameters）にソートする
-        $position = intval(self::PARAMETER_OFFSETS[$position] ?? $position);
-        $n = count($this->params);
-        foreach (arrayize($params) as $param) {
-            $this->params[$position + $n++] = $param;
-        }
-        return $this;
-    }
-
-    /**
-     * bind 値を設定する
-     *
-     * なんの制約もなしにダイレクトに代入できるが、内部向けなので非推奨。
-     *
-     * @param array $params bind パラメータ
-     * @return $this 自分自身
-     */
-    public function setParams($params)
-    {
-        $this->params = $params;
-        return $this;
-    }
-
     public function getQuery()
     {
         return "($this)";
@@ -3352,20 +3305,17 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
 
     public function getParams($queryPartName = null)
     {
-        if ($queryPartName !== null) {
-            $params = [];
-            $offset = self::PARAMETER_OFFSETS[$queryPartName];
-            foreach ($this->params as $k => $v) {
-                if ($offset <= $k && $k < $offset + self::PARAMETER_OFFSET) {
-                    $params[] = $this->params[$k];
-                }
+        $parts = $queryPartName ? $this->sqlParts[$queryPartName] : $this->sqlParts;
+        $params = [];
+        array_walk_recursive($parts, function ($param) use (&$params) {
+            if ($param instanceof Alias) {
+                $param = $param->getActual();
             }
-            return $params;
-        }
-
-        $params = $this->params;
-        ksort($params);
-        return array_merge($params);
+            if ($param instanceof Queryable) {
+                $params = array_merge($params, $param->getParams());
+            }
+        });
+        return $params;
     }
 
     public function merge(?array &$params)

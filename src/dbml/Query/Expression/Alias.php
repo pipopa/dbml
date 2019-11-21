@@ -17,6 +17,9 @@ class Alias
     /** @var mixed 実名 */
     private $actual;
 
+    /** @var mixed 修飾子 */
+    private $modifier;
+
     /**
      * インスタンスを返す
      *
@@ -60,9 +63,10 @@ class Alias
      *
      * @param string $alias エイリアス名
      * @param mixed $actual 実名
+     * @param string|null $modifier $actual の修飾子
      * @return Alias|mixed Alias 化できたら Alias オブジェクト、できなかったら $actual をそのまま返す
      */
-    public static function forge($alias, $actual)
+    public static function forge($alias, $actual, $modifier = null)
     {
         $alen = strlen($alias);
 
@@ -70,13 +74,13 @@ class Alias
         if ($alen === 0 && is_string($actual)) {
             list($alias, $actual2) = self::split($actual);
             if ($alias !== null) {
-                return new self($alias, $actual2);
+                return new self($alias, $actual2, $modifier);
             }
         }
 
         // エイリアス名が指定されているならエイリアスとみなす
         if ($alen > 0 && is_string($alias)) {
-            return new self($alias, $actual);
+            return new self($alias, $actual, $modifier);
         }
 
         // じゃないなら実部をそのまま返す
@@ -88,11 +92,13 @@ class Alias
      *
      * @param string $alias エイリアス名
      * @param mixed $actual 実名
+     * @param string|null $modifier $actual の修飾子
      */
-    public function __construct($alias, $actual)
+    public function __construct($alias, $actual, $modifier = null)
     {
         $this->alias = $alias;
         $this->actual = $actual;
+        $this->modifier = $modifier;
     }
 
     /**
@@ -128,5 +134,15 @@ class Alias
     public function getActual()
     {
         return $this->actual;
+    }
+
+    /**
+     * 修飾子を返す
+     *
+     * @return string 修飾子
+     */
+    public function getModifier()
+    {
+        return $this->modifier;
     }
 }

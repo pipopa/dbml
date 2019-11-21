@@ -48,6 +48,9 @@ class SubqueryBuilder extends QueryBuilder
     /** @var string サブセレクト時の fetch メソッド */
     private $submethod;
 
+    /** @var array bind パラメータ */
+    private $params = [];
+
     public static function getDefaultOptions()
     {
         return array_replace([
@@ -80,7 +83,7 @@ class SubqueryBuilder extends QueryBuilder
                 throw new \UnexpectedValueException('subquery must be lazy mode.');
             }
             $this->submethod = $name;
-            $this->addParam(array_key_exists(0, $arguments) ? $arguments[0] : []);
+            $this->params = array_key_exists(0, $arguments) ? $arguments[0] : [];
             return $this;
         }
 
@@ -345,6 +348,11 @@ class SubqueryBuilder extends QueryBuilder
         return $this;
     }
 
+    public function getParams($queryPartName = null)
+    {
+        return array_merge(parent::getParams($queryPartName), $this->params);
+    }
+
     /**
      * サブクエリを SQL 文字列化して返す（デバッグ用）
      *
@@ -358,11 +366,9 @@ class SubqueryBuilder extends QueryBuilder
         $that = clone $this;
 
         // 自身の subbuilder は再帰しない(そいつの実行時にどうせ実行される)
-        $params = $that->getParams();
         $selects = $that->getQueryPart('select');
         $that->resetQueryPart('select');
         $that->select(...$selects);
-        $that->setParams($params);
 
         // 結合カラムを WHERE に加えてわかりやすくする
         $that->andWhere(array_sprintf($that->lazyColumns, '%2$s IN ([parent.%1$s])'));

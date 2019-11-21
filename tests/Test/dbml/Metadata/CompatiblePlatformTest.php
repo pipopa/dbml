@@ -742,26 +742,26 @@ class CompatiblePlatformTest extends \ryunosuke\Test\AbstractUnitTestCase
      */
     function test_convertUpdateQuery($cplatform, $platform)
     {
-        $builder = self::getDummyDatabase()->select('test');
-        $this->assertEquals('UPDATE test SET key = ?', $cplatform->convertUpdateQuery($builder, 'key = ?'));
+        $builder = self::getDummyDatabase()->select('test')->set(['key' => 1]);
+        $this->assertEquals('UPDATE test SET key = ?', $cplatform->convertUpdateQuery($builder));
 
-        $builder = self::getDummyDatabase()->select('test T');
+        $builder = self::getDummyDatabase()->select('test T')->set(['key' => 1]);
         if ($platform instanceof SQLServerPlatform) {
-            $this->assertException(new \DomainException('not supported'), L($cplatform)->convertUpdateQuery($builder, 'key = ?'));
+            $this->assertException(new \DomainException('not supported'), L($cplatform)->convertUpdateQuery($builder));
         }
         else {
-            $this->assertEquals('UPDATE test T SET key = ?', $cplatform->convertUpdateQuery($builder, 'key = ?'));
+            $this->assertEquals('UPDATE test T SET key = ?', $cplatform->convertUpdateQuery($builder));
         }
 
-        $builder = self::getDummyDatabase()->select('foreign_c1 C, foreign_p');
+        $builder = self::getDummyDatabase()->select('foreign_c1 C, foreign_p')->set(['key' => 1]);
         if ($platform instanceof \ryunosuke\Test\Platforms\SqlitePlatform || $platform instanceof MySqlPlatform) {
-            $this->assertEquals('UPDATE foreign_c1 C, foreign_p SET key = ?', $cplatform->convertUpdateQuery($builder, 'key = ?'));
+            $this->assertEquals('UPDATE foreign_c1 C, foreign_p SET key = ?', $cplatform->convertUpdateQuery($builder));
         }
         elseif ($platform instanceof SQLServerPlatform) {
-            $this->assertEquals('UPDATE C SET key = ? FROM foreign_c1 C, foreign_p', $cplatform->convertUpdateQuery($builder, 'key = ?'));
+            $this->assertEquals('UPDATE C SET key = ? FROM foreign_c1 C, foreign_p', $cplatform->convertUpdateQuery($builder));
         }
         else {
-            $this->assertException(new \DomainException('not supported'), L($cplatform)->convertUpdateQuery($builder, 'key = ?'));
+            $this->assertException(new \DomainException('not supported'), L($cplatform)->convertUpdateQuery($builder));
         }
     }
 

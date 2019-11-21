@@ -909,13 +909,13 @@ class CompatiblePlatform /*extends AbstractPlatform*/
      * SELECT 文を UPDATE 文に変換する
      *
      * @param QueryBuilder $builder 変換するクエリビルダ
-     * @param string $sets SET 句
      * @return string クエリビルダ を UPDATE に変換した文字列
      */
-    public function convertUpdateQuery(QueryBuilder $builder, $sets)
+    public function convertUpdateQuery(QueryBuilder $builder)
     {
         $froms = $builder->getFromPart();
         $from = reset($froms);
+        $sets = array_sprintf($builder->getQueryPart('colval'), '%2$s = %1$s', ', ');
 
         // JOIN がなければ変換はできる
         if (count($froms) === 1 || $this->platform instanceof \ryunosuke\Test\Platforms\SqlitePlatform || $this->platform instanceof MySqlPlatform) {

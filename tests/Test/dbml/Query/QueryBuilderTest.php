@@ -57,8 +57,6 @@ class QueryBuilderTest extends \ryunosuke\Test\AbstractUnitTestCase
         $this->assertEquals('a', $builder->select('name1')->from('test1')->limit(1)->value());
 
         $this->assertEquals('e', $builder->select('name1')->from('test1')->where('id = ?')->limit(1)->value([5]));
-
-        $this->assertEquals('e', $builder->select('name1')->from('test1')->where('id = ?')->limit(1)->addParam(5)->value());
     }
 
     /**
@@ -1164,15 +1162,12 @@ AND
             ['id = 2', 'seq = 2']
         ));
 
-        $builder->setParams([]);
         $this->assertQuery('SELECT test.* FROM test WHERE id = ?', $builder->where(['id' => 1]));
         $this->assertEquals([1], $builder->getParams());
 
-        $builder->setParams([]);
         $this->assertQuery("SELECT test.* FROM test WHERE (id = ?) AND (seq = ?)", $builder->where(['id = ?' => 1, 'seq = ?' => 2]));
         $this->assertEquals([1, 2], $builder->getParams());
 
-        $builder->setParams([]);
         $this->assertQuery("SELECT test.* FROM test WHERE (id1 = 0) AND (id2 = ?) AND (id3 IN (?,?)) AND (id4 = ?) AND (id5 IN (?,?))", $builder->where(
             [
                 'id1 = 0',
@@ -1201,7 +1196,6 @@ AND
             ['id = 2', 'seq = 2']
         ));
 
-        $builder->setParams([]);
         $this->assertQuery("SELECT test.* FROM test WHERE NOT ((and_cond = ?) AND ((0) OR ((or_cond1 = ?) AND (or_cond2 = ?)) OR ((or_cond1 = ?) AND (or_cond2 = ?))))", $builder->notWhere([
             'and_cond' => 1,
             [
@@ -1674,15 +1668,12 @@ SQL
             ['id = 2', 'seq = 2']
         ));
 
-        $builder->setParams([]);
         $this->assertQuery('SELECT test.* FROM test HAVING id = ?', $builder->having(['id' => 1]));
         $this->assertEquals([1], $builder->getParams());
 
-        $builder->setParams([]);
         $this->assertQuery("SELECT test.* FROM test HAVING (id = ?) AND (seq = ?)", $builder->having(['id = ?' => 1, 'seq = ?' => 2]));
         $this->assertEquals([1, 2], $builder->getParams());
 
-        $builder->setParams([]);
         $this->assertQuery("SELECT test.* FROM test HAVING (id1 = 0) AND (id2 = ?) AND (id3 IN (?,?)) AND (id4 = ?) AND (id5 IN (?,?))", $builder->having(
             [
                 'id1 = 0',
@@ -1711,7 +1702,6 @@ SQL
             ['id = 2', 'seq = 2']
         ));
 
-        $builder->setParams([]);
         $this->assertQuery("SELECT test.* FROM test HAVING NOT ((and_cond = ?) AND ((0) OR ((or_cond1 = ?) AND (or_cond2 = ?)) OR ((or_cond1 = ?) AND (or_cond2 = ?))))", $builder->notHaving([
             'and_cond' => 1,
             [
@@ -1837,16 +1827,16 @@ SQL
                 'C.comment_id' => 'DESC',
             ],
         ]);
-        $this->assertEquals(['A.article_id' => false], $builder->getQueryPart('orderBy'));
-        $this->assertEquals(['C.comment_id' => false], $builder->getSubbuilder('C')->getQueryPart('orderBy'));
+        $this->assertEquals([['A.article_id', false]], $builder->getQueryPart('orderBy'));
+        $this->assertEquals([['C.comment_id', false]], $builder->getSubbuilder('C')->getQueryPart('orderBy'));
 
         // スラッシュネスト
         $builder->reset()->column('t_article A/t_comment C')->orderBy([
             'A.article_id' => 'DESC',
             'C/comment_id' => 'DESC',
         ]);
-        $this->assertEquals(['A.article_id' => false], $builder->getQueryPart('orderBy'));
-        $this->assertEquals(['comment_id' => false], $builder->getSubbuilder('C')->getQueryPart('orderBy'));
+        $this->assertEquals([['A.article_id', false]], $builder->getQueryPart('orderBy'));
+        $this->assertEquals([['comment_id', false]], $builder->getSubbuilder('C')->getQueryPart('orderBy'));
     }
 
     /**
@@ -2156,6 +2146,32 @@ SELECT test.* FROM test", $builder);
             $this->assertQuery("SELECT RAND(?) FROM ({$us}SELECT 1{$ue} UNION {$us}SELECT test.id FROM test WHERE id = ?{$ue}) __dbml_union_table INNER JOIN test1 ON uid1 = ? INNER JOIN test2 ON uid2 = ? WHERE uid = ? ORDER BY uuid ASC LIMIT 10 OFFSET 1", $builder);
             $this->assertEquals([100, 1, 10, 20, 'inner'], $builder->getParams());
         }
+    }
+
+    /**
+     * @dataProvider provideQueryBuilder
+     * @param QueryBuilder $builder
+     */
+    function test_colval($builder)
+    {
+        $builder->column([
+            'test' => [
+                'id'   => 123,
+                'name' => new Expression('CONCAT(name, ?)', ['hoge']),
+            ],
+        ]);
+        $colval = $builder->getColval();
+        $this->assertEquals([
+            'test.id'   => new Expression(123),
+            'test.name' => new Expression('CONCAT(name, ?)', ['hoge']),
+        ], $colval);
+
+        $builder->set(['data' => 'hoge'] + $colval);
+        $this->assertEquals([
+            'data'      => new Expression('?', ['hoge']),
+            'test.id'   => new Expression(123),
+            'test.name' => new Expression('CONCAT(name, ?)', ['hoge']),
+        ], $builder->getQueryPart('colval'));
     }
 
     /**
@@ -3347,14 +3363,11 @@ INNER JOIN t_leaf ON (t_leaf.leaf_root_id = t_root.root_id) AND (t_leaf.leaf_roo
     function test_parameter($builder)
     {
         // 追加順は関係なく区毎の順番で返ってくるはず
-        $builder->addParam(4, 'where');
-        $builder->addParam(1, 'select');
-        $builder->addParam(2, 'select');
-        $builder->addParam(5, 'having');
-        $builder->addParam(3, 'from');
-        $builder->addParam(9, 9999999);
-        $builder->addParam(0);
-        $this->assertEquals([0, 1, 2, 3, 4, 5, 9], $builder->getParams());
+        $builder->where(['?' => 4]);
+        $builder->select(new Expression('?', 1), new Expression('?', 2));
+        $builder->having(['?' => 5]);
+        $builder->from(new Expression('?', 3));
+        $this->assertEquals([1, 2, 3, 4, 5], $builder->getParams());
         $this->assertEquals([1, 2], $builder->getParams('select'));
         $this->assertEquals([3], $builder->getParams('from'));
         $this->assertEquals([4], $builder->getParams('where'));
@@ -3363,7 +3376,7 @@ INNER JOIN t_leaf ON (t_leaf.leaf_root_id = t_root.root_id) AND (t_leaf.leaf_roo
         // 順番が明示されていれば resetQueryPart で吹き飛ぶはず
         $builder->resetQueryPart('select');
         $builder->resetQueryPart('where');
-        $this->assertEquals([0, 3, 5, 9], $builder->getParams());
+        $this->assertEquals([3, 5], $builder->getParams());
     }
 
     /**
