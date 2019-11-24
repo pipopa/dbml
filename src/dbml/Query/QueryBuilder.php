@@ -3279,8 +3279,8 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
     /**
      * 現在のビルダの状態で固定して prepare する
      *
-     * 「peparedStatement を返す」のではなく「prepare 状態にするだけ」なのに注意。
-     * peparedStatement は {@link getPreparedStatement()} で取得する。
+     * 「preparedStatement を返す」のではなく「prepare 状態にするだけ」なのに注意。
+     * preparedStatement は {@link getPreparedStatement()} で取得する。
      *
      * ```php
      * $qb->column('t_article', ['state' => 'active', 'id = :id']);

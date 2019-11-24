@@ -485,7 +485,7 @@ AND ((flag=1))", "$gw");
 
         // scope クロージャ内の $this はそれ自身になる
         $params = $gateway->as('hogera')->scope('this')->getScopeParams();
-        $this->assertEquals('ryunosuke\\dbml\\Gateway\\TableGateway', $params['where']['hogera.class']);
+        $this->assertEquals(TableGateway::class, $params['where']['hogera.class']);
         $this->assertEquals('hogera', $params['where']['hogera.alias']);
     }
 
@@ -733,7 +733,7 @@ AND ((flag=1))", "$gw");
         $t_article = new TableGateway($database, 't_article');
 
         $select = $t_article->scoping('*', ['article_id' => 1]);
-        $this->assertInstanceOf('\\IteratorAggregate', $select);
+        $this->assertInstanceOf(\IteratorAggregate::class, $select);
         $row = iterator_to_array($select)[0];
         $this->assertEquals([
             'article_id' => '1',
@@ -743,7 +743,7 @@ AND ((flag=1))", "$gw");
 
         $Article = new TableGateway($database, 't_article', 'Article');
         $select = $Article->scoping('*', ['article_id' => 1]);
-        $this->assertInstanceOf('\\IteratorAggregate', $select);
+        $this->assertInstanceOf(\IteratorAggregate::class, $select);
         $row = iterator_to_array($select)[0];
         $this->assertInstanceOf(Article::class, $row);
         $this->assertEquals([

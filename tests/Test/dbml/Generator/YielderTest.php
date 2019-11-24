@@ -3,6 +3,7 @@
 namespace ryunosuke\Test\dbml\Generator;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Index;
 use Doctrine\DBAL\Schema\Table;
@@ -172,13 +173,11 @@ class YielderTest extends \ryunosuke\Test\AbstractUnitTestCase
         ], $actual);
     }
 
-    /**
-     * @runInSeparateProcess
-     */
-    function test_buffered()
+    static function provideHeavy()
     {
-        $database = self::getDummyDatabase();
-        $database->getConnection()->getSchemaManager()->createTable(
+        $dsn = ['url' => 'sqlite:///' . sys_get_temp_dir() . '/heavy'];
+        $database = new Database(DriverManager::getConnection($dsn));
+        $database->getConnection()->getSchemaManager()->dropAndCreateTable(
             new Table('t_heavy',
                 [
                     new Column('id', Type::getType('integer'), ['autoincrement' => true]),
@@ -198,14 +197,28 @@ class YielderTest extends \ryunosuke\Test\AbstractUnitTestCase
         }));
         $database->commit();
 
-        // 暖機運転
-        $query = $database->select('t_heavy')->limit(10)->queryInto();
-        $database->yieldArray($query);
-        $database->fetchArray($query);
+        return [
+            [$dsn],
+        ];
+    }
 
-        // yieldArray なら現在値＋3MB に制限しても落ちない
+    /**
+     * @runInSeparateProcess
+     * @dataProvider provideHeavy
+     * @param array $dsn
+     */
+    function test_buffered($dsn)
+    {
+        $database = new Database(DriverManager::getConnection($dsn));
+
+        // 暖機運転
+        $database->yieldArray('select * from t_heavy limit 1');
+        $database->fetchArray('select * from t_heavy limit 1');
+
+        $initial = memory_get_usage();
+
+        // yieldArray なら最大値が穏やか
         gc_collect_cycles();
-        ini_set('memory_limit', memory_get_usage(true) + 3000 * 1024);
         $count = 0;
         foreach ($database->yieldArray('select * from t_heavy') as $row) {
             /** @noinspection PhpUnusedLocalVariableInspection */
@@ -213,21 +226,17 @@ class YielderTest extends \ryunosuke\Test\AbstractUnitTestCase
             $count++;
         }
         $this->assertEquals(100, $count);
+        $this->assertLessThan(4 * 1024 * 1024, memory_get_peak_usage() - $initial);
 
-        // fetchArray だと落ちる
+        // fetchArray だと最大値が不穏
         gc_collect_cycles();
-        ini_set('memory_limit', memory_get_usage(true) + 3000 * 1024);
         $count = 0;
-        foreach (@$database->fetchArray('select * from t_heavy') as $row) {
+        foreach ($database->fetchArray('select * from t_heavy') as $row) {
             /** @noinspection PhpUnusedLocalVariableInspection */
             $dummy = $row;
             $count++;
         }
         $this->assertEquals(100, $count);
-
-        // Fatal memory のテストをどうやったら良いのか分からん
-        // とりあえず @runInSeparateProcess は標準エラーと標準出力で色々しているようなので下手にいじれん
-        // が、出力を何も出さなければパスしたとみなされるようなので @ で抑制して到達し得ない箇所で自ら echo するようにした
-        echo $this->getName(false) . ' is failed.';
+        $this->assertGreaterThan(10 * 1024 * 1024, memory_get_peak_usage() - $initial);
     }
 }

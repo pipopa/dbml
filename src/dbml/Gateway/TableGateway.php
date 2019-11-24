@@ -394,6 +394,7 @@ use function ryunosuke\dbml\try_finally;
  * }
  * @method array|Entityable|false tuple($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
  *     レコードを配列で返す（<@uses Database::selectTuple()> を参照）
+ * }
  * @method mixed                  value($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
  *     カラム値をスカラーで返す（<@uses Database::selectValue()> を参照）
  * }
@@ -432,7 +433,7 @@ use function ryunosuke\dbml\try_finally;
  *     <@uses TableGateway::array()> の共有ロック版
  * }
  * @method array|Entityable[]     assocInShare($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
- *     [@uses TableGateway::assoc()] の共有ロック版
+ *     <@uses TableGateway::assoc()> の共有ロック版
  * }
  * @method array                  listsInShare($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
  *     <@uses TableGateway::lists()> の共有ロック版

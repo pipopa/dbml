@@ -20,7 +20,7 @@ use function ryunosuke\dbml\split_noempty;
  *     'tablename' => [
  *         'nullvalue' => new PhpExpression(null),
  *         'boolvalue' => new PhpExpression(true),
- *         'strbalue'  => new PhpExpression('mojiretu'),
+ *         'strvalue'  => new PhpExpression('mojiretu'),
  *     ],
  * ]);
  * // results:
@@ -30,7 +30,7 @@ use function ryunosuke\dbml\split_noempty;
  *     // PhpExpression に与えた true がそのまま結果配列に含まれてくる
  *     'boolvalue' => true,
  *     // PhpExpression に与えた 'mojiretu' がそのまま結果配列に含まれてくる
- *     'strbalue'  => 'mojiretu',
+ *     'strvalue'  => 'mojiretu',
  * ];
  *
  * # 上記の例は冗長な上にほとんど旨味がない。似たようなことは Expression の自動変換で代替可能（ただの文字列だけは無理）

@@ -56,15 +56,16 @@ namespace {
 
 namespace ryunosuke\Test {
 
-    use Doctrine\DBAL\Connection;
     use Doctrine\DBAL\Platforms\SQLServerPlatform;
 
     /**
-     * テスト用 Connection
+     * テスト用 Database
      *
-     * 行を変更したら戻してくれる。
+     * 行を変更したら戻したり SQLServer 用の小細工オーバーライド。
+     *
+     * @mixin \Annotation\Database
      */
-    class TestConnection extends Connection
+    class Database extends \ryunosuke\dbml\Database
     {
         private $is_dirty = true;
 
@@ -76,22 +77,12 @@ namespace ryunosuke\Test {
             }
         }
 
-        public function executeUpdate($query, array $params = [], array $types = [])
+        public function executeUpdate($query, array $params = [])
         {
             $this->is_dirty = true;
-            return parent::executeUpdate($query, $params, $types);
+            return parent::executeUpdate($query, $params);
         }
-    }
 
-    /**
-     * テスト用 Database
-     *
-     * SQLServer 用の小細工オーバーライド
-     *
-     * @mixin \Annotation\Database
-     */
-    class Database extends \ryunosuke\dbml\Database
-    {
         /**
          * SQLServer は AUTO_INCREMENT なカラムを明示指定できないので小細工する
          *
@@ -157,7 +148,6 @@ namespace ryunosuke\Test {
 
 namespace ryunosuke\Test\Gateway {
 
-    use Doctrine\DBAL\Types\Type;
     use ryunosuke\dbml\Database;
 
     /**

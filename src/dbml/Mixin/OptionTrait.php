@@ -47,10 +47,14 @@ trait OptionTrait
      * オプションのデフォルト値を返す static メソッド
      *
      * このメソッドの返り値が構成要素とデフォルト値を担っていて、その配列以外のキーは基本的に保持できない。
+     *
+     * @return array
      */
     public static function getDefaultOptions()
     {
         throw new \DomainException('must be implemented getDefaultOptions.');
+        /** @noinspection PhpUnreachableStatementInspection */
+        return [];
     }
 
     /**

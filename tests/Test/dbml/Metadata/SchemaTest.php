@@ -203,7 +203,7 @@ class SchemaTest extends \ryunosuke\Test\AbstractUnitTestCase
         $schema->addTable(new Table('noprimary', [new Column('id', Type::getType('integer'))]));
 
         $column = $schema->getTableAutoIncrement('metasample');
-        $this->assertInstanceOf('\\Doctrine\\DBAL\\Schema\\Column', $column);
+        $this->assertInstanceOf(Column::class, $column);
         $this->assertEquals('id', $column->getName());
         $this->assertTrue(true, $column->getAutoincrement());
 

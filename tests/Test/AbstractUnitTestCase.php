@@ -45,7 +45,6 @@ abstract class AbstractUnitTestCase extends TestCase
         }
 
         $connection = DriverManager::getConnection($config + [
-                'wrapperClass'  => 'ryunosuke\\Test\\TestConnection',
                 'driverOptions' => [
                     // for mysql
                     \PDO::MYSQL_ATTR_LOCAL_INFILE => true,
@@ -385,7 +384,7 @@ abstract class AbstractUnitTestCase extends TestCase
         return $dbs ?: $dbs = array_map(function ($v) {
             return [
                 new Database($v[0], [
-                    'entityMapper'  => function ($tablename) {
+                    'entityMapper'  => static function ($tablename) {
                         if ($tablename === 't_article') {
                             return \ryunosuke\Test\Entity\Article::class;
                         }
@@ -393,7 +392,7 @@ abstract class AbstractUnitTestCase extends TestCase
                             return \ryunosuke\Test\Entity\Comment::class;
                         }
                     },
-                    'gatewayMapper' => function ($tablename) {
+                    'gatewayMapper' => static function ($tablename) {
                         if ($tablename === 't_article') {
                             return \ryunosuke\Test\Gateway\Article::class;
                         }
@@ -470,12 +469,11 @@ abstract class AbstractUnitTestCase extends TestCase
 
     public static function readyRecord()
     {
-        foreach (self::getConnections() as $connection) {
-            /** @var TestConnection $connection */
-            $connection->clean(function (Connection $connection) {
-                $db = new Database($connection);
+        /** @var Database $db */
+        foreach (array_column(self::provideDatabase(), 0) as $db) {
+            $db->clean(function (Database $db) {
                 // http://blogs.wankuma.com/naka/archive/2005/10/10/18641.aspx
-                if ($connection->getDatabasePlatform()->getName() === 'mssql') {
+                if ($db->getPlatform()->getName() === 'mssql') {
                     $db->delete('t_comment');
                     $db->delete('t_article');
                     $db->insert('t_article', ['article_id' => 1, 'title' => '', 'checks' => '']);
@@ -595,9 +593,17 @@ abstract class AbstractUnitTestCase extends TestCase
         }
     }
 
-    public function tearDown()
+    public function setUp()
     {
-        parent::tearDown();
+        parent::setUp();
+
+        /** @var Database $db */
+        foreach (array_column(self::provideDatabase(), 0) as $db) {
+            // DBMS によっては接続時間？ かなにかが原因で唐突に切れる事があるので再接続する
+            if (!$db->getConnection()->ping()) {
+                $db->getConnection()->close();
+            }
+        }
 
         self::readyRecord();
     }

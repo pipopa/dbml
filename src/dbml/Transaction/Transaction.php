@@ -311,12 +311,11 @@ class Transaction
                 $connection->getConfiguration()->setSQLLogger($this->logger);
             }
             else {
-                $logger = new LoggerChain();
+                $loggers = [$this->logger];
                 if ($current_logger) {
-                    $logger->addLogger($current_logger);
+                    array_unshift($loggers, $current_logger);
                 }
-                $logger->addLogger($this->logger);
-                $connection->getConfiguration()->setSQLLogger($logger);
+                $connection->getConfiguration()->setSQLLogger(new LoggerChain($loggers));
             }
         }
 

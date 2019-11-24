@@ -14,6 +14,7 @@ use Doctrine\DBAL\Schema\AbstractAsset;
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\ForeignKeyConstraint;
 use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use ryunosuke\dbml\Entity\Entity;
 use ryunosuke\dbml\Entity\Entityable;
 use ryunosuke\dbml\Exception\NonAffectedException;
@@ -21,6 +22,9 @@ use ryunosuke\dbml\Exception\NonSelectedException;
 use ryunosuke\dbml\Exception\TooManyException;
 use ryunosuke\dbml\Gateway\TableGateway;
 use ryunosuke\dbml\Generator\AbstractGenerator;
+use ryunosuke\dbml\Generator\ArrayGenerator;
+use ryunosuke\dbml\Generator\CsvGenerator;
+use ryunosuke\dbml\Generator\JsonGenerator;
 use ryunosuke\dbml\Generator\Yielder;
 use ryunosuke\dbml\Metadata\CompatiblePlatform;
 use ryunosuke\dbml\Metadata\Schema;
@@ -687,22 +691,22 @@ class Database
             'autoCastType'         => [
                 // 正式な与え方。select は取得（SELECT）時、affect は設定（INSERT/UPDATE）時を表す
                 // 個人的には DATETIME で設定したい。出すときは DateTime で返ってくれると便利だけど、入れるときは文字列で入れたい
-                'hoge'         => [
+                'hoge'                  => [
                     'select' => true,
                     'affect' => false,
                 ],
                 // 短縮記法。select/affect が両方 true ならこのように true だけでも良い
-                'fuga'         => true,
+                'fuga'                  => true,
                 // 共に false。実質的に与えていないのと同じで単に明示するだけ
-                Type::DATE     => [
+                Types::DATE_MUTABLE     => [
                     'select' => false,
                     'affect' => false,
                 ],
                 // 共に false の短縮記法。やはり単に明示するだけ
-                Type::DATETIME => false,
+                Types::DATETIME_MUTABLE => false,
                 // このようにクロージャを与えると Type::convertTo(PHP|Database)Value の代わりのこれらが呼ばれるようになる
                 // なお、クロージャの $this は「その Type」でバインドされる
-                'piyo'         => [
+                'piyo'                  => [
                     'select' => function ($value, AbstractPlatform $platform) { return Type::getType('string')->convertToPHPValue($value, $platform); },
                     'affect' => function ($value, AbstractPlatform $platform) { return Type::getType('string')->convertToDatabaseValue($value, $platform); }
                 ],
@@ -751,9 +755,9 @@ class Database
             ],
             // exportXXX 呼び出し時にどのクラスを使用するか
             'exportClass'          => [
-                'array' => '\\ryunosuke\\dbml\\Generator\\ArrayGenerator',
-                'csv'   => '\\ryunosuke\\dbml\\Generator\\CsvGenerator',
-                'json'  => '\\ryunosuke\\dbml\\Generator\\JsonGenerator',
+                'array' => ArrayGenerator::class,
+                'csv'   => CsvGenerator::class,
+                'json'  => JsonGenerator::class,
             ],
             // ロギングオブジェクト（SQLLogger）
             'logger'               => null,
@@ -1405,7 +1409,7 @@ class Database
 
         if ($this->getUnsafeOption('convertEmptyToNull')) {
             // 対象としない型（要するに文字列系）
-            $targets = [Type::STRING => true, Type::TEXT => true, Type::BINARY => true, Type::BLOB => true];
+            $targets = [Types::STRING => true, Types::TEXT => true, Types::BINARY => true, Types::BLOB => true];
             foreach ($columns as $cname => $column) {
                 // NULLABLE のみ対象で・・・
                 if (!$column->getNotnull()) {
@@ -1701,31 +1705,30 @@ class Database
         $args2 = '$variadic_primary, $tableDescriptor = []';
 
         $typeMap = [
-            Type::TARRAY               => 'array|string',
-            Type::SIMPLE_ARRAY         => 'array|string',
-            Type::JSON_ARRAY           => 'array|string',
-            Type::JSON                 => 'array|string',
-            Type::OBJECT               => 'object|string',
-            Type::BOOLEAN              => 'bool',
-            Type::INTEGER              => 'int',
-            Type::SMALLINT             => 'int',
-            Type::BIGINT               => 'int|string',
-            Type::DECIMAL              => 'float',
-            Type::FLOAT                => 'float',
-            Type::STRING               => 'string',
-            Type::TEXT                 => 'string',
-            Type::BINARY               => 'string',
-            Type::BLOB                 => 'string',
-            Type::GUID                 => 'string',
-            Type::DATETIME             => '\\DateTime|string',
-            Type::DATETIME_IMMUTABLE   => '\\DateTimeImmutable|string',
-            Type::DATETIMETZ           => '\\DateTime|string',
-            Type::DATETIMETZ_IMMUTABLE => '\\DateTimeImmutable|string',
-            Type::DATE                 => '\\DateTime|string',
-            Type::DATE_IMMUTABLE       => '\\DateTimeImmutable|string',
-            Type::TIME                 => '\\DateTime|string',
-            Type::TIME_IMMUTABLE       => '\\DateTimeImmutable|string',
-            Type::DATEINTERVAL         => '\\DateInterval|string',
+            Types::ARRAY                => 'array|string',
+            Types::SIMPLE_ARRAY         => 'array|string',
+            Types::JSON                 => 'array|string',
+            Types::OBJECT               => 'object|string',
+            Types::BOOLEAN              => 'bool',
+            Types::INTEGER              => 'int',
+            Types::SMALLINT             => 'int',
+            Types::BIGINT               => 'int|string',
+            Types::DECIMAL              => 'float',
+            Types::FLOAT                => 'float',
+            Types::STRING               => 'string',
+            Types::TEXT                 => 'string',
+            Types::BINARY               => 'string',
+            Types::BLOB                 => 'string',
+            Types::GUID                 => 'string',
+            Types::DATETIME_MUTABLE     => '\\DateTime|string',
+            Types::DATETIME_IMMUTABLE   => '\\DateTimeImmutable|string',
+            Types::DATETIMETZ_MUTABLE   => '\\DateTime|string',
+            Types::DATETIMETZ_IMMUTABLE => '\\DateTimeImmutable|string',
+            Types::DATE_MUTABLE         => '\\DateTime|string',
+            Types::DATE_IMMUTABLE       => '\\DateTimeImmutable|string',
+            Types::TIME_MUTABLE         => '\\DateTime|string',
+            Types::TIME_IMMUTABLE       => '\\DateTimeImmutable|string',
+            Types::DATEINTERVAL         => '\\DateInterval|string',
         ];
 
         $database = [];
@@ -2910,12 +2913,12 @@ class Database
             $key = $alias . '.' . $cname;
             switch ($type) {
                 // 完全一致系
-                case Type::BOOLEAN:
-                case Type::BIGINT:
-                case Type::INTEGER:
-                case Type::SMALLINT:
-                case Type::FLOAT:
-                case Type::DECIMAL:
+                case Types::BOOLEAN:
+                case Types::BIGINT:
+                case Types::INTEGER:
+                case Types::SMALLINT:
+                case Types::FLOAT:
+                case Types::DECIMAL:
                     if ($is_numeric) {
                         if ($coptions['keyonly'] && (!isset($keys[$cname]))) {
                             break;
@@ -2925,15 +2928,18 @@ class Database
                     break;
 
                 // 範囲系
-                case Type::DATETIME:
-                case Type::DATETIMETZ:
-                case Type::DATE:
+                case Types::DATETIME_MUTABLE:
+                case Types::DATETIME_IMMUTABLE:
+                case Types::DATETIMETZ_MUTABLE:
+                case Types::DATETIMETZ_IMMUTABLE:
+                case Types::DATE_MUTABLE:
+                case Types::DATE_IMMUTABLE:
                     if ($ymdhis) {
                         if (!$coptions['greedy'] && $is_numeric) {
                             break;
                         }
                         $format = '%04d-%02d-%02d';
-                        if ($type !== Type::DATE) {
+                        if ($type !== Types::DATE_MUTABLE && $type !== Types::DATE_IMMUTABLE) {
                             $format .= ' %02d:%02d:%02d';
                         }
                         $from = Adhoc::fillYmdHis($ymdhis, true);
@@ -2943,8 +2949,8 @@ class Database
                     break;
 
                 // 包含系
-                case Type::STRING:
-                case Type::TEXT:
+                case Types::STRING:
+                case Types::TEXT:
                     if (!$coptions['greedy'] && ($is_numeric || $ymdhis)) {
                         break;
                     }
@@ -2955,16 +2961,15 @@ class Database
                     $where[$comment . $key . $collate . " LIKE ?"] = $inwords;
                     break;
 
-                // いかんともしがたいので無視（TIME くらいはなんとかできそうだが…）
+                // いかんともしがたいので無視（array や json はなんとかなるかもしれない ）
+                case Types::GUID:
+                case Types::OBJECT:
+                case Types::ARRAY:
+                case Types::SIMPLE_ARRAY:
+                case Types::JSON:
+                case Types::BINARY:
+                case Types::BLOB:
                 default:
-                case Type::GUID:
-                case Type::OBJECT:
-                case Type::TARRAY:
-                case Type::SIMPLE_ARRAY:
-                case Type::JSON_ARRAY:
-                case Type::BINARY:
-                case Type::BLOB:
-                case Type::TIME:
             }
         }
         return $where;

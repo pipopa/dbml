@@ -12,9 +12,12 @@ use Doctrine\DBAL\Platforms\SqlitePlatform;
 use Doctrine\DBAL\Platforms\SQLServerPlatform;
 use Doctrine\DBAL\Schema;
 use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 use ryunosuke\dbml\Entity\Entity;
 use ryunosuke\dbml\Exception\NonAffectedException;
 use ryunosuke\dbml\Exception\NonSelectedException;
+use ryunosuke\dbml\Gateway\TableGateway;
+use ryunosuke\dbml\Generator\Yielder;
 use ryunosuke\dbml\Query\Expression\Expression;
 use ryunosuke\dbml\Query\Expression\PhpExpression;
 use ryunosuke\dbml\Query\QueryBuilder;
@@ -133,8 +136,8 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
      */
     function test___get($database)
     {
-        $this->assertInstanceOf('ryunosuke\\dbml\\Gateway\\TableGateway', $database->test);
-        $this->assertInstanceOf('ryunosuke\\dbml\\Gateway\\TableGateway', $database->Comment);
+        $this->assertInstanceOf(TableGateway::class, $database->test);
+        $this->assertInstanceOf(TableGateway::class, $database->Comment);
         $this->assertNull($database->hogera);
     }
 
@@ -274,8 +277,8 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
         $this->assertEquals('foobar', $database->selectValue('test.name', $lastid));
 
         // Gateway 系
-        $this->assertInstanceOf('ryunosuke\\dbml\\Gateway\\TableGateway', $database->test());
-        $this->assertInstanceOf('ryunosuke\\dbml\\Gateway\\TableGateway', $database->Comment('*'));
+        $this->assertInstanceOf(TableGateway::class, $database->test());
+        $this->assertInstanceOf(TableGateway::class, $database->Comment('*'));
 
         // 基本的には Gateway を返す。ただし数値のときは pk になる
         $this->assertEquals([
@@ -653,7 +656,7 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
         // リレーションが消えるはず
         $this->assertException('nocondition join foreign_c1<->foreign_p', L($database)->select('foreign_p P + foreign_c1 C'));
         // 戻り値は外部キーオブジェクトのはず
-        $this->assertInstanceOf('\\Doctrine\\DBAL\\Schema\\ForeignKeyConstraint', $fkey);
+        $this->assertInstanceOf(Schema\ForeignKeyConstraint::class, $fkey);
 
         // 外部キーがないなら例外が投げられるはず
         $this->assertException('foreign key is not found', L($database)->ignoreForeignKey('foreign_c1', 'foreign_p', 'id'));
@@ -2049,7 +2052,7 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
             ],
         ]);
 
-        $database->getSchema()->setTableColumnType('misctype', 'carray', Type::getType(Type::SIMPLE_ARRAY));
+        $database->getSchema()->setTableColumnType('misctype', 'carray', Type::getType(Types::SIMPLE_ARRAY));
 
         $database->insert('misctype', [
             'cint'      => 1,
@@ -2131,11 +2134,11 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
     function test_yield($database)
     {
         $it = $database->yieldLists($database->select('test.name', ['id' => [2, 3]]));
-        $this->assertInstanceOf('\\ryunosuke\\dbml\\Generator\\Yielder', $it);
+        $this->assertInstanceOf(Yielder::class, $it);
         $this->assertEquals(['b', 'c'], iterator_to_array($it));
 
         $it = $database->yieldArray('select * from test where id=1');
-        $this->assertInstanceOf('\\ryunosuke\\dbml\\Generator\\Yielder', $it);
+        $this->assertInstanceOf(Yielder::class, $it);
         $this->assertEquals([
             [
                 'id'   => '1',
@@ -2270,9 +2273,9 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
         $annotation = $database->getAnnotation();
         $this->assertContains('$t_article', $annotation);
         $this->assertContains('$Comment', $annotation);
-        $this->assertContains('\\ryunosuke\\Test\\Gateway\\TableGateway', $annotation);
-        $this->assertContains('\\ryunosuke\\Test\\Gateway\\Article', $annotation);
-        $this->assertContains('\\ryunosuke\\Test\\Gateway\\Comment', $annotation);
+        $this->assertContains(\ryunosuke\Test\Gateway\TableGateway::class, $annotation);
+        $this->assertContains(\ryunosuke\Test\Gateway\Article::class, $annotation);
+        $this->assertContains(\ryunosuke\Test\Gateway\Comment::class, $annotation);
 
         $annotation = $database->getAnnotation(['t_article', 'Comment']);
         $this->assertNotContains('$t_article', $annotation);
@@ -4775,31 +4778,31 @@ ORDER BY T.id DESC, name ASC
         $this->assertEquals([3, 2, 1], $database->union(["select 1 id", "select 2 id", $sub], [], [], ['id' => 'desc'])->lists());
         $this->assertEquals([3, 2], $database->union(["select 1 id", "select 2 id", $sub], [], [], ['id' => 'desc'], 2)->lists());
 
-        $ordkey = 'name' . ($database->getConnection()->getDatabasePlatform() instanceof MySqlPlatform ? ' COLLATE utf8_bin;' : '');
-
         // qb
-        $test1 = $database->select('test1(1,2,3).id, name1 name');
+        $test1 = $database->select('test1(1,2,3).id, id as ord, name1 name');
         $test2 = $database->select([
             'test2' => [
                 'id',
+                'ord'  => 'id + 10',
                 'name' => 'name2',
             ]
         ], ['id' => [3, 4, 5]]);
         $this->assertEquals([
-            ['id' => '3', 'name' => 'C', 'a' => 'A'],
             ['id' => '3', 'name' => 'c', 'a' => 'A'],
-        ], $database->unionAll([$test1, $test2], ['id', 'name', 'a' => new Expression('UPPER(?)', 'a')], ['id' => 3], $ordkey)->array());
+            ['id' => '3', 'name' => 'C', 'a' => 'A'],
+        ], $database->unionAll([$test1, $test2], ['id', 'name', 'a' => new Expression('UPPER(?)', 'a')], ['id' => 3], 'ord')->array());
 
         // gw
-        $test1 = $database->test1['(1,2,3).id, name1 name'];
+        $test1 = $database->test1['(1,2,3).id, id as ord, name1 name'];
         $test2 = $database->test2([
             'id',
+            'ord'  => 'id + 10',
             'name' => 'name2',
         ], ['id' => [3, 4, 5]]);
         $this->assertEquals([
-            ['id' => '3', 'name' => 'C', 'a' => 'A'],
             ['id' => '3', 'name' => 'c', 'a' => 'A'],
-        ], $database->unionAll([$test1, $test2], ['id', 'name', 'a' => new Expression('UPPER(?)', 'a')], ['id' => 3], $ordkey)->array());
+            ['id' => '3', 'name' => 'C', 'a' => 'A'],
+        ], $database->unionAll([$test1, $test2], ['id', 'name', 'a' => new Expression('UPPER(?)', 'a')], ['id' => 3], 'ord')->array());
     }
 
     /**

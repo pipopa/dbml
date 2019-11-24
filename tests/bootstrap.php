@@ -9,12 +9,14 @@ require_once __DIR__ . '/classess.php';
 if (DIRECTORY_SEPARATOR === '\\') {
     $tmpdir = $_SERVER['TMP'] ?? $_SERVER['TEMP'] ?? null;
     if ($tmpdir) {
+        @mkdir("$tmpdir\\dbml", 0777, true);
         putenv("TMP=$tmpdir\\dbml");
     }
 }
 else {
     $tmpdir = $_SERVER['TMPDIR'] ?? '/tmp';
     if ($tmpdir) {
+        @mkdir("$tmpdir/dbml", 0777, true);
         putenv("TMPDIR=$tmpdir/dbml");
     }
 };
