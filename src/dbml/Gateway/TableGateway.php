@@ -781,8 +781,6 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
             'defaultJoinMethod'      => 'auto',
             // 仮想カラムを暗黙的に利用するか
             'defaultImplicitVirtual' => false,
-            // offsetGet したときに find するか pk するか（後方互換性のための設定であり、いずれ削除され pk に統一される）
-            'offsetGetFind'          => true,
         ];
     }
 
@@ -1019,7 +1017,7 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
     public function __invoke($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
     {
         if (filter_var($tableDescriptor, \FILTER_VALIDATE_INT) !== false) {
-            return $this->find($tableDescriptor);
+            return $this->pk($tableDescriptor);
         }
 
         $args = func_get_args();
@@ -1162,7 +1160,7 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
     public function offsetGet($offset)
     {
         if (is_array($offset) || filter_var($offset, \FILTER_VALIDATE_INT) !== false) {
-            return $this->getUnsafeOption('offsetGetFind') ? $this->find($offset) : $this->pk($offset);
+            return $this->pk($offset);
         }
         if (preg_match('#^\\*+$#ui', $offset)) {
             return $this->tuple($offset);
@@ -1961,15 +1959,6 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
         }
         return $this;
     }
-
-    /**
-     * メソッド名を変えたので互換性のためのプロキシメソッド
-     *
-     * @deprecated use setVirtualColumn()
-     * @ignore
-     * @inheritdoc setVirtualColumn()
-     */
-    public function addVirtualColumn($definition) { return $this->setVirtualColumn($definition); }
 
     /**
      * 仮想カラム定義を取得する

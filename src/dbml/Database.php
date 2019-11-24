@@ -142,8 +142,6 @@ use ryunosuke\dbml\Utility\Adhoc;
  *     entityMapper でマッピングしたテーブルはそのエンティティ名が使用されるが、未設定だったり null を返したりすると、この設定に応じてデフォルトエンティティを返す。
  *     キーがクラス名、値がコンストラクタ引数になる。
  * }
- * @method bool                   getNotableAsColumn()
- * @method $this                  setNotableAsColumn(bool $bool)
  * @method bool                   getInsertSet()
  * @method $this                  setInsertSet($bool)
  * @method bool                   getFilterNoExistsColumn()
@@ -186,31 +184,7 @@ use ryunosuke\dbml\Utility\Adhoc;
  *     @param string $string 自動キャストの目印文字列
  * }
  * @method callable               getYamlParser()
- * @method $this                  setYamlParser($callable) {
- *     yaml パーサを設定する
- *
- *     デフォルトは Symfony\Yaml を使用するようになっているが**依存には含まれていない**。
- *     よってそのまま使う場合は composer.json の require に "symfony/yaml" を追加する必要がある。
- *
- *     symfony ではなくエクステンションのパーサを使いたい場合は下記のようにする。
- *
- *     ```php
- *     # エクステンションの yaml_parse を使う
- *     $db->setYamlParser(function ($yamlstring) {
- *         return yaml_parse($yamlstring);
- *     });
- *
- *     # 所詮 callable 判定なので複雑な指定がないならこれでも良い
- *     $db->setYamlParser('yaml_parse');
- *
- *     # エクステンションでも symfony でもないサードパーティのものを使う
- *     $db->setYamlParser(function ($yamlstring) {
- *         return \third\vendor\Yaml::parse($yamlstring);
- *     });
- *     ```
- *
- *     @param callable $callable yaml パーサ
- * }
+ * @method $this                  setYamlParser($callable)
  * @method array                  getAutoCastType()
  * @nethod self                   setAutoCastType($array) 実際に定義している
  * @method string                 getInjectCallStack()
@@ -699,8 +673,6 @@ class Database
             'initCommand'          => null,
             // デフォルトエンティティクラス名
             'defaultEntity'        => [Entity::class => function ($database) { return [$database]; }],
-            // 存在しないテーブル名指定をカラム名とみなすか（QB::column を参照）
-            'notableAsColumn'      => false, // このオプションは互換性維持であり将来的にデフォルト true になるか削除される
             // 拡張 INSERT SET 構文を使うか否か（mysql 以外は無視される）
             'insertSet'            => false,
             // insert 時などにテーブルに存在しないカラムを自動でフィルタするか否か
@@ -710,13 +682,7 @@ class Database
             // 取得時にサフィックス(columnname@integer)で自動キャストする時の区切り文字
             'autoCastSuffix'       => null,
             // 埋め込み条件の yaml パーサ
-            'yamlParser'           => (function () {
-                // for compatible 1.0
-                if (class_exists('\\Symfony\\Component\\Yaml\\Yaml')) {
-                    return '\\Symfony\\Component\\Yaml\\Yaml::parse'; // @codeCoverageIgnoreStart
-                }
-                return function ($yaml) { return paml_import($yaml)[0]; };
-            })(),
+            'yamlParser'           => function ($yaml) { return \ryunosuke\dbml\paml_import($yaml)[0]; },
             // DB型で自動キャストする型設定。select,affect 要素を持つ（多少無駄になるがサンプルも兼ねて冗長に記述してある）
             'autoCastType'         => [
                 // 正式な与え方。select は取得（SELECT）時、affect は設定（INSERT/UPDATE）時を表す
@@ -1107,7 +1073,7 @@ class Database
         if ($gateway = $this->$name) {
             if ($arguments) {
                 if (filter_var($arguments[0], \FILTER_VALIDATE_INT) !== false) {
-                    return $gateway->find($arguments[0]);
+                    return $gateway->pk($arguments[0]);
                 }
 
                 $gateway = $gateway->scoping(...$arguments);
@@ -2153,10 +2119,7 @@ class Database
     /**
      * 外部キーをまとめて追加する
      *
-     * addForeignKey を複数呼ぶのとほぼ等しい。
-     * $lazy に true を与えると遅延実行され、必要になったときに追加される。
-     * あまり大量に追加するのであれば true にしたほうが良い。
-     * また、 $lazy のデフォルト値は将来 true 変更される。
+     * addForeignKey を複数呼ぶのとほぼ等しいが、遅延実行されて必要になったときに追加される。
      *
      * ```php
      * # 下記のような配列を与える
@@ -2176,24 +2139,15 @@ class Database
      * ```
      *
      * @param array $relations 外部キー定義
-     * @param bool $lazy 遅延追加するか（デフォルト false だが、このデフォルト値はバージョンアップで true に変更される）
-     * @return ForeignKeyConstraint[] 追加した外部キーオブジェクト。$lazy の場合は名前だけで実体はなし
+     * @return array 追加した外部キー名
      */
-    public function addRelation($relations, $lazy = false)
+    public function addRelation($relations)
     {
         $result = [];
         foreach ($relations as $localTable => $foreignTables) {
             foreach ($foreignTables as $foreignTable => $relation) {
                 foreach ($relation as $fkname => $columnsMap) {
-                    $fkname = is_int($fkname) ? null : $fkname;
-                    if ($lazy) {
-                        $fkname = $this->getSchema()->addForeignKeyLazy($localTable, $foreignTable, $columnsMap, $fkname);
-                        $result[$fkname] = null;
-                    }
-                    else {
-                        $fkey = $this->addForeignKey($localTable, $foreignTable, $columnsMap, $fkname);
-                        $result[$fkey->getName()] = $fkey;
-                    }
+                    $result[] = $this->getSchema()->addForeignKeyLazy($localTable, $foreignTable, $columnsMap, is_int($fkname) ? null : $fkname);
                 }
             }
         }
@@ -2304,19 +2258,13 @@ class Database
      * ```
      *
      * @param callable $main メイン処理
-     * @param callable $catch 例外発生時の処理。ただし後方互換性のため $options を与えても良い
+     * @param callable $catch 例外発生時の処理
      * @param array $options トランザクションオプション
      * @param bool $throwable 例外を投げるか返すか
      * @return mixed メイン処理の返り値
      */
     public function transact($main, $catch = null, $options = [], $throwable = true)
     {
-        // for compatible
-        if (is_bool($options)) {
-            $throwable = $options;
-            $options = $catch;
-        }
-
         return $this->transaction($main, $catch, $options)->perform($throwable);
     }
 
@@ -2326,18 +2274,12 @@ class Database
      * $options は {@link Transaction} を参照。
      *
      * @param callable $main メイン処理
-     * @param callable $catch 例外発生時の処理。ただし後方互換性のため $options を与えても良い
+     * @param callable $catch 例外発生時の処理
      * @param array $options トランザクションオプション
      * @return Transaction トランザクションオブジェクト
      */
     public function transaction($main = null, $catch = null, $options = [])
     {
-        // for compatible
-        if (!$catch instanceof \Closure) {
-            $options = (array) $catch;
-            $catch = null;
-        }
-
         $tx = new Transaction($this, $options);
         if ($main) {
             $tx->main($main);

@@ -277,12 +277,12 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
         $this->assertInstanceOf('ryunosuke\\dbml\\Gateway\\TableGateway', $database->test());
         $this->assertInstanceOf('ryunosuke\\dbml\\Gateway\\TableGateway', $database->Comment('*'));
 
-        // 基本的には Gateway を返す。ただし数値のときは find になる
+        // 基本的には Gateway を返す。ただし数値のときは pk になる
         $this->assertEquals([
             'id'   => '4',
             'name' => 'd',
             'data' => '',
-        ], $database->test(4));
+        ], $database->test(4)->tuple());
 
         // H は存在しないはず
         $this->assertException(new \BadMethodCallException(), [$database, 'selectH'], 'hoge');
@@ -613,7 +613,7 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
                 ],
             ],
         ]);
-        $this->assertEquals(['auto_fk1', 'test2_test_0'], array_keys($fkeys));
+        $this->assertEquals(['auto_fk1', 'test2_test_0'], $fkeys);
 
         $this->assertEquals('SELECT test.*, test1.* FROM test INNER JOIN test1 ON test1.id = test.id', (string) $database->select('test+test1'));
         $this->assertEquals('SELECT test.*, test2.* FROM test INNER JOIN test2 ON test2.id = test.id', (string) $database->select('test+test2'));
@@ -626,8 +626,8 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
                     ],
                 ],
             ],
-        ], true);
-        $this->assertEquals(['t_comment_t_article_0'], array_keys($fkeys));
+        ]);
+        $this->assertEquals(['t_comment_t_article_0'], $fkeys);
         $this->assertEquals([
             'fk_articlecomment',
             't_comment_t_article_0'
@@ -832,7 +832,7 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
         $this->assertEquals($stmt->executeQuery(['id' => 2])->fetchAll(), $database->fetchArray($stmt, ['id' => 2]));
 
         // insert
-        $stmt = $database->prepareInsert('test', ['id' => $database->raw(':id'), 'name']);
+        $stmt = $database->prepareInsert('test', ['id' => $database->raw(':id'), ':name']);
         if (!$database->getCompatiblePlatform()->supportsIdentityUpdate()) {
             $database->getConnection()->exec($database->getCompatiblePlatform()->getIdentityInsertSQL('test', true));
         }
@@ -844,7 +844,7 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
         $this->assertEquals(['XXX', 'YYY'], $database->selectLists('test.name', ['id' => [101, 102]]));
 
         // update
-        $stmt = $database->prepareUpdate('test', ['name'], ['id = :id']);
+        $stmt = $database->prepareUpdate('test', [':name'], ['id = :id']);
         $stmt->executeUpdate(['id' => 101, 'name' => 'updateXXX']);
         $stmt->executeUpdate(['id' => 102, 'name' => 'updateYYY']);
         $this->assertEquals(['updateXXX', 'updateYYY'], $database->selectLists('test.name', ['id' => [101, 102]]));
@@ -863,7 +863,7 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
 
         if ($database->getCompatiblePlatform()->supportsReplace()) {
             // replace
-            $stmt = $database->prepareReplace('test', ['id', 'name', 'data']);
+            $stmt = $database->prepareReplace('test', [':id', ':name', ':data']);
             $stmt->executeUpdate(['id' => 101, 'name' => 'replaceXXX', 'data' => '']);
             $stmt->executeUpdate(['id' => 102, 'name' => 'replaceXXX', 'data' => '']);
             $this->assertEquals(['replaceXXX', 'replaceXXX'], $database->selectLists('test.name', ['id' => [101, 102]]));
@@ -871,7 +871,7 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
 
         if ($database->getCompatiblePlatform()->supportsMerge()) {
             // modify
-            $stmt = $database->prepareModify('test', ['id', 'name', 'data']);
+            $stmt = $database->prepareModify('test', [':id', ':name', ':data']);
             $stmt->executeUpdate(['id' => 101, 'name' => 'modifyXXX', 'data' => '']);
             $stmt->executeUpdate(['id' => 102, 'name' => 'modifyYYY', 'data' => '']);
             $stmt->executeUpdate(['id' => 103, 'name' => 'modifyZZZ', 'data' => '']);
@@ -1053,7 +1053,6 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
         $tx = $database->transaction();
         $this->assertInstanceOf(get_class(new Transaction($database)), $tx);
 
-        // for compatible 1.1
         $current = $database->count('test');
         $return = $database->transact(function (Database $db) {
             $db->delete('test', ["'1'" => '1']);
@@ -1061,23 +1060,6 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
         });
         $this->assertEquals('success', $return);
         $this->assertNotEquals($current, $database->count('test'));
-    }
-
-    /**
-     * @dataProvider provideDatabase
-     * @param Database $database
-     */
-    function test_transact_compatible($database)
-    {
-        // for compatible 1.1
-        $finish = false;
-        $return = $database->transact(function (Database $db) {
-            throw new \Exception('error');
-        }, [
-            'finish' => function () use (&$finish) { $finish = true; }
-        ], false);
-        $this->assertEquals('error', $return->getMessage());
-        $this->assertEquals(true, $finish);
     }
 
     /**

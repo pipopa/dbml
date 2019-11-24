@@ -370,7 +370,6 @@ class TableDescriptor
         // テーブルに紐付かないカラムのための下ごしらえ
         if (true
             && preg_match('#^[_a-z0-9]+$#i', $descriptor)
-            && $database->getOption('notableAsColumn')
             && !$schema->hasTable($database->convertTableName($descriptor))
         ) {
             $cols = [$descriptor => $cols];

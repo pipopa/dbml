@@ -67,11 +67,11 @@ class TableGatewayTest extends \ryunosuke\Test\AbstractUnitTestCase
             'id'   => '2',
             'name' => 'b',
             'data' => '',
-        ], $gateway(2));
+        ], $gateway(2)->tuple());
 
         $this->assertEquals([
             'name' => 'c',
-        ], $gateway->column('name')(3));
+        ], ($gateway->column('name')(3))->tuple());
     }
 
     /**
@@ -100,24 +100,6 @@ class TableGatewayTest extends \ryunosuke\Test\AbstractUnitTestCase
             'name' => 'a',
             'data' => '',
         ], $gateway[1]->tuple());
-    }
-
-    /**
-     * @dataProvider provideGateway
-     * @param TableGateway $gateway
-     * @param Database $database
-     */
-    function test_offsetGet_primary($gateway, $database)
-    {
-        $gateway->setOption('offsetGetFind', true);
-        $this->assertIsArray($gateway[1]);
-        /** @noinspection PhpIllegalArrayKeyTypeInspection */
-        $this->assertIsArray($gateway[[1]]);
-
-        $gateway->setOption('offsetGetFind', false);
-        $this->assertInstanceOf(TableGateway::class, $gateway[1]);
-        /** @noinspection PhpIllegalArrayKeyTypeInspection */
-        $this->assertInstanceOf(TableGateway::class, $gateway[[1]]);
     }
 
     /**
@@ -862,7 +844,7 @@ AND ((flag=1))", "$gw");
         $this->assertContains("(NOT EXISTS (SELECT * FROM foreign_c2 WHERE foreign_c2.cid = foreign_p.id))", $queryInto($stmt, ['id' => 1]));
 
         // insert
-        $stmt = $gateway->prepareInsert(['name', 'id' => new Expression(':id')]);
+        $stmt = $gateway->prepareInsert([':name', 'id' => new Expression(':id')]);
         $this->assertEquals("INSERT INTO test (name, id) VALUES ('xxx', '1')", $queryInto($stmt, ['id' => 1, 'name' => 'xxx']));
         if (!$cplatform->supportsIdentityUpdate()) {
             $database->getConnection()->exec($cplatform->getIdentityInsertSQL($gateway->tableName(), true));
@@ -875,7 +857,7 @@ AND ((flag=1))", "$gw");
         $this->assertEquals(['XXX', 'YYY'], $gateway->lists('name', ['id' => [101, 102]]));
 
         // update
-        $stmt = $gateway->prepareUpdate(['name'], ['id = :id']);
+        $stmt = $gateway->prepareUpdate([':name'], ['id = :id']);
         $this->assertEquals("UPDATE test SET name = 'xxx' WHERE id = '1'", $queryInto($stmt, ['id' => 1, 'name' => 'xxx']));
         $stmt->executeUpdate(['id' => 101, 'name' => 'updateXXX']);
         $stmt->executeUpdate(['id' => 102, 'name' => 'updateYYY']);
