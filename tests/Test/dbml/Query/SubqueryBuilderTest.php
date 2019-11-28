@@ -230,6 +230,42 @@ class SubqueryBuilderTest extends \ryunosuke\Test\AbstractUnitTestCase
      * @dataProvider provideQueryBuilder
      * @param SubqueryBuilder $builder
      */
+    function test_subquery_batch($builder)
+    {
+        $builder->column('test1');
+        $parents = $builder->lazy('batch', 'id')->array()->subquery([['id' => 2], ['id' => 3]], 'sub');
+        $this->assertInstanceOf(\Generator::class, $parents[0]['sub']);
+        $this->assertInstanceOf(\Generator::class, $parents[1]['sub']);
+        $this->assertEquals([
+            ['id' => '2', 'name1' => 'b']
+        ], iterator_to_array($parents[0]['sub']));
+        $this->assertEquals([
+            ['id' => '3', 'name1' => 'c']
+        ], iterator_to_array($parents[1]['sub']));
+    }
+
+    /**
+     * @dataProvider provideQueryBuilder
+     * @param SubqueryBuilder $builder
+     */
+    function test_subquery_yield($builder)
+    {
+        $builder->column('test1');
+        $parents = $builder->lazy('yield', 'id')->array()->subquery([['id' => 2], ['id' => 3]], 'sub');
+        $this->assertInstanceOf(\Generator::class, $parents[0]['sub']);
+        $this->assertInstanceOf(\Generator::class, $parents[1]['sub']);
+        $this->assertEquals([
+            ['id' => '2', 'name1' => 'b']
+        ], iterator_to_array($parents[0]['sub']));
+        $this->assertEquals([
+            ['id' => '3', 'name1' => 'c']
+        ], iterator_to_array($parents[1]['sub']));
+    }
+
+    /**
+     * @dataProvider provideQueryBuilder
+     * @param SubqueryBuilder $builder
+     */
     function test_subquery_limit($builder)
     {
         $builder->column('multiprimary');

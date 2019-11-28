@@ -2626,6 +2626,41 @@ SELECT test.* FROM test", $builder);
     /**
      * @dataProvider provideQueryBuilder
      * @param QueryBuilder $builder
+     * @param Database $database
+     */
+    function test_lazymode($builder, $database)
+    {
+        $database->insert('foreign_p', ['id' => 1, 'name' => 'name1']);
+        $database->insert('foreign_c1', ['id' => 1, 'seq' => 1, 'name' => 'c1name11']);
+        $database->insert('foreign_c1', ['id' => 1, 'seq' => 2, 'name' => 'c1name12']);
+        $database->insert('foreign_c2', ['cid' => 1, 'seq' => 1, 'name' => 'c2name11']);
+        $database->insert('foreign_c2', ['cid' => 1, 'seq' => 2, 'name' => 'c2name12']);
+
+        $builder->setDefaultLazyMode('yield');
+
+        $builder->column([
+            'foreign_p P' => [
+                'C1'            => $database->foreign_c1('*'),
+                'foreign_c2 C2' => ['*'],
+            ],
+        ]);
+        $builder->where(['id' => 1]);
+        $tuple = $builder->tuple();
+        $this->assertInstanceOf(\Generator::class, $tuple['C1']);
+        $this->assertInstanceOf(\Generator::class, $tuple['C2']);
+        $this->assertEquals([
+            1 => ['id' => 1, 'seq' => 1, 'name' => 'c1name11'],
+            2 => ['id' => 1, 'seq' => 2, 'name' => 'c1name12'],
+        ], iterator_to_array($tuple['C1']));
+        $this->assertEquals([
+            1 => ['cid' => 1, 'seq' => 1, 'name' => 'c2name11'],
+            2 => ['cid' => 1, 'seq' => 2, 'name' => 'c2name12'],
+        ], iterator_to_array($tuple['C2']));
+    }
+
+    /**
+     * @dataProvider provideQueryBuilder
+     * @param QueryBuilder $builder
      */
     function test_postselect($builder)
     {

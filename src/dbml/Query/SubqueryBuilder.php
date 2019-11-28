@@ -36,7 +36,7 @@ class SubqueryBuilder extends QueryBuilder
 {
     use OptionTrait;
 
-    /** @var string 遅延実行モード(select|fetch) */
+    /** @var string 遅延実行モード(select|batch|fetch|yield) */
     private $lazyMode;
 
     /** @var array 関連カラム */
@@ -90,30 +90,25 @@ class SubqueryBuilder extends QueryBuilder
         throw new \BadMethodCallException("'$name' is undefined.");
     }
 
-    private function _convertChildKey($ck)
-    {
-        if ($this->lazyMode === 'select') {
-            return $ck;
-        }
-        else {
-            return str_replace('.', '__', $ck);
-        }
-    }
-
     /**
      * 遅延実行化する
      *
      * このメソッドを呼ぶと fetch 系メソッドは実行されなくなる
      *
-     * @param string $mode 遅延モード(select|fetch)
+     * - select: 親の取得と同時に一括取得する（親キーの IN）
+     * - batch: 最初のアクセス時に一括取得する（親キーの IN の Generator）
+     * - fetch: 都度クエリを投げる（prepared statement）
+     * - yield: 必要になったらクエリを投げる（prepared statement の Generator）
+     *
+     * @param string $mode 遅延モード(select|batch|fetch|yield)
      * @param array|string $child_columns [子供カラム => 親カラム] あるいは [共通カラム]
      * @return $this 自分自身
      */
     public function lazy($mode, $child_columns)
     {
-        // 現状 select/fetch しか受け付けない
-        if (!array_key_exists($mode, ['select' => true, 'fetch' => true])) {
-            throw new \InvalidArgumentException('$mode is must be [select|fetch]');
+        // 現状 select/batch/fetch|yield しか受け付けない
+        if (!array_key_exists($mode, ['select' => true, 'batch' => true, 'fetch' => true, 'yield' => true])) {
+            throw new \InvalidArgumentException('$mode is must be [select|batch|fetch|yield]');
         }
 
         $child_columns = Adhoc::to_hash($child_columns);
@@ -174,7 +169,13 @@ class SubqueryBuilder extends QueryBuilder
      */
     public function isRequireUnsetSubcolumn()
     {
-        return $this->lazyMode === 'fetch';
+        $map = [
+            'select' => false,
+            'batch'  => false,
+            'fetch'  => true,
+            'yield'  => true,
+        ];
+        return $map[$this->lazyMode];
     }
 
     /**
@@ -224,8 +225,6 @@ class SubqueryBuilder extends QueryBuilder
         $subdatabase = $this->getDatabase();
         $subselect = $this->getLazyClonable() ? clone $this : $this;
 
-        $lazy_mode = $this->lazyMode;
-
         // 親カラム参照カラムを分離しておく
         $pcolumns = [];
         $selects = $subselect->getQueryPart('select');
@@ -247,7 +246,7 @@ class SubqueryBuilder extends QueryBuilder
         $conds = [];
         $childkeys = [];
         foreach ($subselect->lazyColumns as $child => $parent) {
-            $childkey = $subselect->_convertChildKey($child);
+            $childkey = in_array($this->lazyMode, ['select', 'batch']) ? $child : str_replace('.', '__', $child);
             $childkeys[$child] = $childkey;
             foreach ($parents as $n => $parent_row) {
                 // 親行カラムがあるかチェック（1回で十分なので初回のみ）
@@ -266,44 +265,82 @@ class SubqueryBuilder extends QueryBuilder
 
         $subselect->detectAutoOrder(true);
 
-        switch ($lazy_mode) {
-            case 'select':
-                // 分類に必要なので子どもキーを加える
-                $lckey = $subselect->_addPrimary(Database::AUTO_CHILD_KEY, array_keys($childkeys), false);
-
-                // 親行から抽出した where（queryInto してるのは誤差レベルではなく速度に差が出るから）
-                $expr = $subdatabase->getCompatiblePlatform()->getPrimaryCondition($conds);
-                $subselect->andWhere($subdatabase->queryInto($expr));
-
-                // 子供行の limit は親の範囲内の limit として利用する
-                $suboffset = $subselect->getQueryPart('offset');
-                $sublength = $subselect->getQueryPart('limit') === null ? null : $suboffset + $subselect->getQueryPart('limit');
-                $subselect->limit(null, null);
-
-                // 子供行の取得とグループ化
-                $children = [];
-                $counter = [];
-                $child_rows = $subdatabase->fetchArray($subselect);
-                foreach ($child_rows as $nc => $child_row) {
-                    $pckey = $child_row[$lckey];
-                    if ($suboffset !== null || $sublength !== null) {
-                        $counter[$pckey] = ($counter[$pckey] ?? 0) + 1;
-                        if ($suboffset !== null && $suboffset >= $counter[$pckey]) {
-                            continue;
-                        }
-                        if ($sublength !== null && $sublength < $counter[$pckey]) {
-                            continue;
-                        }
+        // 親カラムを参照して入れるクロージャ
+        $scalarable = $subselect->submethod === Database::METHOD_TUPLE || $subselect->submethod === Database::METHOD_VALUE;
+        $inject_parent = function ($crows, $n) use ($scalarable, $pcolumns, $parents) {
+            foreach ($pcolumns as $alias => $pcolumn) {
+                if ($scalarable) {
+                    if ($crows) {
+                        $crows[$alias] = $parents[$n][$pcolumn];
                     }
-                    $children[$pckey][] = $child_row;
                 }
+                else {
+                    foreach ($crows as $k => $crow) {
+                        $crows[$k][$alias] = $parents[$n][$pcolumn];
+                    }
+                }
+            }
+            return $crows;
+        };
 
-                // 親の指定キーに子供行を突っ込むループ
+        switch ($this->lazyMode) {
+            case 'select':
+            case 'batch':
+                $fetchChildren = function () use ($subselect, $childkeys, $conds) {
+                    $subdatabase = $subselect->getDatabase();
+
+                    // 分類に必要なので子どもキーを加える
+                    $lckey = $subselect->_addPrimary(Database::AUTO_CHILD_KEY, array_keys($childkeys), false);
+
+                    // 親行から抽出した where（queryInto してるのは誤差レベルではなく速度に差が出るから）
+                    $expr = $subdatabase->getCompatiblePlatform()->getPrimaryCondition($conds);
+                    $subselect->andWhere($subdatabase->queryInto($expr));
+
+                    // 子供行の limit は親の範囲内の limit として利用する
+                    $suboffset = $subselect->getQueryPart('offset');
+                    $sublength = $subselect->getQueryPart('limit') === null ? null : $suboffset + $subselect->getQueryPart('limit');
+                    $subselect->limit(null, null);
+
+                    // 子供行の取得とグループ化
+                    $children = [];
+                    $counter = [];
+                    $child_rows = $subdatabase->fetchArray($subselect);
+                    foreach ($child_rows as $nc => $child_row) {
+                        $pckey = $child_row[$lckey];
+                        if ($suboffset !== null || $sublength !== null) {
+                            $counter[$pckey] = ($counter[$pckey] ?? 0) + 1;
+                            if ($suboffset !== null && $suboffset >= $counter[$pckey]) {
+                                continue;
+                            }
+                            if ($sublength !== null && $sublength < $counter[$pckey]) {
+                                continue;
+                            }
+                        }
+                        $children[$pckey][] = $child_row;
+                    }
+                    return $children;
+                };
+
                 $psep = $subselect->getPrimarySeparator();
-                foreach ($parents as $n => $parent_row) {
-                    $ckey = implode($psep, array_get($parent_row, $subselect->lazyColumns));
-                    $crow = $children[$ckey] ?? [];
-                    $parents[$n][$column] = $subdatabase->perform($crow, $subselect->submethod, null, true);
+
+                if ($this->lazyMode === 'select') {
+                    $children = $fetchChildren();
+                    foreach ($parents as $n => $parent_row) {
+                        $ckey = implode($psep, array_get($parent_row, $subselect->lazyColumns));
+                        $crow = $children[$ckey] ?? [];
+                        $parents[$n][$column] = $inject_parent($subdatabase->perform($crow, $subselect->submethod, null, true), $n);
+                    }
+                }
+                if ($this->lazyMode === 'batch') {
+                    $children = null;
+                    foreach ($parents as $n => $parent_row) {
+                        $parents[$n][$column] = (function () use (&$children, $parent_row, $psep, $subselect, $fetchChildren, $subdatabase, $inject_parent, $n) {
+                            $children = $children ?? $fetchChildren();
+                            $ckey = implode($psep, array_get($parent_row, $subselect->lazyColumns));
+                            $crow = $children[$ckey] ?? [];
+                            yield from $inject_parent($subdatabase->perform($crow, $subselect->submethod, null, true), $n);
+                        })();
+                    }
                 }
                 break;
             case 'fetch':
@@ -311,26 +348,19 @@ class SubqueryBuilder extends QueryBuilder
                 $subselect->prepare();
                 $submethod = 'fetch' . $subselect->submethod;
                 foreach ($parents as $n => $parent_row) {
-                    $parents[$n][$column] = $subdatabase->$submethod($subselect, $conds[$n]);
+                    $parents[$n][$column] = $inject_parent($subdatabase->$submethod($subselect, $conds[$n]), $n);
                 }
                 break;
-        }
-
-        // 親カラムを参照して入れる
-        $scalarable = $subselect->submethod === Database::METHOD_TUPLE || $subselect->submethod === Database::METHOD_VALUE;
-        foreach ($pcolumns as $alias => $pcolumn) {
-            foreach ($parents as $n => $parent_row) {
-                if ($scalarable) {
-                    if ($parents[$n][$column]) {
-                        $parents[$n][$column][$alias] = $parent_row[$pcolumn];
-                    }
+            case 'yield':
+                $subselect->andWhere(array_sprintf($childkeys, '%2$s = :%1$s'));
+                $subselect->prepare();
+                $submethod = 'fetch' . $subselect->submethod;
+                foreach ($parents as $n => $parent_row) {
+                    $parents[$n][$column] = (function () use ($subdatabase, $submethod, $subselect, $conds, $n, $inject_parent) {
+                        yield from $inject_parent($subdatabase->$submethod($subselect, $conds[$n]), $n);
+                    })();
                 }
-                else {
-                    foreach ($parent_row[$column] as $k => $crow) {
-                        $parents[$n][$column][$k][$alias] = $parent_row[$pcolumn];
-                    }
-                }
-            }
+                break;
         }
 
         return $parents;

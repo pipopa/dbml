@@ -69,6 +69,8 @@ use function ryunosuke\dbml\throws;
  * 明示的に prepare のようなメソッドを呼ばない限り内部のプリペアードステートメントでは名前付きパラメータを一切使用しない（{@link Statement} も参照）。
  * prepare を呼ぶと現時点のパラメータで固定することができ、その上で `:name` のような名前付きパラメータに値を渡すことができる。
  *
+ * @method string                 getDefaultLazyMode()
+ * @method $this                  setDefaultLazyMode($string) {[] や Gateway 指定時のデフォルト sub lazy mode}
  * @method bool                   getAutoOrder()
  * @method $this                  setAutoOrder($bool) {自動で主キー順にするか（{@link detectAutoOrder()} を参照）}
  * @method string                 getPrimarySeparator()
@@ -263,6 +265,8 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
     public static function getDefaultOptions()
     {
         return [
+            // [] や Gateway 指定時のデフォルト sub lazy mode
+            'defaultLazyMode'      => 'select',
             // 自動 order by 有効/無効フラグ
             'autoOrder'            => true,
             // 複合主キーを単一主キーとみなすための結合文字列
@@ -613,7 +617,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
                 $result[] = array_strpad($fcols, '', $prefix);
 
                 $subtable = $this->database->createSubqueryBuilder();
-                $subtable->build($build_params)->lazy('select', array_strpad($fcols, $parsed->accessor . '.'));
+                $subtable->build($build_params)->lazy($this->getUnsafeOption('defaultLazyMode'), array_strpad($fcols, $parsed->accessor . '.'));
 
                 // 「主キーから外部キーを差っ引いたものが空」はすなわち「親との結合」とみなすことができる
                 // その場合 assoc は無駄だし、assoc のためのカラムを追加する必要もない
@@ -641,7 +645,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
 
                     $dparam['column'] = [$key => array_merge($parsed->column, arrayize($dparam['column']))];
                     $fcols = $schema->getForeignColumns($table, $parsed->table, $parsed->fkeyname);
-                    $column->build($dparam)->lazy('select', array_strpad($fcols, $parsed->accessor . '.'));
+                    $column->build($dparam)->lazy($this->getUnsafeOption('defaultLazyMode'), array_strpad($fcols, $parsed->accessor . '.'));
 
                     $key = $parsed->alias ?: $this->database->convertEntityName($parsed->table) . $parsed->fkeysuffix;
                     $add_columns = $fcols;
@@ -2714,7 +2718,8 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
             foreach ($this->subbuilders as $column => $subselect) {
                 // 連続コールされる場合は無駄なので clone もしないし prepare を使用する
                 if ($continuity) {
-                    $subselect->setLazyMode('fetch');
+                    $mode = $this->getUnsafeOption('defaultLazyMode');
+                    $subselect->setLazyMode($mode === 'select' ? 'fetch' : $mode);
                 }
                 else {
                     $subselect = $subselect->getLazyClonable() ? clone $subselect : $subselect;
