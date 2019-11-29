@@ -18,6 +18,7 @@ use ryunosuke\dbml\Exception\NonAffectedException;
 use ryunosuke\dbml\Exception\NonSelectedException;
 use ryunosuke\dbml\Gateway\TableGateway;
 use ryunosuke\dbml\Generator\Yielder;
+use ryunosuke\dbml\Metadata\CompatiblePlatform;
 use ryunosuke\dbml\Query\Expression\Expression;
 use ryunosuke\dbml\Query\Expression\PhpExpression;
 use ryunosuke\dbml\Query\QueryBuilder;
@@ -42,12 +43,12 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
         $database = new Database($connection);
         $options = $database::getDefaultOptions();
         foreach ($options as $key => $dummy) {
-            if ($key !== 'autoCastType') {
+            if (!in_array($key, ['logger', 'autoCastType', 'compatiblePlatform'])) {
                 $this->assertSame($database, $database->{'set' . $key}($key));
             }
         }
         foreach ($options as $key => $dummy) {
-            if ($key !== 'autoCastType') {
+            if (!in_array($key, ['logger', 'autoCastType', 'compatiblePlatform'])) {
                 $this->assertSame($key, $database->{'get' . $key}());
             }
         }
@@ -395,6 +396,44 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
             $slave = DriverManager::getConnection(['url' => 'mysql://localhost/testdb']);
             new Database([$master, $slave]);
         });
+    }
+
+    function test_getConnections()
+    {
+        $master = DriverManager::getConnection(['url' => 'sqlite:///:memory:']);
+        $slave = DriverManager::getConnection(['url' => 'sqlite:///:memory:']);
+
+        $database = new Database([$master, $slave]);
+        $this->assertCount(2, $database->getConnections());
+
+        $database = new Database([$master]);
+        $this->assertCount(1, $database->getConnections());
+
+        $database = new Database([$master, $master]);
+        $this->assertCount(1, $database->getConnections());
+    }
+
+    function test_compatiblePlatform()
+    {
+        // デフォルト
+        $database = self::getDummyDatabase();
+        $this->assertInstanceOf(CompatiblePlatform::class, $database->getCompatiblePlatform());
+
+        // クラス名
+        eval('class CPlatform extends \\ryunosuke\\dbml\\Metadata\\CompatiblePlatform{}');
+        $database = new Database(DriverManager::getConnection(['url' => 'sqlite:///:memory:']), [
+            'compatiblePlatform' => 'CPlatform'
+        ]);
+        $this->assertInstanceOf('CPlatform', $database->getCompatiblePlatform());
+
+        // インスタンス
+        $cplatform = new class(new SqlitePlatform()) extends CompatiblePlatform
+        {
+        };
+        $database = new Database(DriverManager::getConnection(['url' => 'sqlite:///:memory:']), [
+            'compatiblePlatform' => $cplatform
+        ]);
+        $this->assertSame($cplatform, $database->getCompatiblePlatform());
     }
 
     function test_getSchema()
@@ -3398,7 +3437,7 @@ ON DUPLICATE KEY UPDATE id = VALUES(id), name = VALUES(name)", $affected);
         // 複数テーブル
         $this->assertEquals(2, $database->insert([
             'foreign_p P' => [
-            'id'              => 99,
+                'id'   => 99,
                 'name' => 'hoge',
             ],
             '+foreign_c1' => [
@@ -3416,7 +3455,7 @@ ON DUPLICATE KEY UPDATE id = VALUES(id), name = VALUES(name)", $affected);
 
         $sqls = $database->dryrun()->insert([
             'foreign_p P' => [
-            'id'              => 99,
+                'id'   => 99,
                 'name' => 'hoge',
             ],
             '+foreign_c1' => [

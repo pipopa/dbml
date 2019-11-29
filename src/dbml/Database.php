@@ -8,6 +8,7 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Event\Listeners\SQLSessionInit;
 use Doctrine\DBAL\Events;
+use Doctrine\DBAL\Logging\SQLLogger;
 use Doctrine\DBAL\Platforms;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Schema\AbstractAsset;
@@ -746,6 +747,8 @@ class Database
                     ],
                 ],
             ],
+            // CompatiblePlatform のクラス名 or インスタンス
+            'compatiblePlatform'   => CompatiblePlatform::class,
             // exportXXX 呼び出し時にどのクラスを使用するか
             'exportClass'          => [
                 'array' => ArrayGenerator::class,
@@ -882,14 +885,7 @@ class Database
 
         $this->setDefault($options);
 
-        /** @var Connection[] $cons $connections は同一インスタンスが混ざっていて複数設定されてしまうので unique する */
-        $cons = array_each($this->connections, function (&$carry, $v) { $carry[spl_object_hash($v)] = $v; }, []);
-        foreach ($cons as $con) {
-            $logger = $this->getUnsafeOption('logger');
-            if ($logger) {
-                $con->getConfiguration()->setSQLLogger($logger);
-            }
-
+        foreach ($this->getConnections() as $con) {
             $commands = (array) $this->getUnsafeOption('initCommand');
             foreach ($commands as $command) {
                 if ($command) {
@@ -898,8 +894,8 @@ class Database
             }
         }
 
-        // デフォルト兼サンプルの正規化の必要があるので無駄に呼んでおく
-        $this->setAutoCastType($this->getAutoCastType());
+        $this->setLogger($this->getUnsafeOption('logger'));
+        $this->setAutoCastType($this->getUnsafeOption('autoCastType')); // デフォルト兼サンプルの正規化の必要があるので無駄に呼んでおく
     }
 
     /**
@@ -1792,6 +1788,40 @@ class Database
     }
 
     /**
+     * ロガーを設定する
+     *
+     * 配列で 0, master を指定するとマスター接続に設定される。
+     * 同様に 1, slave を指定するとスレーブ接続に設定される。
+     *
+     * 単一のインスタンスを渡した場合は両方に設定される。
+     *
+     * @param SQLLogger|SQLLogger[] $logger ロガー
+     * @return $this 自分自身
+     */
+    public function setLogger($logger)
+    {
+        if (is_array($logger)) {
+            $loggers = [
+                array_get($logger, 0) ?? array_get($logger, 'master') ?? null,
+                array_get($logger, 1) ?? array_get($logger, 'slave') ?? null,
+            ];
+        }
+        else {
+            $loggers = [
+                $logger,
+                $logger,
+            ];
+        }
+
+        foreach ($this->getConnections() as $n => $con) {
+            if (isset($loggers[$n])) {
+                $con->getConfiguration()->setSQLLogger($loggers[$n]);
+            }
+        }
+        return $this;
+    }
+
+    /**
      * カラムの型に応じた自動変換処理を登録する
      *
      * 自動変換がなにかは {@link ryunosuke\dbml\ dbml} を参照。
@@ -1930,6 +1960,23 @@ class Database
     }
 
     /**
+     * コネクション配列を返す
+     *
+     * 単一だろうと Master/Slave 構成だろうとインスタンスとしての配列を返す。
+     * 例えばマスタースレーブが同じインスタンスの場合は1つしか返さない。
+     *
+     * @return Connection[] コネクション配列
+     */
+    public function getConnections()
+    {
+        $cons = [];
+        foreach ($this->connections as $con) {
+            $cons[spl_object_hash($con)] = $con;
+        }
+        return array_values($cons);
+    }
+
+    /**
      * トランザクション接続の PDO を返す
      *
      * トランザクション接続とは基本的に「マスター接続」を指す。
@@ -2044,7 +2091,12 @@ class Database
      */
     public function getCompatiblePlatform()
     {
-        return $this->cache['compatiblePlatform'] ?? $this->cache['compatiblePlatform'] = new CompatiblePlatform($this->getPlatform());
+        if (!isset($this->cache['compatiblePlatform'])) {
+            $classname = $this->getUnsafeOption('compatiblePlatform');
+            assert(is_a($classname, CompatiblePlatform::class, true));
+            $this->cache['compatiblePlatform'] = is_object($classname) ? $classname : new $classname($this->getPlatform());
+        }
+        return $this->cache['compatiblePlatform'];
     }
 
     /**
