@@ -3378,8 +3378,9 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
         return array_merge($params);
     }
 
-    public function merge(&$params)
+    public function merge(?array &$params)
     {
+        $params = $params ?? [];
         foreach ($this->getParams() as $param) {
             $params[] = $param;
         }

@@ -2596,8 +2596,10 @@ class Database
      * @param array $params bind 値が渡される
      * @return mixed ? が埋め込まれた正規化されたクエリ文字列
      */
-    public function bindInto($data, array &$params)
+    public function bindInto($data, ?array &$params)
     {
+        $params = $params ?? [];
+
         // 配列は再帰
         if (is_array($data)) {
             return array_each($data, function (&$carry, $value, $columnName) use (&$params) {
@@ -2763,8 +2765,9 @@ class Database
      * @param bool $filterd 条件が全て ! などでフィルタされたら true が格納される（内部向け引数なので気にしなくて良い）
      * @return array where 配列
      */
-    public function whereInto(array $identifier, array &$params, $andor = 'OR', &$filterd = null)
+    public function whereInto(array $identifier, ?array &$params, $andor = 'OR', &$filterd = null)
     {
+        $params = $params ?? [];
         $orand = $andor === 'AND' ? 'OR' : 'AND';
         $criteria = [];
 

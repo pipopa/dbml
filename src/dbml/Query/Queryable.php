@@ -29,5 +29,5 @@ interface Queryable
      * @param array $params この引数にパラメータが追加される
      * @return string 文字列表現を返す
      */
-    public function merge(&$params);
+    public function merge(?array &$params);
 }

@@ -389,8 +389,9 @@ class Operator implements Queryable
     /**
      * @inheritdoc
      */
-    public function merge(&$params)
+    public function merge(?array &$params)
     {
+        $params = $params ?? [];
         foreach ($this->getParams() as $param) {
             $params[] = $param;
         }
