@@ -41,7 +41,7 @@ class Statement implements Queryable
     /** @var \Doctrine\DBAL\Statement[] */
     private $statements = [];
 
-    public function __construct($query, array $params, Database $database)
+    public function __construct($query, iterable $params, Database $database)
     {
         // コンストラクタ時点で疑問符プレースホルダーをすべて名前付きプレースホルダーに変換しておく
         $n = 0;
@@ -68,8 +68,10 @@ class Statement implements Queryable
         $this->database = $database;
     }
 
-    private function _execute(array $params, Connection $connection)
+    private function _execute(iterable $params, Connection $connection)
     {
+        $params = $params instanceof \Traversable ? iterator_to_array($params) : $params;
+
         // 同じコネクションの stmt はキャッシュする（$this->query は不変なので問題ない）
         $key = spl_object_hash($connection);
         if (!isset($this->statements[$key])) {
@@ -94,7 +96,7 @@ class Statement implements Queryable
      * @param Connection $connection コネクション
      * @return \Doctrine\DBAL\Statement stmt オブジェクト
      */
-    public function executeQuery(array $params = [], Connection $connection = null)
+    public function executeQuery(iterable $params = [], Connection $connection = null)
     {
         return $this->_execute($params, $connection ?: $this->database->getSlaveConnection());
     }
@@ -106,7 +108,7 @@ class Statement implements Queryable
      * @param Connection $connection コネクション
      * @return \Doctrine\DBAL\Statement stmt オブジェクト
      */
-    public function executeUpdate(array $params = [], Connection $connection = null)
+    public function executeUpdate(iterable $params = [], Connection $connection = null)
     {
         return $this->_execute($params, $connection ?: $this->database->getMasterConnection());
     }

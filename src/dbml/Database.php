@@ -257,22 +257,22 @@ use ryunosuke\dbml\Utility\Adhoc;
  * @method bool                   getPropagateLockMode() {{@link SubqueryBuilder::getPropagateLockMode()} 参照@inheritdoc SubqueryBuilder::getPropagateLockMode()}
  * @method $this                  setPropagateLockMode($bool) {{@link SubqueryBuilder::setPropagateLockMode()} 参照@inheritdoc SubqueryBuilder::setPropagateLockMode()}
  *
- * @method array|Entityable[]     fetchArrayOrThrow($sql, $params = []) {
+ * @method array|Entityable[]     fetchArrayOrThrow($sql, iterable $params = []) {
  *     <@uses Database::fetchArray()> の例外送出版
  * }
- * @method array|Entityable[]     fetchAssocOrThrow($sql, $params = []) {
+ * @method array|Entityable[]     fetchAssocOrThrow($sql, iterable $params = []) {
  *     <@uses Database::fetchAssoc()> の例外送出版
  * }
- * @method array                  fetchListsOrThrow($sql, $params = []) {
+ * @method array                  fetchListsOrThrow($sql, iterable $params = []) {
  *     <@uses Database::fetchLists()> の例外送出版
  * }
- * @method array                  fetchPairsOrThrow($sql, $params = []) {
+ * @method array                  fetchPairsOrThrow($sql, iterable $params = []) {
  *     <@uses Database::fetchPairs()> の例外送出版
  * }
- * @method array|Entityable|false fetchTupleOrThrow($sql, $params = []) {
+ * @method array|Entityable|false fetchTupleOrThrow($sql, iterable $params = []) {
  *     <@uses Database::fetchTuple()> の例外送出版
  * }
- * @method mixed                  fetchValueOrThrow($sql, $params = []) {
+ * @method mixed                  fetchValueOrThrow($sql, iterable $params = []) {
  *     <@uses Database::fetchValue()> の例外送出版
  * }
  *
@@ -392,26 +392,26 @@ use ryunosuke\dbml\Utility\Adhoc;
  *     <@uses Database::entityTuple()> の例外送出版
  * }
  *
- * @method Yielder                yieldArray($sql, $params = []) {
+ * @method Yielder                yieldArray($sql, iterable $params = []) {
  *     <@uses Database::yield()> のレコードの配列版
  * }
- * @method Yielder                yieldAssoc($sql, $params = []) {
+ * @method Yielder                yieldAssoc($sql, iterable $params = []) {
  *     <@uses Database::yield()> のレコードの連想配列版
  * }
- * @method Yielder                yieldLists($sql, $params = []) {
+ * @method Yielder                yieldLists($sql, iterable $params = []) {
  *     <@uses Database::yield()> のレコード[1列目の配列]
  * }
- * @method Yielder                yieldPairs($sql, $params = []) {
+ * @method Yielder                yieldPairs($sql, iterable $params = []) {
  *     <@uses Database::yield()> のレコード[1列目=>2列目]の連想配列
  * }
  *
- * @method int                    exportArray($sql, $params = [], array $config = [], $file = null) {
+ * @method int                    exportArray($sql, iterable $params = [], array $config = [], $file = null) {
  *     <@uses Database::export()> の ARRAY 版
  * }
- * @method int                    exportCsv($sql, $params = [], array $config = [], $file = null) {
+ * @method int                    exportCsv($sql, iterable $params = [], array $config = [], $file = null) {
  *     <@uses Database::export()> の CSV 版
  * }
- * @method int                    exportJson($sql, $params = [], array $config = [], $file = null) {
+ * @method int                    exportJson($sql, iterable $params = [], array $config = [], $file = null) {
  *     <@uses Database::export()> の JSON 版
  * }
  *
@@ -1149,7 +1149,7 @@ class Database
         return $map;
     }
 
-    private function _doFetch($sql, $params, $method)
+    private function _doFetch($sql, iterable $params, $method)
     {
         $sub_flg = ($sql instanceof SubqueryBuilder && $sql->isRequireUnsetSubcolumn());
         $converter = $this->_getConverter($sql);
@@ -1163,7 +1163,7 @@ class Database
         }
     }
 
-    private function _sqlToStmt($sql, array $params, Connection $connection)
+    private function _sqlToStmt($sql, iterable $params, Connection $connection)
     {
         if ($sql instanceof Statement) {
             $stmt = $sql->executeQuery($params, $connection);
@@ -1185,8 +1185,10 @@ class Database
         return $stmt;
     }
 
-    private function _builderToSql($builder, array &$fetch_params)
+    private function _builderToSql($builder, iterable &$fetch_params)
     {
+        $fetch_params = $fetch_params instanceof \Traversable ? iterator_to_array($fetch_params) : $fetch_params;
+
         // QueryBuilder なら文字列化 && $params を置換
         if ($builder instanceof QueryBuilder) {
             $builder_params = $builder->getParams();
@@ -2423,7 +2425,7 @@ class Database
      * 可能なら直接 new Expression せずにこのメソッド経由で生成したほうが良い（MUST ではない）。
      *
      * @param mixed $expr クエリ文
-     * @param array $params bind パラメータ
+     * @param mixed $params bind パラメータ
      * @return Expression クエリ表現オブジェクト
      */
     public function raw($expr, $params = [])
@@ -2464,7 +2466,7 @@ class Database
      * ```
      *
      * @param array|string $cond クエリ文
-     * @param array $params bind パラメータ
+     * @param mixed $params bind パラメータ
      * @return Expression クエリ表現オブジェクト
      */
     public function operator($cond, $params = [])
@@ -2481,6 +2483,45 @@ class Database
             $glue = " AND ";
         }
         return new Expression('(' . implode($glue, Adhoc::wrapParentheses($conds)) . ')', $ps);
+    }
+
+    /**
+     * 値を保持しつつプレースホルダーを返すオブジェクトを返す
+     *
+     * ```php
+     * $binder = $db->binder();
+     * // このようにすると値を保持しつつプレースホルダー文字列を返す
+     * $sql = "SELECT * FROM t_table WHERE id IN ({$binder([1, 2, 3])}) AND status = {$binder(1)}";
+     * // $binder はそのままパラメータとして使える
+     * $db->fetchAll($sql, $binder);
+     * // prepare: SELECT * FROM t_table WHERE id IN (?, ?, ?) AND status = ?
+     * // execute: SELECT * FROM t_table WHERE id IN (1, 2, 3) AND status = 1
+     * ```
+     *
+     * @return callable|\ArrayObject
+     */
+    public function binder()
+    {
+        return new class extends \ArrayObject
+        {
+            public function __invoke($param)
+            {
+                if ($param instanceof Queryable) {
+                    $this($param->getParams());
+                    return $param->getQuery();
+                }
+
+                if (is_array($param)) {
+                    if (count($param) === 0) {
+                        return $this(null);
+                    }
+                    return implode(', ', array_map($this, $param));
+                }
+
+                $this[] = $param;
+                return '?';
+            }
+        };
     }
 
     /**
@@ -2539,11 +2580,13 @@ class Database
      * ```
      *
      * @param string $sql SQL
-     * @param array $params bind 配列
+     * @param iterable $params bind 配列
      * @return string 値が埋め込まれた実行可能なクエリ
      */
-    public function queryInto($sql, $params = [])
+    public function queryInto($sql, iterable $params = [])
     {
+        $params = $params instanceof \Traversable ? iterator_to_array($params) : $params;
+
         if ($sql instanceof Queryable) {
             $sql = $sql->merge($params);
         }
@@ -2774,6 +2817,9 @@ class Database
         foreach ($identifier as $cond => $value) {
             if ($value instanceof \Closure) {
                 $value = $value($this);
+            }
+            if ($value instanceof \ArrayObject) {
+                $value = iterator_to_array($value);
             }
 
             if (is_int($cond)) {
@@ -3114,10 +3160,10 @@ class Database
      * @used-by fetchArrayOrThrow()
      *
      * @param string|QueryBuilder $sql クエリ
-     * @param array $params bind パラメータ
+     * @param iterable $params bind パラメータ
      * @return array|Entityable[] クエリ結果
      */
-    public function fetchArray($sql, array $params = [])
+    public function fetchArray($sql, iterable $params = [])
     {
         $result = $this->_doFetch($sql, $params, self::METHOD_ARRAY);
         if ($sql instanceof QueryBuilder) {
@@ -3147,10 +3193,10 @@ class Database
      * @used-by fetchAssocOrThrow()
      *
      * @param string|QueryBuilder $sql クエリ
-     * @param array $params bind パラメータ
+     * @param iterable $params bind パラメータ
      * @return array|Entityable[] クエリ結果
      */
-    public function fetchAssoc($sql, array $params = [])
+    public function fetchAssoc($sql, iterable $params = [])
     {
         $result = $this->_doFetch($sql, $params, self::METHOD_ASSOC);
         if ($sql instanceof QueryBuilder) {
@@ -3174,10 +3220,10 @@ class Database
      * @used-by fetchListsOrThrow()
      *
      * @param string|QueryBuilder $sql クエリ
-     * @param array $params bind パラメータ
+     * @param iterable $params bind パラメータ
      * @return array|Entityable[] クエリ結果
      */
-    public function fetchLists($sql, array $params = [])
+    public function fetchLists($sql, iterable $params = [])
     {
         $result = $this->_doFetch($sql, $params, self::METHOD_LISTS);
         if ($sql instanceof QueryBuilder) {
@@ -3201,10 +3247,10 @@ class Database
      * @used-by fetchPairsOrThrow()
      *
      * @param string|QueryBuilder $sql クエリ
-     * @param array $params bind パラメータ
+     * @param iterable $params bind パラメータ
      * @return array|Entityable[] クエリ結果
      */
-    public function fetchPairs($sql, array $params = [])
+    public function fetchPairs($sql, iterable $params = [])
     {
         $result = $this->_doFetch($sql, $params, self::METHOD_PAIRS);
         if ($sql instanceof QueryBuilder) {
@@ -3236,10 +3282,10 @@ class Database
      * @used-by fetchTupleOrThrow()
      *
      * @param string|QueryBuilder $sql クエリ
-     * @param array $params bind パラメータ
+     * @param iterable $params bind パラメータ
      * @return array|Entityable|false クエリ結果
      */
-    public function fetchTuple($sql, array $params = [])
+    public function fetchTuple($sql, iterable $params = [])
     {
         $result = $this->_doFetch($sql, $params, self::METHOD_TUPLE);
         if ($result === false) {
@@ -3271,10 +3317,10 @@ class Database
      * @used-by fetchValueOrThrow()
      *
      * @param string|QueryBuilder $sql クエリ
-     * @param array $params bind パラメータ
+     * @param iterable $params bind パラメータ
      * @return mixed クエリ結果
      */
-    public function fetchValue($sql, array $params = [])
+    public function fetchValue($sql, iterable $params = [])
     {
         $result = $this->_doFetch($sql, $params, self::METHOD_VALUE);
         if ($result === false) {
@@ -4133,10 +4179,10 @@ class Database
      * @used-by yieldPairs()
      *
      * @param string|QueryBuilder $sql SQL
-     * @param array $params SQL パラメータ
+     * @param iterable $params SQL パラメータ
      * @return Yielder foreach で回せるオブジェクト
      */
-    public function yield($sql, $params = [])
+    public function yield($sql, iterable $params = [])
     {
         $converter = $this->_getConverter($sql);
         $callback = $sql instanceof QueryBuilder ? function ($row) use ($sql, $converter) {
@@ -4177,12 +4223,12 @@ class Database
      *
      * @param string|AbstractGenerator $generator 出力タイプ
      * @param string|QueryBuilder $sql SQL
-     * @param array $params SQL パラメータ
+     * @param iterable $params SQL パラメータ
      * @param array $config 出力パラメータ
      * @param string|resource $file 出力先。 null を与えると標準出力に書き出される
      * @return int 書き込みバイト数
      */
-    public function export($generator, $sql, $params = [], $config = [], $file = null)
+    public function export($generator, $sql, iterable $params = [], $config = [], $file = null)
     {
         if (is_string($generator)) {
             $generator = strtolower($generator);
@@ -4367,10 +4413,10 @@ class Database
      * @used-by prepareReplace()
      *
      * @param string|QueryBuilder $sql クエリ
-     * @param array $params パラメータ
+     * @param iterable $params パラメータ
      * @return Statement プリペアドステートメント
      */
-    public function prepare($sql, $params = [])
+    public function prepare($sql, iterable $params = [])
     {
         if ($sql instanceof QueryBuilder) {
             return $this->prepare((string) $sql, $sql->getParams());
@@ -4383,8 +4429,9 @@ class Database
      *
      * @inheritdoc Connection::executeQuery
      */
-    public function executeQuery($query, array $params = [])
+    public function executeQuery($query, iterable $params = [])
     {
+        $params = $params instanceof \Traversable ? iterator_to_array($params) : $params;
         $params = array_map(function ($p) { return is_bool($p) ? (int) $p : $p; }, $params);
 
         if ($filter_path = $this->getInjectCallStack()) {
@@ -4406,8 +4453,9 @@ class Database
      *
      * @inheritdoc Connection::executeUpdate
      */
-    public function executeUpdate($query, array $params = [])
+    public function executeUpdate($query, iterable $params = [])
     {
+        $params = $params instanceof \Traversable ? iterator_to_array($params) : $params;
         $params = array_map(function ($p) { return is_bool($p) ? (int) $p : $p; }, $params);
 
         if ($this->getUnsafeOption('dryrun')) {
@@ -4821,10 +4869,10 @@ class Database
      * @param string $tableName テーブル名
      * @param string|QueryBuilder $sql SELECT クエリ
      * @param array $columns カラム定義
-     * @param array $params bind パラメータ
+     * @param iterable $params bind パラメータ
      * @return int|string|Statement 基本的には affected row. dryrun 中は文字列、preparing 中は Statement
      */
-    public function insertSelect($tableName, $sql, $columns = [], array $params = [])
+    public function insertSelect($tableName, $sql, $columns = [], iterable $params = [])
     {
         $tableName = $this->convertTableName($tableName);
 

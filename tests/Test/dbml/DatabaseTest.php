@@ -1258,6 +1258,35 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
      * @dataProvider provideDatabase
      * @param Database $database
      */
+    function test_binder($database)
+    {
+        $binder = $database->binder();
+        $this->assertEquals('select ? WHERE ? and (?, ?, ?)', "select {$binder(1)} WHERE {$binder(2)} and ({$binder([3, 4, 5])})");
+        $this->assertEquals([1, 2, 3, 4, 5], (array) $binder);
+
+        $binder = $database->binder();
+        $select = $database->select([
+            'f' => new Expression('F(?)', 'arg'),
+        ], [
+            'id'   => [7, 8, 9],
+            'name' => 'hoge',
+        ]);
+        $this->assertEquals(
+            'select ? WHERE (SELECT F(?) AS f WHERE (id IN (?,?,?)) AND (name = ?)) = ? and (?, ?, ?)',
+            "select {$binder(1)} WHERE {$binder($select)} = {$binder(99)} and ({$binder([3, 4, 5])})");
+        $this->assertEquals([1, 'arg', 7, 8, 9, 'hoge', 99, 3, 4, 5], (array) $binder);
+
+        $binder = $database->binder();
+        $this->assertEquals(
+            'select ?,?',
+            "select {$binder(null)},{$binder([])}");
+        $this->assertEquals([null, null], (array) $binder);
+    }
+
+    /**
+     * @dataProvider provideDatabase
+     * @param Database $database
+     */
     function test_quoteIdentifier($database)
     {
         // カバレッジ以上の意味はない
@@ -1402,6 +1431,14 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
 
         $this->assertEquals(['cond = ?', 'id = :id', 'condition'], $whereInto(['cond' => 1, ':id', 'condition']));
         $this->assertEquals([1], $params);
+
+        $this->assertEquals(['hoge IN(?) OR fuga IN(?,?)'], $whereInto([
+            'hoge IN(?) OR fuga IN(?)' => new \ArrayObject([
+                new \ArrayObject([1]),
+                new \ArrayObject([2, 3])
+            ])
+        ]));
+        $this->assertEquals([1, 2, 3], $params);
 
         $this->assertEquals([
             'b1 = ?',

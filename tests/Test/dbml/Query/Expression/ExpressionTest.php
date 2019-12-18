@@ -33,6 +33,21 @@ class ExpressionTest extends \ryunosuke\Test\AbstractUnitTestCase
         $this->assertEquals(new Expression(0), $actual);
     }
 
+    function test___construct()
+    {
+        $expr = new Expression('hogera', 1);
+        $this->assertEquals('hogera', $expr->getQuery());
+        $this->assertEquals([1], $expr->getParams());
+
+        $expr = new Expression('hogera', [1, 2, 3]);
+        $this->assertEquals('hogera', $expr->getQuery());
+        $this->assertEquals([1, 2, 3], $expr->getParams());
+
+        $expr = new Expression('hogera', new \ArrayObject([1, 2, 3]));
+        $this->assertEquals('hogera', $expr->getQuery());
+        $this->assertEquals([1, 2, 3], $expr->getParams());
+    }
+
     function test___callStatic()
     {
         /** @var Expression $actual */

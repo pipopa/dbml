@@ -10,6 +10,7 @@ use function ryunosuke\dbml\array_each;
 use function ryunosuke\dbml\array_flatten;
 use function ryunosuke\dbml\array_nmap;
 use function ryunosuke\dbml\arrayize;
+use function ryunosuke\dbml\arrayval;
 use function ryunosuke\dbml\first_keyvalue;
 use function ryunosuke\dbml\str_subreplace;
 use const ryunosuke\dbml\strcat;
@@ -154,6 +155,10 @@ class Operator implements Queryable
         $this->operand1 = $operand1;
         $this->operand2 = arrayize($operand2);
         $this->isarray = is_array($operand2);
+
+        if ($this->isarray) {
+            $this->operand2 = arrayval($this->operand2);
+        }
 
         // ! は否定を意味する
         if (isset($this->operator[0]) && $this->operator[0] === '!') {

@@ -77,7 +77,7 @@ namespace ryunosuke\Test {
             }
         }
 
-        public function executeUpdate($query, array $params = [])
+        public function executeUpdate($query, iterable $params = [])
         {
             $this->is_dirty = true;
             return parent::executeUpdate($query, $params);

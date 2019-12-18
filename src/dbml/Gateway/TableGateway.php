@@ -594,7 +594,7 @@ use function ryunosuke\dbml\try_finally;
  *     駆動表を省略できる <@uses Database::selectAvg()>
  * }
  *
- * @method array                  insertSelect($sql, $columns = [], array $params = []) {
+ * @method array                  insertSelect($sql, $columns = [], iterable $params = []) {
  *     駆動表を省略できる <@uses Database::insertSelect()>
  * }
  * @method array                  insertArray($data, $chunk = 0) {

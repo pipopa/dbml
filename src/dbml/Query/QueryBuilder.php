@@ -155,22 +155,22 @@ use function ryunosuke\dbml\throws;
  *     結合方法が RIGHT で結合条件・外部キー指定の <@uses QueryBuilder::join()>
  * }
  *
- * @method array|Entityable[]     array(array $params = []) {
+ * @method array|Entityable[]     array(iterable $params = []) {
  *     自身が保持しているクエリでレコードの配列を返す（<@uses Database::fetchArray()> 参照）
  * }
- * @method array|Entityable[]     assoc(array $params = []) {
+ * @method array|Entityable[]     assoc(iterable $params = []) {
  *     自身が保持しているクエリでレコードの連想配列を返す（<@uses Database::fetchAssoc()> 参照）
  * }
- * @method array                  lists(array $params = []) {
+ * @method array                  lists(iterable $params = []) {
  *     自身が保持しているクエリでレコード[1列目]の配列を返す（<@uses Database::fetchLists()> 参照）
  * }
- * @method array                  pairs(array $params = []) {
+ * @method array                  pairs(iterable $params = []) {
  *     自身が保持しているクエリでレコード[1列目=>2列目]の連想配列を返す（<@uses Database::fetchPairs()> 参照）
  * }
- * @method array|Entityable|false tuple(array $params = []) {
+ * @method array|Entityable|false tuple(iterable $params = []) {
  *     自身が保持しているクエリでレコードを返す（<@uses Database::fetchTuple()> 参照）
  * }
- * @method mixed                  value(array $params = []) {
+ * @method mixed                  value(iterable $params = []) {
  *     自身が保持しているクエリでレコード[1列目]を返す（<@uses Database::fetchValue()> 参照）
  * }
  */

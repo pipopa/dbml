@@ -118,6 +118,9 @@ class Expression implements Queryable
      */
     public function __construct($expr, $params = [])
     {
+        if ($params instanceof \ArrayObject) {
+            $params = iterator_to_array($params);
+        }
         $this->expr = $expr;
         $this->params = arrayize($params);
     }
