@@ -151,7 +151,7 @@ class Operator implements Queryable
     public function __construct($platform, $operator, $operand1, $operand2)
     {
         $this->platform = $platform;
-        $this->operator = strtoupper(trim($operator));
+        $this->operator = trim($operator);
         $this->operand1 = $operand1;
         $this->operand2 = arrayize($operand2);
         $this->isarray = is_array($operand2);
@@ -227,7 +227,7 @@ class Operator implements Queryable
                 self::OP_RANGE_GTE     => ['_range' => ['>', '<=']],
                 self::OP_RANGE_BETWEEN => ['_range' => ['>=', '<=']],
             ];
-            $method = $methods[strlen($this->operator) ? $this->operator : self::COLVAL] ?? $methods[''];
+            $method = $methods[strlen($this->operator) ? strtoupper($this->operator) : self::COLVAL] ?? $methods[''];
             foreach ($method as $name => $args) {
                 $this->$name(...$args);
             }
@@ -245,7 +245,7 @@ class Operator implements Queryable
         if (count($this->operand2) !== 1) {
             throw new \UnexpectedValueException("DEFAULT's operand2 must be array contains 1 elements.");
         }
-        $this->string = $this->operand1 . ' ' . $this->operator . ' ?';
+        $this->string = $this->operand1 . ' ' . strtoupper($this->operator) . ' ?';
         $this->params = $this->operand2;
     }
 
@@ -296,7 +296,7 @@ class Operator implements Queryable
 
     private function _isnull()
     {
-        $this->string = $this->operand1 . ' ' . $this->operator;
+        $this->string = $this->operand1 . ' ' . strtoupper($this->operator);
         $this->params = [];
     }
 
@@ -305,7 +305,7 @@ class Operator implements Queryable
         if (count($this->operand2) !== 2) {
             throw new \UnexpectedValueException("BETWEEN's operand2 must be array contains 2 elements.");
         }
-        $this->string = $this->operand1 . ' ' . $this->operator . ' ? AND ?';
+        $this->string = $this->operand1 . ' ' . strtoupper($this->operator) . ' ? AND ?';
         $this->params = $this->operand2;
     }
 
