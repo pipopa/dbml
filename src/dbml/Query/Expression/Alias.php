@@ -53,7 +53,7 @@ class Alias
      */
     public static function split($string, $defaultAlias = null)
     {
-        $parts = preg_split('#\s+(as\s+)?#ui', $string);
+        $parts = preg_split('#(?<!,)\s+(as\s+)?#ui', $string);
         if (count($parts) === 2) {
             return array_reverse($parts + [1 => $defaultAlias]);
         }

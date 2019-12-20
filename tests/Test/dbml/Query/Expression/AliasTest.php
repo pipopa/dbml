@@ -30,6 +30,9 @@ class AliasTest extends \ryunosuke\Test\AbstractUnitTestCase
         $this->assertSame(['fuga', 'hoge'], Alias::split('hoge fuga', 'noooo'));
         $this->assertSame([null, 'hoge  as  fuga as piyo'], Alias::split('hoge  as  fuga as piyo'));
         $this->assertSame(['alias', 'hoge  fuga as piyo'], Alias::split('hoge  fuga as piyo', 'alias'));
+        $this->assertSame(['hogefuga', 'hoge,fuga'], Alias::split('hoge,fuga as hogefuga'));
+        $this->assertSame(['hogefuga', 'hoge, fuga'], Alias::split('hoge, fuga as hogefuga'));
+        $this->assertSame([null, 'hoge, fuga'], Alias::split('hoge, fuga'));
     }
 
     function test_forge()

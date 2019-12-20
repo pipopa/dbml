@@ -14,7 +14,6 @@ use Doctrine\DBAL\Types\Type;
 use ryunosuke\dbml\Entity\Entity;
 use ryunosuke\dbml\Query\Expression\Alias;
 use ryunosuke\dbml\Query\Expression\Expression;
-use ryunosuke\dbml\Query\Expression\PhpExpression;
 use ryunosuke\dbml\Query\Expression\SelectOption;
 use ryunosuke\dbml\Query\QueryBuilder;
 use ryunosuke\Test\Database;
@@ -295,43 +294,37 @@ FROM foreign_p INNER JOIN foreign_c1 ON foreign_c1.id = foreign_p.id
     function test_column_expression($builder)
     {
         $builder->column([
-            'test1' => 'name1',
-            ''      => [
-                'hoge'  => new PhpExpression(null),
-                'fuga'  => new PhpExpression(123),
-                'piyo'  => new PhpExpression(function ($row) { return 'xx-' . $row['name1']; }),
-                'idn1'  => new PhpExpression(function ($id, $name) { return "$id-$name"; }, 'id', 'name1'),
-                'idn2'  => function ($id = 'id', $name = 'test1.name1') { return "$id-$name"; },
-                'hage'  => function ($row) { return 'xx_' . $row['name1']; },
-                'name1' => function ($v = null) { return 'ss_' . $v; },
-                'last'  => new Expression("'dbval'"),
+            'test1' => [
+                'piyo'          => function ($row) { return 'xx-' . $row['name1']; },
+                'name1'         => function ($v) { return 'ss_' . $v; },
+                'id,name1 idn1' => function ($id, $name) { return "$id-$name"; },
+                'last'          => new Expression("'dbval'"),
             ]
         ]);
         $this->assertEquals([
             'name1' => 'ss_a',
-            'hoge'  => null,
-            'fuga'  => 123,
-            'piyo'  => 'xx-a',
+            'piyo'  => 'xx-ss_a',
             'idn1'  => '1-a',
-            'idn2'  => '1-a',
-            'hage'  => 'xx_a',
             'last'  => 'dbval',
-            'id'    => '1',
         ], $builder->limit(1)->tuple());
 
         $builder->where('1=0');
         $this->assertEmpty($builder->tuple());
 
         $builder->reset()->column([
-            'test1' => 'id',
-            ''      => [
-                'name1' => new PhpExpression('strtoupper', 'name1')
+            'test1' => [
+                'name1' => \Closure::fromCallable('strtoupper'),
             ],
         ]);
         $this->assertEquals([
-            'id'    => '1',
             'name1' => 'A',
         ], $builder->limit(1)->tuple());
+
+        $this->assertException('cannot be mixed', L($builder->reset())->column([
+            'test1' => [
+                'id,name idn' => function ($id, $name) { return "$id-$name"; },
+            ]
+        ]));
     }
 
     /**
@@ -1773,7 +1766,7 @@ SQL
     {
         $builder->column([
             'test' => [
-                'id' => PhpExpression::intval(),
+                'id' => \Closure::fromCallable('intval'),
                 'name',
             ]
         ])->limit(3);
@@ -2744,9 +2737,8 @@ SELECT test.* FROM test", $builder);
     function test_postselect($builder)
     {
         $builder->column([
-            'test' => [
-                'phpval' => new PhpExpression('phpval'),
-                'func'   => new PhpExpression(function () { return function ($arg) { return $this['id'] * $arg; }; }),
+            'test.*' => [
+                'func'   => function () { return function ($arg) { return $this['id'] * $arg; }; },
             ]
         ]);
         $actual = $builder->limit(1)->tuple();

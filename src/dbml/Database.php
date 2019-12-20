@@ -568,6 +568,7 @@ class Database
     public const AUTO_PRIMARY_KEY = self::AUTO_KEY . '_key';
     public const AUTO_PARENT_KEY  = self::AUTO_KEY . '_pk';
     public const AUTO_CHILD_KEY   = self::AUTO_KEY . '_ck';
+    public const AUTO_DEPEND_KEY  = self::AUTO_KEY . '_depend';
 
     /// perform メソッド
     public const METHOD_ARRAY = 'array';

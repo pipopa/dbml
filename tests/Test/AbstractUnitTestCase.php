@@ -620,8 +620,8 @@ abstract class AbstractUnitTestCase extends TestCase
                     ],
                     'title2'        => 'UPPER(%s.title)',
                     'title3'        => [
-                        'expression' => static function ($v = 'title') {
-                            return "a $v z";
+                        'expression' => static function ($v) {
+                            return "a {$v['title']} z";
                         },
                     ],
                     'title4'        => static function () {

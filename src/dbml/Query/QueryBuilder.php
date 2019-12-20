@@ -11,7 +11,6 @@ use ryunosuke\dbml\Mixin\IteratorTrait;
 use ryunosuke\dbml\Mixin\OptionTrait;
 use ryunosuke\dbml\Query\Expression\Alias;
 use ryunosuke\dbml\Query\Expression\Expression;
-use ryunosuke\dbml\Query\Expression\PhpExpression;
 use ryunosuke\dbml\Query\Expression\SelectOption;
 use ryunosuke\dbml\Query\Expression\TableDescriptor;
 use ryunosuke\dbml\Query\Pagination\Paginator;
@@ -232,8 +231,8 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
     /** @var string 生成した SQL（キャッシュ） */
     private $sql;
 
-    /** @var PhpExpression[] php 式配列 */
-    private $phpExpressions = [];
+    /** @var array php コールバック */
+    private $callbacks = [];
 
     /** @var array JOIN 順 */
     private $joinOrders = [];
@@ -596,6 +595,12 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
         $accessor = $alias ?: $table;
         $prefix = $accessor ? $accessor . '.' : '';
 
+        $actuals = $schema->hasTable($table) ? array_each($schema->getTableColumns($table), function (&$carry, Column $col, $key) {
+            if (!($col->getCustomSchemaOptions()['virtual'] ?? false)) {
+                $carry[$key] = $col;
+            }
+        }, []) : [];
+
         // '*' や '!nocol' は差分をとったり仮想カラムを追加したりしなければならないので事前処理が必要
         if ($schema->hasTable($table)) {
             $ignores = [];
@@ -699,7 +704,6 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
 
             // Expression 化出来そうならする
             $column = Expression::forge($column);
-            $column = PhpExpression::forge($column, $key);
 
             // テーブルに紐付かない列指定で配列指定は operator(Expression 化) する
             if (!$table && is_array($column)) {
@@ -765,10 +769,32 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
             elseif ($column instanceof Alias) {
                 $result[] = $column;
             }
-            // PhpExpression なら phpExpressions に追加するだけ
-            elseif ($column instanceof PhpExpression) {
-                $result[] = $column->getDependColumns();
-                $this->phpExpressions[$key] = $column;
+            // Closure は callbacks に入れる
+            elseif ($column instanceof \Closure) {
+                [$colalias, $colactuals] = Alias::split($key, $key);
+                $args = [];
+                foreach (split_noempty(',', $colactuals) as $colactual) {
+                    if (isset($actuals[$colactual])) {
+                        if ($colalias === $colactual) {
+                            $result[] = $prefix . $colactual;
+                            $args[] = $colactual;
+                        }
+                        else {
+                            $arg = Database::AUTO_DEPEND_KEY . $accessor . '_' . $colactual;
+                            $result[] = new Alias($arg, $prefix . $colactual);
+                            $args[] = $arg;
+                        }
+                    }
+                    else {
+                        if ($args) {
+                            throw new \InvalidArgumentException('actual column and alias cannot be mixed.');
+                        }
+                    }
+                }
+                if (!isset($actuals[$colalias])) {
+                    $result[] = new Alias($colalias, 'NULL');
+                }
+                $this->callbacks[$colalias] = [$column, $args];
             }
             // Expression なら文字列化したものをそのまま select
             elseif ($column instanceof Expression) {
@@ -1552,12 +1578,8 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
      * | 10 | `"+prefix.column_name"`                          | JOIN 記号＋ドットを含む文字列は prefix テーブルと JOIN してそのカラムを取得
      * | 11 | `new Expression("NOW()")`                        | {@link Expression} を与えると一切加工せずそのまま文字列を表す
      * | 12 | `"NOW()"`                                        | 上と同じ。 `()` を含む文字列は自動で {@link Expression} 化される
-     * | 20 | `new PhpExpression($val)`                        | 列の値として {@link PhpExpression} でラップされた値をそのまま返す
-     * | 21 | `new PhpExpression(function($row){})`            | 列の値として {@link PhpExpression} でラップされたクロージャの返り値を返す。クロージャの引数は行配列
-     * | 22 | `function($row){}`                               | 上と同じ。クロージャは自動で {@link PhpExpression} 化される
-     * | 23 | `new PhpExpression(function($cname){}, 'cname')` | PhpExpression に第2引数を指定すると列の値として {@link PhpExpression} でラップされたクロージャの返り値を返す。引数は**第2引数で指定された列の値**
-     * | 24 | `function($cname = 'cname'){}`                   | 上と同じ。引数にデフォルト値が指定されている場合はそのデフォルト値が上で言う「指定された列」に相当する。
-     * | 25 | `['cname' => function($value = null){}]`         | 上と同じ。引数のデフォルト値が null の場合はキーの値が使用される
+     * | 22 | `['alias' => function($row){}]`                  | キーが存在しないカラム指定のクロージャは行全体が渡ってくるコールバックになる
+     * | 25 | `['cname' => function($cname){}]`                | キーが存在するカラム指定のクロージャはカラム値が単一で渡ってくるコールバックになる
      * | 27 | `function(){return function($v){return $v;};}`   | クロージャの亜種。クロージャを返すクロージャはそのままクロージャとして活きるのでメソッドのような扱いにできる
      * | 30 | `Gateway object`                                 | Gateway の表すテーブルとの {@link Database::subselect()} 相当の動作
      * | 31 | `['+alias' => Gateway object]`                   | Gateway の表すテーブルとの JOIN を表す
@@ -1628,19 +1650,21 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
      *     ],
      * ]);
      *
-     * # No.20 ～ 24： PhpExpression（他の用法は PhpExpression クラスのリファレンスを参照）
+     * # No.22： 行全体を受け取るクロージャ
      * $qb->column([
      *     't_article' => [
-     *         'phpval' => new PhpExpression('hoge'), // "hoge" という文字列を取得
+     *         // $row は行全体が渡ってくる
+     *         'row' => function($row){},
      *     ],
      * ]);
      *
-     * # No.25, 26： PhpExpression（キーのカラム値を受け取るクロージャ）
+     * # No.25： カラム値を受け取るクロージャ
      * $qb->column([
      *     't_article' => [
-     *         // No.25 デフォルト引数を null にするとキーで指定した値を単一で受け取るクロージャになる
-     *         'idmul10'      => function($id = null){return $id * 10;},
-     *         'article_id', // ただし、自動でカラムが追加されないので明示的に SELECT 句への追加が必要
+     *         // AS 指定するとキーで指定した値を単一で受け取るクロージャになる
+     *         'id AS idmul10'      => function($id){return $id * 10;},
+     *         // カンマ区切りで複数指定すれば複数渡ってくる
+     *         'id, name AS idname'      => function($id, $name){return "$id: $name";},
      *     ],
      * ]);
      *
@@ -2665,7 +2689,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
 
         // COUNT だけなのでこの辺は全部不要
         $that->subbuilders = [];
-        $that->phpExpressions = [];
+        $that->callbacks = [];
         $that->phpOrders = [];
         $that->caster = null;
 
@@ -2889,8 +2913,19 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
     {
         $caster = $this->getCaster();
         return function ($parent_row) use ($caster) {
-            foreach ($this->phpExpressions as $name => $column) {
-                $parent_row[$name] = $column($parent_row);
+            foreach ($this->callbacks as $name => [$callback, $args]) {
+                if ($args) {
+                    $args2 = [];
+                    foreach ($args as $arg) {
+                        $args2[] = $parent_row[$arg];
+                    }
+                    $parent_row[$name] = $callback(...$args2);
+                }
+            }
+            foreach ($parent_row as $col => $val) {
+                if (strpos($col, Database::AUTO_DEPEND_KEY) === 0) {
+                    unset($parent_row[$col]);
+                }
             }
             if ($caster) {
                 $parent_row = $caster($parent_row);
@@ -2951,7 +2986,10 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
         // binding
         foreach ($parents as $n => $parent_row) {
             $row_class = null;
-            foreach ($this->phpExpressions as $name => $column) {
+            foreach ($this->callbacks as $name => [$callback, $args]) {
+                if (!$args) {
+                    $parents[$n][$name] = $callback($parents[$n]);
+                }
                 if (isset($parents[$n][$name]) && $parents[$n][$name] instanceof \Closure) {
                     // 親行がスカラーなのは何かがおかしい
                     assert(!is_primitive(first_value($parents)));
@@ -3415,7 +3453,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
         // 各句に紐づくフィールドは特別にクリアしなければならない
         if ($queryPartName === 'select') {
             $this->subbuilders = [];
-            $this->phpExpressions = [];
+            $this->callbacks = [];
             $this->joinOrders = [];
             $this->sqlParts['option'] = [];
         }
@@ -3446,7 +3484,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
         $this->statement = null;
         $this->caster = null;
         $this->subbuilders = [];
-        $this->phpExpressions = [];
+        $this->callbacks = [];
         $this->joinOrders = [];
         $this->wrappers = [];
         $this->lockMode = null;

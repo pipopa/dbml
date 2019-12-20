@@ -9,7 +9,6 @@ use Doctrine\DBAL\Schema\Index;
 use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Types\Type;
 use ryunosuke\dbml\Database;
-use ryunosuke\dbml\Query\Expression\PhpExpression;
 use function ryunosuke\dbml\benchmark;
 
 require_once __DIR__ . '/bootstrap.php';
@@ -117,9 +116,9 @@ benchmark([
     'dbml' => function () use ($database) {
         $articles = $database->selectAssoc([
             'article.*' => [
-                'title'              => new PhpExpression('strtoupper', 'title'),
+                'title'              => function ($title) { return strtoupper($title); },
                 'comment comments.*' => [
-                    'comment' => new PhpExpression('strtoupper', 'comment'),
+                    'comment' => function ($comment) { return strtoupper($comment); },
                 ],
             ],
         ]);

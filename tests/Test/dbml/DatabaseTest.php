@@ -20,7 +20,6 @@ use ryunosuke\dbml\Gateway\TableGateway;
 use ryunosuke\dbml\Generator\Yielder;
 use ryunosuke\dbml\Metadata\CompatiblePlatform;
 use ryunosuke\dbml\Query\Expression\Expression;
-use ryunosuke\dbml\Query\Expression\PhpExpression;
 use ryunosuke\dbml\Query\QueryBuilder;
 use ryunosuke\dbml\Transaction\Logger;
 use ryunosuke\dbml\Transaction\Transaction;
@@ -5417,7 +5416,6 @@ anywhere.enable = 1
         $rows = $database->selectArray([
             'foreign_p P' => [
                 'pie'              => new Expression('3.14'),
-                'array'            => new PhpExpression([1, 'str']),
                 'foreign_c1 as C1' => ['name'],
                 'foreign_c2 AS C2' => ['name'],
             ]
@@ -5425,7 +5423,6 @@ anywhere.enable = 1
         $this->assertEquals([
             [
                 'pie'   => 3.14,
-                'array' => [1, 'str'],
                 'C1'    => [
                     11 => ['name' => 'c1name1'],
                 ],
@@ -5529,10 +5526,8 @@ anywhere.enable = 1
         $select = $database->select([
             'test' => ['id', 'name'],
             [
-                'hoge' => new PhpExpression(null),
-                'fuga' => new PhpExpression(123),
-                'piyo' => new PhpExpression(function ($row) { return $row['id'] . ':' . $row['name']; }),
-                'func' => new PhpExpression(function () { return function ($prefix) { return $prefix . $this['name']; }; }),
+                'piyo' => function ($row) { return $row['id'] . ':' . $row['name']; },
+                'func' => function () { return function ($prefix) { return $prefix . $this['name']; }; },
                 'last' => new Expression("'dbval'"),
             ]
         ])->limit(1);
@@ -5540,8 +5535,6 @@ anywhere.enable = 1
         $expected = [
             'id'   => '1',
             'name' => 'a',
-            'hoge' => null,
-            'fuga' => 123,
             'piyo' => '1:a',
             'func' => function () { /* dummy */ },
             'last' => 'dbval'
@@ -5559,7 +5552,7 @@ anywhere.enable = 1
         $select = $database->select([
             'test' => [
                 'id',
-                'name' => function ($row) { return $row . '-1'; },
+                'name' => function ($name) { return $name . '-1'; },
             ],
         ])->limit(1);
         $this->assertEquals([1 => 'a-1'], $select->pairs());
