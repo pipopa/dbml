@@ -94,13 +94,17 @@ class Sequencer implements \IteratorAggregate, \Countable
                 $garbage = count($items) > $this->count ? array_pop($items) : false;
                 if ($value >= 0) {
                     // $items が無い場合は 0 になって頭から始まってしまうので $appendix + 1 にする
+                    $last = end($items);
+                    $last = $last === false ? [] : $last;
                     $this->prev = $appendix && $value ? [$key => (reset($items)[$key] ?: reset($appendix)[$key] + 1) * -1] : false;
-                    $this->next = $garbage ? [$key => end($items)[$key]] : false;
+                    $this->next = $garbage ? [$key => $last[$key] ?? null] : false;
                 }
                 else {
                     $items = array_reverse($items);
+                    $last = end($items);
+                    $last = $last === false ? [] : $last;
                     $this->prev = $garbage && $value ? [$key => reset($items)[$key] * -1] : false;
-                    $this->next = $appendix ? [$key => end($items)[$key]] : false;
+                    $this->next = $appendix ? [$key => $last[$key] ?? null] : false;
                 }
             }
 

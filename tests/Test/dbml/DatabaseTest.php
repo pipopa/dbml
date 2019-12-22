@@ -775,8 +775,12 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
         $entityMap = self::forcedCallize($database, '_entityMap');
 
         // Mapper 未設定なら null のはず
-        $database->setOption('entityMapper', null);
-        $this->assertEquals(null, $entityMap());
+        $database->setOption('entityMapper', []);
+        $this->assertEquals([
+            'class' => [],
+            'TtoE'  => [],
+            'EtoT'  => [],
+        ], $entityMap());
 
         // 同じエンティティ名を返すような実装だと例外が飛ぶはず
         $database->setOption('entityMapper', function ($tablename) {

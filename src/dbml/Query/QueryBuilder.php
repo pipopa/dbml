@@ -303,9 +303,12 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
     {
         $this->database = $database;
         $this->setDefault($database->getOptions());
+        // $this だと gc されずに参照が残り続けるので無名クラスのコンテキストにする（どうせ実行時に再バインドされる）
         $this->setProvider(\Closure::bind(function () {
             return $this->array();
-        }, null, null));
+        }, new class()
+        {
+        }));
     }
 
     /**
@@ -1108,7 +1111,8 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
         if ($classname === null) {
             $froms = $this->getFromPart();
             $from = reset($froms);
-            $classname = $this->database->getEntityClass([$from['alias'], $from['table']], true);
+            $from = $from === false ? [] : $from;
+            $classname = $this->database->getEntityClass([$from['alias'] ?? null, $from['table'] ?? null], true);
             foreach ($this->subbuilders as $subselect) {
                 $subselect->cast(null);
             }
