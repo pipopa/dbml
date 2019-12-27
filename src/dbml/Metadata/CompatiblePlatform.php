@@ -15,6 +15,7 @@ use ryunosuke\dbml\Query\Queryable;
 use ryunosuke\dbml\Query\QueryBuilder;
 use function ryunosuke\dbml\array_each;
 use function ryunosuke\dbml\array_sprintf;
+use function ryunosuke\dbml\array_strpad;
 use function ryunosuke\dbml\arrayize;
 use function ryunosuke\dbml\concat;
 use function ryunosuke\dbml\first_keyvalue;
@@ -245,6 +246,9 @@ class CompatiblePlatform /*extends AbstractPlatform*/
     public function supportsRowConstructor()
     {
         if ($this->platform instanceof SQLServerPlatform) {
+            return false;
+        }
+        if ($this->platform instanceof \ryunosuke\Test\Platforms\SqlitePlatform) {
             return false;
         }
         if ($this->platform instanceof SqlitePlatform) {
@@ -479,8 +483,6 @@ class CompatiblePlatform /*extends AbstractPlatform*/
     /**
      * 条件配列を結合した Expression を返す
      *
-     * OR の方は行値式で書いても良いが、インデックスをサポートしない DBMS があるので OR のままとする。
-     *
      * @param array $wheres WHERE 配列
      * @param string $prefix 修飾子
      * @return Expression WHERE 条件をバインドパラメータに持つ Expression インスタンス
@@ -491,6 +493,7 @@ class CompatiblePlatform /*extends AbstractPlatform*/
             return new Expression('');
         }
 
+        $prefix = concat($prefix, '.');
         $first = reset($wheres);
         $params = [];
 
@@ -509,25 +512,46 @@ class CompatiblePlatform /*extends AbstractPlatform*/
                 }
             }
             $binds = implode(', ', $andconds);
-            $condition = concat($prefix, '.') . (count($andconds) === 1 ? "$key = $binds" : "$key IN ($binds)");
+            $condition = $prefix . (count($andconds) === 1 ? "$key = $binds" : "$key IN ($binds)");
         }
         // カラムが2つ以上なら ((c1 = v11 AND c2 = v12) OR (c1 = v21 AND c2 = v22))
         else {
-            $andconds = [];
-            foreach ($wheres as $where) {
-                $orconds = [];
-                foreach ($where as $c => $v) {
-                    if ($v instanceof Queryable) {
-                        $orconds[] = concat($prefix, '.') . "$c = " . $v->merge($params);
+            if (count($wheres) > 1 && $this->supportsRowConstructor()) {
+                $andconds = [];
+                foreach ($wheres as $where) {
+                    $orconds = [];
+                    foreach ($where as $c => $v) {
+                        if ($v instanceof Queryable) {
+                            $orconds[] = $v->merge($params);
+                        }
+                        else {
+                            $orconds[] = '?';
+                            $params[] = $v;
+                        }
                     }
-                    else {
-                        $orconds[] = concat($prefix, '.') . "$c = " . '?';
-                        $params[] = $v;
-                    }
+                    $andconds[] = '(' . implode(', ', $orconds) . ')';
                 }
-                $andconds[] = '(' . implode(' AND ', $orconds) . ')';
+                $binds = implode(', ', $andconds);
+                $key = implode(', ', array_keys(array_strpad($first, $prefix)));
+                $condition = "($key) IN ($binds)";
             }
-            $condition = implode(' OR ', $andconds);
+            else {
+                $andconds = [];
+                foreach ($wheres as $where) {
+                    $orconds = [];
+                    foreach ($where as $c => $v) {
+                        if ($v instanceof Queryable) {
+                            $orconds[] = $prefix . "$c = " . $v->merge($params);
+                        }
+                        else {
+                            $orconds[] = $prefix . "$c = " . '?';
+                            $params[] = $v;
+                        }
+                    }
+                    $andconds[] = '(' . implode(' AND ', $orconds) . ')';
+                }
+                $condition = implode(' OR ', $andconds);
+            }
         }
         return new Expression($condition, $params);
     }

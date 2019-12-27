@@ -206,11 +206,14 @@ class CompatiblePlatformTest extends \ryunosuke\Test\AbstractUnitTestCase
     function test_supportsRowConstructor($cplatform, $platform)
     {
         $expected = true;
-        if ($platform instanceof SqlitePlatform) {
-            $expected = version_compare(\SQLite3::version()['versionString'], '3.15.0', '>=');
-        }
         if ($platform instanceof SQLServerPlatform) {
             $expected = false;
+        }
+        elseif ($platform instanceof \ryunosuke\Test\Platforms\SqlitePlatform) {
+            $expected = false;
+        }
+        elseif ($platform instanceof SqlitePlatform) {
+            $expected = version_compare(\SQLite3::version()['versionString'], '3.15.0', '>=');
         }
         $this->assertEquals($expected, $cplatform->supportsRowConstructor());
     }
@@ -409,14 +412,29 @@ class CompatiblePlatformTest extends \ryunosuke\Test\AbstractUnitTestCase
         $actual = $cplatform->getPrimaryCondition([['id' => new Expression('?', 1)], ['id' => 2]]);
         $this->assertExpression($actual, 'id IN (?, ?)', [1, 2]);
 
-        $actual = $cplatform->getPrimaryCondition([['id' => 1, 'seq' => 2], ['id' => 3, 'seq' => 4]]);
-        $this->assertExpression($actual, '(id = ? AND seq = ?) OR (id = ? AND seq = ?)', [1, 2, 3, 4]);
-
-        $actual = $cplatform->getPrimaryCondition([['id' => 1, 'seq' => 2], ['id' => 3, 'seq' => 4]], 'prefix');
-        $this->assertExpression($actual, '(prefix.id = ? AND prefix.seq = ?) OR (prefix.id = ? AND prefix.seq = ?)', [1, 2, 3, 4]);
-
         $actual = $cplatform->getPrimaryCondition([['id' => new Expression('?', 1), 'seq' => 2]]);
         $this->assertExpression($actual, '(id = ? AND seq = ?)', [1, 2]);
+
+        if ($cplatform->supportsRowConstructor()) {
+            $actual = $cplatform->getPrimaryCondition([['id' => 1, 'seq' => 2], ['id' => 3, 'seq' => 4]]);
+            $this->assertExpression($actual, '(id, seq) IN ((?, ?), (?, ?))', [1, 2, 3, 4]);
+
+            $actual = $cplatform->getPrimaryCondition([['id' => 1, 'seq' => 2], ['id' => 3, 'seq' => 4]], 'prefix');
+            $this->assertExpression($actual, '(prefix.id, prefix.seq) IN ((?, ?), (?, ?))', [1, 2, 3, 4]);
+
+            $actual = $cplatform->getPrimaryCondition([['id' => new Expression('?', 1), 'seq' => 2], ['id' => 3, 'seq' => new Expression('?', 4)]]);
+            $this->assertExpression($actual, '(id, seq) IN ((?, ?), (?, ?))', [1, 2, 3, 4]);
+        }
+        else {
+            $actual = $cplatform->getPrimaryCondition([['id' => 1, 'seq' => 2], ['id' => 3, 'seq' => 4]]);
+            $this->assertExpression($actual, '(id = ? AND seq = ?) OR (id = ? AND seq = ?)', [1, 2, 3, 4]);
+
+            $actual = $cplatform->getPrimaryCondition([['id' => 1, 'seq' => 2], ['id' => 3, 'seq' => 4]], 'prefix');
+            $this->assertExpression($actual, '(prefix.id = ? AND prefix.seq = ?) OR (prefix.id = ? AND prefix.seq = ?)', [1, 2, 3, 4]);
+
+            $actual = $cplatform->getPrimaryCondition([['id' => new Expression('?', 1), 'seq' => 2], ['id' => 3, 'seq' => new Expression('?', 4)]]);
+            $this->assertExpression($actual, '(id = ? AND seq = ?) OR (id = ? AND seq = ?)', [1, 2, 3, 4]);
+        }
     }
 
     /**

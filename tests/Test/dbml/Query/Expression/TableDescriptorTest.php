@@ -213,13 +213,24 @@ class TableDescriptorTest extends \ryunosuke\Test\AbstractUnitTestCase
             ],
             'key'       => 'foreign_p(1, 2) T',
         ]);
-        $this->assertDescriptor(new TableDescriptor($database, 'foreign_c1((1, 2), (3, 4))', []), [
-            'table'     => 'foreign_c1',
-            'condition' => [
-                new Expression('(foreign_c1.id = ? AND foreign_c1.seq = ?) OR (foreign_c1.id = ? AND foreign_c1.seq = ?)', [1, 2, 3, 4]),
-            ],
-            'key'       => 'foreign_c1((1, 2), (3, 4))',
-        ]);
+        if ($database->getCompatiblePlatform()->supportsRowConstructor()) {
+            $this->assertDescriptor(new TableDescriptor($database, 'foreign_c1((1, 2), (3, 4))', []), [
+                'table'     => 'foreign_c1',
+                'condition' => [
+                    new Expression('(foreign_c1.id, foreign_c1.seq) IN ((?, ?), (?, ?))', [1, 2, 3, 4]),
+                ],
+                'key'       => 'foreign_c1((1, 2), (3, 4))',
+            ]);
+        }
+        else {
+            $this->assertDescriptor(new TableDescriptor($database, 'foreign_c1((1, 2), (3, 4))', []), [
+                'table'     => 'foreign_c1',
+                'condition' => [
+                    new Expression('(foreign_c1.id = ? AND foreign_c1.seq = ?) OR (foreign_c1.id = ? AND foreign_c1.seq = ?)', [1, 2, 3, 4]),
+                ],
+                'key'       => 'foreign_c1((1, 2), (3, 4))',
+            ]);
+        }
 
         // ORDER
         $this->assertDescriptor(new TableDescriptor($database, 'foreign_c1+aid-did', []), [

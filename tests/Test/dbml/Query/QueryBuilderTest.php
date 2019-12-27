@@ -749,10 +749,17 @@ GREATEST(1,2,3) FROM test1', $builder);
         $this->assertEquals([1, 2], $builder->getParams());
 
         $builder->reset()->column('foreign_c1 ((1, 2), (3, 4))');
-        $this->assertQuery("SELECT foreign_c1.* FROM foreign_c1 WHERE
+        if ($builder->getDatabase()->getCompatiblePlatform()->supportsRowConstructor()) {
+            $this->assertQuery("SELECT foreign_c1.* FROM foreign_c1 WHERE
+(foreign_c1.id, foreign_c1.seq) IN ((?, ?), (?, ?))", $builder);
+            $this->assertEquals([1, 2, 3, 4], $builder->getParams());
+        }
+        else {
+            $this->assertQuery("SELECT foreign_c1.* FROM foreign_c1 WHERE
 (foreign_c1.id = ? AND foreign_c1.seq = ?) OR
 (foreign_c1.id = ? AND foreign_c1.seq = ?)", $builder);
-        $this->assertEquals([1, 2, 3, 4], $builder->getParams());
+            $this->assertEquals([1, 2, 3, 4], $builder->getParams());
+        }
 
         $this->assertException('not match primary columns', L($builder->reset())->column('foreign_c1 (1, 2)'));
     }
@@ -1288,7 +1295,12 @@ AND
         $builder->reset()->column('multiprimary');
         $this->assertEquals("SELECT multiprimary.* FROM multiprimary", $builder->where(['' => []])->queryInto());
         $this->assertEquals("SELECT multiprimary.* FROM multiprimary WHERE (multiprimary.mainid = '1' AND multiprimary.subid = '1')", $builder->where(['' => [1, 1]])->queryInto());
-        $this->assertEquals("SELECT multiprimary.* FROM multiprimary WHERE (multiprimary.mainid = '1' AND multiprimary.subid = '1') OR (multiprimary.mainid = '1' AND multiprimary.subid = '2')", $builder->where(['' => [[1, 1], [1, 2]]])->queryInto());
+        if ($builder->getDatabase()->getCompatiblePlatform()->supportsRowConstructor()) {
+            $this->assertEquals("SELECT multiprimary.* FROM multiprimary WHERE (multiprimary.mainid, multiprimary.subid) IN (('1', '1'), ('1', '2'))", $builder->where(['' => [[1, 1], [1, 2]]])->queryInto());
+        }
+        else {
+            $this->assertEquals("SELECT multiprimary.* FROM multiprimary WHERE (multiprimary.mainid = '1' AND multiprimary.subid = '1') OR (multiprimary.mainid = '1' AND multiprimary.subid = '2')", $builder->where(['' => [[1, 1], [1, 2]]])->queryInto());
+        }
 
         // エラー
         $this->assertException("base table not found", L($builder->reset())->where(['' => [[1]]]));
@@ -2330,7 +2342,7 @@ SELECT test.* FROM test", $builder);
         ], $builder->neighbor(['id' => 10], 1));
 
         // 複数指定は行値式になる
-        if ($builder->getDatabase()->getCompatiblePlatform()->supportsRowConstructor()) {
+        if (!$builder->getDatabase()->getPlatform() instanceof SQLServerPlatform) {
             $builder->column('multiprimary.mainid, subid');
             $this->assertEquals([
                 -1 => ['mainid' => '1', 'subid' => '4'],
