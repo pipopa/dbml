@@ -149,10 +149,20 @@ class TableDescriptorTest extends \ryunosuke\Test\AbstractUnitTestCase
             'condition' => ['on1=1', 'on2 = 2'],
             'key'       => 'test[on1=1] T',
         ]);
+        $this->assertDescriptor(new TableDescriptor($database, 'test{id1, id2}', []), [
+            'table'     => 'test',
+            'condition' => [stdclass(['id1' => 'id1', 'id2' => 'id2'])],
+            'key'       => 'test{id1, id2}',
+        ]);
         $this->assertDescriptor(new TableDescriptor($database, 'test{tA: tB,uA: uB}', []), [
             'table'     => 'test',
             'condition' => [stdclass(['tA' => 'tB', 'uA' => 'uB'])],
             'key'       => 'test{tA: tB,uA: uB}',
+        ]);
+        $this->assertDescriptor(new TableDescriptor($database, 'test{id1, id2, tA: tB, uA: uB}', []), [
+            'table'     => 'test',
+            'condition' => [stdclass(['id1' => 'id1', 'id2' => 'id2', 'tA' => 'tB', 'uA' => 'uB'])],
+            'key'       => 'test{id1, id2, tA: tB, uA: uB}',
         ]);
         $this->assertDescriptor(new TableDescriptor($database, 'test[cond1, cond2]', []), [
             'table'     => 'test',
