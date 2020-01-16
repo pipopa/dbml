@@ -1063,7 +1063,7 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
         $this->assertException('is same column or alias', (L($database)->selectTuple([
             'test1' => [
                 '*',
-                'test2' => $database->subselectArray('id', [
+                'test2{id}' => $database->subselectArray([
                     'test2' => [
                         '*',
                     ],
@@ -2065,7 +2065,7 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
         // 完全指定呼び出しが・・・
         $row4 = $database->select([
             't_article.*' => [
-                'Comment' => $database->subAssoc('t_comment'),
+                'Comment' => $database->subselectAssoc('t_comment'),
             ]
         ])->limit(1)->cast()->tuple();
 
@@ -5252,92 +5252,13 @@ anywhere.enable = 1
         $select = $database->select([
             'test1',
             [
-                'hoge' => $database->subselectArray('id', 'test2')
+                'hoge{id}' => $database->subselectArray('test2')
             ]
         ]);
 
         $this->assertIsArray($database->fetchArray($select));
         $this->assertIsArray($database->fetchAssoc($select));
         $this->assertIsArray($database->fetchTuple($select->limit(1)));
-    }
-
-    /**
-     * @dataProvider provideDatabase
-     * @param Database $database
-     */
-    function test_sub($database)
-    {
-        $database->insert('foreign_p', ['id' => 1, 'name' => 'name1']);
-        $database->insert('foreign_c1', ['id' => 1, 'seq' => 11, 'name' => 'c1name1']);
-        $database->insert('foreign_c2', ['cid' => 1, 'seq' => 21, 'name' => 'c2name1']);
-
-        $row = $database->selectTuple([
-            'foreign_p P' => [
-                'C1' => $database->subArray('foreign_c1'),
-                'C2' => $database->subArray('foreign_c2'),
-            ]
-        ], [], [], 1);
-        $this->assertEquals(
-            [
-                'id' => '1',
-                'C1' => [
-                    [
-                        'id'   => '1',
-                        'seq'  => '11',
-                        'name' => 'c1name1',
-                    ],
-                ],
-                'C2' => [
-                    [
-                        'cid'  => '1',
-                        'seq'  => '21',
-                        'name' => 'c2name1',
-                    ],
-                ],
-            ], $row);
-    }
-
-    /**
-     * @dataProvider provideDatabase
-     * @param Database $database
-     */
-    function test_subtable($database)
-    {
-        $database->insert('foreign_p', ['id' => 1, 'name' => 'name1']);
-        $database->insert('foreign_c1', ['id' => 1, 'seq' => 11, 'name' => 'c1name1']);
-        $database->insert('foreign_c2', ['cid' => 1, 'seq' => 21, 'name' => 'c2name1']);
-
-        $row = $database->selectTuple([
-            'foreign_p P' => [
-                'foreign_c1 C1' => $database->subtableArray('*'),
-                'foreign_c2 C2' => $database->subtableArray('*'),
-            ]
-        ], [], [], 1);
-        $this->assertEquals(
-            [
-                'id' => '1',
-                'C1' => [
-                    [
-                        'id'   => '1',
-                        'seq'  => '11',
-                        'name' => 'c1name1',
-                    ],
-                ],
-                'C2' => [
-                    [
-                        'cid'  => '1',
-                        'seq'  => '21',
-                        'name' => 'c2name1',
-                    ],
-                ],
-            ], $row);
-
-        // 外部キーがなければ例外が飛ぶはず
-        $this->assertException('need to 1 or more', L($database)->selectTuple([
-            'test1' => [
-                'test2' => $database->subtableArray('*')
-            ],
-        ], [], [], 1));
     }
 
     /**
@@ -5355,18 +5276,18 @@ anywhere.enable = 1
                 'test1' => 'id',
                 [
                     // subselect
-                    'arrayS'    => $database->subselectArray('id', 'test2.name2, id'),
-                    'assocS'    => $database->subselectAssoc('id', 'test2.name2, id'),
-                    'colS'      => $database->subselectLists('id', 'test2.name2, id'),
-                    'pairsS'    => $database->subselectPairs('id', 'test2.name2, id'),
-                    'tupleS'    => $database->subselectTuple('id', 'test2.name2, id', [], [], 1),
-                    'valueS'    => $database->subselectValue('id', 'test2.name2'),
-                    'prefixS'   => $database->subselectArray(['test2.id' => 'id'], 'test2.name2, id'),
+                    'arrayS{id}'    => $database->subselectArray('test2.name2, id'),
+                    'assocS{id}'    => $database->subselectAssoc('test2.name2, id'),
+                    'colS{id}'      => $database->subselectLists('test2.name2, id'),
+                    'pairsS{id}'    => $database->subselectPairs('test2.name2, id'),
+                    'tupleS{id}'    => $database->subselectTuple('test2.name2, id', [], [], 1),
+                    'valueS{id}'    => $database->subselectValue('test2.name2'),
+                    'prefixS{id}'   => $database->subselectArray('test2.name2, id'),
                     // subcast
-                    'arrayT'    => $database->subselect('id', 'test2.name2, id')->cast(Entity::class)->array(),
-                    'assocT'    => $database->subselect('id', 'test2.name2, id')->cast(Entity::class)->assoc(),
-                    'tupleT'    => $database->subselect('id', 'test2.name2, id')->cast(Entity::class)->tuple(),
-                    'callbackT' => $database->subselect('id', 'test2.name2, id')->cast(function ($row) { return $row; })->array(),
+                    'arrayT{id}'    => $database->subselect('test2.name2, id')->cast(Entity::class)->array(),
+                    'assocT{id}'    => $database->subselect('test2.name2, id')->cast(Entity::class)->assoc(),
+                    'tupleT{id}'    => $database->subselect('test2.name2, id')->cast(Entity::class)->tuple(),
+                    'callbackT{id}' => $database->subselect('test2.name2, id')->cast(function ($row) { return $row; })->array(),
                 ]
             ]
         );
@@ -5406,7 +5327,7 @@ anywhere.enable = 1
         $rows = $database->selectArray([
             'foreign_c1' => [
                 '*',
-                'P' => $database->subTuple('foreign_p')
+                'P' => $database->subselectTuple('foreign_p')
             ]
         ]);
 
@@ -5459,15 +5380,16 @@ anywhere.enable = 1
         ], [], [], 1);
         $this->assertEquals(
             [
-                'id' => '1',
-                'C1' => [
+                'id'   => '1',
+                'name' => 'name1',
+                'C1'   => [
                     11 => [
                         'id'   => '1',
                         'seq'  => '11',
                         'name' => 'c1name1',
                     ],
                 ],
-                'C2' => [
+                'C2'   => [
                     21 => [
                         'name' => 'c2name1',
                     ],
@@ -5475,7 +5397,7 @@ anywhere.enable = 1
             ], $row);
 
         // 外部キーがなければ例外が飛ぶはず
-        $this->assertException('need to 1 or more', L($database)->selectTuple([
+        $this->assertException('has not foreign key', L($database)->selectTuple([
             'test1' => [
                 'test2' => $database->foreign_c1()
             ],
@@ -5504,7 +5426,6 @@ anywhere.enable = 1
             [
                 'pie'   => 3.14,
                 'array' => [1, 'str'],
-                'id'    => 1,
                 'C1'    => [
                     11 => ['name' => 'c1name1'],
                 ],
@@ -5536,10 +5457,12 @@ anywhere.enable = 1
                     '..pid',
                     'ppname' => '..name',
                 ],
-                'foreign_c2 C2' => $database->subtableTuple([
-                    '*',
-                    '..pid',
-                    'ppname' => '..name',
+                'C2'            => $database->subselectTuple([
+                    'foreign_c2' => [
+                        '*',
+                        '..pid',
+                        'ppname' => '..name',
+                    ]
                 ]),
             ]
         ]);

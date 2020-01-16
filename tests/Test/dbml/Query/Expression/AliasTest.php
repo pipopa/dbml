@@ -3,6 +3,7 @@
 namespace ryunosuke\Test\dbml\Query\Expression;
 
 use ryunosuke\dbml\Query\Expression\Alias;
+use ryunosuke\Test\Database;
 
 class AliasTest extends \ryunosuke\Test\AbstractUnitTestCase
 {
@@ -48,6 +49,14 @@ class AliasTest extends \ryunosuke\Test\AbstractUnitTestCase
     {
         $alias = new Alias('alias', 'actual');
         $this->assertEquals('actual', $alias->getActual());
+    }
+
+    function test_isPlaceholdable()
+    {
+        $this->assertFalse((new Alias('alias', 'actual'))->isPlaceholdable());
+        $this->assertTrue((new Alias('alias', 'actual', null, true))->isPlaceholdable());
+        $this->assertTrue((Alias::forge(Database::AUTO_KEY . 'hoge', 'actual'))->isPlaceholdable());
+        $this->assertTrue((Alias::forge('hoge', 'NULL'))->isPlaceholdable());
     }
 
     function test___toString()

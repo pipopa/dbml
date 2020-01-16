@@ -37,7 +37,6 @@ use ryunosuke\dbml\Query\Expression\TableDescriptor;
 use ryunosuke\dbml\Query\Queryable;
 use ryunosuke\dbml\Query\QueryBuilder;
 use ryunosuke\dbml\Query\Statement;
-use ryunosuke\dbml\Query\SubqueryBuilder;
 use ryunosuke\dbml\Transaction\Transaction;
 use ryunosuke\dbml\Utility\Adhoc;
 
@@ -232,13 +231,10 @@ use ryunosuke\dbml\Utility\Adhoc;
  * @method $this                  setPrimarySeparator($string) {{@link QueryBuilder::setPrimarySeparator()} 参照@inheritdoc QueryBuilder::setPrimarySeparator()}
  * @method string                 getAggregationDelimiter() {{@link QueryBuilder::getAggregationDelimiter()} 参照@inheritdoc QueryBuilder::getAggregationDelimiter()}
  * @method $this                  setAggregationDelimiter($string) {{@link QueryBuilder::setAggregationDelimiter()} 参照@inheritdoc QueryBuilder::setAggregationDelimiter()}
+ * @method bool                   getPropagateLockMode() {{@link QueryBuilder::getPropagateLockMode()} 参照@inheritdoc QueryBuilder::getPropagateLockMode()}
+ * @method $this                  setPropagateLockMode($bool) {{@link QueryBuilder::setPropagateLockMode()} 参照@inheritdoc QueryBuilder::setPropagateLockMode()}
  * @method bool                   getInjectChildColumn() {{@link QueryBuilder::getInjectChildColumn()} 参照@inheritdoc QueryBuilder::getInjectChildColumn()}
  * @method $this                  setInjectChildColumn($bool) {{@link QueryBuilder::setInjectChildColumn()} 参照@inheritdoc QueryBuilder::setInjectChildColumn()}
- *
- * @method bool                   getLazyClonable() {{@link SubqueryBuilder::getLazyClonable()} 参照@inheritdoc SubqueryBuilder::getLazyClonable()}
- * @method $this                  setLazyClonable($bool) {{@link SubqueryBuilder::setLazyClonable()} 参照@inheritdoc SubqueryBuilder::setLazyClonable()}
- * @method bool                   getPropagateLockMode() {{@link SubqueryBuilder::getPropagateLockMode()} 参照@inheritdoc SubqueryBuilder::getPropagateLockMode()}
- * @method $this                  setPropagateLockMode($bool) {{@link SubqueryBuilder::setPropagateLockMode()} 参照@inheritdoc SubqueryBuilder::setPropagateLockMode()}
  *
  * @method array|Entityable[]     fetchArrayOrThrow($sql, iterable $params = []) {
  *     <@uses Database::fetchArray()> の例外送出版
@@ -398,61 +394,23 @@ use ryunosuke\dbml\Utility\Adhoc;
  *     <@uses Database::export()> の JSON 版
  * }
  *
- * @method SubqueryBuilder        subselectArray($child_columns, $tableDescriptor, $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
- *     結合列を指定して子供レコード（array）を表すサブビルダを返す（<@uses Database::subselect()> を参照）
+ * @method QueryBuilder        subselectArray($tableDescriptor, $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
+ *     子供レコード（array）を表すサブビルダを返す（<@uses Database::subselect()> を参照）
  * }
- * @method SubqueryBuilder        subselectAssoc($child_columns, $tableDescriptor, $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
- *     結合列を指定して子供レコード（assoc）を表すサブビルダを返す（<@uses Database::subselect()> を参照）
+ * @method QueryBuilder        subselectAssoc($tableDescriptor, $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
+ *     子供レコード（assoc）を表すサブビルダを返す（<@uses Database::subselect()> を参照）
  * }
- * @method SubqueryBuilder        subselectLists($child_columns, $tableDescriptor, $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
- *     結合列を指定して子供レコード（lists）を表すサブビルダを返す（<@uses Database::subselect()> を参照）
+ * @method QueryBuilder        subselectLists($tableDescriptor, $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
+ *     子供レコード（lists）を表すサブビルダを返す（<@uses Database::subselect()> を参照）
  * }
- * @method SubqueryBuilder        subselectPairs($child_columns, $tableDescriptor, $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
- *     結合列を指定して子供レコード（pairs）を表すサブビルダを返す（<@uses Database::subselect()> を参照）
+ * @method QueryBuilder        subselectPairs($tableDescriptor, $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
+ *     子供レコード（pairs）を表すサブビルダを返す（<@uses Database::subselect()> を参照）
  * }
- * @method SubqueryBuilder        subselectTuple($child_columns, $tableDescriptor, $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
- *     結合列を指定して子供レコード（tuple）を表すサブビルダを返す（<@uses Database::subselect()> を参照）
+ * @method QueryBuilder        subselectTuple($tableDescriptor, $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
+ *     子供レコード（tuple）を表すサブビルダを返す（<@uses Database::subselect()> を参照）
  * }
- * @method SubqueryBuilder        subselectValue($child_columns, $tableDescriptor, $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
- *     結合列を指定して子供レコード（value）を表すサブビルダを返す（<@uses Database::subselect()> を参照）
- * }
- *
- * @method SubqueryBuilder        subArray($tableDescriptor, $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
- *     外部キーを利用して子供レコード（array）を表すサブビルダを返す（<@uses Database::subselect()> を参照）
- * }
- * @method SubqueryBuilder        subAssoc($tableDescriptor, $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
- *     外部キーを利用して子供レコード（assoc）を表すサブビルダを返す（<@uses Database::subselect()> を参照）
- * }
- * @method SubqueryBuilder        subLists($tableDescriptor, $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
- *     外部キーを利用して子供レコード（lists）を表すサブビルダを返す（<@uses Database::subselect()> を参照）
- * }
- * @method SubqueryBuilder        subPairs($tableDescriptor, $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
- *     外部キーを利用して子供レコード（pairs）を表すサブビルダを返す（<@uses Database::subselect()> を参照）
- * }
- * @method SubqueryBuilder        subTuple($tableDescriptor, $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
- *     外部キーを利用して子供レコード（tuple）を表すサブビルダを返す（<@uses Database::subselect()> を参照）
- * }
- * @method SubqueryBuilder        subValue($tableDescriptor, $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
- *     外部キーを利用して子供レコード（value）を表すサブビルダを返す（<@uses Database::subselect()> を参照）
- * }
- *
- * @method SubqueryBuilder        subtableArray($tableDescriptor, $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
- *     親キーをテーブル指定とみなして子供レコード（array）を表すサブビルダを返す（<@uses Database::subtable()> を参照）
- * }
- * @method SubqueryBuilder        subtableAssoc($tableDescriptor, $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
- *     親キーをテーブル指定とみなして子供レコード（assoc）を表すサブビルダを返す（<@uses Database::subtable()> を参照）
- * }
- * @method SubqueryBuilder        subtableLists($tableDescriptor, $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
- *     親キーをテーブル指定とみなして子供レコード（lists）を表すサブビルダを返す（<@uses Database::subtable()> を参照）
- * }
- * @method SubqueryBuilder        subtablePairs($tableDescriptor, $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
- *     親キーをテーブル指定とみなして子供レコード（pairs）を表すサブビルダを返す（<@uses Database::subtable()> を参照）
- * }
- * @method SubqueryBuilder        subtableTuple($tableDescriptor, $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
- *     親キーをテーブル指定とみなして子供レコード（tuple）を表すサブビルダを返す（<@uses Database::subtable()> を参照）
- * }
- * @method SubqueryBuilder        subtableValue($tableDescriptor, $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
- *     親キーをテーブル指定とみなして子供レコード（value）を表すサブビルダを返す（<@uses Database::subtable()> を参照）
+ * @method QueryBuilder        subselectValue($tableDescriptor, $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
+ *     子供レコード（value）を表すサブビルダを返す（<@uses Database::subselect()> を参照）
  * }
  *
  * @method QueryBuilder           subcount($column, $where = []) {
@@ -606,14 +564,10 @@ class Database
     use OptionTrait;
 
     /// 内部的に自動付加されるカラム名
-    public const AUTO_PRIMARY_KEY = '__dbml_auto_pk';
-    public const AUTO_CHILD_KEY   = '__dbml_auto_ck';
-
-    /** @var array 内部的に自動付加されるカラム名 */
-    public const AUTO_KEYS = [
-        self::AUTO_PRIMARY_KEY,
-        self::AUTO_CHILD_KEY,
-    ];
+    public const AUTO_KEY         = '__dbml_auto_column';
+    public const AUTO_PRIMARY_KEY = self::AUTO_KEY . '_key';
+    public const AUTO_PARENT_KEY  = self::AUTO_KEY . '_pk';
+    public const AUTO_CHILD_KEY   = self::AUTO_KEY . '_ck';
 
     /// perform メソッド
     public const METHOD_ARRAY = 'array';
@@ -625,12 +579,12 @@ class Database
 
     /// perform メソッド配列
     public const METHODS = [
-        self::METHOD_ARRAY => [],
-        self::METHOD_ASSOC => [],
-        self::METHOD_LISTS => [],
-        self::METHOD_PAIRS => [],
-        self::METHOD_TUPLE => [],
-        self::METHOD_VALUE => [],
+        self::METHOD_ARRAY => ['keyable' => false, 'entity' => true],
+        self::METHOD_ASSOC => ['keyable' => true, 'entity' => true],
+        self::METHOD_LISTS => ['keyable' => false, 'entity' => false],
+        self::METHOD_PAIRS => ['keyable' => true, 'entity' => false],
+        self::METHOD_TUPLE => ['keyable' => null, 'entity' => true],
+        self::METHOD_VALUE => ['keyable' => null, 'entity' => false],
     ];
 
     /** @var array JOIN 記号のマッピング */
@@ -749,7 +703,6 @@ class Database
         // 他クラスのオプションをマージ
         $default_options += TableGateway::getDefaultOptions();
         $default_options += QueryBuilder::getDefaultOptions();
-        $default_options += SubqueryBuilder::getDefaultOptions();
         $default_options += array_each(Transaction::getDefaultOptions(), function (&$carry, $v, $k) {
             // Transaction のオプション名は簡易すぎるので "transaction" を付与する
             $carry['transaction' . ucfirst($k)] = $v;
@@ -1012,15 +965,9 @@ class Database
             return $this->export($matches[1], ...$arguments);
         }
         // sub～ 系
-        if (preg_match('/^(sub(table|select)?)(.+?)$/ui', $name, $matches)) {
-            list(, $submethod, , $perform) = array_map('strtolower', $matches);
-            if ($submethod === 'subtable') {
-                $subselect = $this->subtable(...$arguments);
-            }
-            else {
-                $subselect = $this->subselect($submethod === 'subselect' ? array_shift($arguments) : null, ...$arguments);
-            }
-            return $subselect->$perform();
+        if (preg_match('/^subselect(.+?)$/ui', $name, $matches)) {
+            list(, $perform) = array_map('strtolower', $matches);
+            return $this->subselect(...$arguments)->$perform();
         }
         // affect～OrThrow 系
         if (preg_match('/^(insert|update|delete|remove|destroy|reduce|upsert|modify|replace)OrThrow$/ui', $name, $matches)) {
@@ -1131,12 +1078,11 @@ class Database
 
     private function _doFetch($sql, iterable $params, $method)
     {
-        $sub_flg = ($sql instanceof SubqueryBuilder && $sql->isRequireUnsetSubcolumn());
         $converter = $this->_getConverter($sql);
         $revert = $this->_toTablePrefix($sql);
         try {
             $stmt = $this->_sqlToStmt($sql, $params, $this->getSlaveConnection());
-            return $this->perform($stmt, $method, $converter, $sub_flg);
+            return $this->perform($stmt, $method, $converter);
         }
         finally {
             $revert();
@@ -3154,18 +3100,6 @@ class Database
     }
 
     /**
-     * サブクエリビルダを生成して返す
-     *
-     * 極力 new SubqueryBuilder せずにこのメソッドを介すこと。
-     *
-     * @return SubqueryBuilder サブクエリビルダオブジェクト
-     */
-    public function createSubqueryBuilder()
-    {
-        return new SubqueryBuilder($this);
-    }
-
-    /**
      * レコードの配列を返す
      *
      * ```php
@@ -3366,10 +3300,9 @@ class Database
      * @param \Traversable|array $row_provider foreach で回せる何か
      * @param string|array $fetch_mode Database::METHOD__XXX
      * @param \Closure $converter 行ごとの変換クロージャ
-     * @param bool $sub_flg サブクエリフラグ
      * @return array|bool|mixed クエリ結果
      */
-    public function perform($row_provider, $fetch_mode, $converter = null, $sub_flg = false)
+    public function perform($row_provider, $fetch_mode, $converter = null)
     {
         switch ($fetch_mode) {
             default:
@@ -3379,13 +3312,6 @@ class Database
             case self::METHOD_ARRAY:
                 $result = [];
                 foreach ($row_provider as $n => $row) {
-                    if ($sub_flg) {
-                        foreach (self::AUTO_KEYS as $ukey) {
-                            if (array_key_exists($ukey, $row)) {
-                                unset($row[$ukey]);
-                            }
-                        }
-                    }
                     $result[] = $converter ? $converter($row) : $row;
                 }
                 return $result;
@@ -3395,13 +3321,6 @@ class Database
                     foreach ($row as $e) {
                         $key = $e;
                         break;
-                    }
-                    if ($sub_flg) {
-                        foreach (self::AUTO_KEYS as $ukey) {
-                            if (array_key_exists($ukey, $row)) {
-                                unset($row[$ukey]);
-                            }
-                        }
                     }
                     /** @noinspection PhpUndefinedVariableInspection */
                     $result[$key] = $converter ? $converter($row) : $row;
@@ -3446,13 +3365,6 @@ class Database
                 $result = false;
                 $first = true;
                 foreach ($row_provider as $n => $row) {
-                    if ($sub_flg) {
-                        foreach (self::AUTO_KEYS as $ukey) {
-                            if (array_key_exists($ukey, $row)) {
-                                unset($row[$ukey]);
-                            }
-                        }
-                    }
                     if ($first) {
                         $first = false;
                         $result = $converter ? $converter($row) : $row;
@@ -3598,49 +3510,56 @@ class Database
     }
 
     /**
-     * 子供レコード配列を取得する SubqueryBuilder を返す
+     * 子供レコード配列を取得するビルダを返す
      *
      * このメソッドを使うと自身のレコード配列に子供レコードを生やすことができる。
      * この処理はクエリを2回投げることで実現される。つまり 1 + N 問題は起こらない（tuple だけではなく array/assoc でも同様）。
-     *
-     * 第1引数 $child_columns で結合するカラムを指定できるが、実際は null を指定して外部キーカラムで結合することが多いはず。
-     * （そもそも生メソッドを使わず `subArray` のようなプロキシメソッドが前提）。
+     * この挙動は setLazyMode で変更可能。
      *
      * WHERE や ORDER などの条件も完全に活かすことができるが、LIMIT だけは扱いが異なる（下記のサンプルコードを参照）。
      * これを利用するといわゆる「グループ内の上位N件取得」も簡単に実現できる。
      *
+     * 親子の結合条件は原則として外部キーが前提。
+     * 外部キーがない・特殊な条件で結合したい場合は親側のキーに `{cond}` でカラムを指定する。
+     *
      * ```php
      * # t_parent に紐づく t_child レコードを引っ張る
-     * $qb = $db->selectTuple([
+     * $row = $db->selectTuple([
      *     't_parent P' => [
      *         'parent_id',
-     *         // 結合キーとして [子供カラム => 親カラム] を指定する（複合可）
-     *         'childarray'  => $db->subselectArray(['child_id' => 'parent_id'], 't_child'),
-     *         // もし仮にカラム名が同じなら単配列でもOK
-     *         'childtuple1' => $db->subselectTuple(['id'], 't_child'),
-     *         // というか単配列で要素が1つなら文字列でもOK
-     *         'childtuple2' => $db->subselectTuple('id', 't_child'),
-     *         // さらに外部キーがあるなら null でもOK（ただしその場合、後述の subTuple の方が適している）
-     *         'childtuple3' => $db->subselectTuple(null, 't_child'),
-     *     ],
-     * ]);
-     *
-     * # 上記の外部キー版
-     * $qb = $db->selectTuple([
-     *     't_parent P' => [
-     *         'parent_id',
-     *         // 上記のように結合カラムを指定する必要はない
-     *         'childarray' => $db->subArray('t_child'),
-     *         'childtuple' => $db->subTuple('t_child'),
+     *         // 外部キーが使用される
+     *         'childarray'            => $db->subselectArray('t_child'),
+     *         // 結合カラムを明示的に指定
+     *         'childassoc{cid: pid}'  => $db->subselectAssoc('t_child'),
      *     ],
      * ]);
      *
      * # サブの limit は各行に対して作用する
-     * $qb = $db->selectArray([
+     * $rows = $db->selectArray([
      *     't_parent P' => [
      *         'parent_id',
      *         // 各行に紐づく t_child の最新5件を取得する
-     *         'latestchild' => $db->subArray('t_child', [], ['update_time' => 'DESC'], 5),
+     *         'latestchildren' => $db->subselectArray('t_child', [], ['update_time' => 'DESC'], 5),
+     *     ],
+     * ]);
+     *
+     * # 簡易記法としての配列形式（t_parent に紐づく t_child レコードを引っ張る）
+     * $row = $db->selectTuple([
+     *     't_parent P' => [
+     *         'parent_id',
+     *         // 親のキーがテーブル名（エイリアス）の役目を果たし、原則として assoc 相当の動作になる
+     *         // つまり下記2つは全く同じ動作となる
+     *         'childassoc1'            => $db->subselectAssoc('t_child'),
+     *         't_child AS childassoc2' => ['*'],
+     *     ],
+     * ]);
+     *
+     * # ネストもできる（t_ancestor に紐づく t_parent に紐づく t_child レコードを引っ張る）
+     * $row = $db->selectTuple([
+     *     't_ancestor AS A' => [
+     *         't_parent AS P' => [
+     *             't_child AS C' => ['*'],
+     *         ],
      *     ],
      * ]);
      * ```
@@ -3651,69 +3570,15 @@ class Database
      * @used-by subselectPairs()
      * @used-by subselectTuple()
      * @used-by subselectValue()
-     * @used-by subArray()
-     * @used-by subAssoc()
-     * @used-by subLists()
-     * @used-by subPairs()
-     * @used-by subTuple()
-     * @used-by subValue()
      *
      * @inheritdoc select()
      *
-     * @param array|string $child_columns [子供カラム => 親カラム] あるいは [共通カラム]。 null を与えると外部キーカラム
-     * @return SubqueryBuilder サブクエリビルダオブジェクト
+     * @return QueryBuilder サブクエリビルダオブジェクト
      */
-    public function subselect($child_columns, $tableDescriptor, $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
+    public function subselect($tableDescriptor, $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
     {
-        $builder = $this->createSubqueryBuilder();
-        $builder->lazy('select', $child_columns);
-        return $builder->build(array_combine(QueryBuilder::CLAUSES, [$tableDescriptor, $where, $orderBy, $limit, $groupBy, $having]));
-    }
-
-    /**
-     * 親キーを見て遅延ビルドする子供レコード配列を取得する SubqueryBuilder を返す
-     *
-     * このメソッドを使うと自身のレコード配列に子供レコードを生やすことができる。
-     * この処理はクエリを2回投げることで実現される。つまり 1+ N 問題は起こらない（tuple だけではなく array/assoc でも同様）。
-     *
-     * シンプルな宣言的記法を目指して実装されたメソッドなので結合カラムは外部キー固定。
-     *
-     * ```php
-     * # t_parent に紐づく t_child レコードを引っ張る
-     * $qb = $db->selectTuple([
-     *     't_parent P' => [
-     *         'parent_id',
-     *         // 親のキーがテーブル名（エイリアス）の役目を果たすので subtable 自体にはテーブル名は不要。カラムのみ記述する
-     *         't_child AS childarray1' => $db->subtableAssoc('*'),
-     *         // 実際にはメソッド呼び出しを伴わずに配列で指定することが多い（これは↑のメソッド呼び出しと全く等価な糖衣構文）
-     *         't_child AS childarray2' => ['*'],
-     *     ],
-     * ]);
-     *
-     * # ネストもできる（t_ancestor に紐づく t_parent に紐づく t_child レコードを引っ張る）
-     * $qb = $db->selectTuple([
-     *     't_ancestor AS A' => [
-     *         't_parent AS P' => [
-     *             't_child AS C' => ['*'],
-     *         ],
-     *     ],
-     * ]);
-     * ```
-     *
-     * @used-by subtableArray()
-     * @used-by subtableAssoc()
-     * @used-by subtableLists()
-     * @used-by subtablePairs()
-     * @used-by subtableTuple()
-     * @used-by subtableValue()
-     *
-     * @inheritdoc subselect()
-     */
-    public function subtable($tableDescriptor, $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
-    {
-        $builder = $this->createSubqueryBuilder();
-        $builder->delay()->lazy('select', null);
-        return $builder->build(array_combine(QueryBuilder::CLAUSES, [$tableDescriptor, $where, $orderBy, $limit, $groupBy, $having]));
+        $builder = $this->createQueryBuilder();
+        return $builder->setLazyMode()->build(array_combine(QueryBuilder::CLAUSES, [$tableDescriptor, $where, $orderBy, $limit, $groupBy, $having]));
     }
 
     /**

@@ -17,12 +17,14 @@ use ryunosuke\dbml\Query\Expression\TableDescriptor;
 use ryunosuke\dbml\Query\Pagination\Paginator;
 use ryunosuke\dbml\Query\Pagination\Sequencer;
 use ryunosuke\dbml\Utility\Adhoc;
+use function ryunosuke\dbml\array_all;
 use function ryunosuke\dbml\array_convert;
 use function ryunosuke\dbml\array_depth;
 use function ryunosuke\dbml\array_each;
 use function ryunosuke\dbml\array_find;
 use function ryunosuke\dbml\array_flatten;
 use function ryunosuke\dbml\array_implode;
+use function ryunosuke\dbml\array_kmap;
 use function ryunosuke\dbml\array_lookup;
 use function ryunosuke\dbml\array_map_filter;
 use function ryunosuke\dbml\array_maps;
@@ -33,6 +35,7 @@ use function ryunosuke\dbml\array_strpad;
 use function ryunosuke\dbml\array_unset;
 use function ryunosuke\dbml\arrayize;
 use function ryunosuke\dbml\concat;
+use function ryunosuke\dbml\first_key;
 use function ryunosuke\dbml\first_keyvalue;
 use function ryunosuke\dbml\first_value;
 use function ryunosuke\dbml\is_hasharray;
@@ -41,7 +44,6 @@ use function ryunosuke\dbml\optional;
 use function ryunosuke\dbml\preg_splice;
 use function ryunosuke\dbml\rbind;
 use function ryunosuke\dbml\split_noempty;
-use function ryunosuke\dbml\stdclass;
 use function ryunosuke\dbml\str_lchop;
 use function ryunosuke\dbml\throws;
 
@@ -117,6 +119,8 @@ use function ryunosuke\dbml\throws;
  *
  *     @param string $string  集約関数の区切り文字
  * }
+ * @method bool                   getPropagateLockMode()
+ * @method $this                  setPropagateLockMode($bool)
  * @method bool                   getInjectChildColumn()
  * @method $this                  setInjectChildColumn($bool)
  *
@@ -156,22 +160,22 @@ use function ryunosuke\dbml\throws;
  *     結合方法が RIGHT で結合条件・外部キー指定の <@uses QueryBuilder::join()>
  * }
  *
- * @method array|Entityable[]     array(iterable $params = []) {
+ * @method $this|array|Entityable[]     array(iterable $params = []) {
  *     自身が保持しているクエリでレコードの配列を返す（<@uses Database::fetchArray()> 参照）
  * }
- * @method array|Entityable[]     assoc(iterable $params = []) {
+ * @method $this|array|Entityable[]     assoc(iterable $params = []) {
  *     自身が保持しているクエリでレコードの連想配列を返す（<@uses Database::fetchAssoc()> 参照）
  * }
- * @method array                  lists(iterable $params = []) {
+ * @method $this|array                  lists(iterable $params = []) {
  *     自身が保持しているクエリでレコード[1列目]の配列を返す（<@uses Database::fetchLists()> 参照）
  * }
- * @method array                  pairs(iterable $params = []) {
+ * @method $this|array                  pairs(iterable $params = []) {
  *     自身が保持しているクエリでレコード[1列目=>2列目]の連想配列を返す（<@uses Database::fetchPairs()> 参照）
  * }
- * @method array|Entityable|false tuple(iterable $params = []) {
+ * @method $this|array|Entityable|false tuple(iterable $params = []) {
  *     自身が保持しているクエリでレコードを返す（<@uses Database::fetchTuple()> 参照）
  * }
- * @method mixed                  value(iterable $params = []) {
+ * @method $this|mixed                  value(iterable $params = []) {
  *     自身が保持しているクエリでレコード[1列目]を返す（<@uses Database::fetchValue()> 参照）
  * }
  */
@@ -189,6 +193,20 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
         'limit',
         'groupBy',
         'having',
+    ];
+
+    // 遅延モード
+    public const LAZY_MODE_EAGER = 'eager';
+    public const LAZY_MODE_BATCH = 'batch';
+    public const LAZY_MODE_FETCH = 'fetch';
+    public const LAZY_MODE_YIELD = 'yield';
+
+    // 遅延モードの設定値
+    public const LAZY_MODES = [
+        self::LAZY_MODE_EAGER => ['prepared' => false, 'generated' => false],
+        self::LAZY_MODE_BATCH => ['prepared' => false, 'generated' => true],
+        self::LAZY_MODE_FETCH => ['prepared' => true, 'generated' => false],
+        self::LAZY_MODE_YIELD => ['prepared' => true, 'generated' => true],
     ];
 
     private const COUNT_ALIAS = '__dbml_auto_cnt';
@@ -238,7 +256,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
     /** @var Statement prepare されたステートメント */
     private $statement;
 
-    /** @var SubqueryBuilder[] サブビルダー配列 */
+    /** @var QueryBuilder[] サブビルダー配列 */
     private $subbuilders = [];
 
     /** @var null|bool submethod(null で無効、true で有効、false で否定有効、文字列で集約関数) */
@@ -246,6 +264,18 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
 
     /** @var null|string submethod の対象テーブル（複数回呼ぶと複数回設定される不具合があったので暫定対応） */
     private $subwhere;
+
+    /** @var string 遅延実行モード(select|batch|fetch|yield) */
+    private $lazyMode;
+
+    /** @var string サブセレクト時の fetch メソッド */
+    private $lazyMethod;
+
+    /** @var string 親カラム */
+    private $lazyParent;
+
+    /** @var array 関連カラム */
+    private $lazyColumns = [];
 
     /** @var bool|int クエリを投げると同時に limit を外した件数を取得するか */
     private $rowcount = false;
@@ -266,13 +296,15 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
     {
         return [
             // [] や Gateway 指定時のデフォルト sub lazy mode
-            'defaultLazyMode'      => 'select',
+            'defaultLazyMode'      => self::LAZY_MODE_EAGER,
             // 自動 order by 有効/無効フラグ
             'autoOrder'            => true,
             // 複合主キーを単一主キーとみなすための結合文字列
             'primarySeparator'     => "\x1F",
             // aggregate 時（columnname@sum）の区切り文字
             'aggregationDelimiter' => '@',
+            // 遅延実行時に親のロックモードを受け継ぐか否か
+            'propagateLockMode'    => true,
             // サブクエリをコメント化して親のクエリに埋め込むか否か
             'injectChildColumn'    => false,
         ];
@@ -346,6 +378,10 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
         // perform 系
         $methods = Database::METHODS;
         if (isset($methods[strtolower($name)])) {
+            if ($this->lazyMode) {
+                $this->lazyMethod = $name;
+                return $this;
+            }
             return $this->getDatabase()->{"fetch$name"}($this, ...$arguments);
         }
 
@@ -441,14 +477,38 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
 
                 $qalias = $cplatform->quoteIdentifierIfNeeded($alias);
                 if ($qalias !== $alias) {
-                    $builder->sqlParts['select'][$n] = new Alias($qalias, $actual);
+                    $builder->sqlParts['select'][$n] = new Alias($qalias, $actual, null, $select->isPlaceholdable());
                 }
+            }
+        }
+        // 全て自動系カラムだと実質空（後で伏せられるため）なので * を追加する
+        if (array_all($builder->sqlParts['select'], function ($select) {
+            return $select instanceof Alias && $select->isPlaceholdable();
+        }, false)) {
+            foreach ($builder->getFromPart() as $from) {
+                $builder->sqlParts['select'][] = $from['alias'] . '.*';
             }
         }
         // 子セレクトを埋め込む
         if ($builder->subbuilders && $builder->getInjectChildColumn() && count($builder->sqlParts['select']) > 0) {
-            $toParentColumns = array_sprintf($builder->subbuilders, function (SubqueryBuilder $subbuilder, $key) {
-                return $subbuilder->toParentColumn($key);
+            $toParentColumns = array_sprintf($builder->subbuilders, function (QueryBuilder $subbuilder, $key) {
+                $that = clone $subbuilder;
+
+                // 自身の subbuilder は再帰しない(そいつの実行時にどうせ実行される)
+                $selects = $that->getQueryPart('select');
+                $that->resetQueryPart('select');
+                $selects = array_filter($selects, function ($select) {
+                    return !($select instanceof Alias && $select->isPlaceholdable());
+                });
+                $that->select(...$selects);
+
+                // 結合カラムを WHERE に加えてわかりやすくする
+                $that->andWhere(array_sprintf($that->lazyColumns, '%2$s IN ([parent.%1$s])'));
+
+                // カラムコメント化
+                $cplatform = $this->getDatabase()->getCompatiblePlatform();
+                $x = $that->queryInto();
+                return $cplatform->commentize("($x) AS $key");
             }, '');
             $builder->sqlParts['select'][0] = $toParentColumns . ' ' . $builder->sqlParts['select'][0];
         }
@@ -561,6 +621,71 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
             }
         }
 
+        $detectForeign = function (QueryBuilder $subbuiler, TableDescriptor $parsed, $table, $from, $name) use ($prefix) {
+            if ($subbuiler->getPreparedStatement()) {
+                throw new \UnexpectedValueException("subquery does not support prepared statement.");
+            }
+
+            // condition 指定時はテーブルは無関係（駆動表を使う）
+            foreach ((array) $parsed->condition as $cond) {
+                if ($cond instanceof \stdClass) {
+                    $from = $from ?? first_value($subbuiler->getFromPart());
+                    $fcols = (array) $cond;
+                    break;
+                }
+            }
+
+            // 上記で確定しなかったら相関のある外部キーを漁る
+            if (!isset($fcols)) {
+                $from = $from ?? array_find($subbuiler->getFromPart(), function ($from) use ($table) {
+                        $fcols = $this->database->getSchema()->getForeignColumns($table, $from['table'], $from['fkeyname']);
+                        if ($fcols) {
+                            return $from;
+                        }
+                    }, false);
+                $fcols = $from
+                    ? $this->database->getSchema()->getForeignColumns($table, $from['table'], $from['fkeyname'] ?? $parsed->fkeyname)
+                    : null;
+            }
+
+            if (!$fcols) {
+                $from = $from ?: ['table' => 'NotSpecified', 'fkeyname' => 'NotSpecified'];
+                throw new \UnexpectedValueException("has not foreign key between '{$table}' and '{$from['table']}' ({$from['fkeyname']}).");
+            }
+
+            $concatPrimary = function ($alias, $columns) {
+                $psep = $this->database->quote($this->getPrimarySeparator());
+                $cplatform = $this->database->getCompatiblePlatform();
+                return new Alias($alias, $cplatform->getConcatExpression(array_values(array_implode($columns, $psep))), null, true);
+            };
+
+            $lazy_columns = array_strpad($fcols, $from['alias'] . '.', $prefix);
+
+            $subbuiler->lazyMode = $subbuiler->lazyMode ?? $this->getDefaultLazyMode();
+            $subbuiler->lazyParent = Database::AUTO_PRIMARY_KEY . strtolower($name);
+            $subbuiler->lazyColumns = $lazy_columns;
+            $subbuiler->sqlParts['select'][] = $concatPrimary(Database::AUTO_PARENT_KEY, array_keys($lazy_columns));
+
+            // 「主キーから外部キーを差っ引いたものが空」はすなわち「親との結合」とみなすことができる
+            // その場合 assoc は無駄だし、assoc のためのカラムを追加する必要もない
+            if ($subbuiler->lazyMethod === null) {
+                $pcols = $this->database->getSchema()->getTablePrimaryKey($from['table'])->getColumns();
+                $jcols = array_strpad(array_diff($pcols, array_keys($fcols)), '', $from['alias'] . '.');
+                if (!$jcols) {
+                    $subbuiler->tuple();
+                }
+                else {
+                    $subbuiler->assoc();
+                    array_unshift($subbuiler->sqlParts['select'], $concatPrimary(Database::AUTO_CHILD_KEY, $jcols));
+                }
+            }
+            $this->subbuilders[$name] = $subbuiler;
+            return [
+                $concatPrimary($subbuiler->lazyParent, $lazy_columns),
+                new Alias($name, 'NULL', null, true),
+            ];
+        };
+
         foreach ($columns as $key => $column) {
             // 仮想カラム
             if ($schema->hasTable($table) && is_string($column)) {
@@ -585,80 +710,41 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
             if ($column === null) {
                 // dummy
             }
-            // SelectOption は単純に addSelectOption するだけ
-            elseif ($column instanceof SelectOption) {
-                $this->addSelectOption($column);
+            // 配列は subselect 化
+            elseif (is_array($column)) {
+                $parsed = new TableDescriptor($this->database, $key, []);
+                $result[] = $detectForeign(
+                    $this->database->select([$key => array_merge($parsed->column, $column)]),
+                    $parsed,
+                    $table,
+                    ['table' => $parsed->table, 'alias' => $parsed->accessor, 'fkeyname' => $parsed->fkeyname],
+                    $parsed->alias ?: $this->database->convertEntityName($parsed->table) . $parsed->fkeysuffix
+                );
             }
-            // Alias はそのまま
-            elseif ($column instanceof Alias) {
-                $result[] = $column;
+            // Gateway は subselect 化
+            elseif ($column instanceof TableGateway) {
+                $parsed = new TableDescriptor($this->database, $key, []);
+                $result[] = $detectForeign(
+                    $column->select(),
+                    $parsed,
+                    $table,
+                    ['table' => $column->tableName(), 'alias' => $column->modifier(), 'fkeyname' => $column->foreign()],
+                    is_int($key) ? $column->modifier() : ($parsed->accessor ?: first_key($parsed->column))
+                );
             }
-            // 配列や Gateway なら subtable 化
-            elseif (is_array($column) || $column instanceof TableGateway) {
-                // Gateway ならパースの必要はない
-                if ($column instanceof TableGateway) {
-                    $parsed = stdclass([
-                        'table'    => $column->tableName(),
-                        'alias'    => $column->alias(),
-                        'accessor' => $column->modifier(),
-                        'fkeyname' => $column->foreign(),
-                    ]);
-                    $build_params = $column->getScopeParams([]);
-                    $key = is_int($key) ? $column->modifier() : $key;
-                }
-                // 配列なら key をパース
-                else {
-                    $parsed = new TableDescriptor($this->database, $key, []);
-                    $build_params = ['column' => [$key => array_merge($parsed->column, $column)]];
-                    $key = $parsed->alias ?: $this->database->convertEntityName($parsed->table) . $parsed->fkeysuffix;
-                }
-
-                $fcols = $schema->getForeignColumns($table, $parsed->table, $parsed->fkeyname);
-                $result[] = array_strpad($fcols, '', $prefix);
-
-                $subtable = $this->database->createSubqueryBuilder();
-                $subtable->build($build_params)->lazy($this->getUnsafeOption('defaultLazyMode'), array_strpad($fcols, $parsed->accessor . '.'));
-
-                // 「主キーから外部キーを差っ引いたものが空」はすなわち「親との結合」とみなすことができる
-                // その場合 assoc は無駄だし、assoc のためのカラムを追加する必要もない
-                $pk = $schema->getTablePrimaryKey($parsed->table);
-                $jk = array_diff($pk->getColumns(), array_keys($fcols));
-                if (!$jk) {
-                    $this->subbuilders[$key] = $subtable->tuple();
-                }
-                else {
-                    $jk = array_strpad($jk, '', $parsed->accessor . '.');
-                    $subtable->_addPrimary(Database::AUTO_PRIMARY_KEY, $jk, true);
-                    $this->subbuilders[$key] = $subtable->assoc();
-                }
-            }
-            // PhpExpression なら phpExpressions に追加するだけ
-            elseif ($column instanceof PhpExpression) {
-                $result[] = $column->getDependColumns();
-                $this->phpExpressions[$key] = $column;
-            }
-            // SubqueryBuilder ならクエリ化せずに subbuilders に追加するだけ
-            elseif ($column instanceof SubqueryBuilder) {
-                // ビルド保留状態ならここでビルドする
-                if ($dparam = $column->getDelayedParams()) {
-                    $parsed = new TableDescriptor($this->database, $key, []);
-
-                    $dparam['column'] = [$key => array_merge($parsed->column, arrayize($dparam['column']))];
-                    $fcols = $schema->getForeignColumns($table, $parsed->table, $parsed->fkeyname);
-                    $column->build($dparam)->lazy($this->getUnsafeOption('defaultLazyMode'), array_strpad($fcols, $parsed->accessor . '.'));
-
-                    $key = $parsed->alias ?: $this->database->convertEntityName($parsed->table) . $parsed->fkeysuffix;
-                    $add_columns = $fcols;
-                }
-                else {
-                    $add_columns = $column->setLazyColumnFrom($table);
-                }
-
-                $result[] = array_strpad($add_columns, '', $prefix);
-                $this->subbuilders[$key] = $column;
+            // QueryBuilder の遅延モードなら subbuilders に追加するだけ
+            elseif ($column instanceof QueryBuilder && $column->lazyMode) {
+                $parsed = new TableDescriptor($this->database, $key, []);
+                $result[] = $detectForeign(
+                    clone $column,
+                    $parsed,
+                    $table,
+                    null,
+                    $parsed->condition ? ($parsed->accessor ?? $key) : $key
+                );
             }
             // QueryBuilder なら文字列化したものをカッコつきで select + パラメータ追加
-            elseif ($column instanceof QueryBuilder) {
+            elseif ($column instanceof QueryBuilder && !$column->lazyMode) {
                 // サブクエリで order は無意味
                 $column->setAutoOrder(false);
 
@@ -669,8 +755,20 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
                         $column = $this->database->getCompatiblePlatform()->convertSelectExistsQuery($column);
                     }
                 }
-                $expr = new Expression($column->getQuery(), $column->getParams());
-                $result[] = Alias::forge($key, $expr, $prefix);
+                $result[] = Alias::forge($key, new Expression($column->getQuery(), $column->getParams()), $prefix);
+            }
+            // SelectOption は単純に addSelectOption するだけ
+            elseif ($column instanceof SelectOption) {
+                $this->addSelectOption($column);
+            }
+            // Alias はそのまま
+            elseif ($column instanceof Alias) {
+                $result[] = $column;
+            }
+            // PhpExpression なら phpExpressions に追加するだけ
+            elseif ($column instanceof PhpExpression) {
+                $result[] = $column->getDependColumns();
+                $this->phpExpressions[$key] = $column;
             }
             // Expression なら文字列化したものをそのまま select
             elseif ($column instanceof Expression) {
@@ -935,78 +1033,174 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
         return false;
     }
 
+    /**
+     * サブクエリを実行する
+     *
+     * @param array $parents 親行配列
+     * @param string $column 親行に格納するキー
+     * @return array サブクエリ結果が埋め込まれた $parents
+     */
+    private function _subquery($parents, $column)
+    {
+        $subdatabase = $this->getDatabase();
+
+        // 親カラム参照カラムを分離しておく
+        $pcolumns = [];
+        $selects = $this->getQueryPart('select');
+        foreach ($selects as $n => $select) {
+            $palias = null;
+            if ($select instanceof Alias && is_string($select->getActual())) {
+                $palias = $select->getAlias();
+                $select = $select->getActual();
+            }
+            if (is_string($select) && strpos($select, '..') === 0) {
+                list(, $pcol) = explode('..', $select, 2);
+                $pcolumns[$palias ?: $pcol] = $pcol;
+                unset($selects[$n]);
+            }
+        }
+        $this->select(...$selects);
+
+        // [子供のキー => 親の値] の配列を作成
+        $psep = $this->getPrimarySeparator();
+        if (self::LAZY_MODES[$this->lazyMode]['prepared']) {
+            $childkeys = array_kmap($this->lazyColumns, function ($v, $k) { return str_replace('.', '__', $k); });
+        }
+        else {
+            $childkeys = array_keys($this->lazyColumns);
+        }
+        $conds = [];
+        foreach ($parents as $n => $parent_row) {
+            // 親行カラムがあるかチェック（1回で十分なので初回のみ）
+            if (!isset($checked)) {
+                $checked = true;
+                if ($pcolumns && array_diff_key(array_flip($pcolumns), $parent_row)) {
+                    throw new \OutOfBoundsException("reference undefined parent column [" . implode(', ', $pcolumns) . "].");
+                }
+            }
+            $conds[$n] = array_combine($childkeys, explode($psep, $parent_row[$this->lazyParent]));
+        }
+
+        $this->detectAutoOrder(true);
+
+        // 後処理クロージャ（親カラムを参照して入れたり不要なカラムを伏せたり）
+        $arrayable = Database::METHODS[$this->lazyMethod]['keyable'] !== null;
+        $entityable = Database::METHODS[$this->lazyMethod]['entity'];
+        $cleanup = function ($crows, $n) use ($arrayable, $entityable, $pcolumns, $parents) {
+            if (!$crows) {
+                return $crows;
+            }
+            if ($arrayable) {
+                if ($entityable) {
+                    foreach ($crows as $k => $crow) {
+                        foreach ($pcolumns as $alias => $pcolumn) {
+                            $crows[$k][$alias] = $parents[$n][$pcolumn];
+                        }
+                        unset($crows[$k][Database::AUTO_PARENT_KEY], $crows[$k][Database::AUTO_CHILD_KEY]);
+                    }
+                }
+            }
+            else {
+                if ($entityable) {
+                    foreach ($pcolumns as $alias => $pcolumn) {
+                        $crows[$alias] = $parents[$n][$pcolumn];
+                    }
+                    unset($crows[Database::AUTO_PARENT_KEY], $crows[Database::AUTO_CHILD_KEY]);
+                }
+            }
+            return $crows;
+        };
+
+        switch ($this->lazyMode) {
+            case self::LAZY_MODE_EAGER:
+            case self::LAZY_MODE_BATCH:
+                $fetchChildren = function () use ($conds) {
+                    $subdatabase = $this->getDatabase();
+
+                    // 親行から抽出した where（queryInto してるのは誤差レベルではなく速度に差が出るから）
+                    $expr = $subdatabase->getCompatiblePlatform()->getPrimaryCondition($conds);
+                    $this->andWhere($subdatabase->queryInto($expr));
+
+                    // 子供行の limit は親の範囲内の limit として利用する
+                    $suboffset = $this->getQueryPart('offset');
+                    $sublength = $this->getQueryPart('limit') === null ? null : $suboffset + $this->getQueryPart('limit');
+                    $this->limit(null, null);
+
+                    // 子供行の取得とグループ化
+                    $children = [];
+                    $counter = [];
+                    $child_rows = $subdatabase->fetchArray($this);
+                    foreach ($child_rows as $nc => $child_row) {
+                        $pckey = $child_row[Database::AUTO_PARENT_KEY];
+                        if ($suboffset !== null || $sublength !== null) {
+                            $counter[$pckey] = ($counter[$pckey] ?? 0) + 1;
+                            if ($suboffset !== null && $suboffset >= $counter[$pckey]) {
+                                continue;
+                            }
+                            if ($sublength !== null && $sublength < $counter[$pckey]) {
+                                continue;
+                            }
+                        }
+                        $children[$pckey][] = $child_row;
+                    }
+                    return $children;
+                };
+
+                if ($this->lazyMode === self::LAZY_MODE_EAGER) {
+                    $children = $fetchChildren();
+                    foreach ($parents as $n => $parent_row) {
+                        $pkey = $parent_row[$this->lazyParent];
+                        unset($parents[$n][$this->lazyParent]);
+                        $crows = $children[$pkey] ?? [];
+                        $parents[$n][$column] = $cleanup($subdatabase->perform($crows, $this->lazyMethod), $n);
+                    }
+                }
+                if ($this->lazyMode === self::LAZY_MODE_BATCH) {
+                    $children = null;
+                    foreach ($parents as $n => $parent_row) {
+                        $pkey = $parent_row[$this->lazyParent];
+                        unset($parents[$n][$this->lazyParent]);
+                        $parents[$n][$column] = (function () use (&$children, $parent_row, $pkey, $fetchChildren, $subdatabase, $cleanup, $n) {
+                            $children = $children ?? $fetchChildren();
+                            $crows = $children[$pkey] ?? [];
+                            yield from $cleanup($subdatabase->perform($crows, $this->lazyMethod), $n);
+                        })();
+                    }
+                }
+                break;
+            case self::LAZY_MODE_FETCH:
+            case self::LAZY_MODE_YIELD:
+                if (!$this->getPreparedStatement()) {
+                    $this->andWhere(array_sprintf($childkeys, '%2$s = :%1$s'));
+                    $this->prepare();
+                }
+                $lazyMethod = 'fetch' . $this->lazyMethod;
+
+                if ($this->lazyMode === self::LAZY_MODE_FETCH) {
+                    foreach ($parents as $n => $parent_row) {
+                        unset($parents[$n][$this->lazyParent]);
+                        $parents[$n][$column] = $cleanup($subdatabase->$lazyMethod($this, $conds[$n]), $n);
+                    }
+                }
+                if ($this->lazyMode === self::LAZY_MODE_YIELD) {
+                    foreach ($parents as $n => $parent_row) {
+                        unset($parents[$n][$this->lazyParent]);
+                        $parents[$n][$column] = (function () use ($subdatabase, $lazyMethod, $conds, $n, $cleanup) {
+                            yield from $cleanup($subdatabase->$lazyMethod($this, $conds[$n]), $n);
+                        })();
+                    }
+                }
+                break;
+        }
+
+        return $parents;
+    }
+
     private function _dirty()
     {
         $this->sql = null;
         $this->resetResult();
         return $this;
-    }
-
-    /**
-     * 指定カラム群を concat したカラムを先頭に追加する
-     *
-     * ただし、カラム群が1つでかつ既に含まれているなら何もしない。
-     * なお、このメソッドの Primary とはいわゆる主キーではなく「主要な」という意味の Primary である。
-     *
-     * @ignore
-     *
-     * @param string $alias エイリアス名
-     * @param array $columns 追加するカラム
-     * @param bool $prepended 前に追加するなら true
-     * @return string Primary キー
-     */
-    protected function _addPrimary($alias, $columns, $prepended)
-    {
-        $selects = $this->sqlParts['select'];
-
-        // 1つの場合は既に含まれているか探す
-        if (count($columns) === 1) {
-            $pk = reset($columns);
-            $modifier = null;
-            $pkc = $pk;
-            if (strpos($pk, '.') !== false) {
-                list($modifier, $pkc) = explode('.', $pk);
-            }
-            foreach ($selects as $n => $select) {
-                // Alias は実名を使う
-                if ($select instanceof Alias) {
-                    $select = $select->getActual();
-                }
-                // 含まれているなら・・・
-                if (in_array($select, [$pk, $pkc], true)) {
-                    // 挿入モードで 0 番目ならOK. あるいは追加モードならそもそも順番は関係ない
-                    if (($prepended && $n === 0) || (!$prepended)) {
-                        return $pkc;
-                    }
-                }
-                // * を含む場合は・・・
-                if (in_array($select, ["$modifier.*", '*'], true)) {
-                    // 挿入モードならエイリアスを変更して後段に任せる(* なら対象を必ず含んでいるので前に追加するだけで良い)
-                    // 結果「table.id, table.*」のようになってしまうが php レイヤーでは関係ない
-                    if ($prepended) {
-                        $alias = $pkc;
-                        break;
-                    }
-                    // 追加モードならそのまま返す(位置は関係なく対象が含まれていれば良いので * で事足りる)
-                    else {
-                        return $pkc;
-                    }
-                }
-            }
-        }
-
-        // 区切り文字で区切って、引数に応じて前・後に追加
-        $pkcol = array_implode($columns, $this->database->quote($this->getPrimarySeparator()));
-        $primary = new Alias($alias, $this->database->getCompatiblePlatform()->getConcatExpression($pkcol));
-        if ($prepended) {
-            array_unshift($selects, $primary);
-            $this->select(...$selects);
-        }
-        else {
-            $this->addSelect($primary);
-        }
-
-        return $alias;
     }
 
     /**
@@ -1263,6 +1457,30 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
     }
 
     /**
+     * lazyMode を設定する
+     *
+     * このメソッドを呼ぶと fetch 系メソッドは実行されなくなる。
+     * 引数無しで呼ぶと解除される。
+     *
+     * - eager: 親の取得と同時に一括取得する（親キーの IN）
+     * - batch: 最初のアクセス時に一括取得する（親キーの IN の Generator）
+     * - fetch: 都度クエリを投げる（prepared statement）
+     * - yield: 必要になったらクエリを投げる（prepared statement の Generator）
+     *
+     * @param string|null $lazyMode 遅延モード文字列
+     * @return $this 自分自身
+     */
+    public function setLazyMode($lazyMode = null)
+    {
+        if ($lazyMode !== null && !isset(self::LAZY_MODES[$lazyMode])) {
+            throw new \InvalidArgumentException('$mode is must be self::LAZY_MODE_* (' . implode('|', array_keys(self::LAZY_MODES)) . ')');
+        }
+
+        $this->lazyMode = func_num_args() ? $lazyMode : $this->getDefaultLazyMode();
+        return $this;
+    }
+
+    /**
      * select オプションを追加する
      *
      * SELECT オプションとは「SELECT 句のカラム群の前に（カラムとは区別されて）置かれる文字列」のこと。
@@ -1330,7 +1548,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
      * |  2 | `null`                                           | null を与えると「何も取得しない」を明示
      * |  4 | `"!hoge"`                                        | hoge 列**以外**を取得
      * |  5 | `"!"`                                            | 仮想カラムを含めたテーブルの全列を取得（これは「空文字カラム以外を全て」を意味するので結局全てのカラムが得られる、ということになる）
-     * |  8 | `"..hoge"`                                       | subtable 時において親のカラムを表す
+     * |  8 | `"..hoge"`                                       | subselect 時において親のカラムを表す
      * | 10 | `"+prefix.column_name"`                          | JOIN 記号＋ドットを含む文字列は prefix テーブルと JOIN してそのカラムを取得
      * | 11 | `new Expression("NOW()")`                        | {@link Expression} を与えると一切加工せずそのまま文字列を表す
      * | 12 | `"NOW()"`                                        | 上と同じ。 `()` を含む文字列は自動で {@link Expression} 化される
@@ -1341,7 +1559,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
      * | 24 | `function($cname = 'cname'){}`                   | 上と同じ。引数にデフォルト値が指定されている場合はそのデフォルト値が上で言う「指定された列」に相当する。
      * | 25 | `['cname' => function($value = null){}]`         | 上と同じ。引数のデフォルト値が null の場合はキーの値が使用される
      * | 27 | `function(){return function($v){return $v;};}`   | クロージャの亜種。クロージャを返すクロージャはそのままクロージャとして活きるのでメソッドのような扱いにできる
-     * | 30 | `Gateway object`                                 | Gateway の表すテーブルとの {@link Database::subtable()} 相当の動作
+     * | 30 | `Gateway object`                                 | Gateway の表すテーブルとの {@link Database::subselect()} 相当の動作
      * | 31 | `['+alias' => Gateway object]`                   | Gateway の表すテーブルとの JOIN を表す
      * | 50 | `'TableDescriptor'`                              | 「テーブル名」を書く場所にはテーブル記法が使用できる（駆動表）
      * | 51 | `['+TableDescriptor' => ['*']]`                  | 「テーブル名」を書く場所にはテーブル記法が使用できる（JOIN）
@@ -1381,7 +1599,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
      *     ],
      * ]);
      *
-     * # No.8： "..hoge" で subtable における親カラムを参照できる
+     * # No.8： "..hoge" で subselect における親カラムを参照できる
      * $qb->column([
      *     't_article' => [
      *         '*',
@@ -1563,11 +1781,6 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
                     $this->addColumn([$key => $jointable], $descriptor->accessor);
                 }
             }
-        }
-
-        // from が無い subselect 指定は無効
-        if (count($this->sqlParts['from']) === 0 && count($this->subbuilders) > 0) {
-            throw new \InvalidArgumentException('column is not possible to specify only children.');
         }
 
         return $this->_dirty();
@@ -2718,11 +2931,12 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
             foreach ($this->subbuilders as $column => $subselect) {
                 // 連続コールされる場合は無駄なので clone もしないし prepare を使用する
                 if ($continuity) {
-                    $mode = $this->getUnsafeOption('defaultLazyMode');
-                    $subselect->setLazyMode($mode === 'select' ? 'fetch' : $mode);
+                    if ($subselect->lazyMode === self::LAZY_MODE_EAGER) {
+                        $subselect->lazyMode = self::LAZY_MODE_FETCH;
+                    }
                 }
                 else {
-                    $subselect = $subselect->getLazyClonable() ? clone $subselect : $subselect;
+                    $subselect = clone $subselect;
                 }
 
                 // 親のロックモードを受け継ぐ
@@ -2730,7 +2944,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
                     $subselect->lockMode = $this->lockMode;
                     $subselect->lockOption = $this->lockOption;
                 }
-                $parents = $subselect->subquery($parents, $column);
+                $parents = $subselect->_subquery($parents, $column);
             }
         }
 
@@ -3074,7 +3288,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
      * ```
      *
      * @param string $name キー。省略すると単一ではなく全サブクエリビルダを配列で返す
-     * @return SubqueryBuilder|SubqueryBuilder[] サブクエリビルダ
+     * @return $this|$this[] サブクエリビルダ
      */
     public function getSubbuilder($name = null)
     {
@@ -3238,6 +3452,11 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
         $this->lockMode = null;
         $this->lockOption = null;
         $this->rowcount = false;
+
+        $this->lazyMode = null;
+        $this->lazyMethod = null;
+        $this->lazyParent = null;
+        $this->lazyColumns = [];
 
         $this->resetQueryPart();
 

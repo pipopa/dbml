@@ -18,6 +18,7 @@ use ryunosuke\dbml\Query\Expression\PhpExpression;
 use ryunosuke\dbml\Query\Expression\SelectOption;
 use ryunosuke\dbml\Query\QueryBuilder;
 use ryunosuke\Test\Database;
+use function ryunosuke\dbml\arrayval;
 
 class QueryBuilderTest extends \ryunosuke\Test\AbstractUnitTestCase
 {
@@ -436,14 +437,23 @@ GREATEST(1,2,3) FROM test1', $builder);
     function test_column_sub($builder)
     {
         $builder->column('t_article A.*, article_id/t_comment C.comment, t_comment.*');
-        $this->assertEquals(['A.*', 'A.article_id'], $builder->getQueryPart('select'));
         $this->assertEquals([
-            Alias::forge('__dbml_auto_pk', 'C.comment_id'),
-            'C.comment'
+            'A.*',
+            'A.article_id',
+            Alias::forge(Database::AUTO_PRIMARY_KEY . "c", 'A.article_id'),
+            Alias::forge("C", 'NULL'),
+            Alias::forge(Database::AUTO_PRIMARY_KEY . "comment", 'A.article_id'),
+            Alias::forge("Comment", 'NULL'),
+        ], $builder->getQueryPart('select'));
+        $this->assertEquals([
+            Alias::forge(Database::AUTO_CHILD_KEY, 'C.comment_id'),
+            'C.comment',
+            Alias::forge(Database::AUTO_PARENT_KEY, 'C.article_id'),
         ], $builder->getSubbuilder('C')->getQueryPart('select'));
         $this->assertEquals([
-            Alias::forge('comment_id', 't_comment.comment_id'),
-            't_comment.*'
+            Alias::forge(Database::AUTO_CHILD_KEY, 't_comment.comment_id'),
+            't_comment.*',
+            Alias::forge(Database::AUTO_PARENT_KEY, 't_comment.article_id'),
         ], $builder->getSubbuilder('Comment')->getQueryPart('select'));
     }
 
@@ -1488,9 +1498,10 @@ SQL
             ],
         ]);
         // value のみ見るので IN になるのは正しい動作
-        $this->assertEquals("SELECT A.*, A.article_id FROM t_article A WHERE A.article_id IN (NULL)", $builder->queryInto());
+        $C = $builder->getDatabase()->getCompatiblePlatform()->quoteIdentifierIfNeeded('C');
+        $this->assertEquals("SELECT A.*, A.article_id AS " . Database::AUTO_PRIMARY_KEY . "c, NULL AS $C FROM t_article A WHERE A.article_id IN (NULL)", $builder->queryInto());
         // 子供である C 条件が現れるのはインジェクションの危険性がある
-        $this->assertEquals("SELECT C.comment_id, C.* FROM t_comment C", $builder->getSubbuilder('C')->queryInto());
+        $this->assertEquals("SELECT C.comment_id AS " . Database::AUTO_CHILD_KEY . ", C.*, C.article_id AS " . Database::AUTO_PARENT_KEY . " FROM t_comment C", $builder->getSubbuilder('C')->queryInto());
     }
 
     /**
@@ -2488,7 +2499,7 @@ SELECT test.* FROM test", $builder);
             [
                 'test1' => ['id', 'name1'],
                 ''      => [
-                    'children' => $builder->getDatabase()->subselectArray('id', 'test2'),
+                    'children{id}' => $builder->getDatabase()->subselectArray('test2'),
                 ]
             ]
         )->limit(2);
@@ -2535,13 +2546,19 @@ SELECT test.* FROM test", $builder);
         $this->assertEquals(false, $builder->tuple());
 
         // from が無い subselect 指定は無効なはず
-        $this->assertException(new \InvalidArgumentException('column is not possible to specify only children'),
-            [$builder, 'column'], [
-                [
-                    'hoge' => $builder->getDatabase()->subselectArray('id', 't_dummy')
-                ]
+        $this->assertException(new \UnexpectedValueException('has not foreign key'), L($builder)->column([
+            [
+                'hoge' => $builder->getDatabase()->subselectArray('t_dummy')
             ]
-        );
+        ]));
+
+        // prepared statement は使用できないはず
+        $this->assertException(new \UnexpectedValueException('not support prepared statement'), L($builder)->column([
+            'test1' => ['id', 'name1'],
+            ''      => [
+                'children{id}' => $builder->getDatabase()->subselectArray('test2')->prepare(),
+            ]
+        ]));
     }
 
     /**
@@ -2552,22 +2569,28 @@ SELECT test.* FROM test", $builder);
     {
         $builder->reset()->column([
             'foreign_d1' => [
-                'foreign_d2' => $builder->getDatabase()->subselectArray(null, 'foreign_d2:fk_dd12'),
+                'foreign_d2' => $builder->getDatabase()->subselectArray('foreign_d2:fk_dd12'),
             ],
         ]);
-        $this->assertEquals(['foreign_d1.d2_id'], $builder->getQueryPart('select'));
+        $this->assertEquals([
+            Alias::forge(Database::AUTO_PRIMARY_KEY . 'foreign_d2', 'foreign_d1.d2_id'),
+            Alias::forge('foreign_d2', 'NULL'),
+        ], $builder->getQueryPart('select'));
 
         $builder->reset()->column([
             'foreign_d1' => [
-                'foreign_d2' => $builder->getDatabase()->subselectArray(null, 'foreign_d2:fk_dd21'),
+                'foreign_d2' => $builder->getDatabase()->subselectArray('foreign_d2:fk_dd21'),
             ],
         ]);
-        $this->assertEquals(['foreign_d1.id'], $builder->getQueryPart('select'));
+        $this->assertEquals([
+            Alias::forge(Database::AUTO_PRIMARY_KEY . 'foreign_d2', 'foreign_d1.id'),
+            Alias::forge('foreign_d2', 'NULL'),
+        ], $builder->getQueryPart('select'));
 
         $this->assertException('ambiguous foreign keys', function () use ($builder) {
             $builder->reset()->column([
                 'foreign_d1' => [
-                    'foreign_d2' => $builder->getDatabase()->subselectArray(null, 'foreign_d2'),
+                    'foreign_d2' => $builder->getDatabase()->subselectArray('foreign_d2'),
                 ],
             ]);
         });
@@ -2577,29 +2600,78 @@ SELECT test.* FROM test", $builder);
      * @dataProvider provideQueryBuilder
      * @param QueryBuilder $builder
      */
-    function test_subtable($builder)
+    function test_subquery_limit($builder)
     {
-        $builder->column([
-            'foreign_p P' => [
-                'foreign_c1 C1' => $builder->getDatabase()->subtableArray('*'),
-                'foreign_c2 C2' => ['*'],
+        $expected = [
+            [
+                'mainid' => '1',
+                'subid'  => '3',
+                'name'   => 'c',
             ],
-        ]);
-        $this->assertArrayHasKey('C1', $builder->getSubbuilder());
-        $this->assertArrayHasKey('C2', $builder->getSubbuilder());
+            [
+                'mainid' => '1',
+                'subid'  => '4',
+                'name'   => 'd',
+            ],
+        ];
 
-        $builder->column([
-            'horizontal1' => [
-                'horizontal2' => ['*'],
-            ],
-        ]);
-        $this->assertArrayHasKey('horizontal2', $builder->getSubbuilder());
+        foreach (QueryBuilder::LAZY_MODES as $mode => $opt) {
+            $actual = $builder->getDatabase()->selectTuple([
+                'multiprimary' => [
+                    'sub{mainid}' => $builder->setLazyMode($mode)->column('multiprimary')->limit(2, 2)->array()
+                ]
+            ], ['mainid' => '1', 'subid' => '1']);
+            if ($opt['generated']) {
+                $this->assertInstanceOf(\Generator::class, $actual['sub']);
+            }
+            $this->assertEquals($expected, arrayval($actual['sub']), $mode);
+        }
+    }
 
-        $this->assertException("need to 1 or more", L($builder)->column([
-            'test1' => [
-                'test2' => $builder->getDatabase()->subtableArray('*'),
+    /**
+     * @dataProvider provideQueryBuilder
+     * @param QueryBuilder $builder
+     * @param Database $database
+     */
+    function test_inheritLockMode($builder, $database)
+    {
+        $platform = $database->getPlatform();
+        $readlock = trim($platform->getReadLockSQL());
+        $readlock = $readlock ?: trim($platform->appendLockHint('', LockMode::PESSIMISTIC_READ));
+        $writelock = trim($platform->getWriteLockSQL());
+        $writelock = $writelock ?: trim($platform->appendLockHint('', LockMode::PESSIMISTIC_WRITE));
+
+        $parent = $database->createQueryBuilder();
+        $stringify = function (QueryBuilder $parent) use ($database) {
+            return implode("\n", $database->preview(function () use ($parent) { $parent->tuple(); }));
+        };
+
+        // 親で lockInShare すれば伝播する
+        $parent->reset()->lockInShare()->column([
+            'test.*' => [
+                'ddd{id}' => $builder->reset()->column('test1')->setLazyMode()->array()
             ],
-        ]));
+        ])->limit(1);
+        $this->assertEquals(2, substr_count($stringify($parent), $readlock));
+
+        // 親で lockInShare しても子で明示的にしてれば伝播しない
+        $parent->reset()->lockInShare()->column([
+            'test.*' => [
+                'ddd{id}' => $builder->reset()->column('test1')->setLazyMode()->lockForUpdate()->array()
+            ],
+        ])->limit(1);
+        $this->assertEquals(1, substr_count($stringify($parent), $readlock));
+        $this->assertEquals(1, substr_count($stringify($parent), $writelock));
+
+        // そもそも propagateLockMode しなければ伝播しない
+        // そもそも InheritLockMode しなければ伝播しない
+        $parent->reset()->lockForUpdate()->column([
+            'test.*' => [
+                'ddd{id}' => $builder->setPropagateLockMode(false)->reset()->column('test2')->setLazyMode()->array()
+            ],
+        ])->limit(1);
+        $this->assertEquals(0, substr_count($stringify($parent), $readlock));
+        $this->assertEquals(1, substr_count($stringify($parent), $writelock));
     }
 
     /**
@@ -2615,12 +2687,6 @@ SELECT test.* FROM test", $builder);
             ],
         ]);
         $this->assertArrayHasKey('C1', $builder->getSubbuilder());
-
-        $this->assertException("need to 1 or more", L($builder)->column([
-            'test1' => [
-                'test2' => ['*'],
-            ],
-        ]));
     }
 
     /**
@@ -2636,26 +2702,39 @@ SELECT test.* FROM test", $builder);
         $database->insert('foreign_c2', ['cid' => 1, 'seq' => 1, 'name' => 'c2name11']);
         $database->insert('foreign_c2', ['cid' => 1, 'seq' => 2, 'name' => 'c2name12']);
 
-        $builder->setDefaultLazyMode('yield');
-
-        $builder->column([
+        $columns = [
             'foreign_p P' => [
                 'C1'            => $database->foreign_c1('*'),
                 'foreign_c2 C2' => ['*'],
             ],
-        ]);
-        $builder->where(['id' => 1]);
-        $tuple = $builder->tuple();
-        $this->assertInstanceOf(\Generator::class, $tuple['C1']);
-        $this->assertInstanceOf(\Generator::class, $tuple['C2']);
-        $this->assertEquals([
-            1 => ['id' => 1, 'seq' => 1, 'name' => 'c1name11'],
-            2 => ['id' => 1, 'seq' => 2, 'name' => 'c1name12'],
-        ], iterator_to_array($tuple['C1']));
-        $this->assertEquals([
-            1 => ['cid' => 1, 'seq' => 1, 'name' => 'c2name11'],
-            2 => ['cid' => 1, 'seq' => 2, 'name' => 'c2name12'],
-        ], iterator_to_array($tuple['C2']));
+        ];
+        $expected = [
+            'id'   => 1,
+            'name' => 'name1',
+            'C1'   => [
+                1 => ['id' => 1, 'seq' => 1, 'name' => 'c1name11'],
+                2 => ['id' => 1, 'seq' => 2, 'name' => 'c1name12'],
+            ],
+            'C2'   => [
+                1 => ['cid' => 1, 'seq' => 1, 'name' => 'c2name11'],
+                2 => ['cid' => 1, 'seq' => 2, 'name' => 'c2name12'],
+            ],
+        ];
+
+        foreach (QueryBuilder::LAZY_MODES as $mode => $opt) {
+            $actual = $builder->setDefaultLazyMode($mode)->column($columns)->where(['id' => 1])->tuple();
+            if ($opt['generated']) {
+                $this->assertInstanceOf(\Generator::class, $actual['C1']);
+                $this->assertInstanceOf(\Generator::class, $actual['C2']);
+            }
+            else {
+                $this->assertIsArray($actual['C1']);
+                $this->assertIsArray($actual['C2']);
+            }
+            $this->assertEquals($expected, arrayval($actual));
+        }
+
+        $this->assertException('$mode is must be', L($builder)->setLazyMode('hoge'));
     }
 
     /**
@@ -2679,12 +2758,12 @@ SELECT test.* FROM test", $builder);
 
         $builder->column([
             'test' => [
-                'subcol' => $builder->getDatabase()->subselectArray('id', 'test2.name2'),
+                'subcol{id}' => $builder->getDatabase()->subselectArray('test2.name2'),
             ]
         ]);
         $actual = $builder->postselect([
-            ['id' => 1, 'name' => 'a'],
-            ['id' => 2, 'name' => 'b'],
+            ['id' => 1, 'name' => 'a', Database::AUTO_PRIMARY_KEY . 'subcol' => 1],
+            ['id' => 2, 'name' => 'b', Database::AUTO_PRIMARY_KEY . 'subcol' => 2],
         ], true);
         $this->assertEquals([
             [
@@ -3287,54 +3366,6 @@ INNER JOIN t_leaf ON (t_leaf.leaf_root_id = t_root.root_id) AND (t_leaf.leaf_roo
      * @dataProvider provideQueryBuilder
      * @param QueryBuilder $builder
      */
-    function test_addPrimary($builder)
-    {
-        $addPrimary = self::forcedCallize($builder, '_addPrimary');
-
-        $builder->reset()->column('test.id');
-        $added = $addPrimary('alias', ['test.id'], true);
-        $selects = $builder->getQueryPart('select');
-        $this->assertEquals('id', $added);
-        $this->assertEquals('test.id', $selects[0]);
-
-        $builder->reset()->column(['test' => ['alias' => 'id']]);
-        $added = $addPrimary('alias', ['test.id'], true);
-        $selects = $builder->getQueryPart('select');
-        $this->assertEquals('id', $added);
-        $this->assertEquals('test.id AS alias', $selects[0]);
-
-        $builder->reset()->column('test.id');
-        $added = $addPrimary('alias', ['hoge'], true);
-        $selects = $builder->getQueryPart('select');
-        $this->assertEquals('alias', $added);
-        $this->assertEquals('hoge AS alias', $selects[0]);
-        $this->assertEquals('test.id', $selects[1]);
-
-        $builder->reset()->column('test.*');
-        $added = $addPrimary('alias', ['test.id'], true);
-        $selects = $builder->getQueryPart('select');
-        $this->assertEquals('id', $added);
-        $this->assertEquals('test.id', $selects[0]);
-        $this->assertEquals('test.*', $selects[1]);
-
-        $builder->reset()->column('test.id');
-        $added = $addPrimary('alias', ['hoge'], false);
-        $selects = $builder->getQueryPart('select');
-        $this->assertEquals('alias', $added);
-        $this->assertEquals('test.id', $selects[0]);
-        $this->assertEquals('hoge AS alias', $selects[1]);
-
-        $builder->reset()->column('test.*');
-        $added = $addPrimary('alias', ['test.id'], false);
-        $selects = $builder->getQueryPart('select');
-        $this->assertEquals('id', $added);
-        $this->assertEquals('test.*', $selects[0]);
-    }
-
-    /**
-     * @dataProvider provideQueryBuilder
-     * @param QueryBuilder $builder
-     */
     function test_setAutoOrder($builder)
     {
         $builder->setAutoOrder(false);
@@ -3431,8 +3462,8 @@ INNER JOIN t_leaf ON (t_leaf.leaf_root_id = t_root.root_id) AND (t_leaf.leaf_roo
             ]
         ]);
         $query = $builder->queryInto();
-        $this->assertContains('-- (SELECT C1.seq, C1.* FROM foreign_c1 C1 WHERE C1.id IN ([parent.id])) AS C1', $query);
-        $this->assertContains("-- (SELECT C2.seq, NOW('1') AS now FROM foreign_c2 C2 WHERE (C2.seq = '1') AND (C2.cid IN ([parent.id]))) AS C2", $query);
+        $this->assertContains('-- (SELECT C1.* FROM foreign_c1 C1 WHERE C1.id IN ([parent.P.id])) AS C1', $query);
+        $this->assertContains("-- (SELECT C2.seq, NOW('1') AS now FROM foreign_c2 C2 WHERE (C2.seq = '1') AND (C2.cid IN ([parent.P.id]))) AS C2", $query);
 
         $builder->getDatabase()->insert('g_ancestor', [
             'ancestor_id'   => 1,
@@ -3451,25 +3482,25 @@ INNER JOIN t_leaf ON (t_leaf.leaf_root_id = t_root.root_id) AND (t_leaf.leaf_roo
 
         $builder->reset()->addColumn([
             'g_ancestor A' => [
-                'a'          => $builder->getDatabase()->subexists('g_parent'),
-                'g_parent P' => $builder->getDatabase()->subtableTuple([
-                    'a'         => $builder->getDatabase()->subexists('g_child'),
-                    'g_child C' => $builder->getDatabase()->subtableTuple([
-                        'a' => $builder->getDatabase()->subexists('g_parent'),
-                        'child_id',
-                    ], ['child_id' => [1, 2, 3]]),
+                'a' => $builder->getDatabase()->subexists('g_parent'),
+                'P' => $builder->getDatabase()->subselectTuple([
+                    'g_parent' => [
+                        'a' => $builder->getDatabase()->subexists('g_child'),
+                        'C' => $builder->getDatabase()->subselectTuple([
+                            'g_child' => [
+                                'a' => $builder->getDatabase()->subexists('g_parent'),
+                            ]
+                        ], ['child_id' => [1, 2, 3]]),
+                    ]
                 ], ['parent_id' => [1, 2, 3], $builder->getDatabase()->subexists('g_child')]),
             ]
         ]);
         $this->assertEquals([
-            'a'           => '1',
-            'ancestor_id' => '1',
-            'P'           => [
-                'a'         => '1',
-                'parent_id' => '1',
-                'C'         => [
-                    'a'        => '1',
-                    'child_id' => '1',
+            'a' => '1',
+            'P' => [
+                'a' => '1',
+                'C' => [
+                    'a' => '1',
                 ],
             ],
         ], $builder->tuple());

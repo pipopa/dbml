@@ -1614,74 +1614,13 @@ FROM t_article Article", $Article->column([
      * @param TableGateway $gateway
      * @param Database $database
      */
-    function test_sub($gateway, $database)
-    {
-        $t_article = new TableGateway($database, 't_article');
-        $t_comment = new TableGateway($database, 't_comment');
-
-        $rows = $t_article->assoc([
-            'article_id',
-            'comments' => $t_comment->scoping('*', [], ['comment_id' => 'DESC'])->subArray(),
-        ]);
-        $this->assertEquals([
-            1 => [
-                'article_id' => '1',
-                'comments'   => [
-                    [
-                        'comment_id' => '3',
-                        'article_id' => '1',
-                        'comment'    => 'コメント3です',
-                    ],
-                    [
-                        'comment_id' => '2',
-                        'article_id' => '1',
-                        'comment'    => 'コメント2です',
-                    ],
-                    [
-                        'comment_id' => '1',
-                        'article_id' => '1',
-                        'comment'    => 'コメント1です',
-                    ],
-                ],
-            ],
-            2 => [
-                'article_id' => '2',
-                'comments'   => [],
-            ],
-        ], $rows);
-
-        $rows = $t_article->assoc([
-            'article_id',
-            'comments' => $t_comment->scoping(['comment_id', 'comment'], [], ['comment_id' => 'DESC'])->subPairs(),
-        ]);
-        $this->assertEquals([
-            1 => [
-                'article_id' => '1',
-                'comments'   => [
-                    3 => 'コメント3です',
-                    2 => 'コメント2です',
-                    1 => 'コメント1です',
-                ],
-            ],
-            2 => [
-                'article_id' => '2',
-                'comments'   => [],
-            ],
-        ], $rows);
-    }
-
-    /**
-     * @dataProvider provideGateway
-     * @param TableGateway $gateway
-     * @param Database $database
-     */
     function test_subselect($gateway, $database)
     {
         $test1 = new TableGateway($database, 'test1');
         $test2 = new TableGateway($database, 'test2');
 
         $rows = $test1->assoc([
-            'tests2s' => $test2->subselectAssoc('id', '*'),
+            'tests2s{id}' => $test2->subselectAssoc('*'),
         ], ['id' => 1]);
         $this->assertEquals([
             1 => [
@@ -1697,7 +1636,7 @@ FROM t_article Article", $Article->column([
         ], $rows);
 
         $rows = $test1->assoc([
-            'tests2s' => $test2->subselectPairs('id', '*'),
+            'tests2s{id}' => $test2->subselectPairs('*'),
         ], ['id' => 1]);
         $this->assertEquals([
             1 => [

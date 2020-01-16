@@ -14,12 +14,11 @@ namespace {
     use ryunosuke\dbml\Query\Pagination\Paginator;
     use ryunosuke\dbml\Query\Pagination\Sequencer;
     use ryunosuke\dbml\Query\QueryBuilder;
-    use ryunosuke\dbml\Query\SubqueryBuilder;
     use ryunosuke\dbml\Transaction\Transaction;
 
     /**
      * @param $object
-     * @return Database|Schema|QueryBuilder|SubqueryBuilder|TableGateway|Paginator|Sequencer|CompatiblePlatform|Operator|Expression|Entity|Transaction|Yielder|AbstractGenerator
+     * @return Database|Schema|QueryBuilder|TableGateway|Paginator|Sequencer|CompatiblePlatform|Operator|Expression|Entity|Transaction|Yielder|AbstractGenerator
      */
     function L($object)
     {

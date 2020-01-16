@@ -2,6 +2,7 @@
 
 namespace ryunosuke\dbml\Query\Expression;
 
+use ryunosuke\dbml\Database;
 use function ryunosuke\dbml\concat;
 
 /**
@@ -19,6 +20,9 @@ class Alias
 
     /** @var mixed 修飾子 */
     private $modifier;
+
+    /** @var bool 位置確保用のプレースホルダーか */
+    private $placeholdable = false;
 
     /**
      * インスタンスを返す
@@ -72,7 +76,7 @@ class Alias
 
         // エイリアス名が指定されていないならパース
         if ($alen === 0 && is_string($actual)) {
-            list($alias, $actual2) = self::split($actual);
+            [$alias, $actual2] = self::split($actual);
             if ($alias !== null) {
                 return new self($alias, $actual2, $modifier);
             }
@@ -80,7 +84,7 @@ class Alias
 
         // エイリアス名が指定されているならエイリアスとみなす
         if ($alen > 0 && is_string($alias)) {
-            return new self($alias, $actual, $modifier);
+            return new self($alias, $actual, $modifier, strpos($alias, Database::AUTO_KEY) === 0 || $actual === 'NULL');
         }
 
         // じゃないなら実部をそのまま返す
@@ -93,12 +97,14 @@ class Alias
      * @param string $alias エイリアス名
      * @param mixed $actual 実名
      * @param string|null $modifier $actual の修飾子
+     * @param bool $placeholdable 後で伏せられるか
      */
-    public function __construct($alias, $actual, $modifier = null)
+    public function __construct($alias, $actual, $modifier = null, $placeholdable = false)
     {
         $this->alias = $alias;
         $this->actual = $actual;
         $this->modifier = $modifier;
+        $this->placeholdable = $placeholdable;
     }
 
     /**
@@ -144,5 +150,15 @@ class Alias
     public function getModifier()
     {
         return $this->modifier;
+    }
+
+    /**
+     * 自動で伏せるべきか
+     *
+     * @return bool
+     */
+    public function isPlaceholdable()
+    {
+        return $this->placeholdable;
     }
 }

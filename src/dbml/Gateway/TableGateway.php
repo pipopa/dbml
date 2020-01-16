@@ -10,7 +10,6 @@ use ryunosuke\dbml\Mixin\OptionTrait;
 use ryunosuke\dbml\Query\Expression\TableDescriptor;
 use ryunosuke\dbml\Query\QueryBuilder;
 use ryunosuke\dbml\Query\Statement;
-use ryunosuke\dbml\Query\SubqueryBuilder;
 use ryunosuke\dbml\Utility\Adhoc;
 use function ryunosuke\dbml\array_each;
 use function ryunosuke\dbml\array_get;
@@ -49,9 +48,6 @@ use function ryunosuke\dbml\try_finally;
  *
  * // 自身と子供テーブルを階層化して返す
  * $gw->array([
- *     // 紐づく子供を array で取得
- *     'childarray' => $db->child()->subArray(),
- *     // assoc で良いならメソッドは省略できる
  *     'childassoc' => $db->child(),
  * ]);
  *
@@ -487,42 +483,23 @@ use function ryunosuke\dbml\try_finally;
  *     レコード群を[key => value]で少しずつ返す（<@uses Database::yieldPairs()> を参照）
  * }
  *
- * @method SubqueryBuilder        subselectArray($child_columns, $tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
- *     結合列を指定して子供レコード（array）を表すサブビルダを返す（<@uses Database::subselect()> を参照）
+ * @method QueryBuilder           subselectArray($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
+ *     指定して子供レコード（array）を表すサブビルダを返す（<@uses Database::subselect()> を参照）
  * }
- * @method SubqueryBuilder        subselectAssoc($child_columns, $tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
- *     結合列を指定して子供レコード（assoc）を表すサブビルダを返す（<@uses Database::subselect()> を参照）
+ * @method QueryBuilder           subselectAssoc($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
+ *     指定して子供レコード（assoc）を表すサブビルダを返す（<@uses Database::subselect()> を参照）
  * }
- * @method SubqueryBuilder        subselectLists($child_columns, $tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
- *     結合列を指定して子供レコード（lists）を表すサブビルダを返す（<@uses Database::subselect()> を参照）
+ * @method QueryBuilder           subselectLists($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
+ *     指定して子供レコード（lists）を表すサブビルダを返す（<@uses Database::subselect()> を参照）
  * }
- * @method SubqueryBuilder        subselectPairs($child_columns, $tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
- *     結合列を指定して子供レコード（pairs）を表すサブビルダを返す（<@uses Database::subselect()> を参照）
+ * @method QueryBuilder           subselectPairs($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
+ *     指定して子供レコード（pairs）を表すサブビルダを返す（<@uses Database::subselect()> を参照）
  * }
- * @method SubqueryBuilder        subselectTuple($child_columns, $tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
- *     結合列を指定して子供レコード（tuple）を表すサブビルダを返す（<@uses Database::subselect()> を参照）
+ * @method QueryBuilder           subselectTuple($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
+ *     指定して子供レコード（tuple）を表すサブビルダを返す（<@uses Database::subselect()> を参照）
  * }
- * @method SubqueryBuilder        subselectValue($child_columns, $tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
- *     結合列を指定して子供レコード（value）を表すサブビルダを返す（<@uses Database::subselect()> を参照）
- * }
- *
- * @method SubqueryBuilder        subArray($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
- *     外部キーを利用して子供レコード（array）を表すサブビルダを返す（<@uses Database::subselect()> を参照）
- * }
- * @method SubqueryBuilder        subAssoc($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
- *     外部キーを利用して子供レコード（assoc）を表すサブビルダを返す（<@uses Database::subselect()> を参照）
- * }
- * @method SubqueryBuilder        subLists($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
- *     外部キーを利用して子供レコード（lists）を表すサブビルダを返す（<@uses Database::subselect()> を参照）
- * }
- * @method SubqueryBuilder        subPairs($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
- *     外部キーを利用して子供レコード（pairs）を表すサブビルダを返す（<@uses Database::subselect()> を参照）
- * }
- * @method SubqueryBuilder        subTuple($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
- *     外部キーを利用して子供レコード（tuple）を表すサブビルダを返す（<@uses Database::subselect()> を参照）
- * }
- * @method SubqueryBuilder        subValue($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
- *     外部キーを利用して子供レコード（value）を表すサブビルダを返す（<@uses Database::subselect()> を参照）
+ * @method QueryBuilder           subselectValue($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
+ *     指定して子供レコード（value）を表すサブビルダを返す（<@uses Database::subselect()> を参照）
  * }
  *
  * @method QueryBuilder           select($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
@@ -852,8 +829,7 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
         }
 
         // スコープを当てた後に Database への移譲で済むもの系
-        $methods = implode('|', array_keys(Database::METHODS));
-        if (preg_match("#^((prepare)?select|select(count|min|max|sum|avg)|sub($methods)|(not)?subexists|sub(query|count|min|max|sum|avg)|_count|min|max|sum|avg)$#ui", $name)) {
+        if (preg_match("#^((prepare)?select|select(count|min|max|sum|avg)|(not)?subexists|sub(query|count|min|max|sum|avg)|_count|min|max|sum|avg)$#ui", $name)) {
             // Countable のために別メソッドにしているので読み替え
             if (strcasecmp($name, '_count') === 0) {
                 $name = 'count';
@@ -881,7 +857,7 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
 
         // subselect 系
         if (preg_match('/^subselect?(.+?)$/ui', $name, $matches)) {
-            return $this->database->$name(array_shift($arguments), ...array_values($this->getScopeParams(...$arguments)));
+            return $this->database->$name(...array_values($this->getScopeParams(...$arguments)));
         }
 
         // find メソッド（tuple メソッドの特別版とみなせる）

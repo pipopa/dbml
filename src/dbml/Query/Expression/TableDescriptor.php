@@ -5,7 +5,6 @@ namespace ryunosuke\dbml\Query\Expression;
 use ryunosuke\dbml\Database;
 use ryunosuke\dbml\Gateway\TableGateway;
 use ryunosuke\dbml\Query\QueryBuilder;
-use ryunosuke\dbml\Query\SubqueryBuilder;
 use ryunosuke\dbml\Utility\Adhoc;
 use function ryunosuke\dbml\array_each;
 use function ryunosuke\dbml\array_put;
@@ -438,7 +437,7 @@ class TableDescriptor
         if ($this->alias === null && $this->table !== $table) {
             $this->alias = $table;
         }
-        if ($cols instanceof QueryBuilder && !$cols instanceof SubqueryBuilder) {
+        if ($cols instanceof QueryBuilder) {
             if ($cols->getSubmethod() === null) {
                 $this->alias = $table;
                 $this->table = $cols;
@@ -542,12 +541,12 @@ class TableDescriptor
                     continue;
                 }
 
-                // 配列を入れることで subtable に移譲する
+                // 配列を入れることで subselect に移譲する
                 $subcol = $database->convertEntityName($ltable);
                 $subcols[$subcol][$fkey->getName()] = [$m[1]];
             }
         }
-        // **+ カラムの処理2パス目（集めたカラムを subtable として代入。複数外部キーを考慮するとどうしても2パス必要）
+        // **+ カラムの処理2パス目（集めたカラムを subselect として代入。複数外部キーを考慮するとどうしても2パス必要）
         foreach ($subcols as $subcol => $scols) {
             $suffix = count($scols) > 1;
             foreach ($scols as $fname => $fcol) {
