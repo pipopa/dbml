@@ -139,13 +139,6 @@ use ryunosuke\dbml\Utility\Adhoc;
  * 値のエスケープに関しては基本的には安全側に倒しているが、 {@link Expression} を使用する場合はその前提が崩れる事がある（ `()` を含むエントリは自動で Expression 化されるので同じ）。
  * 原則的に外部入力を Expression 化したり、値以外の入力として使用するのは全く推奨できない。
  *
- * @method array                  getDefaultEntity()
- * @method $this                  setDefaultEntity(array $array) {
- *     デフォルトエンティティ兼コンストラクタ引数を指定する
- *
- *     entityMapper でマッピングしたテーブルはそのエンティティ名が使用されるが、未設定だったり null を返したりすると、この設定に応じてデフォルトエンティティを返す。
- *     キーがクラス名、値がコンストラクタ引数になる。
- * }
  * @method bool                   getInsertSet()
  * @method $this                  setInsertSet($bool)
  * @method bool                   getFilterNoExistsColumn()
@@ -675,8 +668,6 @@ class Database
             'cacheProvider'        => new ArrayCache(),
             // 初期化後の SQL コマンド（mysql@PDO でいう MYSQL_ATTR_INIT_COMMAND）
             'initCommand'          => null,
-            // デフォルトエンティティクラス名
-            'defaultEntity'        => [Entity::class => function ($database) { return [$database]; }],
             // 拡張 INSERT SET 構文を使うか否か（mysql 以外は無視される）
             'insertSet'            => false,
             // insert 時などにテーブルに存在しないカラムを自動でフィルタするか否か
@@ -2068,10 +2059,9 @@ class Database
      * テーブル名からエンティティクラス名を取得する
      *
      * @param string|array $tablename テーブル名
-     * @param bool $use_default 見つからなかった場合にデフォルトエンティティクラスを使うか
      * @return string|false エンティティクラス名
      */
-    public function getEntityClass($tablename, $use_default = false)
+    public function getEntityClass($tablename)
     {
         foreach ((array) $tablename as $tn) {
             $map = $this->_entityMap()['class'];
@@ -2080,24 +2070,7 @@ class Database
                 return $map[$tn];
             }
         }
-        if ($use_default) {
-            return first_key($this->getDefaultEntity());
-        }
-        return false;
-    }
-
-    /**
-     * エンティティクラスのコンストラクタ引数を取得する
-     *
-     * @return array コンストラクタ引数
-     */
-    public function getEntityArgument()
-    {
-        $args = first_value($this->getDefaultEntity());
-        if (is_callable($args)) {
-            $args = $args($this);
-        }
-        return $args;
+        return Entity::class;
     }
 
     /**
@@ -4556,7 +4529,7 @@ class Database
         if ($table !== $tablename) {
             $entityClass = $this->getEntityClass($table);
             /** @var Entityable $entity */
-            $entity = new $entityClass(...$this->getEntityArgument());
+            $entity = new $entityClass();
             $record = $entity->assign($record);
         }
 

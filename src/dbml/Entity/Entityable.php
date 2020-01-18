@@ -15,12 +15,12 @@ interface Entityable extends \ArrayAccess
      * @param array $fields 元配列
      * @return $this 自分自身
      */
-    public function assign($fields);
+    public function assign(array $fields): Entityable;
 
     /**
      * 子要素も含めて再帰的に配列化する
      *
      * @return array プロパティを配列化したもの
      */
-    public function arrayize();
+    public function arrayize(): array;
 }

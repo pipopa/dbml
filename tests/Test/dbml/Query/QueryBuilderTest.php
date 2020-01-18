@@ -108,12 +108,10 @@ class QueryBuilderTest extends \ryunosuke\Test\AbstractUnitTestCase
         $row = call_user_func($builder->cast(Entity::class)->getCaster(), ['c' => 'v']);
         $this->assertInstanceOf(Entity::class, $row);
         $this->assertEquals(['c' => 'v'], $row->arrayize());
-        $this->assertSame($builder->getDatabase(), $row->getDatabase());
 
-        $row = call_user_func($builder->cast([Entity::class => [self::getDummyDatabase()]])->getCaster(), ['c' => 'v']);
+        $row = call_user_func($builder->cast(Entity::class)->getCaster(), ['c' => 'v']);
         $this->assertInstanceOf(Entity::class, $row);
         $this->assertEquals(['c' => 'v'], $row->arrayize());
-        $this->assertSame(self::getDummyDatabase(), $row->getDatabase());
 
         $row = call_user_func($builder->cast(function ($row) { return $row; })->getCaster(), ['c' => 'v']);
         $this->assertIsArray($row);
@@ -130,9 +128,6 @@ class QueryBuilderTest extends \ryunosuke\Test\AbstractUnitTestCase
         $subuilder = $builder->getSubbuilder('Comment');
         $row = call_user_func($subuilder->getCaster(), ['c' => 'v']);
         $this->assertInstanceOf(\ryunosuke\Test\Entity\Comment::class, $row);
-
-        $this->assertException(new \InvalidArgumentException('nested array'), L($builder)->cast([]));
-        $this->assertException(new \InvalidArgumentException('nested array'), L($builder)->cast(['t' => 'u']));
 
         $this->assertException(new \InvalidArgumentException('is not exists'), L($builder)->cast('NotFound'));
 

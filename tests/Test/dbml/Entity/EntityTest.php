@@ -8,7 +8,7 @@ class EntityTest extends \ryunosuke\Test\AbstractUnitTestCase
 {
     function test___call()
     {
-        $entity = new Entity(self::getDummyDatabase());
+        $entity = new Entity();
         $entity->assign([
             'func' => function ($arg) { return strtoupper($arg); },
         ]);
@@ -16,22 +16,57 @@ class EntityTest extends \ryunosuke\Test\AbstractUnitTestCase
         @$this->assertEquals('XXX', $entity->func('xxx'));
     }
 
-    function test_getDatabase()
+    function test_PropertyAccess()
     {
-        $db = self::getDummyDatabase();
-        $entity = new Entity($db);
-        $this->assertSame($db, $entity->getDatabase());
+        $entity = new Entity();
+        $this->assertFalse(isset($entity['a']));
+        $entity['a'] = 'A';
+        $this->assertTrue(isset($entity['a']));
+        $this->assertEquals('A', $entity['a']);
+        unset($entity['a']);
+        $this->assertFalse(isset($entity['a']));
+    }
 
-        $cdb = self::getDummyDatabase()->dryrun();
-        $entity = new Entity($cdb);
-        $this->assertSame($db, $entity->getDatabase());
+    function test_ArrayAccess()
+    {
+        $entity = new Entity();
+        $this->assertFalse(isset($entity->a));
+        $entity->a = 'A';
+        $this->assertTrue(isset($entity->a));
+        $this->assertEquals('A', $entity->a);
+        unset($entity->a);
+        $this->assertFalse(isset($entity->a));
+    }
+
+    function test_foreach()
+    {
+        $entity = new Entity();
+        $entity->a = 'A';
+        $entity->b = 'B';
+        $entity->c = 'C';
+        $this->assertEquals([
+            'a' => 'A',
+            'b' => 'B',
+            'c' => 'C',
+        ], iterator_to_array($entity));
+    }
+
+    function test_jsonSerialize()
+    {
+        $entity = new Entity();
+        $entity->a = 'A';
+        $entity->x = [
+            (new Entity())->assign(['x' => 'X']),
+            (new Entity())->assign(['y' => 'Y']),
+        ];
+        $this->assertEquals('{"a":"A","x":[{"x":"X"},{"y":"Y"}]}', json_encode($entity));
     }
 
     function test_arrayize()
     {
-        $child = new Entity(self::getDummyDatabase());
+        $child = new Entity();
         $child->assign(['cid' => 1, 'name' => 'this is child']);
-        $parent = new Entity(self::getDummyDatabase());
+        $parent = new Entity();
         $parent->assign(['pid' => 1, 'name' => 'this is parent', 'children' => [$child]]);
         $this->assertEquals([
             'pid'      => 1,
@@ -43,39 +78,5 @@ class EntityTest extends \ryunosuke\Test\AbstractUnitTestCase
                 ],
             ],
         ], $parent->arrayize());
-    }
-
-    function test_offsetExists()
-    {
-        $entity = new Entity(self::getDummyDatabase());
-        $entity->a = 'A';
-        $this->assertTrue(isset($entity['a']));
-        $this->assertFalse(isset($entity['X']));
-    }
-
-    function test_offsetGet()
-    {
-        $entity = new Entity(self::getDummyDatabase());
-        $entity->a = 'A';
-        $this->assertEquals('A', $entity['a']);
-        @$this->assertEquals(null, $entity['X']);
-    }
-
-    function test_offsetSet()
-    {
-        $entity = new Entity(self::getDummyDatabase());
-        $entity->a = 'A';
-        $entity['a'] = 'AA';
-        $entity['b'] = 'BB';
-        $this->assertEquals('AA', $entity['a']);
-        $this->assertEquals('BB', $entity['b']);
-    }
-
-    function test_offsetUnset()
-    {
-        $entity = new Entity(self::getDummyDatabase());
-        $entity->a = 'A';
-        unset($entity['a']);
-        @$this->assertEquals(null, $entity['a']);
     }
 }

@@ -782,15 +782,13 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
     {
         // 存在するならそれのはず
         $this->assertEquals(Article::class, $database->getEntityClass('t_article'));
-        // 存在しないならfalseのはず
-        $this->assertEquals(false, $database->getEntityClass('test'));
-        // default:trueならEntityのはず
-        $this->assertEquals(Entity::class, $database->getEntityClass('test', true));
+        // 存在しないならEntityのはず
+        $this->assertEquals(Entity::class, $database->getEntityClass('test'));
 
         // 複数を投げると先に見つかった方を返す
-        $this->assertEquals(Article::class, $database->getEntityClass(['t_article', 't_comment'], true));
-        $this->assertEquals(Comment::class, $database->getEntityClass(['t_comment', 't_article'], true));
-        $this->assertEquals(Entity::class, $database->getEntityClass(['t_not1', 't_not2'], true));
+        $this->assertEquals(Article::class, $database->getEntityClass(['t_article', 't_comment']));
+        $this->assertEquals(Comment::class, $database->getEntityClass(['t_comment', 't_article']));
+        $this->assertEquals(Entity::class, $database->getEntityClass(['t_not1', 't_not2']));
 
         // 直クラス名でも引ける(自動エイリアス機能で t_article は Article と読み替えられるのでどちらでも引けるようにしてある)
         $this->assertEquals(Article::class, $database->getEntityClass('Article'));
@@ -2011,7 +2009,7 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
      */
     function test_fetch_mode($database)
     {
-        $select = $database->select('test')->limit(1)->cast([Entity::class => [self::getDummyDatabase()]]);
+        $select = $database->select('test')->limit(1)->cast(Entity::class);
         $this->assertInstanceOf(Entity::class, $select->tuple());
     }
 

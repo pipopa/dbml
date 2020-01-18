@@ -1061,17 +1061,15 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
      * 取得クラスを指定。クラス名ならそのクラスで、コールバックならそれの呼び出し、になる
      *
      * このメソッドを使うとこのインスタンスが返すレコード配列の型を指定できる。
-     * 指定の方法は大まかには下記の5種類。
+     * 指定の方法は大まかには下記の4種類。
      *
      * 1. callable （行配列を受け取るクロージャ）
      *     - 最も汎用性がある
      * 2. クラス名
      *     - 与えたクラスのインスタンスで返却されるようになる
-     * 3. クラス名 => コンストラクタパラメータ
-     *     - 上記とほぼ同じだが、コンストラクタパラメータを指定できる
-     * 4. null （あるいは未指定）
+     * 3. null （あるいは未指定）
      *     - 駆動表から導き出されるエンティティクラスで返却されるようになる（指定がない場合はデフォルトエンティティ）
-     * 5. "array" という文字列
+     * 4. "array" という文字列
      *     - 配列で返却するようになる（実質的に解除動作として動作する）
      *
      * ```php
@@ -1086,23 +1084,19 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
      * $qb->column('table_name')->cast(EntityClass::class);
      * // table_name のレコードを EntityClass インスタンスで返すようになる
      *
-     * # 3. クラス名 => コンストラクタパラメータ
-     * $qb->column('table_name')->cast([EntityClass::class => ['somthing']]);
-     * // table_name のレコードを EntityClass インスタンスで返すようになる（そのインスタンスは 'something' でコンストラクタがコールされる）
-     *
-     * # 4. null（省略）
+     * # 3. null（省略）
      * $qb->column('table_name')->cast();
      * // table_name のレコードを TableName インスタンスで返すようになる（駆動表 -> エンティティ名は Database に対して指定する）
      *
-     * # 5. "array"
+     * # 4. "array"
      * $qb->column('table_name')->cast("array");
-     * // 何もしなかった場合と変わらない。が、上記の 1～4 で設定したものを解除できるという重要な役割がある
+     * // 何もしなかった場合と変わらない。が、上記の 1～3 で設定したものを解除できるという重要な役割がある
      * ```
      *
      * なお、 このメソッドを呼んでも、 `lists` や `pairs` には一切影響しない。
      * これらは配列を返すメソッドであり、「レコード」という概念が通用しない。 `value` もスカラー値なので同様。
      *
-     * @param string|array|callable $classname 取得クラス
+     * @param null|string|callable $classname 取得クラス
      * @return $this 自分自身
      */
     public function cast($classname = null)
@@ -1112,7 +1106,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
             $froms = $this->getFromPart();
             $from = reset($froms);
             $from = $from === false ? [] : $from;
-            $classname = $this->database->getEntityClass([$from['alias'] ?? null, $from['table'] ?? null], true);
+            $classname = $this->database->getEntityClass([$from['alias'] ?? null, $from['table'] ?? null]);
             foreach ($this->subbuilders as $subselect) {
                 $subselect->cast(null);
             }
@@ -1130,28 +1124,15 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
             return $this;
         }
 
-        $cname = $classname;
-        $ctorargs = $this->database->getEntityArgument();
-
-        if (is_array($classname)) {
-            if (count($classname) !== 1) {
-                throw new \InvalidArgumentException('$classname array must be nested array (class => ctorargs).');
-            }
-            list($cname, $ctorargs) = first_keyvalue($classname);
-            if (!is_array($ctorargs)) {
-                throw new \InvalidArgumentException('$classname array must be nested array (class => ctorargs).');
-            }
+        if (!class_exists($classname)) {
+            throw new \InvalidArgumentException("class '$classname' is not exists.");
         }
 
-        if (!class_exists($cname)) {
-            throw new \InvalidArgumentException("class '$cname' is not exists.");
+        if (!is_subclass_of($classname, Entityable::class)) {
+            throw new \InvalidArgumentException("'$classname' must be implements Entityable.");
         }
 
-        if (!is_subclass_of($cname, Entityable::class)) {
-            throw new \InvalidArgumentException('$classname must be implements Entityable.');
-        }
-
-        $this->caster = [$cname => $ctorargs];
+        $this->caster = $classname;
         return $this;
     }
 
@@ -1170,11 +1151,11 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
         if (is_callable($this->caster)) {
             return $this->caster;
         }
-        if (is_array($this->caster)) {
-            list($ft, $ctorargs) = first_keyvalue($this->caster);
-            return function ($row) use ($ft, $ctorargs) {
+        if (is_string($this->caster)) {
+            $caster = $this->caster;
+            return function ($row) use ($caster) {
                 /** @var Entityable $entity */
-                $entity = new $ft(...$ctorargs);
+                $entity = new $caster();
                 return $entity->assign($row);
             };
         }

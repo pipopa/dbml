@@ -2,72 +2,79 @@
 
 namespace ryunosuke\dbml\Entity;
 
-use ryunosuke\dbml\Database;
+use JsonSerializable;
+use function ryunosuke\dbml\arrayval;
 
 /**
  * 組み込みのデフォルトエンティティクラス
  */
-class Entity implements Entityable
+class Entity implements Entityable, \IteratorAggregate, JsonSerializable
 {
-    /** @var Database これをどう使うかは自由。うまく使えば ActiveRecord のような実装もできるはず */
-    private $database;
-
-    public function __construct(Database $database)
-    {
-        $this->database = $database->getOriginal();
-    }
+    private $fields = [];
 
     public function __call($name, $arguments)
     {
-        return ($this->$name)(...$arguments);
+        return ($this->offsetGet($name))(...$arguments);
     }
 
-    public function getDatabase()
+    public function __isset($name)
     {
-        return $this->database;
+        return $this->offsetExists($name);
+    }
+
+    public function __unset($name)
+    {
+        return $this->offsetUnset($name);
+    }
+
+    public function __get($name)
+    {
+        return $this->offsetGet($name);
+    }
+
+    public function __set($name, $value)
+    {
+        return $this->offsetSet($name, $value);
     }
 
     public function offsetExists($offset)
     {
-        return isset($this->$offset);
-    }
-
-    public function offsetGet($offset)
-    {
-        return $this->$offset;
-    }
-
-    public function offsetSet($offset, $value)
-    {
-        $this->$offset = $value;
+        return array_key_exists($offset, $this->fields);
     }
 
     public function offsetUnset($offset)
     {
-        unset($this->$offset);
+        unset($this->fields[$offset]);
     }
 
-    public function assign($fields)
+    public function offsetGet($offset)
     {
-        foreach ($fields as $k => $v) {
-            $this->$k = $v;
-        }
+        return $this->fields[$offset];
+    }
+
+    public function offsetSet($offset, $value)
+    {
+        $this->fields[$offset] = $value;
+    }
+
+    public function getIterator()
+    {
+        yield from $this->fields;
+    }
+
+    public function jsonSerialize()
+    {
+        return $this->fields;
+    }
+
+    public function assign(array $fields): Entityable
+    {
+        $this->fields = $fields;
         return $this;
     }
 
-    public function arrayize()
+    public function arrayize(): array
     {
-        $result = get_object_vars($this);
-        unset($result['database']);
-        foreach ($result as $k => $v) {
-            if (is_array($v)) {
-                foreach ($v as $ck => $cv) {
-                    if ($cv instanceof Entityable) {
-                        $result[$k][$ck] = $cv->arrayize();
-                    }
-                }
-            }
-        }
-        return $result;
+        return arrayval($this->fields);
     }
 }
