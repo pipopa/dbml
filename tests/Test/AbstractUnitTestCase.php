@@ -386,22 +386,27 @@ abstract class AbstractUnitTestCase extends TestCase
         return self::$databases ?: self::$databases = array_map(function ($v) {
             return [
                 new Database($v[0], [
-                    'entityMapper'  => static function ($tablename) {
+                    'tableMapper' => static function ($tablename) {
                         if ($tablename === 't_article') {
-                            return \ryunosuke\Test\Entity\Article::class;
+                            return [
+                                'Article' => [
+                                    'entityClass'  => \ryunosuke\Test\Entity\Article::class,
+                                    'gatewayClass' => \ryunosuke\Test\Gateway\Article::class,
+                                ],
+                            ];
                         }
                         if ($tablename === 't_comment') {
-                            return \ryunosuke\Test\Entity\Comment::class;
+                            return [
+                                'Comment'        => [
+                                    'entityClass'  => \ryunosuke\Test\Entity\Comment::class,
+                                    'gatewayClass' => \ryunosuke\Test\Gateway\Comment::class,
+                                ],
+                                'ManagedComment' => [
+                                    'entityClass'  => \ryunosuke\Test\Entity\ManagedComment::class,
+                                    'gatewayClass' => \ryunosuke\Test\Gateway\Comment::class,
+                                ],
+                            ];
                         }
-                    },
-                    'gatewayMapper' => static function ($tablename) {
-                        if ($tablename === 't_article') {
-                            return \ryunosuke\Test\Gateway\Article::class;
-                        }
-                        if ($tablename === 't_comment') {
-                            return \ryunosuke\Test\Gateway\Comment::class;
-                        }
-                        return \ryunosuke\Test\Gateway\TableGateway::class;
                     },
                 ])
             ];

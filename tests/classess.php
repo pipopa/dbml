@@ -218,6 +218,14 @@ namespace ryunosuke\Test\Entity {
     class Comment extends \ryunosuke\dbml\Entity\Entity
     {
     }
+
+    /**
+     * @mixin \Annotation\CommentEntity
+     * @property Article $Article
+     */
+    class ManagedComment extends \ryunosuke\dbml\Entity\Entity
+    {
+    }
 }
 
 namespace ryunosuke\Test\Platforms {

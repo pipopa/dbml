@@ -668,6 +668,8 @@ class Database
             'cacheProvider'        => new ArrayCache(),
             // 初期化後の SQL コマンド（mysql@PDO でいう MYSQL_ATTR_INIT_COMMAND）
             'initCommand'          => null,
+            // テーブル名 => Entity クラス名のコンバータ
+            'tableMapper'          => function ($table) { return pascal_case($table); },
             // 拡張 INSERT SET 構文を使うか否か（mysql 以外は無視される）
             'insertSet'            => false,
             // insert 時などにテーブルに存在しないカラムを自動でフィルタするか否か
@@ -752,10 +754,6 @@ class Database
             ],
             // ロギングオブジェクト（SQLLogger）
             'logger'               => null,
-            // テーブル名 => Entity クラス名のコンバータ
-            'entityMapper'         => null,
-            // テーブル名 => Gateway クラス名のコンバータ
-            'gatewayMapper'        => null,
         ];
 
         // 他クラスのオプションをマージ
@@ -947,8 +945,7 @@ class Database
         }
 
         if (!isset($this->cache['gateway'][$name])) {
-            $gatewayMapper = $this->getUnsafeOption('gatewayMapper');
-            $classname = ($gatewayMapper ? $gatewayMapper($tablename) : null) ?: TableGateway::class;
+            $classname = $this->getGatewayClass($name);
             $this->cache['gateway'][$name] = new $classname($this, $tablename, $tablename === $name ? null : $name);
         }
         return $this->cache['gateway'][$name];
@@ -1098,50 +1095,55 @@ class Database
         return $properties;
     }
 
-    private function _entityMap()
+    private function _tableMap()
     {
-        $entityMapper = $this->getUnsafeOption('entityMapper');
-        if (!is_callable($entityMapper)) {
-            return [
-                'class' => [],
-                'TtoE'  => [],
-                'EtoT'  => [],
-            ];
-        }
-
         /** @var CacheProvider $cacher */
         $cacher = $this->getUnsafeOption('cacheProvider');
-        $map = $cacher->fetch('@entityMap');
-        if ($map === false) {
-            $map = [
-                'class' => [],
-                'TtoE'  => [],
-                'EtoT'  => [],
+        $maps = $cacher->fetch('@tableMap');
+        if ($maps === false) {
+            $maps = [
+                'entityClass'  => [],
+                'gatewayClass' => [],
+                'EtoT'         => [],
+                'TtoE'         => [],
             ];
+            $defaultEntity = namespace_split(Entity::class)[0];
+            $defaultGateway = namespace_split(TableGateway::class)[0];
+            $tableMapper = $this->getUnsafeOption('tableMapper');
             foreach ($this->getSchema()->getTableNames() as $tablename) {
-                $entityclass = $entityMapper($tablename);
-                if ($entityclass === null) {
+                $map = $tableMapper($tablename);
+                if ($map === null) {
                     continue;
                 }
-                $entityname = class_shorten($entityclass);
-                $map['class'][$entityname] = $entityclass;
-
-                // テーブル名とエンティティ名が一致してはならない
-                if (isset($map['TtoE'][$tablename]) || isset($map['EtoT'][$tablename])) {
-                    throw new \DomainException("'$tablename' is already defined.");
+                if (is_string($map)) {
+                    $map = [$map => []];
                 }
-                $map['TtoE'][$tablename] = $entityname;
 
-                // 同じエンティティ名があってはならない
-                if (isset($map['EtoT'][$entityname]) || isset($map['TtoE'][$entityname])) {
-                    throw new \DomainException("'$entityname' is already defined.");
+                foreach ($map as $entityname => $class) {
+                    // テーブル名とエンティティ名が一致してはならない
+                    if (isset($maps['EtoT'][$tablename])) {
+                        throw new \DomainException("'$tablename' is already defined.");
+                    }
+                    // 同じエンティティ名があってはならない
+                    if (isset($maps['EtoT'][$entityname])) {
+                        throw new \DomainException("'$entityname' is already defined.");
+                    }
+
+                    $class += [
+                        'entityClass'  => "$defaultEntity\\$entityname",
+                        'gatewayClass' => "$defaultGateway\\$entityname",
+                    ];
+
+                    $maps['entityClass'][$entityname] = class_exists($class['entityClass']) ? $class['entityClass'] : null;
+                    $maps['gatewayClass'][$tablename] = class_exists($class['gatewayClass']) ? $class['gatewayClass'] : null;
+                    $maps['EtoT'][$entityname] = $tablename;
+                    $maps['TtoE'][$tablename][] = $entityname;
                 }
-                $map['EtoT'][$entityname] = $tablename;
             }
-            $cacher->save('@entityMap', $map);
+            $cacher->save('@tableMap', $maps);
         }
 
-        return $map;
+        return $maps;
     }
 
     private function _doFetch($sql, iterable $params, $method)
@@ -1653,7 +1655,7 @@ class Database
     /**
      * コード補完用のアノテーションコメントを取得する
      *
-     * 存在するテーブル名や entityMapper、gatewayMapper などを利用してアノテーションコメントを作成する。
+     * 存在するテーブル名や tableMapper を利用してアノテーションコメントを作成する。
      * このメソッドで得られたコメントを基底クラスなどに貼り付ければ補完が効くようになる。
      *
      * @param string|array 除外テーブル名（fnmatch で除外される）
@@ -1688,7 +1690,7 @@ class Database
     /**
      * コード補完用のアノテーショントレイトを取得する
      *
-     * 存在するテーブル名や entityMapper、gatewayMapper などを利用して mixin 用のトレイトを作成する。
+     * 存在するテーブル名や tableMapper などを利用して mixin 用のトレイトを作成する。
      * このメソッドが吐き出したトレイトを `@ mixin Hogera` などとすると補完が効くようになる。
      *
      * @param string $namespace トレイト群の名前空間。未指定だとグローバル
@@ -2063,14 +2065,28 @@ class Database
      */
     public function getEntityClass($tablename)
     {
+        $map = $this->_tableMap()['entityClass'];
         foreach ((array) $tablename as $tn) {
-            $map = $this->_entityMap()['class'];
-            $tn = $this->convertEntityName($tn);
-            if (isset($map[$tn]) && class_exists($map[$tn])) {
-                return $map[$tn];
+            foreach ((array) $this->convertEntityName($tn) as $t) {
+                if (isset($map[$t])) {
+                    return $map[$t];
+                }
             }
         }
         return Entity::class;
+    }
+
+    /**
+     * テーブル名からゲートウェイクラス名を取得する
+     *
+     * @param string $tablename テーブル名
+     * @return string ゲートウェイクラス名
+     */
+    public function getGatewayClass($tablename)
+    {
+        $map = $this->_tableMap()['gatewayClass'];
+        $tablename = $this->convertTableName($tablename);
+        return $map[$tablename] ?? TableGateway::class;
     }
 
     /**
@@ -2081,20 +2097,22 @@ class Database
      */
     public function convertTableName($entityname)
     {
-        $map = $this->_entityMap()['EtoT'];
+        $map = $this->_tableMap()['EtoT'];
         return $map[$entityname] ?? $entityname;
     }
 
     /**
      * テーブル名からエンティティ名へ変換する
      *
+     * 複数のマッピングがあるときは最初の名前を返す。
+     *
      * @param string $tablename テーブル名
      * @return string エンティティ名
      */
     public function convertEntityName($tablename)
     {
-        $map = $this->_entityMap()['TtoE'];
-        return $map[$tablename] ?? $tablename;
+        $map = $this->_tableMap()['TtoE'];
+        return first_value($map[$tablename] ?? []) ?: $tablename;
     }
 
     /**

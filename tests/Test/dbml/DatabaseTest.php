@@ -26,6 +26,7 @@ use ryunosuke\dbml\Transaction\Transaction;
 use ryunosuke\Test\Database;
 use ryunosuke\Test\Entity\Article;
 use ryunosuke\Test\Entity\Comment;
+use ryunosuke\Test\Entity\ManagedComment;
 use function ryunosuke\dbml\array_order;
 use function ryunosuke\dbml\mkdir_p;
 use function ryunosuke\dbml\rm_rf;
@@ -821,55 +822,50 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
         $cacher = $database->getOption('cacheProvider');
 
         // 前処理
-        $cacher->delete('@entityMap');
-        $backup = $database->getOption('entityMapper');
-        $entityMap = self::forcedCallize($database, '_entityMap');
-
-        // Mapper 未設定なら null のはず
-        $database->setOption('entityMapper', []);
-        $this->assertEquals([
-            'class' => [],
-            'TtoE'  => [],
-            'EtoT'  => [],
-        ], $entityMap());
+        $cacher->delete('@tableMap');
+        $backup = $database->getOption('tableMapper');
+        $tableMap = self::forcedCallize($database, '_tableMap');
 
         // 同じエンティティ名を返すような実装だと例外が飛ぶはず
-        $database->setOption('entityMapper', function ($tablename) {
+        $database->setOption('tableMapper', function ($tablename) {
             if ($tablename === 'test') {
                 return null;
             }
             return 'hoge';
         });
-        $this->assertException('is already defined', $entityMap);
+        $this->assertException('is already defined', $tableMap);
 
         // テーブル名とエンティティが一致しても例外が飛ぶはず
-        $database->setOption('entityMapper', function ($tablename) {
+        $database->setOption('tableMapper', function ($tablename) {
             return $tablename . '1';
         });
-        $this->assertException('already defined', $entityMap);
+        $this->assertException('already defined', $tableMap);
 
         // null を返せば除外される
-        $database->setOption('entityMapper', function ($tablename) {
+        $database->setOption('tableMapper', function ($tablename) {
             if ($tablename === 'test') {
                 return 'TestClass';
             }
             return null;
         });
         $this->assertEquals([
-            'class' => [
-                'TestClass' => 'TestClass',
+            'entityClass'  => [
+                'TestClass' => null,
             ],
-            'TtoE'  => [
-                'test' => 'TestClass',
+            'gatewayClass' => [
+                'test' => null,
             ],
-            'EtoT'  => [
-                'TestClass' => 'test',
+            'EtoT'         => [
+                'TestClass' => 'test'
             ],
-        ], $entityMap());
+            'TtoE'         => [
+                'test' => ['TestClass']
+            ],
+        ], $tableMap());
 
         // 後処理
-        $cacher->delete('@entityMap');
-        $database->setOption('entityMapper', $backup);
+        $cacher->delete('@tableMap');
+        $database->setOption('tableMapper', $backup);
     }
 
     /**
@@ -2016,6 +2012,15 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
      */
     function test_fetch_entity($database)
     {
+        // 明示的に指定されているときは伝播しない
+        $row = $database->select([
+            't_article.*' => [
+                'children' => $database->subselectAssoc('t_comment ManagedComment'),
+            ]
+        ])->limit(1)->cast()->tuple();
+        $this->assertInstanceOf(Article::class, $row);
+        $this->assertContainsOnlyInstancesOf(ManagedComment::class, $row['children']);
+
         // 親子呼び出しと・・・
         $row1 = $database->select('t_article/t_comment')->limit(1)->cast()->tuple();
 
@@ -2392,7 +2397,7 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
         $annotation = $database->getAnnotation();
         $this->assertContains('$t_article', $annotation);
         $this->assertContains('$Comment', $annotation);
-        $this->assertContains(\ryunosuke\Test\Gateway\TableGateway::class, $annotation);
+        $this->assertContains(\ryunosuke\dbml\Gateway\TableGateway::class, $annotation);
         $this->assertContains(\ryunosuke\Test\Gateway\Article::class, $annotation);
         $this->assertContains(\ryunosuke\Test\Gateway\Comment::class, $annotation);
 

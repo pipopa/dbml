@@ -247,7 +247,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
     /** @var bool|int クエリを投げると同時に limit を外した件数を取得するか */
     private $rowcount = false;
 
-    /** @var string|array|callable fetch 時のタイプ */
+    /** @var string|callable fetch 時のタイプ */
     private $caster;
 
     /** @var bool '!' 付き条件で全てがフィルタされたか */
@@ -1065,13 +1065,15 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
             $from = $from === false ? [] : $from;
             $classname = $this->database->getEntityClass([$from['alias'] ?? null, $from['table'] ?? null]);
             foreach ($this->subbuilders as $subselect) {
-                $subselect->cast(null);
+                if ($subselect->caster === null) {
+                    $subselect->cast(null);
+                }
             }
         }
 
         // array は特別扱い(array に戻す)
         if ($classname === 'array') {
-            $this->caster = null;
+            $this->caster = $classname;
             return $this;
         }
 
@@ -1102,7 +1104,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
      */
     public function getCaster()
     {
-        if ($this->caster === null) {
+        if ($this->caster === null || $this->caster === 'array') {
             return null;
         }
         if (is_callable($this->caster)) {
