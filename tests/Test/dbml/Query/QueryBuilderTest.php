@@ -1760,10 +1760,12 @@ SQL
      */
     function test_orderBy_php($builder)
     {
-        // RDB によって返ってくる型が違うので強制的に合わせる
-        $builder->getDatabase()->setAutoCastSuffix('@');
-
-        $builder->column('test.id as id@integer, name as name@string')->limit(3);
+        $builder->column([
+            'test' => [
+                'id' => PhpExpression::intval(),
+                'name',
+            ]
+        ])->limit(3);
 
         // orderBy
         $builder->orderBy([
@@ -2532,9 +2534,6 @@ SELECT test.* FROM test", $builder);
         // Tuple は false 値
         $this->assertEquals(false, $builder->tuple());
 
-        // 親行がスカラーなのは何かがおかしいはず
-        $this->assertException(new \BadMethodCallException('parent is scalar value'), L($builder)->postselect(['scalar']));
-
         // from が無い subselect 指定は無効なはず
         $this->assertException(new \InvalidArgumentException('column is not possible to specify only children'),
             [$builder, 'column'], [
@@ -2633,26 +2632,18 @@ SELECT test.* FROM test", $builder);
         $builder->column([
             'test' => [
                 'phpval' => new PhpExpression('phpval'),
+                'func'   => new PhpExpression(function () { return function ($arg) { return $this['id'] * $arg; }; }),
             ]
         ]);
-        $actual = $builder->postselect(['a', 'b']);
-        $this->assertEquals(['phpval', 'phpval'], $actual);
+        $actual = $builder->limit(1)->tuple();
+        $this->assertEquals(10, $actual['func'](10));
 
-        $builder->column([
-            'test' => [
-                'func' => new PhpExpression(function () { return function ($arg) { return $this['id'] * $arg; }; }),
-            ]
-        ]);
-        $actual = $builder->postselect([['id' => 1]]);
-        $this->assertEquals(10, $actual[0]['func'](10));
-
-        $actual = $builder->postselect([(new Entity($builder->getDatabase()))->assign(['id' => 1])]);
+        $actual = $builder->limit(1)->cast()->tuple();
         /** @noinspection PhpUndefinedMethodInspection */
-        $this->assertEquals(10, $actual[0]->func(10));
+        $this->assertEquals(10, $actual->func(10));
 
         $builder->column([
             'test' => [
-                'phpval' => new PhpExpression('phpval'),
                 'subcol' => $builder->getDatabase()->subselectArray('id', 'test2.name2'),
             ]
         ]);
@@ -2664,7 +2655,6 @@ SELECT test.* FROM test", $builder);
             [
                 'id'     => 1,
                 'name'   => 'a',
-                'phpval' => 'phpval',
                 'subcol' => [
                     ['name2' => 'A'],
                 ],
@@ -2672,7 +2662,6 @@ SELECT test.* FROM test", $builder);
             [
                 'id'     => 2,
                 'name'   => 'b',
-                'phpval' => 'phpval',
                 'subcol' => [
                     ['name2' => 'B'],
                 ],

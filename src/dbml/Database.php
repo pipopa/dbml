@@ -170,17 +170,6 @@ use ryunosuke\dbml\Utility\Adhoc;
  *
  *     @param bool $bool 空文字を NULL に変換するなら true
  * }
- * @method string                 getAutoCastSuffix()
- * @method $this                  setAutoCastSuffix($string) {
- *     自動キャストの目印文字列を設定する
- *
- *     自動キャストがなにかは {@link ryunosuke\dbml\ dbml} を参照。
- *     デフォルトは "@" なので 'hoge_id@integer' とすると int 型で返すようになる。
- *
- *     この設定はクエリビルダに依存しない。 fetchXXX 系メソッドで生クエリを指定しても変換を行うことができる。
- *
- *     @param string $string 自動キャストの目印文字列
- * }
  * @method callable               getYamlParser()
  * @method $this                  setYamlParser($callable)
  * @method array                  getAutoCastType()
@@ -677,8 +666,6 @@ class Database
             'filterNoExistsColumn' => true,
             // insert 時などに NULLABLE NUMERIC カラムは 空文字を null として扱うか否か
             'convertEmptyToNull'   => true,
-            // 取得時にサフィックス(columnname@integer)で自動キャストする時の区切り文字
-            'autoCastSuffix'       => null,
             // 埋め込み条件の yaml パーサ
             'yamlParser'           => function ($yaml) { return \ryunosuke\dbml\paml_import($yaml)[0]; },
             // DB型で自動キャストする型設定。select,affect 要素を持つ（多少無駄になるがサンプルも兼ねて冗長に記述してある）
@@ -1204,7 +1191,6 @@ class Database
     {
         $platform = $this->getPlatform();
         $cast_type = $this->getUnsafeOption('autoCastType');
-        $cast_suffix = $this->getUnsafeOption('autoCastSuffix');
         $samecheck_method = $this->getUnsafeOption('checkSameColumn');
         $samecheck = function ($c, $vv) use ($samecheck_method) {
             if ($samecheck_method === 'noallow') {
@@ -1239,24 +1225,14 @@ class Database
 
         /** @var QueryBuilder $data_source */
         $data_source = optional($data_source, QueryBuilder::class);
+        $rconverter = $data_source->getRowConverter();
         $alias_table = array_lookup($data_source->getFromPart() ?: [], 'table');
 
-        return function ($row) use ($platform, $cast_suffix, $cast_type, $table_columns, $alias_table, $samecheck_method, $samecheck) {
+        return function ($row) use ($platform, $cast_type, $table_columns, $alias_table, $rconverter, $samecheck_method, $samecheck) {
             $newrow = [];
             foreach ($row as $c => $v) {
                 if ($samecheck_method && is_array($v)) {
                     $v = $samecheck($c, $v);
-                }
-
-                if ($cast_suffix) {
-                    $parts = explode($cast_suffix, $c, 2);
-                    if (count($parts) === 2) {
-                        list($ct, $type) = $parts;
-                        if (Type::hasType($type)) {
-                            $c = $ct;
-                            $v = Type::getType($type)->convertToPHPValue($v, $platform);
-                        }
-                    }
                 }
 
                 if ($cast_type) {
@@ -1298,6 +1274,9 @@ class Database
                 }
 
                 $newrow[$c] = $v;
+            }
+            if ($rconverter) {
+                $newrow = $rconverter($newrow);
             }
             return $newrow;
         };

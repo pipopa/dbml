@@ -36,6 +36,7 @@ use function ryunosuke\dbml\concat;
 use function ryunosuke\dbml\first_keyvalue;
 use function ryunosuke\dbml\first_value;
 use function ryunosuke\dbml\is_hasharray;
+use function ryunosuke\dbml\is_primitive;
 use function ryunosuke\dbml\optional;
 use function ryunosuke\dbml\preg_splice;
 use function ryunosuke\dbml\rbind;
@@ -2661,6 +2662,27 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
     }
 
     /**
+     * 行レベルの変換クロージャを返す
+     *
+     * @ignore 内部用
+     *
+     * @return \Closure
+     */
+    public function getRowConverter()
+    {
+        $caster = $this->getCaster();
+        return function ($parent_row) use ($caster) {
+            foreach ($this->phpExpressions as $name => $column) {
+                $parent_row[$name] = $column($parent_row);
+            }
+            if ($caster) {
+                $parent_row = $caster($parent_row);
+            }
+            return $parent_row;
+        };
+    }
+
+    /**
      * 行フェッチ後に QueryBuilder 特有の処理を行う
      *
      * ほぼ内部処理で明示的に呼ぶことはない。
@@ -2683,16 +2705,10 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
             return $parents;
         }
 
-        // フェッチ形式で色々異なるのでチェック用
-        $first = reset($parents);
-        $is_scalar = is_scalar($first) || is_null($first);
-
         // subselect
         if ($this->subbuilders) {
             // 親行がスカラーなのは何かがおかしい
-            if ($is_scalar) {
-                throw new \BadMethodCallException("parent is scalar value.");
-            }
+            assert(!is_primitive(first_value($parents)));
 
             // subselects 分ループ（多くても数個）
             foreach ($this->subbuilders as $column => $subselect) {
@@ -2713,14 +2729,14 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
             }
         }
 
-        $caster = $this->getCaster();
-
-        // evalute
+        // binding
         foreach ($parents as $n => $parent_row) {
             $row_class = null;
             foreach ($this->phpExpressions as $name => $column) {
-                $excol = $column($parents[$n]);
-                if ($excol instanceof \Closure) {
+                if (isset($parents[$n][$name]) && $parents[$n][$name] instanceof \Closure) {
+                    // 親行がスカラーなのは何かがおかしい
+                    assert(!is_primitive(first_value($parents)));
+
                     if ($row_class === null) {
                         if ($parents[$n] instanceof Entityable) {
                             $row_class = $parents[$n];
@@ -2729,18 +2745,8 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
                             $row_class = new \ArrayObject($parents[$n], \ArrayObject::ARRAY_AS_PROPS);
                         }
                     }
-                    $excol = $excol->bindTo($row_class);
+                    $parents[$n][$name] = $parents[$n][$name]->bindTo($row_class);
                 }
-
-                if ($is_scalar) {
-                    $parents[$n] = $excol;
-                }
-                else {
-                    $parents[$n][$name] = $excol;
-                }
-            }
-            if (!$is_scalar && $caster) {
-                $parents[$n] = $caster($parents[$n]);
             }
         }
 

@@ -534,45 +534,34 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
     function test_stackcontext($database)
     {
         // context はチェーンしないと設定が効かない
-        $database->context();
-        $row = $database->selectTuple([
-            'test' => ['id@integer' => 'id']
-        ], [], [], 1);
-        $this->assertEquals(['id@integer' => 1], $row);
+        $database->context()->setInsertSet(true);
+        $this->assertFalse($database->getInsertSet());
 
         // チェーンすれば設定が効く
-        $row = $database->context()->setAutoCastSuffix('@')->selectTuple([
-            'test' => ['id@integer' => 'id']
-        ], [], [], 1);
-        $this->assertEquals(['id' => 1], $row);
+        $this->assertTrue($database->context()->setInsertSet(true)->getInsertSet());
 
         // stack は解除するまで設定が効く
         $database->stack();
-        $row = $database->setAutoCastSuffix('@')->selectTuple([
-            'test' => ['id@integer' => 'id']
-        ], [], [], 1);
-        $this->assertEquals(['id' => 1], $row);
+        $database->setInsertSet(true);
+        $this->assertTrue($database->getInsertSet());
 
         $database->unstack();
-        $row = $database->selectTuple([
-            'test' => ['id@integer' => 'id']
-        ], [], [], 1);
-        $this->assertEquals(['id@integer' => 1], $row);
+        $this->assertFalse($database->getInsertSet());
 
         // どっちも例外発生時はもとに戻る
         try {
             $cx = $database->context();
-            $cx->setAutoCastSuffix('hoge')->fetchTuple('invalid query.');
+            $cx->setInsertSet(true)->fetchTuple('invalid query.');
         }
         catch (\Exception $ex) {
-            $this->assertEquals(null, $database->getAutoCastSuffix());
+            $this->assertFalse($database->getInsertSet());
         }
         try {
             $st = $database->stack();
-            $st->setAutoCastSuffix('hoge')->fetchTuple('invalid query.');
+            $st->setInsertSet(true)->fetchTuple('invalid query.');
         }
         catch (\Exception $ex) {
-            $this->assertEquals(null, $database->getAutoCastSuffix());
+            $this->assertFalse($database->getInsertSet());
         }
     }
 
@@ -2351,65 +2340,6 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
     {
         $this->assertEquals(['hoge'], $database->perform([['hoge']], 'lists'));
         $this->assertException("unknown fetch method 'hoge'", L($database)->perform([], 'hoge'));
-    }
-
-    /**
-     * @dataProvider provideDatabase
-     * @param Database $database
-     */
-    function test_perform_cast($database)
-    {
-        $database->setAutoCastSuffix('__@__');
-        $column = [
-            'test' => [
-                'id1__@__float'        => 'id',
-                'id2__@__boolean'      => 'id',
-                'id3__@__simple_array' => 'id',
-            ]
-        ];
-        $expected = [
-            'id1' => 1.0,
-            'id2' => true,
-            'id3' => ['1'],
-        ];
-
-        $rows = $database->selectArray($column);
-        $this->assertSame($expected, reset($rows));
-
-        $rows = $database->selectAssoc($column);
-        $this->assertSame($expected, reset($rows));
-
-        $row = $database->selectTuple($column, [], [], 1);
-        $this->assertSame($expected, $row);
-
-        // 子供にも効くはず
-        $row = $database->selectTuple([
-            'test1' => [
-                'id__@__integer' => 'id',
-                'test2'          => $database->subselectAssoc('id', [
-                    'test2' => [
-                        'id__@__integer' => 'id',
-                    ]
-                ]),
-            ]
-        ], [], [], 1);
-        $this->assertSame([
-            'id'    => 1,
-            'test2' => [
-                1 => [
-                    'id' => 1,
-                ],
-            ],
-        ], $row);
-
-        $database->setAutoCastSuffix(null);
-
-        $row = $database->selectTuple($column, [], [], 1);
-        $this->assertEquals([
-            'id1__@__float'        => 1,
-            'id2__@__boolean'      => 1,
-            'id3__@__simple_array' => 1,
-        ], $row);
     }
 
     /**
@@ -4673,33 +4603,25 @@ AND (g_parent.ancestor_id = g_ancestor.ancestor_id)))
      */
     function test_subexists($database)
     {
-        $database->setAutoCastSuffix('@');
         $rows = $database->selectArray([
             't_article' => [
-                'has_comment@integer'    => $database->subexists('t_comment'),
-                'nothas_comment@integer' => $database->notSubexists('t_comment'),
+                'has_comment'    => $database->subexists('t_comment'),
+                'nothas_comment' => $database->notSubexists('t_comment'),
             ]
         ], ['article_id' => [1, 2]]);
-        $this->assertEquals([
-            [
-                'has_comment'    => '1',
-                'nothas_comment' => '0',
-            ],
-            [
-                'has_comment'    => '0',
-                'nothas_comment' => '1',
-            ],
-        ], $rows);
+        $this->assertTrue(!!$rows[0]['has_comment']);
+        $this->assertFalse(!!$rows[0]['nothas_comment']);
+        $this->assertFalse(!!$rows[1]['has_comment']);
+        $this->assertTrue(!!$rows[1]['nothas_comment']);
 
         $row = $database->entityTuple([
             'Article' => [
-                'has_comment@integer'    => $database->subexists('Comment'),
-                'nothas_comment@integer' => $database->notSubexists('Comment'),
+                'has_comment'    => $database->subexists('Comment'),
+                'nothas_comment' => $database->notSubexists('Comment'),
             ]
         ], ['article_id' => 1]);
         $this->assertTrue(!!$row['has_comment']);
         $this->assertFalse(!!$row['nothas_comment']);
-        $database->setAutoCastSuffix(null);
     }
 
     /**
@@ -5334,16 +5256,9 @@ anywhere.enable = 1
             ]
         ]);
 
-        // こやつらは普通に結果を返す
         $this->assertIsArray($database->fetchArray($select));
         $this->assertIsArray($database->fetchAssoc($select));
         $this->assertIsArray($database->fetchTuple($select->limit(1)));
-
-        // こやつらは例外が飛ぶはず
-        $ex = new \BadMethodCallException('parent is scalar value');
-        $this->assertException($ex, L($database)->fetchValue($select));
-        $this->assertException($ex, L($database)->fetchLists($select));
-        $this->assertException($ex, L($database)->fetchPairs($select));
     }
 
     /**
@@ -5719,18 +5634,15 @@ anywhere.enable = 1
         $this->assertEquals('hoge-a', $select->tuple()->func('hoge-'));
 
         $select = $database->select([
-            'test' => ['id', 'name'],
-            [
-                'hoge' => new PhpExpression(function ($row) { return $row . '-1'; })
-            ]
+            'test' => [
+                'id',
+                'name' => function ($row) { return $row . '-1'; },
+            ],
         ])->limit(1);
         $this->assertEquals([1 => 'a-1'], $select->pairs());
 
         $select = $database->select([
-            'test' => ['id'],
-            [
-                'hoge' => new PhpExpression(function ($row) { return $row + 1; }),
-            ]
+            'test' => ['id' => function ($row) { return $row + 1; }],
         ])->limit(1);
         $this->assertEquals([0 => 2], $select->lists());
     }
