@@ -145,6 +145,9 @@ class OperatorTest extends \ryunosuke\Test\AbstractUnitTestCase
 
         $operator = new Operator(self::$platform, '%LIKE%', 'a', 'w');
         $this->assertOperator('a LIKE ?', ['%w%'], $operator);
+
+        $operator = new Operator(self::$platform, '%LIKE%', 'a', 'a%_z');
+        $this->assertOperator('a LIKE ?', ['%a\\%\\_z%'], $operator);
     }
 
     function test_op_likein()
@@ -157,6 +160,9 @@ class OperatorTest extends \ryunosuke\Test\AbstractUnitTestCase
 
         $operator = new Operator(self::$platform, '%LIKEIN%', 'a', ['x', 'y']);
         $this->assertOperator('a LIKE ? OR a LIKE ?', ['%x%', '%y%'], $operator);
+
+        $operator = new Operator(self::$platform, '%LIKEIN%', 'a', ['a%z', 'a_z']);
+        $this->assertOperator('a LIKE ? OR a LIKE ?', ['%a\\%z%', '%a\\_z%'], $operator);
     }
 
     function test_op_in()

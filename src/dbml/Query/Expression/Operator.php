@@ -8,12 +8,10 @@ use ryunosuke\dbml\Utility\Adhoc;
 use function ryunosuke\dbml\array_depth;
 use function ryunosuke\dbml\array_each;
 use function ryunosuke\dbml\array_flatten;
-use function ryunosuke\dbml\array_nmap;
 use function ryunosuke\dbml\arrayize;
 use function ryunosuke\dbml\arrayval;
 use function ryunosuke\dbml\first_keyvalue;
 use function ryunosuke\dbml\str_subreplace;
-use const ryunosuke\dbml\strcat;
 
 /**
  * 演算子を表すクラス
@@ -332,7 +330,9 @@ class Operator implements Queryable
     {
         $likes = array_fill(0, count($this->operand2), $this->operand1 . ' LIKE ?');
         $this->string = implode(' OR ', $likes);
-        $this->params = array_nmap($this->operand2, strcat, 1, $l, $r);
+        $this->params = array_map(function ($operand) use ($l, $r) {
+            return $l . $this->platform->escapeLike($operand) . $r;
+        }, $this->operand2);
     }
 
     private function _range($op1, $op2)
