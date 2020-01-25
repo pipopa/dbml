@@ -54,7 +54,7 @@
 		<span class="label label-info"></span>
 		<span class="label label-info">iterateable</span>
 		<span class="label label-deprecated"></span>
-        			<a href="https://github.com/doctrine/dbal/blob/v2.9.2/lib/Doctrine/DBAL/Driver/PDOStatement.php#L12-L231" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+        			<a href="https://github.com/doctrine/dbal/blob/v2.10.1/lib/Doctrine/DBAL/Driver/PDOStatement.php#L16-L228" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                     	</div>
 
 	<h2>class <span class="category-name">Doctrine\DBAL\Driver\PDOStatement</span></h2>
@@ -147,11 +147,11 @@ Used by all PDO-based drivers.</p>
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-protected">protected</span>
-                        			<a href="https://github.com/doctrine/dbal/blob/v2.9.2/lib/Doctrine/DBAL/Driver/PDOStatement.php#L36-L41" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.10.1/lib/Doctrine/DBAL/Driver/PDOStatement.php#L40-L45" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="Doctrine\DBAL\Driver\PDOStatement::__construct()" tabindex="-1" class="structure-title ">
-                        __construct						<small>()</small>
-					</h4>
+                        __construct                        	<small>() : void</small>
+						</h4>
 					<div class="inner-item">
 						<div class="description"><p>Protected constructor.</p>
 </div>
@@ -187,11 +187,11 @@ Used by all PDO-based drivers.</p>
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/doctrine/dbal/blob/v2.9.2/lib/Doctrine/DBAL/Driver/PDOStatement.php#L43-L67" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.10.1/lib/Doctrine/DBAL/Driver/PDOStatement.php#L47-L71" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="Doctrine\DBAL\Driver\PDOStatement::setFetchMode()" tabindex="-1" class="structure-title ">
-                        setFetchMode						<small>($fetchMode, $arg2 = null, $arg3 = null)</small>
-					</h4>
+                        setFetchMode                        	<small>($fetchMode, $arg2 = null, $arg3 = null) : bool</small>
+						</h4>
 					<div class="inner-item">
 						<div class="description"><p><tag_inheritdoc data-type='' data-description=''>Sets the fetch mode to use while iterating this statement.</tag_inheritdoc></p>
 </div>
@@ -253,11 +253,11 @@ Used by all PDO-based drivers.</p>
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/doctrine/dbal/blob/v2.9.2/lib/Doctrine/DBAL/Driver/PDOStatement.php#L69-L81" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.10.1/lib/Doctrine/DBAL/Driver/PDOStatement.php#L73-L85" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="Doctrine\DBAL\Driver\PDOStatement::bindValue()" tabindex="-1" class="structure-title ">
-                        bindValue						<small>($param, $value, $type = Doctrine\DBAL\ParameterType::STRING)</small>
-					</h4>
+                        bindValue                        	<small>($param, $value, $type = Doctrine\DBAL\ParameterType::STRING) : bool</small>
+						</h4>
 					<div class="inner-item">
 						<div class="description"><p><tag_inheritdoc data-type='' data-description=''>Binds a value to a corresponding named (not supported by mysqli driver, see comment below) or positional<br />
 placeholder in the SQL statement that was used to prepare the statement.</p>
@@ -330,11 +330,11 @@ fetchAll(), fetchArray(), fetchColumn(), fetchAssoc() methods to have the named 
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/doctrine/dbal/blob/v2.9.2/lib/Doctrine/DBAL/Driver/PDOStatement.php#L83-L95" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.10.1/lib/Doctrine/DBAL/Driver/PDOStatement.php#L87-L99" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="Doctrine\DBAL\Driver\PDOStatement::bindParam()" tabindex="-1" class="structure-title ">
-                        bindParam						<small>($column, &amp;$variable, $type = Doctrine\DBAL\ParameterType::STRING, $length = null, $driverOptions = null)</small>
-					</h4>
+                        bindParam                        	<small>($column, &amp;$variable, $type = Doctrine\DBAL\ParameterType::STRING, $length = null, $driverOptions = null) : bool</small>
+						</h4>
 					<div class="inner-item">
 						<div class="description"><p><tag_inheritdoc data-type='' data-description=''>Binds a PHP variable to a corresponding named (not supported by mysqli driver, see comment below) or question<br />
 mark placeholder in the SQL statement that was use to prepare the statement. Unlike PDOStatement-&gt;bindValue(),<br />
@@ -366,9 +366,9 @@ parameters that both send in data and are updated to receive it.</tag_inheritdoc
 </td>
 			</tr>
         			<tr>
-				<td class="type">int<span class="type-separator"></span><wbr>null</td>
+				<td class="type">int</td>
 				<td class="rest">$type = Doctrine\DBAL\ParameterType::STRING</td>
-				<td class="desc"><p>Explicit data type for the parameter using the {@link \Doctrine\DBAL\ParameterType}</p>
+				<td class="desc"><p>Explicit data type for the parameter using the <tag_link data-kind='fqsen' data-type-category='class' data-type-fqsen='Doctrine\DBAL\ParameterType' data-type-array='0' data-description='Doctrine\DBAL\ParameterType'>Doctrine\DBAL\ParameterType</tag_link></p>
 <pre><code>                      constants. To return an INOUT parameter from a stored procedure, use the bitwise
                       OR operator to set the PDO::PARAM_INPUT_OUTPUT bits for the data_type parameter.
 </code></pre>
@@ -427,11 +427,11 @@ parameters that both send in data and are updated to receive it.</tag_inheritdoc
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/doctrine/dbal/blob/v2.9.2/lib/Doctrine/DBAL/Driver/PDOStatement.php#L97-L109" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.10.1/lib/Doctrine/DBAL/Driver/PDOStatement.php#L101-L113" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="Doctrine\DBAL\Driver\PDOStatement::closeCursor()" tabindex="-1" class="structure-title ">
-                        closeCursor						<small>()</small>
-					</h4>
+                        closeCursor                        	<small>() : bool</small>
+						</h4>
 					<div class="inner-item">
 						<div class="description"><p><tag_inheritdoc data-type='' data-description=''>Closes the cursor, enabling the statement to be executed again.</tag_inheritdoc></p>
 </div>
@@ -478,11 +478,11 @@ parameters that both send in data and are updated to receive it.</tag_inheritdoc
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/doctrine/dbal/blob/v2.9.2/lib/Doctrine/DBAL/Driver/PDOStatement.php#L111-L121" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.10.1/lib/Doctrine/DBAL/Driver/PDOStatement.php#L115-L125" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="Doctrine\DBAL\Driver\PDOStatement::execute()" tabindex="-1" class="structure-title ">
-                        execute						<small>($params = null)</small>
-					</h4>
+                        execute                        	<small>($params = null) : bool</small>
+						</h4>
 					<div class="inner-item">
 						<div class="description"><p><tag_inheritdoc data-type='' data-description=''>Executes a prepared statement</p>
 <p>If the prepared statement included parameter markers, you must either:<br />
@@ -542,11 +542,11 @@ parameter values.</tag_inheritdoc></p>
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/doctrine/dbal/blob/v2.9.2/lib/Doctrine/DBAL/Driver/PDOStatement.php#L123-L147" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.10.1/lib/Doctrine/DBAL/Driver/PDOStatement.php#L127-L143" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="Doctrine\DBAL\Driver\PDOStatement::fetch()" tabindex="-1" class="structure-title ">
-                        fetch						<small>($fetchMode = null, $cursorOrientation = PDO::FETCH_ORI_NEXT, $cursorOffset = 0)</small>
-					</h4>
+                        fetch                        	<small>($fetchMode = null, $cursorOrientation = PDO::FETCH_ORI_NEXT, $cursorOffset = 0) : mixed</small>
+						</h4>
 					<div class="inner-item">
 						<div class="description"><p><tag_inheritdoc data-type='' data-description=''>Returns the next row of a result set.</tag_inheritdoc></p>
 </div>
@@ -631,11 +631,11 @@ parameter values.</tag_inheritdoc></p>
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/doctrine/dbal/blob/v2.9.2/lib/Doctrine/DBAL/Driver/PDOStatement.php#L149-L173" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.10.1/lib/Doctrine/DBAL/Driver/PDOStatement.php#L145-L174" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="Doctrine\DBAL\Driver\PDOStatement::fetchAll()" tabindex="-1" class="structure-title ">
-                        fetchAll						<small>($fetchMode = null, $fetchArgument = null, $ctorArgs = null)</small>
-					</h4>
+                        fetchAll                        	<small>($fetchMode = null, $fetchArgument = null, $ctorArgs = null) : mixed[]</small>
+						</h4>
 					<div class="inner-item">
 						<div class="description"><p><tag_inheritdoc data-type='' data-description=''>Returns an array containing all of the result set rows.</tag_inheritdoc></p>
 </div>
@@ -713,11 +713,11 @@ parameter values.</tag_inheritdoc></p>
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/doctrine/dbal/blob/v2.9.2/lib/Doctrine/DBAL/Driver/PDOStatement.php#L175-L185" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.10.1/lib/Doctrine/DBAL/Driver/PDOStatement.php#L176-L186" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="Doctrine\DBAL\Driver\PDOStatement::fetchColumn()" tabindex="-1" class="structure-title ">
-                        fetchColumn						<small>($columnIndex = 0)</small>
-					</h4>
+                        fetchColumn                        	<small>($columnIndex = 0) : mixed<span class="type-separator"></span><wbr>false</small>
+						</h4>
 					<div class="inner-item">
 						<div class="description"><p><tag_inheritdoc data-type='' data-description=''>Returns a single column from the next row of a result set or FALSE if there are no more rows.</tag_inheritdoc></p>
 </div>
@@ -775,8 +775,8 @@ parameter values.</tag_inheritdoc></p>
                         			<a href="#L0-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="Doctrine\DBAL\Driver\PDOStatement::bindColumn()" tabindex="-1" class="structure-title ">
-                        bindColumn						<small>($column, &amp;$param, $type, $maxlen, $driverdata)</small>
-					</h4>
+                        bindColumn                        	<small>($column, &amp;$param, $type, $maxlen, $driverdata) : void</small>
+						</h4>
 					<div class="inner-item">
 						<div class="description"></div>
                         	<table class="table">
@@ -849,8 +849,8 @@ parameter values.</tag_inheritdoc></p>
                         			<a href="#L0-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="Doctrine\DBAL\Driver\PDOStatement::rowCount()" tabindex="-1" class="structure-title ">
-                        rowCount						<small>()</small>
-					</h4>
+                        rowCount                        	<small>() : int</small>
+						</h4>
 					<div class="inner-item">
 						<div class="description"><p>Returns the number of rows affected by the last DELETE, INSERT, or UPDATE statement<br />
 executed by the corresponding object.</p>
@@ -905,8 +905,8 @@ relied on for portable applications.</p>
                         			<a href="#L0-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="Doctrine\DBAL\Driver\PDOStatement::fetchObject()" tabindex="-1" class="structure-title ">
-                        fetchObject						<small>($class_name, $ctor_args)</small>
-					</h4>
+                        fetchObject                        	<small>($class_name, $ctor_args) : void</small>
+						</h4>
 					<div class="inner-item">
 						<div class="description"></div>
                         	<table class="table">
@@ -964,8 +964,8 @@ relied on for portable applications.</p>
                         			<a href="#L0-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="Doctrine\DBAL\Driver\PDOStatement::errorCode()" tabindex="-1" class="structure-title ">
-                        errorCode						<small>()</small>
-					</h4>
+                        errorCode                        	<small>() : string<span class="type-separator"></span><wbr>int<span class="type-separator"></span><wbr>bool</small>
+						</h4>
 					<div class="inner-item">
 						<div class="description"><p>Fetches the SQLSTATE associated with the last operation on the statement handle.</p>
 </div>
@@ -1025,8 +1025,8 @@ relied on for portable applications.</p>
                         			<a href="#L0-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="Doctrine\DBAL\Driver\PDOStatement::errorInfo()" tabindex="-1" class="structure-title ">
-                        errorInfo						<small>()</small>
-					</h4>
+                        errorInfo                        	<small>() : mixed[]</small>
+						</h4>
 					<div class="inner-item">
 						<div class="description"><p>Fetches extended error information associated with the last operation on the statement handle.</p>
 </div>
@@ -1076,8 +1076,8 @@ relied on for portable applications.</p>
                         			<a href="#L0-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="Doctrine\DBAL\Driver\PDOStatement::setAttribute()" tabindex="-1" class="structure-title ">
-                        setAttribute						<small>($attribute, $value)</small>
-					</h4>
+                        setAttribute                        	<small>($attribute, $value) : void</small>
+						</h4>
 					<div class="inner-item">
 						<div class="description"></div>
                         	<table class="table">
@@ -1135,8 +1135,8 @@ relied on for portable applications.</p>
                         			<a href="#L0-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="Doctrine\DBAL\Driver\PDOStatement::getAttribute()" tabindex="-1" class="structure-title ">
-                        getAttribute						<small>($attribute)</small>
-					</h4>
+                        getAttribute                        	<small>($attribute) : void</small>
+						</h4>
 					<div class="inner-item">
 						<div class="description"></div>
                         	<table class="table">
@@ -1189,8 +1189,8 @@ relied on for portable applications.</p>
                         			<a href="#L0-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="Doctrine\DBAL\Driver\PDOStatement::columnCount()" tabindex="-1" class="structure-title ">
-                        columnCount						<small>()</small>
-					</h4>
+                        columnCount                        	<small>() : int</small>
+						</h4>
 					<div class="inner-item">
 						<div class="description"><p>Returns the number of columns in the result set</p>
 </div>
@@ -1243,8 +1243,8 @@ relied on for portable applications.</p>
                         			<a href="#L0-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="Doctrine\DBAL\Driver\PDOStatement::getColumnMeta()" tabindex="-1" class="structure-title ">
-                        getColumnMeta						<small>($column)</small>
-					</h4>
+                        getColumnMeta                        	<small>($column) : void</small>
+						</h4>
 					<div class="inner-item">
 						<div class="description"></div>
                         	<table class="table">
@@ -1297,8 +1297,8 @@ relied on for portable applications.</p>
                         			<a href="#L0-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="Doctrine\DBAL\Driver\PDOStatement::nextRowset()" tabindex="-1" class="structure-title ">
-                        nextRowset						<small>()</small>
-					</h4>
+                        nextRowset                        	<small>() : void</small>
+						</h4>
 					<div class="inner-item">
 						<div class="description"></div>
                         	<table class="table">
@@ -1346,8 +1346,8 @@ relied on for portable applications.</p>
                         			<a href="#L0-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="Doctrine\DBAL\Driver\PDOStatement::debugDumpParams()" tabindex="-1" class="structure-title ">
-                        debugDumpParams						<small>()</small>
-					</h4>
+                        debugDumpParams                        	<small>() : void</small>
+						</h4>
 					<div class="inner-item">
 						<div class="description"></div>
                         	<table class="table">
@@ -1395,8 +1395,8 @@ relied on for portable applications.</p>
                         			<a href="#L0-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="Doctrine\DBAL\Driver\PDOStatement::__wakeup()" tabindex="-1" class="structure-title ">
-                        __wakeup						<small>()</small>
-					</h4>
+                        __wakeup                        	<small>() : void</small>
+						</h4>
 					<div class="inner-item">
 						<div class="description"></div>
                         	<table class="table">
@@ -1444,8 +1444,8 @@ relied on for portable applications.</p>
                         			<a href="#L0-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="Doctrine\DBAL\Driver\PDOStatement::__sleep()" tabindex="-1" class="structure-title ">
-                        __sleep						<small>()</small>
-					</h4>
+                        __sleep                        	<small>() : void</small>
+						</h4>
 					<div class="inner-item">
 						<div class="description"></div>
                         	<table class="table">

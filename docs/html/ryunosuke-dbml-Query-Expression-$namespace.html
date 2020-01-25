@@ -61,7 +61,7 @@
 							<span class="label label-info"></span>
 							<span class="label label-info"></span>
 							<span class="label label-deprecated"></span>
-                            			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/Expression/TableDescriptor.php#L19-L580" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                            			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/Expression/TableDescriptor.php#L19-L579" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
             						</div>
 						<h4 id="ryunosuke\dbml\Query\Expression\TableDescriptor" tabindex="-1" class="structure-title ">
 							<a href="ryunosuke-dbml-Query-Expression-TableDescriptor$typespace.html#ryunosuke\dbml\Query\Expression\TableDescriptor">TableDescriptor</a>
@@ -209,7 +209,7 @@
 							<span class="label label-info"></span>
 							<span class="label label-info"></span>
 							<span class="label label-deprecated"></span>
-                            			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/Expression/Alias.php#L7-L132" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                            			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/Expression/Alias.php#L8-L164" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
             						</div>
 						<h4 id="ryunosuke\dbml\Query\Expression\Alias" tabindex="-1" class="structure-title ">
 							<a href="ryunosuke-dbml-Query-Expression-Alias$typespace.html#ryunosuke\dbml\Query\Expression\Alias">Alias</a>
@@ -232,7 +232,7 @@
 							<span class="label label-info"></span>
 							<span class="label label-info"></span>
 							<span class="label label-deprecated"></span>
-                            			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/Expression/Expression.php#L8-L161" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                            			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/Expression/Expression.php#L8-L165" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
             						</div>
 						<h4 id="ryunosuke\dbml\Query\Expression\Expression" tabindex="-1" class="structure-title ">
 							<a href="ryunosuke-dbml-Query-Expression-Expression$typespace.html#ryunosuke\dbml\Query\Expression\Expression">Expression</a>
@@ -240,113 +240,6 @@
 						<div class="inner-item">
 							<div class="description"><p>生クエリを表すクラス</p>
 <p><code>new Expression('NOW()')</code> を select に与えると "NOW()" に展開される（エスケープやサブクエリ化などの余計なことを一切行わない）。</p>
-</div>
-						</div>
-						<div class="attribute">
-							<span class="label label-default"></span>
-							<span class="label label-default"></span>
-						</div>
-						<div class="clearfix"></div>
-					</li>
-                					<li class="structure-item">
-						<div class="attribute">
-							<span class="label label-danger"></span>
-							<span class="label label-warning"></span>
-							<span class="label label-info"></span>
-							<span class="label label-info"></span>
-							<span class="label label-deprecated"></span>
-                            			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/Expression/PhpExpression.php#L11-L303" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
-            						</div>
-						<h4 id="ryunosuke\dbml\Query\Expression\PhpExpression" tabindex="-1" class="structure-title ">
-							<a href="ryunosuke-dbml-Query-Expression-PhpExpression$typespace.html#ryunosuke\dbml\Query\Expression\PhpExpression">PhpExpression</a>
-						</h4>
-						<div class="inner-item">
-							<div class="description"><p>php の式を表すクラス</p>
-<p>このクラスのインスタンスを select に組み込むとアプリケーションレイヤで値を返すようになる。<br />
-応用的に「カラムAとカラムBを結合してカラムXを作り出す」という処理を透過的に行うことができる。</p>
-<pre><code class="language-php"># シンプルなスカラー値の例
-$db-&gt;selectTuple([
-    'tablename' =&gt; [
-        'nullvalue' =&gt; new PhpExpression(null),
-        'boolvalue' =&gt; new PhpExpression(true),
-        'strbalue'  =&gt; new PhpExpression('mojiretu'),
-    ],
-]);
-// results:
-[
-    // PhpExpression に与えた null がそのまま結果配列に含まれてくる
-    'nullvalue' =&gt; null,
-    // PhpExpression に与えた true がそのまま結果配列に含まれてくる
-    'boolvalue' =&gt; true,
-    // PhpExpression に与えた 'mojiretu' がそのまま結果配列に含まれてくる
-    'strbalue'  =&gt; 'mojiretu',
-];
-
-# 上記の例は冗長な上にほとんど旨味がない。似たようなことは Expression の自動変換で代替可能（ただの文字列だけは無理）
-$db-&gt;selectTuple([
-    'tablename' =&gt; [
-        'nullvalue' =&gt; "NULL",
-        'boolvalue' =&gt; true,
-    ],
-]);
-// results:
-[
-    'nullvalue' =&gt; null,
-    'boolvalue' =&gt; true,
-];
-</code></pre>
-<p>ただし、上記にような使い方はただの副産物であり、本来はクロージャを渡すことを想定している。</p>
-<pre><code class="language-php"># 最も有用な使い方はクロージャを与えた時（有用と言うか、クロージャのために存在していると言っても過言ではない）
-$db-&gt;selectTuple([
-    'tablename' =&gt; [
-        // カラムa, カラムb を自動で取得し、その加算結果を列として取得する（第2引数以降で取得するカラムを指定する）
-        'a+b' =&gt; new PhpExpression(function ($a, $b) { return $a + $b; }, 'a', 'b'),
-        // なお、クロージャは自動で PhpExpression に変換されるのでこれでも同じ（引数のデフォルト値で取得するカラムを指定する）
-        'a*b' =&gt; function ($a = 'a', $b = 'b') { return $a * $b; },
-        // 素のクロージャで引数のデフォルト値がない場合、行全体が引数として渡ってくる
-        'a-b' =&gt; function ($row) { return $row['a'] - $row['b']; },
-        // 素のクロージャで引数のデフォルト値が null の場合、キーをカラム名として使用する
-        'a'   =&gt; function ($id = null) { $id * 10; },
-    ],
-]);
-// results:
-[
-    // 仮に、a:4 b:2 だとしたら下記が結果配列に含まれてくる
-    'a+b' =&gt; 6,
-    'a*b' =&gt; 8,
-    'a-b' =&gt; 2,
-    'a'   =&gt; 40,
-];
-</code></pre>
-<p>上記の最後の「引数のデフォルト値が null」について補足すると、この形式は動的な部分が一切ない。つまりただの関数として持ち回すことができる。<br />
-よくありそうな処理は組み込みで用意してあるが、 define を使用して登録することもできる。</p>
-<pre><code class="language-php"># もち回せる関数の登録と組み込み処理の例
-// まず append という名前で処理を登録する
-PhpExpression::define('append', function ($column, ...$appendix) {
-    return $column . '-' . implode('', $appendix);
-});
-// 組み込みと登録した append を使用する例
-$db-&gt;selectTuple([
-    'tablename' =&gt; [
-        // PhpExpression::explode は「指定文字列で explode するクロージャ」を返すので、こうするだけでカラム a をカンマでバラすことができる
-        'a' =&gt; PhpExpression::explode(','),
-        // 上記で登録した append を使う（使い方自体は変わらない）
-        'b' =&gt; PhpExpression::append('X', 'Y', 'Z'),
-    ],
-]);
-// results:
-[
-    // 仮に、a:"x,y,z" b:"hogestring" だとしたら下記が結果配列に含まれてくる
-    'a' =&gt; ['x', 'y', 'z'], // カンマでバラされている
-    'b' =&gt; 'hogestring-XYZ', // 与えた引数 XYZ が付与されている
-];
-</code></pre>
-<p>ただし、実際のところすごく難解でかつニッチなので、実際のところ</p>
-<ul>
-<li><code>function ($row) {}</code> 小細工せずに行をまるごと返す形式</li>
-<li><code>function ($id = 'id') {}</code> デフォルト値でカラムを指定する形式<br />
-程度しか使われないしこれさえ覚えておけば困らない（その場にクロージャで書かれていた方が何をしているか分かりやすい、というメリットもある）。</li>
-</ul>
 </div>
 						</div>
 						<div class="attribute">
@@ -389,7 +282,7 @@ $db-&gt;selectTuple([
 							<span class="label label-info"></span>
 							<span class="label label-info"></span>
 							<span class="label label-deprecated"></span>
-                            			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/Expression/Operator.php#L17-L399" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                            			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/Expression/Operator.php#L16-L405" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
             						</div>
 						<h4 id="ryunosuke\dbml\Query\Expression\Operator" tabindex="-1" class="structure-title ">
 							<a href="ryunosuke-dbml-Query-Expression-Operator$typespace.html#ryunosuke\dbml\Query\Expression\Operator">Operator</a>

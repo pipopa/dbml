@@ -54,7 +54,7 @@
 		<span class="label label-info"></span>
 		<span class="label label-info"></span>
 		<span class="label label-deprecated"></span>
-        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction/Logger.php#L8-L191" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction/Logger.php#L12-L248" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                     	</div>
 
 	<h2>class <span class="category-name">ryunosuke\dbml\Transaction\Logger</span></h2>
@@ -82,6 +82,23 @@ $db = new Database($connection, [
 </code></pre>
 <p>Transaction 名前空間に居るのは少し小細工をしているから（癒着している）＋「クエリログは膨大なのでログらない（RDBMS のログに任せる）がトランザクションログはアプリで取っておきたい」という要件が多いため。<br />
 別にグローバルなロガーとして設定しても問題はない。</p>
+<h3>buffer オプションについて</h3>
+<p>コンストラクタオプションで buffer を渡すと下記のような動作モードになる。<br />
+fastcgi_finish_request など、クライアントに速度を意識させない方法があるなら基本的には true を推奨する。<br />
+BLOB INSERT が多いとか、軽めのクエリの数が多いとか、要件に応じて適時変更したほうが良い。</p>
+<h4>int</h4>
+<p>指定されたサイズでバッファリングして終了時に書き込む（超えた分は一時ファイル書き出し）。</p>
+<p>メモリには優しいが、逐次ログの変換処理が発生するため、場合によっては動作速度があまりよろしくない。<br />
+終了時にロックして書き込むので<strong>ログがリクエスト単位になる</strong>（別リクエストの割り込みログが発生しない）。</p>
+<h4>true</h4>
+<p>配列に溜め込んで終了時に書き込む。</p>
+<p>ログの変換処理が逐次行われず、終了時に変換と書き込みを行うので、 fastcgi_finish_request があるなら（クライアントの）動作速度に一切の影響を与えない。<br />
+ただし、 長大なクエリや BLOB INSERT などもすべて蓄えるのでメモリには優しくない。<br />
+終了時にロックして書き込むので<strong>ログがリクエスト単位になる</strong>（別リクエストの割り込みログが発生しない）。</p>
+<h4>false</h4>
+<p>逐次書き込む。</p>
+<p>逐次変換処理は行われるがメモリは一切消費しないし、ロックも伴わない。<br />
+ただし、逐次書き込むので<strong>ログがリクエスト単位にならない</strong>（別リクエストの割り込みログが発生する）。</p>
 </div>
 
 	<h3>Construction</h3>
@@ -123,11 +140,11 @@ $db = new Database($connection, [
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction/Logger.php#L53-L67" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction/Logger.php#L79-L91" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Transaction\Logger::getDefaultOptions()" tabindex="-1" class="structure-title ">
-                        getDefaultOptions						<small>()</small>
-					</h4>
+                        getDefaultOptions                        	<small>() : array</small>
+						</h4>
 					<div class="inner-item">
 						<div class="description"><p>オプションのデフォルト値を返す static メソッド</p>
 <p>このメソッドの返り値が構成要素とデフォルト値を担っていて、その配列以外のキーは基本的に保持できない。</p>
@@ -141,7 +158,7 @@ $db = new Database($connection, [
 		<caption>Return</caption>
 		<tbody>
 		<tr>
-			<td class="type">void</td>
+			<td class="type">array</td>
 			<td class="desc"></td>
 			<td class="rest"></td>
 		</tr>
@@ -167,6 +184,147 @@ $db = new Database($connection, [
             				<li class="structure-item">
 					<div class="attribute">
 						<span class="label label-danger"></span>
+						<span class="label label-default">static</span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction/Logger.php#L93-L111" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="ryunosuke\dbml\Transaction\Logger::simple()" tabindex="-1" class="structure-title ">
+                        simple                        	<small>($trimsize = null) : <a href="http://php.net/manual/ja/class.closure.php" class="fqsen" target="_blank">\Closure</a></small>
+						</h4>
+					<div class="inner-item">
+						<div class="description"><p>シンプルに値の埋め込みだけを行うコールバックを返す</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">int<span class="type-separator"></span><wbr>null</td>
+				<td class="rest">$trimsize = null</td>
+				<td class="desc"><p>bind パラメータの切り詰めサイズ</p>
+</td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="http://php.net/manual/ja/class.closure.php" class="fqsen" target="_blank">\Closure</a></td>
+			<td class="desc"><p>文字列化コールバック</p>
+</td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default">static</span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction/Logger.php#L113-L125" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="ryunosuke\dbml\Transaction\Logger::pretty()" tabindex="-1" class="structure-title ">
+                        pretty                        	<small>($trimsize = null) : <a href="http://php.net/manual/ja/class.closure.php" class="fqsen" target="_blank">\Closure</a></small>
+						</h4>
+					<div class="inner-item">
+						<div class="description"><p>値を埋め込んだ上で sql フォーマットするコールバックを返す</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">int<span class="type-separator"></span><wbr>null</td>
+				<td class="rest">$trimsize = null</td>
+				<td class="desc"><p>bind パラメータの切り詰めサイズ</p>
+</td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="http://php.net/manual/ja/class.closure.php" class="fqsen" target="_blank">\Closure</a></td>
+			<td class="desc"><p>文字列化コールバック</p>
+</td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default">static</span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction/Logger.php#L127-L155" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="ryunosuke\dbml\Transaction\Logger::oneline()" tabindex="-1" class="structure-title ">
+                        oneline                        	<small>($trimsize = null) : <a href="http://php.net/manual/ja/class.closure.php" class="fqsen" target="_blank">\Closure</a></small>
+						</h4>
+					<div class="inner-item">
+						<div class="description"><p>連続する空白をまとめて1行化するコールバックを返す</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type">int<span class="type-separator"></span><wbr>null</td>
+				<td class="rest">$trimsize = null</td>
+				<td class="desc"><p>bind パラメータの切り詰めサイズ</p>
+</td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="http://php.net/manual/ja/class.closure.php" class="fqsen" target="_blank">\Closure</a></td>
+			<td class="desc"><p>文字列化コールバック</p>
+</td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
 						<span class="label label-default"></span>
 						<span class="label label-magic"></span>
 						<span class="label label-danger"></span>
@@ -174,11 +332,11 @@ $db = new Database($connection, [
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction/Logger.php#L69-L84" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction/Logger.php#L157-L190" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Transaction\Logger::__construct()" tabindex="-1" class="structure-title ">
-                        __construct						<small>($destination = null, $options = [])</small>
-					</h4>
+                        __construct                        	<small>($destination = null, $options = []) : void</small>
+						</h4>
 					<div class="inner-item">
 						<div class="description"><p>コンストラクタ</p>
 </div>
@@ -225,27 +383,20 @@ $db = new Database($connection, [
 						<span class="label label-default"></span>
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
-						<span class="label label-protected">protected</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction/Logger.php#L125-L142" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction/Logger.php#L192-L220" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
-					<h4 id="ryunosuke\dbml\Transaction\Logger::_escape()" tabindex="-1" class="structure-title ">
-                        _escape						<small>($sql, $params)</small>
-					</h4>
+					<h4 id="ryunosuke\dbml\Transaction\Logger::__destruct()" tabindex="-1" class="structure-title ">
+                        __destruct                        	<small>() : void</small>
+						</h4>
 					<div class="inner-item">
-						<div class="description"></div>
+						<div class="description"><p>デストラクタのデフォルト実装</p>
+<p>デストラクタはコンストラクタに比べてそれほど実装されないので trait 側で定義してしまって良いと判断。<br />
+use 側でデストラクタを定義したい場合は OptionTrait__destruct を呼ぶようにすること。</p>
+</div>
                         	<table class="table">
 		<caption>Parameters</caption>
 		<tbody>
-        			<tr>
-				<td class="type"></td>
-				<td class="rest">$sql</td>
-				<td class="desc"></td>
-			</tr>
-        			<tr>
-				<td class="type"></td>
-				<td class="rest">$params</td>
-				<td class="desc"></td>
-			</tr>
         		</tbody>
 	</table>
                             	<table class="table">
@@ -258,56 +409,17 @@ $db = new Database($connection, [
 		</tr>
 		</tbody>
 	</table>
-                                                                            					</div>
-					<div class="attribute">
-						<span class="label label-default"></span>
-						<span class="label label-default"></span>
-					</div>
-					<div class="clearfix"></div>
-				</li>
-            				<li class="structure-item">
-					<div class="attribute">
-						<span class="label label-danger"></span>
-						<span class="label label-default"></span>
-						<span class="label label-magic"></span>
-						<span class="label label-danger"></span>
-						<span class="label label-default"></span>
-						<span class="label label-default"></span>
-						<span class="label label-deprecated"></span>
-						<span class="label label-protected">protected</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction/Logger.php#L144-L147" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
-                                    					</div>
-					<h4 id="ryunosuke\dbml\Transaction\Logger::_keyvalue()" tabindex="-1" class="structure-title ">
-                        _keyvalue						<small>($sql, $params)</small>
-					</h4>
-					<div class="inner-item">
-						<div class="description"></div>
-                        	<table class="table">
-		<caption>Parameters</caption>
+                                                    	<table class="table">
+		<caption>Prototype</caption>
 		<tbody>
         			<tr>
-				<td class="type"></td>
-				<td class="rest">$sql</td>
-				<td class="desc"></td>
-			</tr>
-        			<tr>
-				<td class="type"></td>
-				<td class="rest">$params</td>
-				<td class="desc"></td>
+				<td class="type"><a href="ryunosuke-dbml-Mixin-OptionTrait$typespace.html#ryunosuke\dbml\Mixin\OptionTrait::__destruct()" class="fqsen "><small>ryunosuke\dbml\Mixin\</small><wbr>OptionTrait::__destruct()</a></td>
+				<td class="desc">デストラクタのデフォルト実装</td>
+				<td class="rest">override</td>
 			</tr>
         		</tbody>
 	</table>
-                            	<table class="table">
-		<caption>Return</caption>
-		<tbody>
-		<tr>
-			<td class="type">void</td>
-			<td class="desc"></td>
-			<td class="rest"></td>
-		</tr>
-		</tbody>
-	</table>
-                                                                            					</div>
+                            					</div>
 					<div class="attribute">
 						<span class="label label-default"></span>
 						<span class="label label-default"></span>
@@ -324,11 +436,11 @@ $db = new Database($connection, [
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction/Logger.php#L149-L177" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction/Logger.php#L229-L243" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Transaction\Logger::log()" tabindex="-1" class="structure-title ">
-                        log						<small>($sql, $params = [])</small>
-					</h4>
+                        log                        	<small>($sql, $params = [], $types = []) : void</small>
+						</h4>
 					<div class="inner-item">
 						<div class="description"></div>
                         	<table class="table">
@@ -344,6 +456,11 @@ $db = new Database($connection, [
 				<td class="rest">$params = []</td>
 				<td class="desc"></td>
 			</tr>
+        			<tr>
+				<td class="type">array</td>
+				<td class="rest">$types = []</td>
+				<td class="desc"></td>
+			</tr>
         		</tbody>
 	</table>
                             	<table class="table">
@@ -373,50 +490,11 @@ $db = new Database($connection, [
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction/Logger.php#L179-L186" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
-                                    					</div>
-					<h4 id="ryunosuke\dbml\Transaction\Logger::getLog()" tabindex="-1" class="structure-title ">
-                        getLog						<small>()</small>
-					</h4>
-					<div class="inner-item">
-						<div class="description"></div>
-                        	<table class="table">
-		<caption>Parameters</caption>
-		<tbody>
-        		</tbody>
-	</table>
-                            	<table class="table">
-		<caption>Return</caption>
-		<tbody>
-		<tr>
-			<td class="type">void</td>
-			<td class="desc"></td>
-			<td class="rest"></td>
-		</tr>
-		</tbody>
-	</table>
-                                                                            					</div>
-					<div class="attribute">
-						<span class="label label-default"></span>
-						<span class="label label-default"></span>
-					</div>
-					<div class="clearfix"></div>
-				</li>
-            				<li class="structure-item">
-					<div class="attribute">
-						<span class="label label-danger"></span>
-						<span class="label label-default"></span>
-						<span class="label label-magic"></span>
-						<span class="label label-danger"></span>
-						<span class="label label-default"></span>
-						<span class="label label-default"></span>
-						<span class="label label-deprecated"></span>
-						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction/Logger.php#L188-L188" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction/Logger.php#L245-L245" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Transaction\Logger::startQuery()" tabindex="-1" class="structure-title ">
-                        startQuery						<small>($sql, $params = null, $types = null)</small>
-					</h4>
+                        startQuery                        	<small>($sql, $params = null, $types = null) : void</small>
+						</h4>
 					<div class="inner-item">
 						<div class="description"><p>Logs a SQL statement somewhere.</p>
 </div>
@@ -480,11 +558,11 @@ $db = new Database($connection, [
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction/Logger.php#L190-L190" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction/Logger.php#L247-L247" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Transaction\Logger::stopQuery()" tabindex="-1" class="structure-title ">
-                        stopQuery						<small>()</small>
-					</h4>
+                        stopQuery                        	<small>() : void</small>
+						</h4>
 					<div class="inner-item">
 						<div class="description"><p>Marks the last started query as stopped. This can be used for timing of queries.</p>
 </div>

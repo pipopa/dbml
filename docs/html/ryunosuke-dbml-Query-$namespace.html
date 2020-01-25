@@ -115,7 +115,7 @@
 							<span class="label label-info"></span>
 							<span class="label label-info">iterateable</span>
 							<span class="label label-deprecated"></span>
-                            			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L48-L3389" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                            			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/QueryBuilder.php#L51-L3580" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
             						</div>
 						<h4 id="ryunosuke\dbml\Query\QueryBuilder" tabindex="-1" class="structure-title ">
 							<a href="ryunosuke-dbml-Query-QueryBuilder$typespace.html#ryunosuke\dbml\Query\QueryBuilder">QueryBuilder</a>
@@ -134,31 +134,7 @@ echo count($qb); // t_article の件数を返す
 </code></pre>
 <h3>プリペアードステートメント</h3>
 <p>明示的に prepare のようなメソッドを呼ばない限り内部のプリペアードステートメントでは名前付きパラメータを一切使用しない（<tag_link data-kind='fqsen' data-type-category='class' data-type-fqsen='ryunosuke\dbml\Query\Statement' data-type-array='0' data-description='ryunosuke\dbml\Query\Statement'>ryunosuke\dbml\Query\Statement</tag_link> も参照）。<br />
-したがってメソッド呼び出し順によってはパラメータ順が「ズレ」ることがある。<br />
-基本的にはズレないようにはしてある（ズレるのはかなり特殊な条件）が、怖い場合は <code>queryInto</code> で文字列化してから結合したりサブクエリで使用したりした方が確実。</p>
-</div>
-						</div>
-						<div class="attribute">
-							<span class="label label-default"></span>
-							<span class="label label-default"></span>
-						</div>
-						<div class="clearfix"></div>
-					</li>
-                					<li class="structure-item">
-						<div class="attribute">
-							<span class="label label-danger"></span>
-							<span class="label label-warning"></span>
-							<span class="label label-info"></span>
-							<span class="label label-info">iterateable</span>
-							<span class="label label-deprecated"></span>
-                            			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/SubqueryBuilder.php#L16-L375" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
-            						</div>
-						<h4 id="ryunosuke\dbml\Query\SubqueryBuilder" tabindex="-1" class="structure-title ">
-							<a href="ryunosuke-dbml-Query-SubqueryBuilder$typespace.html#ryunosuke\dbml\Query\SubqueryBuilder">SubqueryBuilder</a>
-						</h4>
-						<div class="inner-item">
-							<div class="description"><p>サブクエリビルダークラス</p>
-<p>直接 new する類のクラスではない。 Database や QueryBuilder が間接的に利用する。</p>
+prepare を呼ぶと現時点のパラメータで固定することができ、その上で <code>:name</code> のような名前付きパラメータに値を渡すことができる。</p>
 </div>
 						</div>
 						<div class="attribute">
@@ -174,7 +150,7 @@ echo count($qb); // t_article の件数を返す
 							<span class="label label-info"></span>
 							<span class="label label-info"></span>
 							<span class="label label-deprecated"></span>
-                            			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/Statement.php#L8-L140" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                            			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/Statement.php#L8-L143" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
             						</div>
 						<h4 id="ryunosuke\dbml\Query\Statement" tabindex="-1" class="structure-title ">
 							<a href="ryunosuke-dbml-Query-Statement$typespace.html#ryunosuke\dbml\Query\Statement">Statement</a>

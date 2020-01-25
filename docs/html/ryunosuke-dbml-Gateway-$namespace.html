@@ -61,7 +61,7 @@
 							<span class="label label-info"></span>
 							<span class="label label-info">iterateable</span>
 							<span class="label label-deprecated"></span>
-                            			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Gateway/TableGateway.php#L26-L2409" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                            			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Gateway/TableGateway.php#L25-L2194" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
             						</div>
 						<h4 id="ryunosuke\dbml\Gateway\TableGateway" tabindex="-1" class="structure-title ">
 							<a href="ryunosuke-dbml-Gateway-TableGateway$typespace.html#ryunosuke\dbml\Gateway\TableGateway">TableGateway</a>
@@ -90,9 +90,6 @@ $gw-&gt;min('id');
 
 // 自身と子供テーブルを階層化して返す
 $gw-&gt;array([
-    // 紐づく子供を array で取得
-    'childarray' =&gt; $db-&gt;child()-&gt;subArray(),
-    // assoc で良いならメソッドは省略できる
     'childassoc' =&gt; $db-&gt;child(),
 ]);
 
@@ -212,16 +209,6 @@ $defaultIteration は複数設定できる箇所があるが、下記の優先�
 </ul>
 <p>下に行くほど優先される。要するに単純に個別で指定するほど強い。</p>
 <p>count() は <code>count($gw)</code> と <code>$gw-&gt;count('*')</code> で挙動が異なる（<tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Gateway\TableGateway::count()' data-type-array='0' data-description='ryunosuke\dbml\Gateway\TableGateway::count()'>ryunosuke\dbml\Gateway\TableGateway::count()</tag_link> を参照）</p>
-<h3>仮想カラム</h3>
-<p><tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Gateway\TableGateway::setVirtualColumn()' data-type-array='0' data-description='ryunosuke\dbml\Gateway\TableGateway::setVirtualColumn()'>ryunosuke\dbml\Gateway\TableGateway::setVirtualColumn()</tag_link> で「あたかもテーブルにあるかのように振る舞うカラム」を定義できる。</p>
-<p>ありがちな例だが「姓」「名」を持つテーブルに対して <code>setVirtualColumn(['fullname' =&gt; new Expression('CONCAT(sei, mei)')]);</code> すると、あたかもフルネームカラムがあるように振る舞わせることができる。<br />
-使用例などはメソッドを参照。</p>
-<p>原則として仮想カラムを引っ張るためには明示的な指定が必要で、 <code>*</code> や <code>!ignore</code> で引っ張ったとしても取得列に含まれることはない。<br />
-ただし <code>defaultImplicitVirtual</code> を true にすると取得列に含まれるようになる（それでも <code>*</code> は不可）。<br />
-仮想カラムを含めた全てを取得したい場合は '!' とする（<tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::column()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::column()'>ryunosuke\dbml\Query\QueryBuilder::column()</tag_link> を参照）。<br />
-<code>defaultImplicitVirtual</code> は Gateway ごとのデフォルト値があり、各仮想カラムごとの設定も可能。</p>
-<p>明示使用の場合でも今のところ select, where, having でのみ使用可能。<br />
-orderBy は select に含めて指定すれば実現できるし、having も mysql であれば（設定次第で）直接式を指定することができるので、実質的には select, where でのみの使用となることが多いはず。</p>
 <h3>JOIN</h3>
 <p>メソッドコール or マジックゲット or マジックコールを使用して JOIN を行うことができる。<br />
 それぞれできる範囲と記法が異なり、特色がある（メソッドコールは冗長、マジックゲットは end がウザイ、マジックコールはエイリアスが張れない など）。</p>

@@ -260,16 +260,26 @@ $db-&gt;t_article-&gt;as('A')-&gt;scope('latest')-&gt;column([
 テーブル記法については <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::column()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::column()'>ryunosuke\dbml\Query\QueryBuilder::column()</tag_link> や <tag_link data-kind='fqsen' data-type-category='class' data-type-fqsen='ryunosuke\dbml\Query\Expression\TableDescriptor' data-type-array='0' data-description='ryunosuke\dbml\Query\Expression\TableDescriptor'>ryunosuke\dbml\Query\Expression\TableDescriptor</tag_link> にも記載があるのでそちらも参照。</p>
 <h3>テーブル名 ⇔ エンティティ名の自動変換</h3>
 <pre><code class="language-php">$db = new Database($connection, [
-    // テーブル名 ⇔ エンティティの変換を行うクロージャを指定する
-    'entityMapper'    =&gt; function ($tablename) {
-        return 'vendor\\Entity\\' . ucfirst(preg_replace('#^t_#', '', $tablename));
-    }
+    // テーブル名 &lt;=&gt; エンティティの変換を行うクロージャを指定する
+    'tableMapper'    =&gt; function ($tablename) {
+        $entityname = ucfirst(preg_replace('#^t_#', '', $tablename));
+        return [
+            // キーが単一のエンティティ名として使用され、要素として使用されるエンティティクラスやゲートウェイクラスを指定できる
+            $entityname =&gt; [
+                'entityClass'  =&gt; 'vendor\\Entity\\' . $entityname,
+                'gatewayClass' =&gt; 'vendor\\Gateway\\' . $entityname,
+            ],
+            // 複数返しても良い。その場合「テーブル名 =&gt; エンティティ」が1対多の関係になる
+        ];
+    },
+    // デフォルトのエンティティやゲートウェイを使うなら文字列を返しても良い
+    'tableMapper'    =&gt; function ($tablename) {
+        return ucfirst(preg_replace('#^t_#', '', $tablename));
+    },
 ]);
 </code></pre>
 <p>このような設定を行うと、内部で「DB テーブル名 ⇔ エンティティクラス名」の相互変換を行うことができる。<br />
 これによって「"t_article" テーブルは php 内で "Article" として扱う」のようなことが可能になる。</p>
-<p>entityMapper に与えるクロージャは php のクラス名を返す必要がある。<br />
-そのとき、クラスのショート名がエンティティ名として使用される（<code>vendor\\Entity\\Article</code> であれば <code>Article</code> がエンティティ名になる）。</p>
 <p>この設定の効果として、具体的には下記のコードが等価になる。</p>
 <pre><code class="language-php">$db-&gt;selectArray('Article.*');
 $db-&gt;selectArray('t_article.*');
@@ -281,7 +291,7 @@ $db-&gt;insert('t_article', $dataarray);
 結果的に「t_article テーブルから引っ張ったら自動で Article キーになってた」「Article キーで更新したら自動で t_article が更新されてた」という動作になる。<br />
 が、下記の制限から「アプリレイヤーによる自動エイリアス」と考えても差し支えない。端的に言えば「SQL レベルでエイリアスを明示しなくても "t_article" でも "Article" でもどっちでも認識する」ということになる。</p>
 <p>変換は、変換前と変換後で決して同じ名前があってはならない。さらに、変換した結果が同じ文字列になるのも厳禁。<br />
-要するにテーブル名 ⇔ エンティティ名が完全に1対1でなければならない。</p>
+要するにエンティティ名 =&gt; テーブル名が曖昧になってはならない。</p>
 <p>この機能はオンにしたところで「DB テーブル名 ⇔ エンティティクラス名の自動読み替え」程度の違いしか生まれず、その他の箇所にほとんど影響しない。<br />
 実装上、影響がある箇所は下記のみ。</p>
 <table>
@@ -307,7 +317,7 @@ $db-&gt;insert('t_article', $dataarray);
 <li><code>$db-&gt;Article-&gt;tuple('*', ['id' =&gt; 1]);</code></li>
 </ul>
 <p>上は<strong>プレーンな配列</strong>で1行を返すが、下は <strong>エンティティインスタンス</strong>で1行を返す。<br />
-その「エンティティインスタンス」とは entityMapper で指定した完全修飾クラス名である。</p>
+その「エンティティインスタンス」とは tableMapper で指定した完全修飾クラス名である。</p>
 <h3>外部キーの扱いについて</h3>
 <p>TableA ⇔ TableBのような相互参照外部キーの場合は例外が飛ぶ。<br />
 したがってそのような場合は外部キー自動指定はできず、明示的にカラムを指定する必要がある。<br />
@@ -340,16 +350,8 @@ $db-&gt;tableA()-&gt;tableC()-&gt;array();
 </code></pre>
 <p>となる。<br />
 この機構は外部キーを見る箇所全てで有効である（join, subselect, subexists など）。</p>
-<h3>カラムキャストについて</h3>
-<p>カラムエイリアスに <code>id@integer</code> のような指定をするとその値は integer にキャストされて取得することができる。その際、キーの <code>@integer</code> は取り除かれる。<br />
-使用できる型名は <code>Doctrine\DBAL\Types\Type</code> を参照。</p>
-<p>なお、 <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::fetchValue()' data-type-array='0' data-description='ryunosuke\dbml\Database::fetchValue()'>ryunosuke\dbml\Database::fetchValue()</tag_link> は行が存在しなかったときに <code>false</code> を返すので、その <code>false</code> と変換値の見分けがつかなくなるため <code>@boolean</code> を <code>fetchValue</code> で使うことはできない。</p>
-<p>区切り文字の <code>@</code> は autoCastSuffix オプションで指定する。 null 指定でキャストを行わなくなる。<br />
-パフォーマンス上の理由でデフォルトは null になっている。</p>
-<p>キャストは得られた全行全列に対して実行する。<br />
-かなりパフォーマンスが劣化するので、 <code>PDO::ATTR_EMULATE_PREPARES</code> <code>PDO::ATTR_STRINGIFY_FETCHES</code> など、ドライバのレイヤーで解決できるならそうすべき。</p>
-<p>autoCastType オプションを設定すると DB の型を活かして <code>Doctrine\DBAL\Types\Type</code> で変換して取得する。<br />
-autoCastSuffix のような「@で型を指定する」ような煩わしい指定がすべて不要になり、 SELECT だけでなく INSERT/UPDATE でも有効になる。</p>
+<h3>自動カラムキャスト</h3>
+<p>autoCastType オプションを設定すると DB の型を活かして <code>Doctrine\DBAL\Types\Type</code> で変換して取得する。</p>
 <pre><code class="language-php">// 具体的にはソースのコメントを参考
 $db-&gt;setAutoCastType([
     // DATETIME 型は「取得時は変換」「更新時はそのまま」となるように設定
@@ -391,11 +393,20 @@ $db-&gt;insert('t_article', [
 ]);
 // このように insert に直接配列を突っ込むことができる（「Array to string conversion」などと怒られたりはしない）。
 </code></pre>
-<p>実際のところとんでもないほど強力な機能だが、その分パフォーマンスは劣化する（理由は autoCastSuffix と同じ）。<br />
+<p>実際のところとんでもないほど強力な機能だが、その分パフォーマンスは劣化する（得られた全行全列に対して実行するので）。<br />
 また、 mysql のみ完全対応で、その他の DBMS はオマケのような位置付けになっている（一応それなりには動きはする）。<br />
 ただし、現在のところほぼグローバル設定で動作し、「テーブルごとに個別設定」のような動作は不可能。<br />
 これについては Gateway や Entity を利用して順次改善していく見込み。<br />
 （例えば Gateway のスコープに型情報を持たせたり、エンティティのフィールドの型でワイヤリングしたりなど）。</p>
+<h3>仮想カラム</h3>
+<p><tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::overrideColumns()' data-type-array='0' data-description='ryunosuke\dbml\Database::overrideColumns()'>ryunosuke\dbml\Database::overrideColumns()</tag_link> で「あたかもテーブルにあるかのように振る舞うカラム」を定義できる。</p>
+<p>ありがちな例だが「姓」「名」を持つテーブルに対して <code>overrideColumns(['usertable' =&gt; ['fullname' =&gt; new Expression('CONCAT(sei, mei)')]]);</code> すると、あたかもフルネームカラムがあるように振る舞わせることができる。<br />
+使用例などはメソッドを参照。</p>
+<p>原則として仮想カラムを引っ張るためには明示的な指定が必要で、 <code>*</code> や <code>!ignore</code> で引っ張ったとしても取得列に含まれることはない。<br />
+ただし追加するときに <code>implicit</code> を true にすると取得列に含まれるようになる（それでも <code>*</code> は不可）。<br />
+仮想カラムを含めた全てを取得したい場合は '!' とする（<tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::column()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::column()'>ryunosuke\dbml\Query\QueryBuilder::column()</tag_link> を参照）。</p>
+<p>明示使用の場合でも今のところ select, where, having でのみ使用可能。<br />
+orderBy は select に含めて指定すれば実現できるし、having も mysql であれば（設定次第で）直接式を指定することができるので、実質的には select, where でのみの使用となることが多いはず。</p>
 </div>
 	</div>
 
@@ -516,7 +527,7 @@ $db-&gt;insert('t_article', [
 							<span class="label label-info"></span>
 							<span class="label label-info"></span>
 							<span class="label label-deprecated"></span>
-                            			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Database.php#L41-L6103" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                            			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Database.php#L45-L6092" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
             						</div>
 						<h4 id="ryunosuke\dbml\Database" tabindex="-1" class="structure-title ">
 							<a href="ryunosuke-dbml-Database$typespace.html#ryunosuke\dbml\Database">Database</a>
@@ -578,7 +589,7 @@ ForUpdate を付与すると SELECT クエリに排他ロック構文が付与�
 <tbody>
 <tr><td align="left">insert などの行追加系</td><td align="left">affected row が 0 の時に例外を投げる。更に戻り値として主キー配列を返す</td></tr>
 <tr><td align="left">update, delete などの行作用系</td><td align="left">affected row が 0 の時に例外を投げる。更に戻り値として<strong>可能な限り</strong>主キー配列を返す（後述）</td></tr>
-<tr><td align="left">upsert などの行置換系</td><td align="left">affected row が 0 の時に例外を投げる。更に戻り値として<strong>追加/更新した行の</strong>主キー配列を返す（{@link upsert()}参照）</td></tr>
+<tr><td align="left">upsert などの行置換系</td><td align="left">affected row が 0 の時に例外を投げる。更に戻り値として<strong>追加/更新した行の</strong>主キー配列を返す（<tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::upsert()' data-type-array='0' data-description='ryunosuke\dbml\Database::upsert()'>ryunosuke\dbml\Database::upsert()</tag_link>参照）</td></tr>
 <tr><td align="left">fetchArray, fetchLists などの複数行を返す系</td><td align="left">フェッチ行数が 0 の時に例外を投げる</td></tr>
 <tr><td align="left">fetchTuple などの単一行を返す系</td><td align="left">行が見つからなかった時に例外を投げる</td></tr>
 <tr><td align="left">fetchValue などのスカラー値を返す系</td><td align="left">行が見つからなかった時に例外を投げる。 PostgreSQL の場合やカラムキャストが有効な場合は注意</td></tr>

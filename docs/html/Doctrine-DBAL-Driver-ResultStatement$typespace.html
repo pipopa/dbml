@@ -54,7 +54,7 @@
 		<span class="label label-info"></span>
 		<span class="label label-info"></span>
 		<span class="label label-deprecated"></span>
-        			<a href="https://github.com/doctrine/dbal/blob/v2.9.2/lib/Doctrine/DBAL/Driver/ResultStatement.php#L8-L98" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+        			<a href="https://github.com/doctrine/dbal/blob/v2.10.1/lib/Doctrine/DBAL/Driver/ResultStatement.php#L8-L98" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                     	</div>
 
 	<h2>interface <span class="category-name">Doctrine\DBAL\Driver\ResultStatement</span></h2>
@@ -108,6 +108,8 @@
         			<li class="indent">
                 <a href="Doctrine-DBAL-Cache-ResultCacheStatement$typespace.html#Doctrine\DBAL\Cache\ResultCacheStatement" class="fqsen "><small>Doctrine\DBAL\Cache\</small><wbr>ResultCacheStatement</a>                			</li>
         			<li class="indent">
+                <a href="ryunosuke-dbml-Entity-Entity$typespace.html#ryunosuke\dbml\Entity\Entity" class="fqsen "><small>ryunosuke\dbml\Entity\</small><wbr>Entity</a>                			</li>
+        			<li class="indent">
                 <a href="ryunosuke-dbml-Gateway-TableGateway$typespace.html#ryunosuke\dbml\Gateway\TableGateway" class="fqsen "><small>ryunosuke\dbml\Gateway\</small><wbr>TableGateway</a>                			</li>
         			<li class="indent">
                 <a href="ryunosuke-dbml-Generator-Yielder$typespace.html#ryunosuke\dbml\Generator\Yielder" class="fqsen "><small>ryunosuke\dbml\Generator\</small><wbr>Yielder</a>                			</li>
@@ -119,8 +121,6 @@
                 <a href="ryunosuke-dbml-Query-Pagination-Paginator$typespace.html#ryunosuke\dbml\Query\Pagination\Paginator" class="fqsen "><small>ryunosuke\dbml\Query\Pagination\</small><wbr>Paginator</a>                			</li>
         			<li class="indent">
                 <a href="ryunosuke-dbml-Query-Pagination-Sequencer$typespace.html#ryunosuke\dbml\Query\Pagination\Sequencer" class="fqsen "><small>ryunosuke\dbml\Query\Pagination\</small><wbr>Sequencer</a>                			</li>
-        			<li class="indent">
-                <a href="ryunosuke-dbml-Query-SubqueryBuilder$typespace.html#ryunosuke\dbml\Query\SubqueryBuilder" class="fqsen "><small>ryunosuke\dbml\Query\</small><wbr>SubqueryBuilder</a>                			</li>
         			<li class="indent">
                 <a href="Doctrine-DBAL-Statement$typespace.html#Doctrine\DBAL\Statement" class="fqsen "><small>Doctrine\DBAL\</small><wbr>Statement</a>                			</li>
         	</ul>
@@ -144,11 +144,11 @@
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/doctrine/dbal/blob/v2.9.2/lib/Doctrine/DBAL/Driver/ResultStatement.php#L13-L18" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.10.1/lib/Doctrine/DBAL/Driver/ResultStatement.php#L13-L18" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="Doctrine\DBAL\Driver\ResultStatement::closeCursor()" tabindex="-1" class="structure-title ">
-                        closeCursor						<small>()</small>
-					</h4>
+                        closeCursor                        	<small>() : bool</small>
+						</h4>
 					<div class="inner-item">
 						<div class="description"><p>Closes the cursor, enabling the statement to be executed again.</p>
 </div>
@@ -185,11 +185,11 @@
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/doctrine/dbal/blob/v2.9.2/lib/Doctrine/DBAL/Driver/ResultStatement.php#L20-L27" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.10.1/lib/Doctrine/DBAL/Driver/ResultStatement.php#L20-L27" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="Doctrine\DBAL\Driver\ResultStatement::columnCount()" tabindex="-1" class="structure-title ">
-                        columnCount						<small>()</small>
-					</h4>
+                        columnCount                        	<small>() : int</small>
+						</h4>
 					<div class="inner-item">
 						<div class="description"><p>Returns the number of columns in the result set</p>
 </div>
@@ -229,11 +229,11 @@
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/doctrine/dbal/blob/v2.9.2/lib/Doctrine/DBAL/Driver/ResultStatement.php#L29-L38" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.10.1/lib/Doctrine/DBAL/Driver/ResultStatement.php#L29-L38" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="Doctrine\DBAL\Driver\ResultStatement::setFetchMode()" tabindex="-1" class="structure-title ">
-                        setFetchMode						<small>($fetchMode, $arg2 = null, $arg3 = null)</small>
-					</h4>
+                        setFetchMode                        	<small>($fetchMode, $arg2 = null, $arg3 = null) : bool</small>
+						</h4>
 					<div class="inner-item">
 						<div class="description"><p>Sets the fetch mode to use while iterating this statement.</p>
 </div>
@@ -285,11 +285,11 @@
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/doctrine/dbal/blob/v2.9.2/lib/Doctrine/DBAL/Driver/ResultStatement.php#L40-L65" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.10.1/lib/Doctrine/DBAL/Driver/ResultStatement.php#L40-L65" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="Doctrine\DBAL\Driver\ResultStatement::fetch()" tabindex="-1" class="structure-title ">
-                        fetch						<small>($fetchMode = null, $cursorOrientation = PDO::FETCH_ORI_NEXT, $cursorOffset = 0)</small>
-					</h4>
+                        fetch                        	<small>($fetchMode = null, $cursorOrientation = PDO::FETCH_ORI_NEXT, $cursorOffset = 0) : mixed</small>
+						</h4>
 					<div class="inner-item">
 						<div class="description"><p>Returns the next row of a result set.</p>
 </div>
@@ -364,11 +364,11 @@
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/doctrine/dbal/blob/v2.9.2/lib/Doctrine/DBAL/Driver/ResultStatement.php#L67-L87" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.10.1/lib/Doctrine/DBAL/Driver/ResultStatement.php#L67-L87" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="Doctrine\DBAL\Driver\ResultStatement::fetchAll()" tabindex="-1" class="structure-title ">
-                        fetchAll						<small>($fetchMode = null, $fetchArgument = null, $ctorArgs = null)</small>
-					</h4>
+                        fetchAll                        	<small>($fetchMode = null, $fetchArgument = null, $ctorArgs = null) : mixed[]</small>
+						</h4>
 					<div class="inner-item">
 						<div class="description"><p>Returns an array containing all of the result set rows.</p>
 </div>
@@ -436,11 +436,11 @@
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/doctrine/dbal/blob/v2.9.2/lib/Doctrine/DBAL/Driver/ResultStatement.php#L89-L97" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.10.1/lib/Doctrine/DBAL/Driver/ResultStatement.php#L89-L97" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="Doctrine\DBAL\Driver\ResultStatement::fetchColumn()" tabindex="-1" class="structure-title ">
-                        fetchColumn						<small>($columnIndex = 0)</small>
-					</h4>
+                        fetchColumn                        	<small>($columnIndex = 0) : mixed<span class="type-separator"></span><wbr>false</small>
+						</h4>
 					<div class="inner-item">
 						<div class="description"><p>Returns a single column from the next row of a result set or FALSE if there are no more rows.</p>
 </div>

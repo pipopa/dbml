@@ -5,34 +5,603 @@
 namespace ryunosuke\dbml;
 
 # constants
-if (!defined("ryunosuke\\dbml\\JP_ERA")) {
-    /** 和暦 */
-    define("ryunosuke\\dbml\\JP_ERA", [
-        [
-            "name"  => "令和",
-            "abbr"  => "R",
-            "since" => 1556636400,
-        ],
-        [
-            "name"  => "平成",
-            "abbr"  => "H",
-            "since" => 600188400,
-        ],
-        [
-            "name"  => "昭和",
-            "abbr"  => "S",
-            "since" => -1357635600,
-        ],
-        [
-            "name"  => "大正",
-            "abbr"  => "T",
-            "since" => -1812186000,
-        ],
-        [
-            "name"  => "明治",
-            "abbr"  => "M",
-            "since" => -3216790800,
-        ],
+if (!defined("ryunosuke\\dbml\\KEYWORDS")) {
+    /** SQL キーワード（全 RDBMS ごちゃまぜ） */
+    define("ryunosuke\\dbml\\KEYWORDS", [
+        ""  => "",
+        0   => "ACCESSIBLE",
+        1   => "ACTION",
+        2   => "ADD",
+        3   => "AFTER",
+        4   => "AGAINST",
+        5   => "AGGREGATE",
+        6   => "ALGORITHM",
+        7   => "ALL",
+        8   => "ALTER",
+        9   => "ALTER TABLE",
+        10  => "ANALYSE",
+        11  => "ANALYZE",
+        12  => "AND",
+        13  => "AS",
+        14  => "ASC",
+        15  => "AUTOCOMMIT",
+        16  => "AUTO_INCREMENT",
+        17  => "BACKUP",
+        18  => "BEGIN",
+        19  => "BETWEEN",
+        20  => "BINLOG",
+        21  => "BOTH",
+        22  => "CASCADE",
+        23  => "CASE",
+        24  => "CHANGE",
+        25  => "CHANGED",
+        26  => "CHARACTER SET",
+        27  => "CHARSET",
+        28  => "CHECK",
+        29  => "CHECKSUM",
+        30  => "COLLATE",
+        31  => "COLLATION",
+        32  => "COLUMN",
+        33  => "COLUMNS",
+        34  => "COMMENT",
+        35  => "COMMIT",
+        36  => "COMMITTED",
+        37  => "COMPRESSED",
+        38  => "CONCURRENT",
+        39  => "CONSTRAINT",
+        40  => "CONTAINS",
+        41  => "CONVERT",
+        42  => "CREATE",
+        43  => "CROSS",
+        44  => "CURRENT_TIMESTAMP",
+        45  => "DATABASE",
+        46  => "DATABASES",
+        47  => "DAY",
+        48  => "DAY_HOUR",
+        49  => "DAY_MINUTE",
+        50  => "DAY_SECOND",
+        51  => "DEFAULT",
+        52  => "DEFINER",
+        53  => "DELAYED",
+        54  => "DELETE",
+        55  => "DELETE FROM",
+        56  => "DESC",
+        57  => "DESCRIBE",
+        58  => "DETERMINISTIC",
+        59  => "DISTINCT",
+        60  => "DISTINCTROW",
+        61  => "DIV",
+        62  => "DO",
+        63  => "DROP",
+        64  => "DUMPFILE",
+        65  => "DUPLICATE",
+        66  => "DYNAMIC",
+        67  => "ELSE",
+        68  => "ENCLOSED",
+        69  => "END",
+        70  => "ENGINE",
+        71  => "ENGINES",
+        72  => "ENGINE_TYPE",
+        73  => "ESCAPE",
+        74  => "ESCAPED",
+        75  => "EVENTS",
+        76  => "EXCEPT",
+        77  => "EXECUTE",
+        78  => "EXISTS",
+        79  => "EXPLAIN",
+        80  => "EXTENDED",
+        81  => "FAST",
+        82  => "FIELDS",
+        83  => "FILE",
+        84  => "FIRST",
+        85  => "FIXED",
+        86  => "FLUSH",
+        87  => "FOR",
+        88  => "FORCE",
+        89  => "FOREIGN",
+        90  => "FROM",
+        91  => "FULL",
+        92  => "FULLTEXT",
+        93  => "FUNCTION",
+        94  => "GLOBAL",
+        95  => "GRANT",
+        96  => "GRANTS",
+        97  => "GROUP",
+        98  => "GROUP_CONCAT",
+        99  => "HAVING",
+        100 => "HEAP",
+        101 => "HIGH_PRIORITY",
+        102 => "HOSTS",
+        103 => "HOUR",
+        104 => "HOUR_MINUTE",
+        105 => "HOUR_SECOND",
+        106 => "IDENTIFIED",
+        107 => "IF",
+        108 => "IFNULL",
+        109 => "IGNORE",
+        110 => "IN",
+        111 => "INDEX",
+        112 => "INDEXES",
+        113 => "INFILE",
+        114 => "INNER",
+        115 => "INSERT",
+        116 => "INSERT_ID",
+        117 => "INSERT_METHOD",
+        118 => "INTERSECT",
+        119 => "INTERVAL",
+        120 => "INTO",
+        121 => "INVOKER",
+        122 => "IS",
+        123 => "ISOLATION",
+        124 => "JOIN",
+        125 => "KEY",
+        126 => "KEYS",
+        127 => "KILL",
+        128 => "LAST_INSERT_ID",
+        129 => "LEADING",
+        130 => "LEFT",
+        131 => "LEVEL",
+        132 => "LIKE",
+        133 => "LIMIT",
+        134 => "LINEAR",
+        135 => "LINES",
+        136 => "LOAD",
+        137 => "LOCAL",
+        138 => "LOCK",
+        139 => "LOCKS",
+        140 => "LOGS",
+        141 => "LOW_PRIORITY",
+        142 => "MARIA",
+        143 => "MASTER",
+        144 => "MASTER_CONNECT_RETRY",
+        145 => "MASTER_HOST",
+        146 => "MASTER_LOG_FILE",
+        147 => "MATCH",
+        148 => "MAX_CONNECTIONS_PER_HOUR",
+        149 => "MAX_QUERIES_PER_HOUR",
+        150 => "MAX_ROWS",
+        151 => "MAX_UPDATES_PER_HOUR",
+        152 => "MAX_USER_CONNECTIONS",
+        153 => "MEDIUM",
+        154 => "MERGE",
+        155 => "MINUTE",
+        156 => "MINUTE_SECOND",
+        157 => "MIN_ROWS",
+        158 => "MODE",
+        159 => "MODIFY",
+        160 => "MONTH",
+        161 => "MRG_MYISAM",
+        162 => "MYISAM",
+        163 => "NAMES",
+        164 => "NATURAL",
+        165 => "NOT",
+        166 => "NOW()",
+        167 => "NULL",
+        168 => "OFFSET",
+        169 => "ON",
+        170 => "ON DELETE",
+        171 => "ON UPDATE",
+        172 => "OPEN",
+        173 => "OPTIMIZE",
+        174 => "OPTION",
+        175 => "OPTIONALLY",
+        176 => "OR",
+        177 => "ORDER",
+        178 => "BY",
+        179 => "OUTER",
+        180 => "OUTFILE",
+        181 => "PACK_KEYS",
+        182 => "PAGE",
+        183 => "PARTIAL",
+        184 => "PARTITION",
+        185 => "PARTITIONS",
+        186 => "PASSWORD",
+        187 => "PRIMARY",
+        188 => "PRIVILEGES",
+        189 => "PROCEDURE",
+        190 => "PROCESS",
+        191 => "PROCESSLIST",
+        192 => "PURGE",
+        193 => "QUICK",
+        194 => "RAID0",
+        195 => "RAID_CHUNKS",
+        196 => "RAID_CHUNKSIZE",
+        197 => "RAID_TYPE",
+        198 => "RANGE",
+        199 => "READ",
+        200 => "READ_ONLY",
+        201 => "READ_WRITE",
+        202 => "REFERENCES",
+        203 => "REGEXP",
+        204 => "RELOAD",
+        205 => "RENAME",
+        206 => "REPAIR",
+        207 => "REPEATABLE",
+        208 => "REPLACE",
+        209 => "REPLICATION",
+        210 => "RESET",
+        211 => "RESTORE",
+        212 => "RESTRICT",
+        213 => "RETURN",
+        214 => "RETURNS",
+        215 => "REVOKE",
+        216 => "RIGHT",
+        217 => "RLIKE",
+        218 => "ROLLBACK",
+        219 => "ROW",
+        220 => "ROWS",
+        221 => "ROW_FORMAT",
+        222 => "SECOND",
+        223 => "SECURITY",
+        224 => "SELECT",
+        225 => "SEPARATOR",
+        226 => "SERIALIZABLE",
+        227 => "SESSION",
+        228 => "SET",
+        229 => "SHARE",
+        230 => "SHOW",
+        231 => "SHUTDOWN",
+        232 => "SLAVE",
+        233 => "SONAME",
+        234 => "SOUNDS",
+        235 => "SQL",
+        236 => "SQL_AUTO_IS_NULL",
+        237 => "SQL_BIG_RESULT",
+        238 => "SQL_BIG_SELECTS",
+        239 => "SQL_BIG_TABLES",
+        240 => "SQL_BUFFER_RESULT",
+        241 => "SQL_CACHE",
+        242 => "SQL_CALC_FOUND_ROWS",
+        243 => "SQL_LOG_BIN",
+        244 => "SQL_LOG_OFF",
+        245 => "SQL_LOG_UPDATE",
+        246 => "SQL_LOW_PRIORITY_UPDATES",
+        247 => "SQL_MAX_JOIN_SIZE",
+        248 => "SQL_NO_CACHE",
+        249 => "SQL_QUOTE_SHOW_CREATE",
+        250 => "SQL_SAFE_UPDATES",
+        251 => "SQL_SELECT_LIMIT",
+        252 => "SQL_SLAVE_SKIP_COUNTER",
+        253 => "SQL_SMALL_RESULT",
+        254 => "SQL_WARNINGS",
+        255 => "START",
+        256 => "STARTING",
+        257 => "STATUS",
+        258 => "STOP",
+        259 => "STORAGE",
+        260 => "STRAIGHT_JOIN",
+        261 => "STRING",
+        262 => "STRIPED",
+        263 => "SUPER",
+        264 => "TABLE",
+        265 => "TABLES",
+        266 => "TEMPORARY",
+        267 => "TERMINATED",
+        268 => "THEN",
+        269 => "TO",
+        270 => "TRAILING",
+        271 => "TRANSACTIONAL",
+        272 => "TRUE",
+        273 => "TRUNCATE",
+        274 => "TYPE",
+        275 => "TYPES",
+        276 => "UNCOMMITTED",
+        277 => "UNION",
+        278 => "UNION ALL",
+        279 => "UNIQUE",
+        280 => "UNLOCK",
+        281 => "UNSIGNED",
+        282 => "UPDATE",
+        283 => "USAGE",
+        284 => "USE",
+        285 => "USING",
+        286 => "VALUES",
+        287 => "VARIABLES",
+        288 => "VIEW",
+        289 => "WHEN",
+        290 => "WHERE",
+        291 => "WITH",
+        292 => "WORK",
+        293 => "WRITE",
+        294 => "XOR",
+        295 => "YEAR_MONTH",
+        296 => "ABS",
+        297 => "ACOS",
+        298 => "ADDDATE",
+        299 => "ADDTIME",
+        300 => "AES_DECRYPT",
+        301 => "AES_ENCRYPT",
+        302 => "AREA",
+        303 => "ASBINARY",
+        304 => "ASCII",
+        305 => "ASIN",
+        306 => "ASTEXT",
+        307 => "ATAN",
+        308 => "ATAN2",
+        309 => "AVG",
+        310 => "BDMPOLYFROMTEXT",
+        311 => "BDMPOLYFROMWKB",
+        312 => "BDPOLYFROMTEXT",
+        313 => "BDPOLYFROMWKB",
+        314 => "BENCHMARK",
+        315 => "BIN",
+        316 => "BIT_AND",
+        317 => "BIT_COUNT",
+        318 => "BIT_LENGTH",
+        319 => "BIT_OR",
+        320 => "BIT_XOR",
+        321 => "BOUNDARY",
+        322 => "BUFFER",
+        323 => "CAST",
+        324 => "CEIL",
+        325 => "CEILING",
+        326 => "CENTROID",
+        327 => "CHAR",
+        328 => "CHARACTER_LENGTH",
+        329 => "CHARSET",
+        330 => "CHAR_LENGTH",
+        331 => "COALESCE",
+        332 => "COERCIBILITY",
+        333 => "COLLATION",
+        334 => "COMPRESS",
+        335 => "CONCAT",
+        336 => "CONCAT_WS",
+        337 => "CONNECTION_ID",
+        338 => "CONTAINS",
+        339 => "CONV",
+        340 => "CONVERT",
+        341 => "CONVERT_TZ",
+        342 => "CONVEXHULL",
+        343 => "COS",
+        344 => "COT",
+        345 => "COUNT",
+        346 => "CRC32",
+        347 => "CROSSES",
+        348 => "CURDATE",
+        349 => "CURRENT_DATE",
+        350 => "CURRENT_TIME",
+        351 => "CURRENT_TIMESTAMP",
+        352 => "CURRENT_USER",
+        353 => "CURTIME",
+        354 => "DATABASE",
+        355 => "DATE",
+        356 => "DATEDIFF",
+        357 => "DATE_ADD",
+        358 => "DATE_DIFF",
+        359 => "DATE_FORMAT",
+        360 => "DATE_SUB",
+        361 => "DAY",
+        362 => "DAYNAME",
+        363 => "DAYOFMONTH",
+        364 => "DAYOFWEEK",
+        365 => "DAYOFYEAR",
+        366 => "DECODE",
+        367 => "DEFAULT",
+        368 => "DEGREES",
+        369 => "DES_DECRYPT",
+        370 => "DES_ENCRYPT",
+        371 => "DIFFERENCE",
+        372 => "DIMENSION",
+        373 => "DISJOINT",
+        374 => "DISTANCE",
+        375 => "ELT",
+        376 => "ENCODE",
+        377 => "ENCRYPT",
+        378 => "ENDPOINT",
+        379 => "ENVELOPE",
+        380 => "EQUALS",
+        381 => "EXP",
+        382 => "EXPORT_SET",
+        383 => "EXTERIORRING",
+        384 => "EXTRACT",
+        385 => "EXTRACTVALUE",
+        386 => "FIELD",
+        387 => "FIND_IN_SET",
+        388 => "FLOOR",
+        389 => "FORMAT",
+        390 => "FOUND_ROWS",
+        391 => "FROM_DAYS",
+        392 => "FROM_UNIXTIME",
+        393 => "GEOMCOLLFROMTEXT",
+        394 => "GEOMCOLLFROMWKB",
+        395 => "GEOMETRYCOLLECTION",
+        396 => "GEOMETRYCOLLECTIONFROMTEXT",
+        397 => "GEOMETRYCOLLECTIONFROMWKB",
+        398 => "GEOMETRYFROMTEXT",
+        399 => "GEOMETRYFROMWKB",
+        400 => "GEOMETRYN",
+        401 => "GEOMETRYTYPE",
+        402 => "GEOMFROMTEXT",
+        403 => "GEOMFROMWKB",
+        404 => "GET_FORMAT",
+        405 => "GET_LOCK",
+        406 => "GLENGTH",
+        407 => "GREATEST",
+        408 => "GROUP_CONCAT",
+        409 => "GROUP_UNIQUE_USERS",
+        410 => "HEX",
+        411 => "HOUR",
+        412 => "IF",
+        413 => "IFNULL",
+        414 => "INET_ATON",
+        415 => "INET_NTOA",
+        416 => "INSERT",
+        417 => "INSTR",
+        418 => "INTERIORRINGN",
+        419 => "INTERSECTION",
+        420 => "INTERSECTS",
+        421 => "INTERVAL",
+        422 => "ISCLOSED",
+        423 => "ISEMPTY",
+        424 => "ISNULL",
+        425 => "ISRING",
+        426 => "ISSIMPLE",
+        427 => "IS_FREE_LOCK",
+        428 => "IS_USED_LOCK",
+        429 => "LAST_DAY",
+        430 => "LAST_INSERT_ID",
+        431 => "LCASE",
+        432 => "LEAST",
+        433 => "LEFT",
+        434 => "LENGTH",
+        435 => "LINEFROMTEXT",
+        436 => "LINEFROMWKB",
+        437 => "LINESTRING",
+        438 => "LINESTRINGFROMTEXT",
+        439 => "LINESTRINGFROMWKB",
+        440 => "LN",
+        441 => "LOAD_FILE",
+        442 => "LOCALTIME",
+        443 => "LOCALTIMESTAMP",
+        444 => "LOCATE",
+        445 => "LOG",
+        446 => "LOG10",
+        447 => "LOG2",
+        448 => "LOWER",
+        449 => "LPAD",
+        450 => "LTRIM",
+        451 => "MAKEDATE",
+        452 => "MAKETIME",
+        453 => "MAKE_SET",
+        454 => "MASTER_POS_WAIT",
+        455 => "MAX",
+        456 => "MBRCONTAINS",
+        457 => "MBRDISJOINT",
+        458 => "MBREQUAL",
+        459 => "MBRINTERSECTS",
+        460 => "MBROVERLAPS",
+        461 => "MBRTOUCHES",
+        462 => "MBRWITHIN",
+        463 => "MD5",
+        464 => "MICROSECOND",
+        465 => "MID",
+        466 => "MIN",
+        467 => "MINUTE",
+        468 => "MLINEFROMTEXT",
+        469 => "MLINEFROMWKB",
+        470 => "MOD",
+        471 => "MONTH",
+        472 => "MONTHNAME",
+        473 => "MPOINTFROMTEXT",
+        474 => "MPOINTFROMWKB",
+        475 => "MPOLYFROMTEXT",
+        476 => "MPOLYFROMWKB",
+        477 => "MULTILINESTRING",
+        478 => "MULTILINESTRINGFROMTEXT",
+        479 => "MULTILINESTRINGFROMWKB",
+        480 => "MULTIPOINT",
+        481 => "MULTIPOINTFROMTEXT",
+        482 => "MULTIPOINTFROMWKB",
+        483 => "MULTIPOLYGON",
+        484 => "MULTIPOLYGONFROMTEXT",
+        485 => "MULTIPOLYGONFROMWKB",
+        486 => "NAME_CONST",
+        487 => "NULLIF",
+        488 => "NUMGEOMETRIES",
+        489 => "NUMINTERIORRINGS",
+        490 => "NUMPOINTS",
+        491 => "OCT",
+        492 => "OCTET_LENGTH",
+        493 => "OLD_PASSWORD",
+        494 => "ORD",
+        495 => "OVERLAPS",
+        496 => "PASSWORD",
+        497 => "PERIOD_ADD",
+        498 => "PERIOD_DIFF",
+        499 => "PI",
+        500 => "POINT",
+        501 => "POINTFROMTEXT",
+        502 => "POINTFROMWKB",
+        503 => "POINTN",
+        504 => "POINTONSURFACE",
+        505 => "POLYFROMTEXT",
+        506 => "POLYFROMWKB",
+        507 => "POLYGON",
+        508 => "POLYGONFROMTEXT",
+        509 => "POLYGONFROMWKB",
+        510 => "POSITION",
+        511 => "POW",
+        512 => "POWER",
+        513 => "QUARTER",
+        514 => "QUOTE",
+        515 => "RADIANS",
+        516 => "RAND",
+        517 => "RELATED",
+        518 => "RELEASE_LOCK",
+        519 => "REPEAT",
+        520 => "REPLACE",
+        521 => "REVERSE",
+        522 => "RIGHT",
+        523 => "ROUND",
+        524 => "ROW_COUNT",
+        525 => "RPAD",
+        526 => "RTRIM",
+        527 => "SCHEMA",
+        528 => "SECOND",
+        529 => "SEC_TO_TIME",
+        530 => "SESSION_USER",
+        531 => "SHA",
+        532 => "SHA1",
+        533 => "SIGN",
+        534 => "SIN",
+        535 => "SLEEP",
+        536 => "SOUNDEX",
+        537 => "SPACE",
+        538 => "SQRT",
+        539 => "SRID",
+        540 => "STARTPOINT",
+        541 => "STD",
+        542 => "STDDEV",
+        543 => "STDDEV_POP",
+        544 => "STDDEV_SAMP",
+        545 => "STRCMP",
+        546 => "STR_TO_DATE",
+        547 => "SUBDATE",
+        548 => "SUBSTR",
+        549 => "SUBSTRING",
+        550 => "SUBSTRING_INDEX",
+        551 => "SUBTIME",
+        552 => "SUM",
+        553 => "SYMDIFFERENCE",
+        554 => "SYSDATE",
+        555 => "SYSTEM_USER",
+        556 => "TAN",
+        557 => "TIME",
+        558 => "TIMEDIFF",
+        559 => "TIMESTAMP",
+        560 => "TIMESTAMPADD",
+        561 => "TIMESTAMPDIFF",
+        562 => "TIME_FORMAT",
+        563 => "TIME_TO_SEC",
+        564 => "TOUCHES",
+        565 => "TO_DAYS",
+        566 => "TRIM",
+        567 => "TRUNCATE",
+        568 => "UCASE",
+        569 => "UNCOMPRESS",
+        570 => "UNCOMPRESSED_LENGTH",
+        571 => "UNHEX",
+        572 => "UNIQUE_USERS",
+        573 => "UNIX_TIMESTAMP",
+        574 => "UPDATEXML",
+        575 => "UPPER",
+        576 => "USER",
+        577 => "UTC_DATE",
+        578 => "UTC_TIME",
+        579 => "UTC_TIMESTAMP",
+        580 => "UUID",
+        581 => "VARIANCE",
+        582 => "VAR_POP",
+        583 => "VAR_SAMP",
+        584 => "VERSION",
+        585 => "WEEK",
+        586 => "WEEKDAY",
+        587 => "WEEKOFYEAR",
+        588 => "WITHIN",
+        589 => "X",
+        590 => "Y",
+        591 => "YEAR",
+        592 => "YEARWEEK",
     ]);
 }
 
@@ -48,10 +617,10 @@ if (!isset($excluded_functions["arrayize"]) && (!function_exists("ryunosuke\\dbm
      *
      * Example:
      * ```php
-     * assertSame(arrayize(1, 2, 3), [1, 2, 3]);
-     * assertSame(arrayize([1], [2], [3]), [1, 2, 3]);
+     * that(arrayize(1, 2, 3))->isSame([1, 2, 3]);
+     * that(arrayize([1], [2], [3]))->isSame([1, 2, 3]);
      * $object = new \stdClass();
-     * assertSame(arrayize($object, false, [1, 2, 3]), [$object, false, 1, 2, 3]);
+     * that(arrayize($object, false, [1, 2, 3]))->isSame([$object, false, 1, 2, 3]);
      * ```
      *
      * @param mixed $variadic 生成する要素（可変引数）
@@ -81,9 +650,9 @@ if (!isset($excluded_functions["is_hasharray"]) && (!function_exists("ryunosuke\
      *
      * Example:
      * ```php
-     * assertFalse(is_hasharray([]));
-     * assertFalse(is_hasharray([1, 2, 3]));
-     * assertTrue(is_hasharray(['x' => 'X']));
+     * that(is_hasharray([]))->isFalse();
+     * that(is_hasharray([1, 2, 3]))->isFalse();
+     * that(is_hasharray(['x' => 'X']))->isTrue();
      * ```
      *
      * @param array $array 調べる配列
@@ -112,8 +681,8 @@ if (!isset($excluded_functions["first_key"]) && (!function_exists("ryunosuke\\db
      *
      * Example:
      * ```php
-     * assertSame(first_key(['a', 'b', 'c']), 0);
-     * assertSame(first_key([], 999), 999);
+     * that(first_key(['a', 'b', 'c']))->isSame(0);
+     * that(first_key([], 999))->isSame(999);
      * ```
      *
      * @param iterable $array 対象配列
@@ -142,8 +711,8 @@ if (!isset($excluded_functions["first_value"]) && (!function_exists("ryunosuke\\
      *
      * Example:
      * ```php
-     * assertSame(first_value(['a', 'b', 'c']), 'a');
-     * assertSame(first_value([], 999), 999);
+     * that(first_value(['a', 'b', 'c']))->isSame('a');
+     * that(first_value([], 999))->isSame(999);
      * ```
      *
      * @param iterable $array 対象配列
@@ -172,8 +741,8 @@ if (!isset($excluded_functions["first_keyvalue"]) && (!function_exists("ryunosuk
      *
      * Example:
      * ```php
-     * assertSame(first_keyvalue(['a', 'b', 'c']), [0, 'a']);
-     * assertSame(first_keyvalue([], 999), 999);
+     * that(first_keyvalue(['a', 'b', 'c']))->isSame([0, 'a']);
+     * that(first_keyvalue([], 999))->isSame(999);
      * ```
      *
      * @param iterable $array 対象配列
@@ -200,8 +769,8 @@ if (!isset($excluded_functions["last_key"]) && (!function_exists("ryunosuke\\dbm
      *
      * Example:
      * ```php
-     * assertSame(last_key(['a', 'b', 'c']), 2);
-     * assertSame(last_key([], 999), 999);
+     * that(last_key(['a', 'b', 'c']))->isSame(2);
+     * that(last_key([], 999))->isSame(999);
      * ```
      *
      * @param iterable $array 対象配列
@@ -230,8 +799,8 @@ if (!isset($excluded_functions["last_value"]) && (!function_exists("ryunosuke\\d
      *
      * Example:
      * ```php
-     * assertSame(last_value(['a', 'b', 'c']), 'c');
-     * assertSame(last_value([], 999), 999);
+     * that(last_value(['a', 'b', 'c']))->isSame('c');
+     * that(last_value([], 999))->isSame(999);
      * ```
      *
      * @param iterable $array 対象配列
@@ -260,8 +829,8 @@ if (!isset($excluded_functions["last_keyvalue"]) && (!function_exists("ryunosuke
      *
      * Example:
      * ```php
-     * assertSame(last_keyvalue(['a', 'b', 'c']), [2, 'c']);
-     * assertSame(last_keyvalue([], 999), 999);
+     * that(last_keyvalue(['a', 'b', 'c']))->isSame([2, 'c']);
+     * that(last_keyvalue([], 999))->isSame(999);
      * ```
      *
      * @param iterable $array 対象配列
@@ -306,9 +875,9 @@ if (!isset($excluded_functions["array_implode"]) && (!function_exists("ryunosuke
      * Example:
      * ```php
      * // (配列, 要素) の呼び出し
-     * assertSame(array_implode(['a', 'b', 'c'], 'X'), ['a', 'X', 'b', 'X', 'c']);
+     * that(array_implode(['a', 'b', 'c'], 'X'))->isSame(['a', 'X', 'b', 'X', 'c']);
      * // (要素, ...配列) の呼び出し
-     * assertSame(array_implode('X', 'a', 'b', 'c'), ['a', 'X', 'b', 'X', 'c']);
+     * that(array_implode('X', 'a', 'b', 'c'))->isSame(['a', 'X', 'b', 'X', 'c']);
      * ```
      *
      * @param iterable|string $array 対象配列
@@ -355,17 +924,17 @@ if (!isset($excluded_functions["array_sprintf"]) && (!function_exists("ryunosuke
      * ```php
      * $array = ['key1' => 'val1', 'key2' => 'val2'];
      * // key, value を利用した sprintf
-     * assertSame(array_sprintf($array, '%2$s=%1$s'), ['key1=val1', 'key2=val2']);
+     * that(array_sprintf($array, '%2$s=%1$s'))->isSame(['key1=val1', 'key2=val2']);
      * // 第3引数を与えるとさらに implode される
-     * assertSame(array_sprintf($array, '%2$s=%1$s', ' '), 'key1=val1 key2=val2');
+     * that(array_sprintf($array, '%2$s=%1$s', ' '))->isSame('key1=val1 key2=val2');
      * // クロージャを与えるとコールバック動作になる
      * $closure = function($v, $k){return "$k=" . strtoupper($v);};
-     * assertSame(array_sprintf($array, $closure, ' '), 'key1=VAL1 key2=VAL2');
+     * that(array_sprintf($array, $closure, ' '))->isSame('key1=VAL1 key2=VAL2');
      * // 省略すると vsprintf になる
-     * assertSame(array_sprintf([
+     * that(array_sprintf([
      *     'str:%s,int:%d' => ['sss', '3.14'],
      *     'single:%s'     => 'str',
-     * ], null, '|'), 'str:sss,int:3|single:str');
+     * ], null, '|'))->isSame('str:sss,int:3|single:str');
      * ```
      *
      * @param iterable $array 対象配列
@@ -413,9 +982,9 @@ if (!isset($excluded_functions["array_strpad"]) && (!function_exists("ryunosuke\
      * ```php
      * $array = ['key1' => 'val1', 'key2' => 'val2'];
      * // キーにプレフィックス付与
-     * assertSame(array_strpad($array, 'prefix-'), ['prefix-key1' => 'val1', 'prefix-key2' => 'val2']);
+     * that(array_strpad($array, 'prefix-'))->isSame(['prefix-key1' => 'val1', 'prefix-key2' => 'val2']);
      * // 値にサフィックス付与
-     * assertSame(array_strpad($array, '', ['-suffix']), ['key1' => 'val1-suffix', 'key2' => 'val2-suffix']);
+     * that(array_strpad($array, '', ['-suffix']))->isSame(['key1' => 'val1-suffix', 'key2' => 'val2-suffix']);
      * ```
      *
      * @param iterable $array 対象配列
@@ -471,19 +1040,19 @@ if (!isset($excluded_functions["array_get"]) && (!function_exists("ryunosuke\\db
      * Example:
      * ```php
      * // 単純取得
-     * assertSame(array_get(['a', 'b', 'c'], 1), 'b');
+     * that(array_get(['a', 'b', 'c'], 1))->isSame('b');
      * // 単純デフォルト
-     * assertSame(array_get(['a', 'b', 'c'], 9, 999), 999);
+     * that(array_get(['a', 'b', 'c'], 9, 999))->isSame(999);
      * // 配列取得
-     * assertSame(array_get(['a', 'b', 'c'], [0, 2]), [0 => 'a', 2 => 'c']);
+     * that(array_get(['a', 'b', 'c'], [0, 2]))->isSame([0 => 'a', 2 => 'c']);
      * // 配列部分取得
-     * assertSame(array_get(['a', 'b', 'c'], [0, 9]), [0 => 'a']);
+     * that(array_get(['a', 'b', 'c'], [0, 9]))->isSame([0 => 'a']);
      * // 配列デフォルト（null ではなく [] を返す）
-     * assertSame(array_get(['a', 'b', 'c'], [9]), []);
+     * that(array_get(['a', 'b', 'c'], [9]))->isSame([]);
      * // クロージャ指定＆単値（コールバックが true を返す最初の要素）
-     * assertSame(array_get(['a', 'b', 'c'], function($v){return in_array($v, ['b', 'c']);}), 'b');
+     * that(array_get(['a', 'b', 'c'], function($v){return in_array($v, ['b', 'c']);}))->isSame('b');
      * // クロージャ指定＆配列（コールバックが true を返すもの）
-     * assertSame(array_get(['a', 'b', 'c'], function($v){return in_array($v, ['b', 'c']);}, []), [1 => 'b', 2 => 'c']);
+     * that(array_get(['a', 'b', 'c'], function($v){return in_array($v, ['b', 'c']);}, []))->isSame([1 => 'b', 2 => 'c']);
      * ```
      *
      * @param array $array 配列
@@ -548,15 +1117,15 @@ if (!isset($excluded_functions["array_set"]) && (!function_exists("ryunosuke\\db
      * ```php
      * $array = ['a' => 'A', 'B'];
      * // 第3引数省略（最後に連番キーで設定）
-     * assertSame(array_set($array, 'Z'), 1);
-     * assertSame($array, ['a' => 'A', 'B', 'Z']);
+     * that(array_set($array, 'Z'))->isSame(1);
+     * that($array)->isSame(['a' => 'A', 'B', 'Z']);
      * // 第3引数でキーを指定
-     * assertSame(array_set($array, 'Z', 'z'), 'z');
-     * assertSame($array, ['a' => 'A', 'B', 'Z', 'z' => 'Z']);
-     * assertSame(array_set($array, 'Z', 'z'), 'z');
+     * that(array_set($array, 'Z', 'z'))->isSame('z');
+     * that($array)->isSame(['a' => 'A', 'B', 'Z', 'z' => 'Z']);
+     * that(array_set($array, 'Z', 'z'))->isSame('z');
      * // 第3引数で配列を指定
-     * assertSame(array_set($array, 'Z', ['x', 'y', 'z']), 'z');
-     * assertSame($array, ['a' => 'A', 'B', 'Z', 'z' => 'Z', 'x' => ['y' => ['z' => 'Z']]]);
+     * that(array_set($array, 'Z', ['x', 'y', 'z']))->isSame('z');
+     * that($array)->isSame(['a' => 'A', 'B', 'Z', 'z' => 'Z', 'x' => ['y' => ['z' => 'Z']]]);
      * ```
      *
      * @param array $array 配列
@@ -612,18 +1181,18 @@ if (!isset($excluded_functions["array_put"]) && (!function_exists("ryunosuke\\db
      * ```php
      * $array = ['a' => 'A', 'B'];
      * // 第3引数 int
-     * assertSame(array_put($array, 'Z', 999), 1);
-     * assertSame($array, ['a' => 'A', 'B', 'Z']);
+     * that(array_put($array, 'Z', 999))->isSame(1);
+     * that($array)->isSame(['a' => 'A', 'B', 'Z']);
      * // 第3引数省略（最後に連番キーで設定）
-     * assertSame(array_put($array, 'Z'), 2);
-     * assertSame($array, ['a' => 'A', 'B', 'Z', 'Z']);
+     * that(array_put($array, 'Z'))->isSame(2);
+     * that($array)->isSame(['a' => 'A', 'B', 'Z', 'Z']);
      * // 第3引数でキーを指定
-     * assertSame(array_put($array, 'Z', 'z'), 'z');
-     * assertSame($array, ['a' => 'A', 'B', 'Z', 'Z', 'z' => 'Z']);
-     * assertSame(array_put($array, 'Z', 'z'), 'z');
+     * that(array_put($array, 'Z', 'z'))->isSame('z');
+     * that($array)->isSame(['a' => 'A', 'B', 'Z', 'Z', 'z' => 'Z']);
+     * that(array_put($array, 'Z', 'z'))->isSame('z');
      * // 第3引数で配列を指定
-     * assertSame(array_put($array, 'Z', ['x', 'y', 'z']), 'z');
-     * assertSame($array, ['a' => 'A', 'B', 'Z', 'Z', 'z' => 'Z', 'x' => ['y' => ['z' => 'Z']]]);
+     * that(array_put($array, 'Z', ['x', 'y', 'z']))->isSame('z');
+     * that($array)->isSame(['a' => 'A', 'B', 'Z', 'Z', 'z' => 'Z', 'x' => ['y' => ['z' => 'Z']]]);
      * ```
      *
      * @param array $array 配列
@@ -681,24 +1250,24 @@ if (!isset($excluded_functions["array_unset"]) && (!function_exists("ryunosuke\\
      * ```php
      * $array = ['a' => 'A', 'b' => 'B'];
      * // ない場合は $default を返す
-     * assertSame(array_unset($array, 'x', 'X'), 'X');
+     * that(array_unset($array, 'x', 'X'))->isSame('X');
      * // 指定したキーを返す。そのキーは伏せられている
-     * assertSame(array_unset($array, 'a'), 'A');
-     * assertSame($array, ['b' => 'B']);
+     * that(array_unset($array, 'a'))->isSame('A');
+     * that($array)->isSame(['b' => 'B']);
      *
      * $array = ['a' => 'A', 'b' => 'B', 'c' => 'C'];
      * // 配列を与えるとそれらを返す。そのキーは全て伏せられている
-     * assertSame(array_unset($array, ['a', 'b', 'x']), ['A', 'B']);
-     * assertSame($array, ['c' => 'C']);
+     * that(array_unset($array, ['a', 'b', 'x']))->isSame(['A', 'B']);
+     * that($array)->isSame(['c' => 'C']);
      *
      * $array = ['a' => 'A', 'b' => 'B', 'c' => 'C'];
      * // 配列のキーは返されるキーを表す。順番も維持される
-     * assertSame(array_unset($array, ['x2' => 'b', 'x1' => 'a']), ['x2' => 'B', 'x1' => 'A']);
+     * that(array_unset($array, ['x2' => 'b', 'x1' => 'a']))->isSame(['x2' => 'B', 'x1' => 'A']);
      *
      * $array = ['hoge' => 'HOGE', 'fuga' => 'FUGA', 'piyo' => 'PIYO'];
      * // 値に "G" を含むものを返す。その要素は伏せられている
-     * assertSame(array_unset($array, function($v){return strpos($v, 'G') !== false;}), ['hoge' => 'HOGE', 'fuga' => 'FUGA']);
-     * assertSame($array, ['piyo' => 'PIYO']);
+     * that(array_unset($array, function($v){return strpos($v, 'G') !== false;}))->isSame(['hoge' => 'HOGE', 'fuga' => 'FUGA']);
+     * that($array)->isSame(['piyo' => 'PIYO']);
      * ```
      *
      * @param array $array 配列
@@ -765,11 +1334,11 @@ if (!isset($excluded_functions["array_keys_exist"]) && (!function_exists("ryunos
      * Example:
      * ```php
      * // すべて含むので true
-     * assertTrue(array_keys_exist(['a', 'b', 'c'], ['a' => 'A', 'b' => 'B', 'c' => 'C']));
+     * that(array_keys_exist(['a', 'b', 'c'], ['a' => 'A', 'b' => 'B', 'c' => 'C']))->isTrue();
      * // N は含まないので false
-     * assertFalse(array_keys_exist(['a', 'b', 'N'], ['a' => 'A', 'b' => 'B', 'c' => 'C']));
+     * that(array_keys_exist(['a', 'b', 'N'], ['a' => 'A', 'b' => 'B', 'c' => 'C']))->isFalse();
      * // 配列を与えると潜る（日本語で言えば「a というキーと、x というキーとその中に x1, x2 というキーがあるか？」）
-     * assertTrue(array_keys_exist(['a', 'x' => ['x1', 'x2']], ['a' => 'A', 'x' => ['x1' => 'X1', 'x2' => 'X2']]));
+     * that(array_keys_exist(['a', 'x' => ['x1', 'x2']], ['a' => 'A', 'x' => ['x1' => 'X1', 'x2' => 'X2']]))->isTrue();
      * ```
      *
      * @param array|string $keys 調べるキー
@@ -825,11 +1394,11 @@ if (!isset($excluded_functions["array_find"]) && (!function_exists("ryunosuke\\d
      * Example:
      * ```php
      * // 最初に見つかったキーを返す
-     * assertSame(array_find(['a', 'b', '9'], 'ctype_digit'), 2);
-     * assertSame(array_find(['a', 'b', '9'], function($v){return $v === 'b';}), 1);
+     * that(array_find(['a', 'b', '9'], 'ctype_digit'))->isSame(2);
+     * that(array_find(['a', 'b', '9'], function($v){return $v === 'b';}))->isSame(1);
      * // 最初に見つかったコールバック結果を返す（最初の数字の2乗を返す）
      * $ifnumeric2power = function($v){return ctype_digit($v) ? $v * $v : false;};
-     * assertSame(array_find(['a', 'b', '9'], $ifnumeric2power, false), 81);
+     * that(array_find(['a', 'b', '9'], $ifnumeric2power, false))->isSame(81);
      * ```
      *
      * @param iterable $array 調べる配列
@@ -865,8 +1434,8 @@ if (!isset($excluded_functions["array_map_key"]) && (!function_exists("ryunosuke
      *
      * Example:
      * ```php
-     * assertSame(array_map_key(['a' => 'A', 'b' => 'B'], 'strtoupper'), ['A' => 'A', 'B' => 'B']);
-     * assertSame(array_map_key(['a' => 'A', 'b' => 'B'], function(){}), []);
+     * that(array_map_key(['a' => 'A', 'b' => 'B'], 'strtoupper'))->isSame(['A' => 'A', 'B' => 'B']);
+     * that(array_map_key(['a' => 'A', 'b' => 'B'], function(){}))->isSame([]);
      * ```
      *
      * @param iterable $array 対象配列
@@ -901,8 +1470,8 @@ if (!isset($excluded_functions["array_map_filter"]) && (!function_exists("ryunos
      *
      * Example:
      * ```php
-     * assertSame(array_map_filter([' a ', ' b ', ''], 'trim'), ['a', 'b']);
-     * assertSame(array_map_filter([' a ', ' b ', ''], 'trim', true), ['a', 'b', '']);
+     * that(array_map_filter([' a ', ' b ', ''], 'trim'))->isSame(['a', 'b']);
+     * that(array_map_filter([' a ', ' b ', ''], 'trim', true))->isSame(['a', 'b', '']);
      * ```
      *
      * @param iterable $array 対象配列
@@ -942,12 +1511,12 @@ if (!isset($excluded_functions["array_maps"]) && (!function_exists("ryunosuke\\d
      * Example:
      * ```php
      * // 値を3乗したあと16進表記にして大文字化する
-     * assertSame(array_maps([1, 2, 3, 4, 5], rbind('pow', 3), 'dechex', 'strtoupper'), ['1', '8', '1B', '40', '7D']);
+     * that(array_maps([1, 2, 3, 4, 5], rbind('pow', 3), 'dechex', 'strtoupper'))->isSame(['1', '8', '1B', '40', '7D']);
      * // キーも渡ってくる
-     * assertSame(array_maps(['a' => 'A', 'b' => 'B'], function($v, $k){return "$k:$v";}), ['a' => 'a:A', 'b' => 'b:B']);
+     * that(array_maps(['a' => 'A', 'b' => 'B'], function($v, $k){return "$k:$v";}))->isSame(['a' => 'a:A', 'b' => 'b:B']);
      * // メソッドコールもできる（引数不要なら `@method` でも同じ）
-     * assertSame(array_maps([new \Exception('a'), new \Exception('b')], ['getMessage' => []]), ['a', 'b']);
-     * assertSame(array_maps([new \Exception('a'), new \Exception('b')], '@getMessage'), ['a', 'b']);
+     * that(array_maps([new \Exception('a'), new \Exception('b')], ['getMessage' => []]))->isSame(['a', 'b']);
+     * that(array_maps([new \Exception('a'), new \Exception('b')], '@getMessage'))->isSame(['a', 'b']);
      * ```
      *
      * @param iterable $array 対象配列
@@ -1001,11 +1570,11 @@ if (!isset($excluded_functions["array_kmap"]) && (!function_exists("ryunosuke\\d
      * Example:
      * ```php
      * // キー・値をくっつけるシンプルな例
-     * assertSame(array_kmap([
+     * that(array_kmap([
      *     'k1' => 'v1',
      *     'k2' => 'v2',
      *     'k3' => 'v3',
-     * ], function($v, $k){return "$k:$v";}), [
+     * ], function($v, $k){return "$k:$v";}))->isSame([
      *     'k1' => 'k1:v1',
      *     'k2' => 'k2:v2',
      *     'k3' => 'k3:v3',
@@ -1043,10 +1612,10 @@ if (!isset($excluded_functions["array_nmap"]) && (!function_exists("ryunosuke\\d
      * ```php
      * // 1番目に値を渡して map
      * $sprintf = function(){return vsprintf('%s%s%s', func_get_args());};
-     * assertSame(array_nmap(['a', 'b'], $sprintf, 1, 'prefix-', '-suffix'), ['prefix-a-suffix', 'prefix-b-suffix']);
+     * that(array_nmap(['a', 'b'], $sprintf, 1, 'prefix-', '-suffix'))->isSame(['prefix-a-suffix', 'prefix-b-suffix']);
      * // 1番目にキー、2番目に値を渡して map
      * $sprintf = function(){return vsprintf('%s %s %s %s %s', func_get_args());};
-     * assertSame(array_nmap(['k' => 'v'], $sprintf, [1 => 2], 'a', 'b', 'c'), ['k' => 'a k b v c']);
+     * that(array_nmap(['k' => 'v'], $sprintf, [1 => 2], 'a', 'b', 'c'))->isSame(['k' => 'a k b v c']);
      * ```
      *
      * @param iterable $array 対象配列
@@ -1116,7 +1685,7 @@ if (!isset($excluded_functions["array_rmap"]) && (!function_exists("ryunosuke\\d
      * Example:
      * ```php
      * $sprintf = function(){return vsprintf('%s%s', func_get_args());};
-     * assertSame(array_rmap(['a', 'b'], $sprintf, 'prefix-'), ['prefix-a', 'prefix-b']);
+     * that(array_rmap(['a', 'b'], $sprintf, 'prefix-'))->isSame(['prefix-a', 'prefix-b']);
      * ```
      *
      * @param iterable $array 対象配列
@@ -1158,9 +1727,9 @@ if (!isset($excluded_functions["array_each"]) && (!function_exists("ryunosuke\\d
      * Example:
      * ```php
      * // 全要素を文字列的に足し合わせる
-     * assertSame(array_each([1, 2, 3, 4, 5], function(&$carry, $v){$carry .= $v;}, ''), '12345');
+     * that(array_each([1, 2, 3, 4, 5], function(&$carry, $v){$carry .= $v;}, ''))->isSame('12345');
      * // 値をキーにして要素を2乗値にする
-     * assertSame(array_each([1, 2, 3, 4, 5], function(&$carry, $v){$carry[$v] = $v * $v;}, []), [
+     * that(array_each([1, 2, 3, 4, 5], function(&$carry, $v){$carry[$v] = $v * $v;}, []))->isSame([
      *     1 => 1,
      *     2 => 4,
      *     3 => 9,
@@ -1168,21 +1737,19 @@ if (!isset($excluded_functions["array_each"]) && (!function_exists("ryunosuke\\d
      *     5 => 25,
      * ]);
      * // 上記と同じ。ただし、3 で break する
-     * assertSame(array_each([1, 2, 3, 4, 5], function(&$carry, $v, $k){
+     * that(array_each([1, 2, 3, 4, 5], function(&$carry, $v, $k){
      *     if ($k === 3) return false;
      *     $carry[$v] = $v * $v;
-     * }, []), [
+     * }, []))->isSame([
      *     1 => 1,
      *     2 => 4,
      *     3 => 9,
      * ]);
      *
      * // 下記は完全に同じ（第3引数の代わりにデフォルト引数を使っている）
-     * assertSame(
-     *     array_each([1, 2, 3], function(&$carry = [], $v) {
+     * that(array_each([1, 2, 3], function(&$carry = [], $v) {
      *         $carry[$v] = $v * $v;
-     *     }),
-     *     array_each([1, 2, 3], function(&$carry, $v) {
+     *     }))->isSame(array_each([1, 2, 3], function(&$carry, $v) {
      *         $carry[$v] = $v * $v;
      *     }, [])
      *     // 個人的に↑のようなぶら下がり引数があまり好きではない（クロージャを最後の引数にしたい）
@@ -1231,9 +1798,9 @@ if (!isset($excluded_functions["array_depth"]) && (!function_exists("ryunosuke\\
      *
      * Example:
      * ```php
-     * assertSame(array_depth([]), 1);
-     * assertSame(array_depth(['hoge']), 1);
-     * assertSame(array_depth([['nest1' => ['nest2']]]), 3);
+     * that(array_depth([]))->isSame(1);
+     * that(array_depth(['hoge']))->isSame(1);
+     * that(array_depth([['nest1' => ['nest2']]]))->isSame(3);
      * ```
      *
      * @param array $array 調べる配列
@@ -1279,10 +1846,10 @@ if (!isset($excluded_functions["array_insert"]) && (!function_exists("ryunosuke\
      *
      * Example:
      * ```php
-     * assertSame(array_insert([1, 2, 3], 'x'), [1, 2, 3, 'x']);
-     * assertSame(array_insert([1, 2, 3], 'x', 1), [1, 'x', 2, 3]);
-     * assertSame(array_insert([1, 2, 3], 'x', -1), [1, 2, 'x', 3]);
-     * assertSame(array_insert([1, 2, 3], ['a' => 'A', 'b' => 'B'], 1), [1, 'a' => 'A', 'b' => 'B', 2, 3]);
+     * that(array_insert([1, 2, 3], 'x'))->isSame([1, 2, 3, 'x']);
+     * that(array_insert([1, 2, 3], 'x', 1))->isSame([1, 'x', 2, 3]);
+     * that(array_insert([1, 2, 3], 'x', -1))->isSame([1, 2, 'x', 3]);
+     * that(array_insert([1, 2, 3], ['a' => 'A', 'b' => 'B'], 1))->isSame([1, 'a' => 'A', 'b' => 'B', 2, 3]);
      * ```
      *
      * @param array $array 対象配列
@@ -1314,12 +1881,12 @@ if (!isset($excluded_functions["array_all"]) && (!function_exists("ryunosuke\\db
      *
      * Example:
      * ```php
-     * assertTrue(array_all([true, true]));
-     * assertFalse(array_all([true, false]));
-     * assertFalse(array_all([false, false]));
+     * that(array_all([true, true]))->isTrue();
+     * that(array_all([true, false]))->isFalse();
+     * that(array_all([false, false]))->isFalse();
      * ```
      *
-     * @param iterable 対象配列
+     * @param iterable $array 対象配列
      * @param callable $callback 評価クロージャ。 null なら値そのもので評価
      * @param bool|mixed $default 空配列の場合のデフォルト値
      * @return bool 全要素が true なら true
@@ -1370,7 +1937,7 @@ if (!isset($excluded_functions["array_order"]) && (!function_exists("ryunosuke\\
      * $v2 = ['id' => '2', 'no' => 'a4',  'name' => 'yyy'];
      * $v3 = ['id' => '3', 'no' => 'a12', 'name' => 'xxx'];
      * // name 昇順, no 自然降順
-     * assertSame(array_order([$v1, $v2, $v3], ['name' => true, 'no' => -SORT_NATURAL]), [$v3, $v2, $v1]);
+     * that(array_order([$v1, $v2, $v3], ['name' => true, 'no' => -SORT_NATURAL]))->isSame([$v3, $v2, $v1]);
      * ```
      *
      * @param array $array 対象配列
@@ -1453,7 +2020,7 @@ if (!isset($excluded_functions["array_order"]) && (!function_exists("ryunosuke\\
                 // でないなら通した値で比較
                 else {
                     $arg = array_map($order, $columns);
-                    $type = $ref->hasReturnType() ? (string) $ref->getReturnType() : gettype(reset($arg));
+                    $type = $ref->hasReturnType() ? $ref->getReturnType()->getName() : gettype(reset($arg));
                     $args[] = $arg;
                     $args[] = SORT_ASC;
                     $args[] = $type === 'string' ? SORT_STRING : SORT_NUMERIC;
@@ -1497,11 +2064,11 @@ if (!isset($excluded_functions["array_pickup"]) && (!function_exists("ryunosuke\
      * ```php
      * $array = ['a' => 'A', 'b' => 'B', 'c' => 'C'];
      * // a と c を取り出す
-     * assertSame(array_pickup($array, ['a', 'c']), ['a' => 'A', 'c' => 'C']);
+     * that(array_pickup($array, ['a', 'c']))->isSame(['a' => 'A', 'c' => 'C']);
      * // 順番は $keys 基準になる
-     * assertSame(array_pickup($array, ['c', 'a']), ['c' => 'C', 'a' => 'A']);
+     * that(array_pickup($array, ['c', 'a']))->isSame(['c' => 'C', 'a' => 'A']);
      * // 連想配列を渡すと読み替えて返す
-     * assertSame(array_pickup($array, ['c' => 'cX', 'a' => 'aX']), ['cX' => 'C', 'aX' => 'A']);
+     * that(array_pickup($array, ['c' => 'cX', 'a' => 'aX']))->isSame(['cX' => 'C', 'aX' => 'A']);
      * ```
      *
      * @param iterable $array 対象配列
@@ -1546,10 +2113,10 @@ if (!isset($excluded_functions["array_lookup"]) && (!function_exists("ryunosuke\
      *     13 => ['id' => 3, 'name' => 'name3'],
      * ];
      * // 第3引数を渡せば array_column と全く同じ
-     * assertSame(array_lookup($array, 'name', 'id'), array_column($array, 'name', 'id'));
-     * assertSame(array_lookup($array, 'name', null), array_column($array, 'name', null));
+     * that(array_lookup($array, 'name', 'id'))->isSame(array_column($array, 'name', 'id'));
+     * that(array_lookup($array, 'name', null))->isSame(array_column($array, 'name', null));
      * // 省略すればキーが保存される
-     * assertSame(array_lookup($array, 'name'), [
+     * that(array_lookup($array, 'name'))->isSame([
      *     11 => 'name1',
      *     12 => 'name2',
      *     13 => 'name3',
@@ -1583,10 +2150,10 @@ if (!isset($excluded_functions["array_uncolumns"]) && (!function_exists("ryunosu
      *
      * Example:
      * ```php
-     * assertSame(array_uncolumns([
+     * that(array_uncolumns([
      *     'id'   => [1, 2],
      *     'name' => ['A', 'B'],
-     * ]), [
+     * ]))->isSame([
      *     ['id' => 1, 'name' => 'A'],
      *     ['id' => 2, 'name' => 'B'],
      * ]);
@@ -1667,7 +2234,7 @@ if (!isset($excluded_functions["array_convert"]) && (!function_exists("ryunosuke
      *     if (!is_array($v)) $v = "prefix-$v";
      *     return "_$k";
      * };
-     * assertSame(array_convert($array, $callback, true), [
+     * that(array_convert($array, $callback, true))->isSame([
      *     '_k1' => 'prefix-v1',
      *     '_k2' => [
      *         'k21' => 'v21',
@@ -1775,7 +2342,7 @@ if (!isset($excluded_functions["array_flatten"]) && (!function_exists("ryunosuke
      *    ],
      * ];
      * // 区切り文字指定なし
-     * assertSame(array_flatten($array), [
+     * that(array_flatten($array))->isSame([
      *    0 => 'v1',
      *    1 => 'v21',
      *    2 => 'v221',
@@ -1785,7 +2352,7 @@ if (!isset($excluded_functions["array_flatten"]) && (!function_exists("ryunosuke
      *    6 => 3,
      * ]);
      * // 区切り文字指定
-     * assertSame(array_flatten($array, '.'), [
+     * that(array_flatten($array, '.'))->isSame([
      *    'k1'            => 'v1',
      *    'k2.k21'        => 'v21',
      *    'k2.k22.k221'   => 'v221',
@@ -1856,7 +2423,7 @@ if (!isset($excluded_functions["array_nest"]) && (!function_exists("ryunosuke\\d
      *    'k2.k22.k223.1' => 2,
      *    'k2.k22.k223.2' => 3,
      * ];
-     * assertSame(array_nest($array), [
+     * that(array_nest($array))->isSame([
      *    'k1' => 'v1',
      *    'k2' => [
      *        'k21' => 'v21',
@@ -1872,7 +2439,7 @@ if (!isset($excluded_functions["array_nest"]) && (!function_exists("ryunosuke\\d
      *    'k1.k2' => 'v1', // この時点で 'k1' は配列になるが・・・
      *    'k1'    => 'v2', // この時点で 'k1' は文字列として上書きされる
      * ];
-     * assertSame(array_nest($array), [
+     * that(array_nest($array))->isSame([
      *    'k1' => 'v2',
      * ]);
      * // 上書きすら出来ない場合は例外が飛ぶ
@@ -1884,7 +2451,7 @@ if (!isset($excluded_functions["array_nest"]) && (!function_exists("ryunosuke\\d
      *     array_nest($array);
      * }
      * catch (\Exception $e) {
-     *     assertInstanceof(\InvalidArgumentException::class, $e);
+     *     that($e)->isInstanceOf(\InvalidArgumentException::class);
      * }
      * ```
      *
@@ -1916,259 +2483,6 @@ if (function_exists("ryunosuke\\dbml\\array_nest") && !defined("ryunosuke\\dbml\
     define("ryunosuke\\dbml\\array_nest", "ryunosuke\\dbml\\array_nest");
 }
 
-if (!isset($excluded_functions["stdclass"]) && (!function_exists("ryunosuke\\dbml\\stdclass") || (!false && (new \ReflectionFunction("ryunosuke\\dbml\\stdclass"))->isInternal()))) {
-    /**
-     * 初期フィールド値を与えて stdClass を生成する
-     *
-     * 手元にある配列でサクッと stdClass を作りたいことがまれによくあるはず。
-     *
-     * object キャストでもいいんだが、 Iterator/Traversable とかも stdClass 化したいかもしれない。
-     * それにキャストだとコールバックで呼べなかったり、数値キーが死んだりして微妙に使いづらいところがある。
-     *
-     * Example:
-     * ```php
-     * // 基本的には object キャストと同じ
-     * $fields = ['a' => 'A', 'b' => 'B'];
-     * assertEquals(stdclass($fields), (object) $fields);
-     * // ただしこういうことはキャストでは出来ない
-     * assertEquals(array_map('stdclass', [$fields]), [(object) $fields]); // コールバックとして利用する
-     * assertTrue(property_exists(stdclass(['a', 'b']), '0')); // 数値キー付きオブジェクトにする
-     * ```
-     *
-     * @param iterable $fields フィールド配列
-     * @return \stdClass 生成した stdClass インスタンス
-     */
-    function stdclass(iterable $fields = [])
-    {
-        $stdclass = new \stdClass();
-        foreach ($fields as $key => $value) {
-            $stdclass->$key = $value;
-        }
-        return $stdclass;
-    }
-}
-if (function_exists("ryunosuke\\dbml\\stdclass") && !defined("ryunosuke\\dbml\\stdclass")) {
-    define("ryunosuke\\dbml\\stdclass", "ryunosuke\\dbml\\stdclass");
-}
-
-if (!isset($excluded_functions["class_shorten"]) && (!function_exists("ryunosuke\\dbml\\class_shorten") || (!false && (new \ReflectionFunction("ryunosuke\\dbml\\class_shorten"))->isInternal()))) {
-    /**
-     * クラスの名前空間部分を除いた短い名前を取得する
-     *
-     * Example:
-     * ```php
-     * assertSame(class_shorten('vendor\\namespace\\ClassName'), 'ClassName');
-     * ```
-     *
-     * @param string|object $class 対象クラス・オブジェクト
-     * @return string クラスの短い名前
-     */
-    function class_shorten($class)
-    {
-        if (is_object($class)) {
-            $class = get_class($class);
-        }
-
-        $parts = explode('\\', $class);
-        return array_pop($parts);
-    }
-}
-if (function_exists("ryunosuke\\dbml\\class_shorten") && !defined("ryunosuke\\dbml\\class_shorten")) {
-    define("ryunosuke\\dbml\\class_shorten", "ryunosuke\\dbml\\class_shorten");
-}
-
-if (!isset($excluded_functions["date_timestamp"]) && (!function_exists("ryunosuke\\dbml\\date_timestamp") || (!false && (new \ReflectionFunction("ryunosuke\\dbml\\date_timestamp"))->isInternal()))) {
-    /**
-     * 日時文字列をよしなにタイムスタンプに変換する
-     *
-     * マイクロ秒にも対応している。つまり返り値は int か float になる。
-     * また、相対指定の +1 month の月末問題は起きないようにしてある。
-     *
-     * かなり適当に和暦にも対応している。
-     *
-     * Example:
-     * ```php
-     * // 普通の日時文字列
-     * assertSame(date_timestamp('2014/12/24 12:34:56'), strtotime('2014/12/24 12:34:56'));
-     * // 和暦
-     * assertSame(date_timestamp('昭和31年12月24日 12時34分56秒'), strtotime('1956/12/24 12:34:56'));
-     * // 相対指定
-     * assertSame(date_timestamp('2012/01/31 +1 month'), strtotime('2012/02/29'));
-     * assertSame(date_timestamp('2012/03/31 -1 month'), strtotime('2012/02/29'));
-     * // マイクロ秒
-     * assertSame(date_timestamp('2014/12/24 12:34:56.789'), 1419392096.789);
-     * ```
-     *
-     * @param string|int|float $datetimedata 日時データ
-     * @return int|float|null タイムスタンプ。パース失敗時は null
-     */
-    function date_timestamp($datetimedata)
-    {
-        // 全角を含めた trim
-        $chars = "[\\x0-\x20\x7f\xc2\xa0\xe3\x80\x80]";
-        $datetimedata = preg_replace("/\A{$chars}++|{$chars}++\z/u", '', $datetimedata);
-
-        // 和暦を西暦に置換
-        $jpnames = array_merge(array_column(JP_ERA, 'name'), array_column(JP_ERA, 'abbr'));
-        $datetimedata = preg_replace_callback('/^(' . implode('|', $jpnames) . ')(\d{1,2}|元)/u', function ($matches) {
-            list(, $era, $year) = $matches;
-            $eratime = array_find(JP_ERA, function ($v) use ($era) {
-                if (in_array($era, [$v['name'], $v['abbr']], true)) {
-                    return $v['since'];
-                }
-            }, false);
-            return idate('Y', $eratime) + ($year === '元' ? 1 : $year) - 1;
-        }, $datetimedata);
-
-        // 単位文字列を置換
-        $datetimedata = strtr($datetimedata, [
-            '　'  => ' ',
-            '西暦' => '',
-            '年'  => '-',
-            '月'  => '-',
-            '日'  => ' ',
-            '時'  => ':',
-            '分'  => ':',
-            '秒'  => '',
-        ]);
-        $datetimedata = trim($datetimedata, " \t\n\r\0\x0B:-");
-
-        // 数値4桁は年と解釈されるように
-        if (preg_match('/^[0-9]{4}$/', $datetimedata)) {
-            $datetimedata .= '-01-01';
-        }
-
-        // 数値系はタイムスタンプとみなす
-        if (ctype_digit("$datetimedata")) {
-            return (int) $datetimedata;
-        }
-        if (is_numeric($datetimedata)) {
-            return (float) $datetimedata;
-        }
-
-        // date_parse してみる
-        $parts = date_parse($datetimedata);
-        if (!$parts) {
-            // ドキュメントに「成功した場合に日付情報を含む配列、失敗した場合に FALSE を返します」とあるが、失敗する気配がない
-            return null; // @codeCoverageIgnore
-        }
-        if ($parts['error_count']) {
-            return null;
-        }
-
-        if (!checkdate($parts['month'], $parts['day'], $parts['year'])) {
-            return null;
-        }
-
-        if (isset($parts['relative'])) {
-            $relative = $parts['relative'];
-            $parts['year'] += $relative['year'];
-            $parts['month'] += $relative['month'];
-            // php の相対指定は割と腐っているので補正する（末日を超えても月は変わらないようにする）
-            if ($parts['month'] > 12) {
-                $parts['year'] += intdiv($parts['month'], 12);
-                $parts['month'] = $parts['month'] % 12;
-            }
-            if ($parts['month'] < 1) {
-                $parts['year'] += intdiv(-12 + $parts['month'], 12);
-                $parts['month'] = 12 + $parts['month'] % 12;
-            }
-            if (!checkdate($parts['month'], $parts['day'], $parts['year'])) {
-                $parts['day'] = idate('t', mktime(12, 12, 12, $parts['month'], 1, $parts['year']));
-            }
-            $parts['day'] += $relative['day'];
-            $parts['hour'] += $relative['hour'];
-            $parts['minute'] += $relative['minute'];
-            $parts['second'] += $relative['second'];
-        }
-
-        // ドキュメントに「引数が不正な場合、 この関数は FALSE を返します」とあるが、 date_parse の結果を与える分には失敗しないはず
-        $time = mktime($parts['hour'], $parts['minute'], $parts['second'], $parts['month'], $parts['day'], $parts['year']);
-        if ($parts['fraction']) {
-            // 1970 以前なら減算、以降なら加算じゃないと帳尻が合わなくなる
-            $time += $time >= 0 ? $parts['fraction'] : -$parts['fraction'];
-        }
-
-        return $time;
-    }
-}
-if (function_exists("ryunosuke\\dbml\\date_timestamp") && !defined("ryunosuke\\dbml\\date_timestamp")) {
-    define("ryunosuke\\dbml\\date_timestamp", "ryunosuke\\dbml\\date_timestamp");
-}
-
-if (!isset($excluded_functions["date_convert"]) && (!function_exists("ryunosuke\\dbml\\date_convert") || (!false && (new \ReflectionFunction("ryunosuke\\dbml\\date_convert"))->isInternal()))) {
-    /**
-     * 日時文字列をよしなに別のフォーマットに変換する
-     *
-     * マイクロ秒にも対応している。
-     * かなり適当に和暦にも対応している。
-     *
-     * Example:
-     * ```php
-     * // 和暦を Y/m/d H:i:s に変換
-     * assertSame(date_convert('Y/m/d H:i:s', '昭和31年12月24日 12時34分56秒'), '1956/12/24 12:34:56');
-     * // 単純に「マイクロ秒が使える date」としても使える
-     * $now = 1234567890.123; // テストがしづらいので固定時刻にする
-     * assertSame(date_convert('Y/m/d H:i:s.u', $now), '2009/02/14 08:31:30.123000');
-     * ```
-     *
-     * @param string $format フォーマット
-     * @param string|int|float|\DateTime $datetimedata 日時データ。省略時は microtime
-     * @return string 日時文字列
-     */
-    function date_convert($format, $datetimedata = null)
-    {
-        // 省略時は microtime
-        if ($datetimedata === null) {
-            $timestamp = microtime(true);
-        }
-        elseif ($datetimedata instanceof \DateTime) {
-            // @fixme DateTime オブジェクトって timestamp を float で得られないの？
-            $timestamp = (float) $datetimedata->format('U.u');
-        }
-        else {
-            $timestamp = date_timestamp($datetimedata);
-            if ($timestamp === null) {
-                throw new \InvalidArgumentException("parse failed '$datetimedata'");
-            }
-        }
-
-        $replace = function ($string, $char, $replace) {
-            $string = preg_replace('/(?<!\\\)' . $char . '/', '${1}' . $replace, $string);
-            return preg_replace('/\\\\' . $char . '/', $char, $string);
-        };
-
-        if (preg_match('/[JbKk]/', $format)) {
-            $era = array_find(JP_ERA, function ($v) use ($timestamp) {
-                if ($v['since'] <= $timestamp) {
-                    return $v;
-                }
-            }, false);
-            if ($era === false) {
-                throw new \InvalidArgumentException("notfound JP_ERA '$datetimedata'");
-            }
-
-            $y = idate('Y', $timestamp) - idate('Y', $era['since']) + 1;
-            $format = $replace($format, 'J', $era['name']);
-            $format = $replace($format, 'b', $era['abbr']);
-            $format = $replace($format, 'K', $y === 1 ? '元' : $y);
-            $format = $replace($format, 'k', $y);
-        }
-
-        $format = $replace($format, 'x', ['日', '月', '火', '水', '木', '金', '土'][idate('w', $timestamp)]);
-
-        if (is_float($timestamp)) {
-            list($second, $micro) = explode('.', $timestamp) + [1 => '000000'];
-            $datetime = \DateTime::createFromFormat('Y/m/d H:i:s.u', date('Y/m/d H:i:s.', $second) . $micro);
-            return $datetime->format($format);
-        }
-        return date($format, $timestamp);
-    }
-}
-if (function_exists("ryunosuke\\dbml\\date_convert") && !defined("ryunosuke\\dbml\\date_convert")) {
-    define("ryunosuke\\dbml\\date_convert", "ryunosuke\\dbml\\date_convert");
-}
-
 if (!isset($excluded_functions["file_set_contents"]) && (!function_exists("ryunosuke\\dbml\\file_set_contents") || (!false && (new \ReflectionFunction("ryunosuke\\dbml\\file_set_contents"))->isInternal()))) {
     /**
      * ディレクトリも掘る file_put_contents
@@ -2178,7 +2492,7 @@ if (!isset($excluded_functions["file_set_contents"]) && (!function_exists("ryuno
      * Example:
      * ```php
      * file_set_contents(sys_get_temp_dir() . '/not/filename.ext', 'hoge');
-     * assertSame(file_get_contents(sys_get_temp_dir() . '/not/filename.ext'), 'hoge');
+     * that(file_get_contents(sys_get_temp_dir() . '/not/filename.ext'))->isSame('hoge');
      * ```
      *
      * @param string $filename 書き込むファイル名
@@ -2252,9 +2566,9 @@ if (!isset($excluded_functions["fnmatch_or"]) && (!function_exists("ryunosuke\\d
      * Example:
      * ```php
      * // aaa にマッチするので true
-     * assertTrue(fnmatch_or(['*aaa*', '*bbb*'], 'aaaX'));
+     * that(fnmatch_or(['*aaa*', '*bbb*'], 'aaaX'))->isTrue();
      * // どれともマッチしないので false
-     * assertFalse(fnmatch_or(['*aaa*', '*bbb*'], 'cccX'));
+     * that(fnmatch_or(['*aaa*', '*bbb*'], 'cccX'))->isFalse();
      * ```
      *
      * @param array|string $patterns パターン配列（単一文字列可）
@@ -2291,9 +2605,9 @@ if (!isset($excluded_functions["path_normalize"]) && (!function_exists("ryunosuk
      * Example:
      * ```php
      * $DS = DIRECTORY_SEPARATOR;
-     * assertSame(path_normalize('/path/to/something'), "{$DS}path{$DS}to{$DS}something");
-     * assertSame(path_normalize('/path/through/../something'), "{$DS}path{$DS}something");
-     * assertSame(path_normalize('./path/current/./through/../something'), "path{$DS}current{$DS}something");
+     * that(path_normalize('/path/to/something'))->isSame("{$DS}path{$DS}to{$DS}something");
+     * that(path_normalize('/path/through/../something'))->isSame("{$DS}path{$DS}something");
+     * that(path_normalize('./path/current/./through/../something'))->isSame("path{$DS}current{$DS}something");
      * ```
      *
      * @param string $path パス文字列
@@ -2402,7 +2716,7 @@ if (!isset($excluded_functions["nbind"]) && (!function_exists("ryunosuke\\dbml\\
      * Example:
      * ```php
      * $bind = nbind('sprintf', 2, 'X');
-     * assertSame($bind('%s%s%s', 'N', 'N'), 'NXN');
+     * that($bind('%s%s%s', 'N', 'N'))->isSame('NXN');
      * ```
      *
      * @param callable $callable 対象 callable
@@ -2428,7 +2742,7 @@ if (!isset($excluded_functions["rbind"]) && (!function_exists("ryunosuke\\dbml\\
      * Example:
      * ```php
      * $bind = rbind('sprintf', 'X');
-     * assertSame($bind('%s%s', 'N'), 'NX');
+     * that($bind('%s%s', 'N'))->isSame('NX');
      * ```
      *
      * @param callable $callable 対象 callable
@@ -2450,8 +2764,8 @@ if (!isset($excluded_functions["reflect_callable"]) && (!function_exists("ryunos
      *
      * Example:
      * ```php
-     * assertInstanceof(\ReflectionFunction::class, reflect_callable('sprintf'));
-     * assertInstanceof(\ReflectionMethod::class, reflect_callable('\Closure::bind'));
+     * that(reflect_callable('sprintf'))->isInstanceOf(\ReflectionFunction::class);
+     * that(reflect_callable('\Closure::bind'))->isInstanceOf(\ReflectionMethod::class);
      * ```
      *
      * @param callable $callable 対象 callable
@@ -2492,7 +2806,7 @@ if (!isset($excluded_functions["call_safely"]) && (!function_exists("ryunosuke\\
      *     call_safely(function(){return $v;});
      * }
      * catch (\Exception $ex) {
-     *     assertSame($ex->getMessage(), 'Undefined variable: v');
+     *     that($ex->getMessage())->isSame('Undefined variable: v');
      * }
      * ```
      *
@@ -2532,9 +2846,9 @@ if (!isset($excluded_functions["parameter_length"]) && (!function_exists("ryunos
      * Example:
      * ```php
      * // trim の引数は2つ
-     * assertSame(parameter_length('trim'), 2);
+     * that(parameter_length('trim'))->isSame(2);
      * // trim の必須引数は1つ
-     * assertSame(parameter_length('trim', true), 1);
+     * that(parameter_length('trim', true))->isSame(1);
      * ```
      *
      * @param callable $callable 対象 callable
@@ -2593,7 +2907,7 @@ if (!isset($excluded_functions["func_user_func_array"]) && (!function_exists("ry
      * ```php
      * // strlen に2つの引数を渡してもエラーにならない
      * $strlen = func_user_func_array('strlen');
-     * assertSame($strlen('abc', null), 3);
+     * that($strlen('abc', null))->isSame(3);
      * ```
      *
      * @param callable $callback 呼び出すクロージャ
@@ -2646,16 +2960,16 @@ if (!isset($excluded_functions["func_method"]) && (!function_exists("ryunosuke\\
      * // hoge を呼び出すクロージャ
      * $hoge = func_method('hoge');
      * // ↑を使用して $object の hoge を呼び出す
-     * assertSame($hoge($object, 1, 2, 3), '1,2,3');
+     * that($hoge($object, 1, 2, 3))->isSame('1,2,3');
      *
      * // デフォルト値付きで hoge を呼び出すクロージャ
      * $hoge789 = func_method('hoge', 7, 8, 9);
      * // ↑を使用して $object の hoge を呼び出す（引数指定してるので結果は同じ）
-     * assertSame($hoge789($object, 1, 2, 3), '1,2,3');
+     * that($hoge789($object, 1, 2, 3))->isSame('1,2,3');
      * // 同上（一部デフォルト値）
-     * assertSame($hoge789($object, 1, 2), '1,2,9');
+     * that($hoge789($object, 1, 2))->isSame('1,2,9');
      * // 同上（全部デフォルト値）
-     * assertSame($hoge789($object), '7,8,9');
+     * that($hoge789($object))->isSame('7,8,9');
      * ```
      *
      * @param string $methodname メソッド名
@@ -2678,25 +2992,536 @@ if (function_exists("ryunosuke\\dbml\\func_method") && !defined("ryunosuke\\dbml
     define("ryunosuke\\dbml\\func_method", "ryunosuke\\dbml\\func_method");
 }
 
-if (!isset($excluded_functions["strcat"]) && (!function_exists("ryunosuke\\dbml\\strcat") || (!false && (new \ReflectionFunction("ryunosuke\\dbml\\strcat"))->isInternal()))) {
+if (!isset($excluded_functions["sql_quote"]) && (!function_exists("ryunosuke\\dbml\\sql_quote") || (!false && (new \ReflectionFunction("ryunosuke\\dbml\\sql_quote"))->isInternal()))) {
     /**
-     * 文字列結合の関数版
+     * ものすごく雑に値をクオートする
+     *
+     * 非常に荒くアドホックに実装しているのでこの関数で得られた値で**実際に実行してはならない**。
+     * あくまでログ出力やデバッグ用途で視認性を高める目的である。
+     *
+     * - null は NULL になる
+     * - 数字はそのまま数字になる
+     * - bool は 0 or 1 になる
+     * - それ以外は addslashes される
      *
      * Example:
      * ```php
-     * assertSame(strcat('a', 'b', 'c'), 'abc');
+     * that(sql_quote(null))->isSame('NULL');
+     * that(sql_quote(123))->isSame(123);
+     * that(sql_quote(true))->isSame(1);
+     * that(sql_quote("hoge"))->isSame("'hoge'");
      * ```
      *
-     * @param mixed $variadic 結合する文字列（可変引数）
-     * @return string 結合した文字列
+     * @param mixed $value クオートする値
+     * @return mixed クオートされた値
      */
-    function strcat(...$variadic)
+    function sql_quote($value)
     {
-        return implode('', $variadic);
+        if ($value === null) {
+            return 'NULL';
+        }
+        if (is_numeric($value)) {
+            return $value;
+        }
+        if (is_bool($value)) {
+            return (int) $value;
+        }
+        return "'" . addslashes("$value") . "'";
     }
 }
-if (function_exists("ryunosuke\\dbml\\strcat") && !defined("ryunosuke\\dbml\\strcat")) {
-    define("ryunosuke\\dbml\\strcat", "ryunosuke\\dbml\\strcat");
+if (function_exists("ryunosuke\\dbml\\sql_quote") && !defined("ryunosuke\\dbml\\sql_quote")) {
+    define("ryunosuke\\dbml\\sql_quote", "ryunosuke\\dbml\\sql_quote");
+}
+
+if (!isset($excluded_functions["sql_bind"]) && (!function_exists("ryunosuke\\dbml\\sql_bind") || (!false && (new \ReflectionFunction("ryunosuke\\dbml\\sql_bind"))->isInternal()))) {
+    /**
+     * ものすごく雑に SQL に値を埋め込む
+     *
+     * 非常に荒くアドホックに実装しているのでこの関数で得られた SQL を**実際に実行してはならない**。
+     * あくまでログ出力やデバッグ用途で視認性を高める目的である。
+     *
+     * プレースホルダは ? か :alnum で混在していても良い。
+     *
+     * Example:
+     * ```php
+     * that(sql_bind('select ?', 1))->isSame("select 1");
+     * that(sql_bind('select :hoge', ['hoge' => 'hoge']))->isSame("select 'hoge'");
+     * that(sql_bind('select ?, :hoge', [1, 'hoge' => 'hoge']))->isSame("select 1, 'hoge'");
+     * ```
+     *
+     * @param string $sql 値を埋め込む SQL
+     * @param array|mixed $values 埋め込む値
+     * @return mixed 値が埋め込まれた SQL
+     */
+    function sql_bind($sql, $values)
+    {
+        $embed = [];
+        foreach (arrayval($values, false) as $k => $v) {
+            if (is_int($k)) {
+                $embed['?'][] = sql_quote($v);
+            }
+            else {
+                $embed[":$k"] = sql_quote($v);
+            }
+        }
+
+        return str_embed($sql, $embed, [
+            "'"   => "'",
+            '"'   => '"',
+            '-- ' => "\n",
+            '/*'  => "*/",
+        ]);
+    }
+}
+if (function_exists("ryunosuke\\dbml\\sql_bind") && !defined("ryunosuke\\dbml\\sql_bind")) {
+    define("ryunosuke\\dbml\\sql_bind", "ryunosuke\\dbml\\sql_bind");
+}
+
+if (!isset($excluded_functions["sql_format"]) && (!function_exists("ryunosuke\\dbml\\sql_format") || (!false && (new \ReflectionFunction("ryunosuke\\dbml\\sql_format"))->isInternal()))) {
+    /**
+     * ものすごく雑に SQL を整形する
+     *
+     * 非常に荒くアドホックに実装しているのでこの関数で得られた SQL を**実際に実行してはならない**。
+     * あくまでログ出力やデバッグ用途で視認性を高める目的である。
+     *
+     * JOIN 句は FROM 句とみなさず、別句として処理する。
+     * AND と && は微妙に処理が異なる。 AND は改行されるが && は改行されない（OR と || も同様）。
+     *
+     * @param string $sql 整形する SQL
+     * @param array $options 整形オプション
+     * @return string 整形された SQL
+     */
+    function sql_format($sql, $options = [])
+    {
+        static $keywords;
+        $keywords = $keywords ?? array_flip(KEYWORDS);
+
+        $options += [
+            // インデント文字
+            'indent'    => "  ",
+            // 括弧の展開レベル
+            'nestlevel' => 1,
+            // キーワードの大文字/小文字可変換（true だと大文字化。false だと小文字化。あるいは 'ucfirst' 等の文字列関数を直接指定する。クロージャでも良い）
+            'case'      => null,
+            // シンタックス装飾（true だと SAPI に基づいてよしなに。"html", "cli" だと SAPI を明示的に指定。クロージャだと直接コール）
+            'highlight' => null,
+            // 最大折返し文字数（未実装）
+            'wrapsize'  => false,
+        ];
+        if ($options['case'] === true) {
+            $options['case'] = 'strtoupper';
+        }
+        elseif ($options['case'] === false) {
+            $options['case'] = 'strtolower';
+        }
+
+        if ($options['highlight'] === true) {
+            $options['highlight'] = php_sapi_name() === 'cli' ? 'cli' : 'html';
+        }
+        if (is_string($options['highlight'])) {
+            $rules = [
+                'cli'  => [
+                    'KEYWORD' => function ($token) { return "\e[1m" . $token . "\e[m"; },
+                    'COMMENT' => function ($token) { return "\e[33m" . $token . "\e[m"; },
+                    'STRING'  => function ($token) { return "\e[31m" . $token . "\e[m"; },
+                    'NUMBER'  => function ($token) { return "\e[36m" . $token . "\e[m"; },
+                ],
+                'html' => [
+                    'KEYWORD' => function ($token) { return "<span style='font-weight:bold;'>" . htmlspecialchars($token) . "</span>"; },
+                    'COMMENT' => function ($token) { return "<span style='color:#FF8000;'>" . htmlspecialchars($token) . "</span>"; },
+                    'STRING'  => function ($token) { return "<span style='color:#DD0000;'>" . htmlspecialchars($token) . "</span>"; },
+                    'NUMBER'  => function ($token) { return "<span style='color:#0000BB;'>" . htmlspecialchars($token) . "</span>"; },
+                ],
+            ];
+            $rule = $rules[$options['highlight']] ?? throws(new \InvalidArgumentException('highlight must be "cli" or "html".'));
+            $options['highlight'] = function ($token, $ttype) use ($keywords, $rule) {
+                switch (true) {
+                    case isset($keywords[strtoupper($token)]):
+                        return $rule['KEYWORD']($token);
+                    case in_array($ttype, [T_COMMENT, T_DOC_COMMENT]):
+                        return $rule['COMMENT']($token);
+                    case in_array($ttype, [T_CONSTANT_ENCAPSED_STRING, T_ENCAPSED_AND_WHITESPACE]):
+                        return $rule['STRING']($token);
+                    case in_array($ttype, [T_LNUMBER, T_DNUMBER]):
+                        return $rule['NUMBER']($token);
+                }
+                return $token;
+            };
+        }
+        $options['syntaxer'] = function ($token, $ttype) use ($options, $keywords) {
+            if ($options['case'] && isset($keywords[strtoupper($token)])) {
+                $token = $options['case']($token);
+            }
+            if ($options['highlight']) {
+                $token = $options['highlight']($token, $ttype);
+            }
+            return $token;
+        };
+
+        // 構文解析も先読みもない素朴な実装なので、特定文字列をあとから置換するための目印文字列
+        $MARK = "{:RM";
+        while (strpos($sql, $MARK) !== false) {
+            $MARK .= rand(1000, 9999);
+        }
+        $MARK_R = "{$MARK}_R:}";   // \r マーク
+        $MARK_N = "{$MARK}_N:}";   // \n マーク
+        $MARK_BR = "{$MARK}_BR:}"; // 改行マーク
+        $MARK_CS = "{$MARK}_CS:}"; // コメント開始マーク
+        $MARK_CE = "{$MARK}_CE:}"; // コメント終了マーク
+        $MARK_NT = "{$MARK}_NT:}"; // インデントマーク
+        $MARK_SP = "{$MARK}_SP:}"; // スペースマーク
+        $MARK_PT = "{$MARK}_PT:}"; // 括弧ネストマーク
+
+        // 字句にバラす（シンタックスが php に似ているので token_get_all で大幅にサボることができる）
+        $tokens = [];
+        $comment = '';
+        foreach (token_get_all("<?php $sql") as $token) {
+            // トークンは配列だったり文字列だったりするので -1 トークンとして配列に正規化
+            if (is_string($token)) {
+                $token = [-1, $token];
+            }
+
+            // パースのために無理やり <?php を付けているので無視
+            if ($token[0] === T_OPEN_TAG) {
+                continue;
+            }
+            // '--' は php ではデクリメントだが sql ではコメントなので特別扱いする
+            elseif ($token[0] === T_DEC) {
+                $comment = $token[1];
+            }
+            // 改行は '--' コメントの終わり
+            elseif ($comment && in_array($token[0], [T_WHITESPACE, T_COMMENT], true) && strpos($token[1], "\n") !== false) {
+                $tokens[] = [T_COMMENT, $comment . $token[1]];
+                $comment = '';
+            }
+            // コメント中はコメントに格納する
+            elseif ($comment) {
+                $comment .= $token[1];
+            }
+            // 上記以外はただのトークンとして格納する
+            else {
+                // `string` のような文字列は T_ENCAPSED_AND_WHITESPACE として得られる（ただし ` がついていないので付与）
+                if ($token[0] === T_ENCAPSED_AND_WHITESPACE) {
+                    $tokens[] = [$token[0], "`{$token[1]}`"];
+                }
+                elseif ($token[0] !== T_WHITESPACE && $token[1] !== '`') {
+                    $tokens[] = [$token[0], $token[1]];
+                }
+            }
+        }
+
+        // コメント以外の前後のトークンを返すクロージャ
+        $seek = function ($start, $step) use ($tokens) {
+            $comments = [];
+            for ($n = 1; ; $n++) {
+                $index = $start + $n * $step;
+                if (!isset($tokens[$index])) {
+                    break;
+                }
+                $token = $tokens[$index];
+                if ($token[0] === T_COMMENT || $token[0] === T_DOC_COMMENT) {
+                    $comments[] = trim($token[1]);
+                }
+                else {
+                    return [$index, trim($token[1]), $comments];
+                }
+            }
+            return [$start, '', $comments];
+        };
+
+        $interpret = function (&$index = -1) use (&$interpret, $MARK_R, $MARK_N, $MARK_BR, $MARK_CS, $MARK_CE, $MARK_NT, $MARK_SP, $MARK_PT, $tokens, $options, $seek) {
+            $index++;
+            $beginning = true; // クエリの冒頭か
+            $context = '';     // SELECT, INSERT などの大分類
+            $subcontext = '';  // SET, VALUES などのサブ分類
+            $modifier = '';    // RIGHT などのキーワード修飾語
+            $firstcol = null;  // SELECT における最初の列か
+
+            $result = [];
+            for ($token_length = count($tokens); $index < $token_length; $index++) {
+                $ttype = $tokens[$index][0];
+                $token = trim($tokens[$index][1]);
+
+                $virttoken = $options['syntaxer']($token, $ttype);
+                $uppertoken = strtoupper($token);
+
+                // 最終的なインデントは「改行＋スペース」で行うのでリテラル内に改行があるとそれもインデントされてしまうので置換して逃がす
+                $token = strtr($token, [
+                    "\r" => $MARK_R,
+                    "\n" => $MARK_N,
+                ]);
+
+                // SELECT の直後には DISTINCT などのオプションが来ることがあるので特別扱い
+                if ($context === 'SELECT' && $firstcol) {
+                    if (!in_array($uppertoken, ['DISTINCT', 'DISTINCTROW', 'STRAIGHT_JOIN'], true) && !preg_match('#^SQL_#i', $uppertoken)) {
+                        $firstcol = false;
+                        $result[] = $MARK_BR;
+                    }
+                }
+
+                // コメントは特別扱いでただ付け足すだけ
+                if ($ttype === T_COMMENT || $ttype === T_DOC_COMMENT) {
+                    $result[] = ($beginning ? '' : $MARK_CS) . $virttoken . $MARK_CE . $MARK_BR;
+                    continue;
+                }
+                $beginning = false;
+
+                switch ($uppertoken) {
+                    default:
+                        _DEFAULT:
+                        $prev = $seek($index, -1)[1];
+                        $next = $seek($index, +1)[1];
+
+                        // "tablename. columnname" になってしまう
+                        // "@ var" になってしまう
+                        // ": holder" になってしまう
+                        if ($prev !== '.' && $prev !== '@' && $prev !== ':') {
+                            $result[] = $MARK_SP;
+                        }
+
+                        $result[] = $virttoken;
+
+                        // "tablename .columnname" になってしまう
+                        // "columnname ," になってしまう
+                        // mysql において関数呼び出し括弧の前に空白は許されない
+                        // ただし、関数呼び出しではなく記号の場合はスペースを入れたい（ colname = (SELECT ～) など）
+                        if (($next !== '.' && $next !== ',' && $next !== '(') || ($next === '(' && !preg_match('#^[a-z0-9_"\'`]+$#i', $token))) {
+                            $result[] = $MARK_SP;
+                        }
+                        break;
+                    case "@":
+                    case ":":
+                        $result[] = $MARK_SP . $virttoken;
+                        break;
+                    case ";":
+                        $result[] = $MARK_BR . $virttoken . $MARK_BR;
+                        break;
+                    case ".":
+                        $result[] = $virttoken;
+                        break;
+                    case ",":
+                        $result[] = $virttoken . $MARK_BR;
+                        break;
+                    case "WITH":
+                        $result[] = $MARK_BR . $virttoken . $MARK_SP;
+                        $subcontext = $uppertoken;
+                        break;
+                    /** @noinspection PhpMissingBreakStatementInspection */
+                    case "BETWEEN":
+                        $subcontext = $uppertoken;
+                        goto _DEFAULT;
+                    case "CREATE":
+                    case "ALTER":
+                    case "DROP":
+                        $result[] = $MARK_SP . $virttoken . $MARK_SP;
+                        $context = $uppertoken;
+                        break;
+                    case "TABLE":
+                        // CREATE TABLE tablename は括弧があるので何もしなくて済むが、
+                        // ALTER TABLE tablename は括弧がなく ADD などで始まるので特別分岐
+                        list($index, $name, $comments) = $seek($index, +1);
+                        $result[] = $MARK_SP . $virttoken . $MARK_SP . ($MARK_SP . implode('', $comments) . $MARK_CE) . $name . $MARK_SP;
+                        if ($context !== 'CREATE' && $context !== 'DROP') {
+                            $result[] = $MARK_BR;
+                        }
+                        break;
+                    /** @noinspection PhpMissingBreakStatementInspection */
+                    case "AND":
+                        // BETWEEN A AND B と論理演算子の AND が競合するので分岐後にフォールスルー
+                        if ($subcontext === 'BETWEEN') {
+                            $result[] = $MARK_SP . $virttoken . $MARK_SP;
+                            $subcontext = '';
+                            break;
+                        }
+                    case "OR":
+                    case "XOR":
+                        $result[] = $MARK_SP . $MARK_BR . $MARK_NT . $virttoken . $MARK_SP;
+                        break;
+                    case "UNION":
+                    case "EXCEPT":
+                    case "INTERSECT":
+                        $result[] = $MARK_BR . $virttoken . $MARK_SP;
+                        $result[] = $MARK_BR;
+                        break;
+                    case "BY":
+                    case "ALL":
+                        $result[] = $MARK_SP . $virttoken . array_pop($result);
+                        break;
+                    case "SELECT":
+                        if ($context === 'INSERT') {
+                            $result[] = $MARK_BR;
+                        }
+                        $result[] = $virttoken;
+                        $context = $uppertoken;
+                        $firstcol = true;
+                        break;
+                    case "LEFT":
+                        /** @noinspection PhpMissingBreakStatementInspection */
+                    case "RIGHT":
+                        // 例えば LEFT や RIGHT は関数呼び出しの場合もあるので分岐後にフォールスルー
+                        if ($seek($index, +1)[1] === '(') {
+                            goto _DEFAULT;
+                        }
+                    case "CROSS":
+                    case "INNER":
+                    case "OUTER":
+                        $modifier .= $virttoken . $MARK_SP;
+                        break;
+                    case "FROM":
+                    case "JOIN":
+                    case "WHERE":
+                    case "HAVING":
+                    case "GROUP":
+                    case "ORDER":
+                    case "LIMIT":
+                    case "OFFSET":
+                        $result[] = $MARK_BR . $modifier . $virttoken;
+                        $result[] = $MARK_BR; // のちの BY のために結合はせず後ろに入れるだけにする
+                        $modifier = '';
+                        break;
+                    case "FOR":
+                    case "LOCK":
+                        $result[] = $MARK_BR . $virttoken . $MARK_SP;
+                        break;
+                    case "ON":
+                        // ON は ON でも mysql の ON DUPLICATED かもしれない（pgsql の ON CONFLICT も似たようなコンテキスト）
+                        $name = $seek($index, +1)[1];
+                        if (in_array(strtoupper($name), ['DUPLICATE', 'CONFLICT'], true)) {
+                            $result[] = $MARK_BR;
+                            $subcontext = '';
+                        }
+                        else {
+                            $result[] = $MARK_SP;
+                        }
+                        $result[] = $virttoken . $MARK_SP;
+                        break;
+                    case "SET":
+                        $result[] = $MARK_BR . $virttoken . $MARK_BR;
+                        $subcontext = $uppertoken;
+                        break;
+                    case "INSERT":
+                    case "REPLACE":
+                        $result[] = $virttoken . $MARK_SP;
+                        $context = "INSERT"; // 構文的には INSERT と同じ
+                        break;
+                    case "INTO":
+                        $result[] = $virttoken;
+                        if ($context === "INSERT") {
+                            $result[] = $MARK_BR;
+                        }
+                        break;
+                    case "VALUES":
+                        if ($context === "UPDATE") {
+                            $result[] = $MARK_SP . $virttoken;
+                        }
+                        else {
+                            $result[] = $MARK_BR . $virttoken . $MARK_BR;
+                        }
+                        break;
+                    case "REFERENCES":
+                        $result[] = $MARK_SP . $virttoken . $MARK_SP;
+                        $subcontext = $uppertoken;
+                        break;
+                    case "UPDATE":
+                    case "DELETE":
+                        $result[] = $MARK_SP . $virttoken;
+                        if ($subcontext !== 'REFERENCES') {
+                            $result[] = $MARK_BR;
+                            $context = $uppertoken;
+                        }
+                        break;
+                    case "WHEN":
+                    case "ELSE":
+                        $result[] = $MARK_BR . $MARK_NT . $virttoken . $MARK_SP;
+                        break;
+                    case "CASE":
+                        $parts = $interpret($index);
+                        $parts = str_replace($MARK_BR, $MARK_BR . $MARK_NT, $parts);
+                        $result[] = $MARK_NT . $virttoken . $MARK_SP . $parts;
+                        break;
+                    case "END":
+                        $result[] = $MARK_BR . $virttoken;
+                        break 2;
+                    case "(":
+                        $current = $index;
+                        $parts = $MARK_BR . $interpret($index);
+
+                        // コメントを含まない指定ネストレベル以下なら改行とインデントを吹き飛ばす
+                        if (strpos($parts, $MARK_CE) === false && substr_count($parts, $MARK_PT) < $options['nestlevel']) {
+                            $parts = strtr($parts, [
+                                $MARK_BR => "",
+                                $MARK_NT => "",
+                            ]);
+                            $parts = preg_replace("#^($MARK_SP)|($MARK_SP)+$#u", '', $parts);
+                        }
+                        elseif ($context === 'CREATE') {
+                            $parts = $parts . $MARK_BR;
+                        }
+                        else {
+                            $brnt = $MARK_BR . $MARK_NT;
+                            if ($subcontext !== 'WITH' && strtoupper($seek($current, +1)[1]) === 'SELECT') {
+                                $brnt .= $MARK_NT;
+                            }
+                            $parts = preg_replace("#($MARK_BR)+#u", $brnt, $parts) . $MARK_BR . $MARK_NT;
+                            $parts = preg_replace("#$MARK_CS#u", "", $parts);
+                        }
+
+                        // IN や数式はネストとみなさない
+                        $prev = $seek($current, -1)[1];
+                        $suffix = $MARK_PT;
+                        if (strtoupper($prev) === 'IN' || !preg_match('#^[a-z0-9_]+$#i', $prev)) {
+                            $suffix = '';
+                        }
+                        if ($subcontext === 'WITH') {
+                            $suffix .= $MARK_BR;
+                        }
+
+                        $result[] = $MARK_NT . "($parts)" . $suffix;
+                        break;
+                    case ")":
+                        break 2;
+                }
+            }
+            return implode('', $result);
+        };
+
+        $result = $interpret();
+        $result = preg_replaces("#" . implode('|', [
+                // 改行文字＋インデント文字をインデントとみなす（改行＋連続スペースもついでに）
+                "(?<indent>$MARK_BR(($MARK_NT|$MARK_SP)+))",
+                // 行末コメントと単一コメント
+                "(?<cs1>$MARK_BR$MARK_CS)",
+                "(?<cs2>$MARK_CS)",
+                // 連続改行は1つに集約
+                "(?<br>$MARK_BR(($MARK_NT|$MARK_SP)*)($MARK_BR)*)",
+                // 連続スペースは1つに集約
+                "(?<sp>($MARK_SP)+)",
+                // 下記はマーカ文字が現れないように単純置換
+                "(?<ce>$MARK_CE)",
+                "(?<nt>$MARK_NT)",
+                "(?<pt>$MARK_PT)",
+                "(?<R>$MARK_R)",
+                "(?<N>$MARK_N)",
+            ]) . "#u", [
+            'indent' => function ($str) use ($options, $MARK_NT, $MARK_SP) {
+                return "\n" . str_repeat($options['indent'], (substr_count($str, $MARK_NT) + substr_count($str, $MARK_SP)));
+            },
+            'cs1'    => "\n" . $options['indent'],
+            'cs2'    => "",
+            'br'     => "\n",
+            'sp'     => ' ',
+            'ce'     => "",
+            'nt'     => "",
+            'pt'     => "",
+            'R'      => "\r",
+            'N'      => "\n",
+        ], $result);
+
+        return trim($result);
+    }
+}
+if (function_exists("ryunosuke\\dbml\\sql_format") && !defined("ryunosuke\\dbml\\sql_format")) {
+    define("ryunosuke\\dbml\\sql_format", "ryunosuke\\dbml\\sql_format");
 }
 
 if (!isset($excluded_functions["concat"]) && (!function_exists("ryunosuke\\dbml\\concat") || (!false && (new \ReflectionFunction("ryunosuke\\dbml\\concat"))->isInternal()))) {
@@ -2710,8 +3535,8 @@ if (!isset($excluded_functions["concat"]) && (!function_exists("ryunosuke\\dbml\
      * 可変引数なので 端的に言えば mysql の CONCAT みたいな動作になる（あっちは NULL だが）。
      *
      * ```php
-     * assertSame(concat('prefix-', 'middle', '-suffix'), 'prefix-middle-suffix');
-     * assertSame(concat('prefix-', '', '-suffix'), '');
+     * that(concat('prefix-', 'middle', '-suffix'))->isSame('prefix-middle-suffix');
+     * that(concat('prefix-', '', '-suffix'))->isSame('');
      * ```
      *
      * @param mixed $variadic 結合する文字列（可変引数）
@@ -2745,9 +3570,9 @@ if (!isset($excluded_functions["split_noempty"]) && (!function_exists("ryunosuke
      *
      * Example:
      * ```php
-     * assertSame(split_noempty(',', 'a, b, c'), ['a', 'b', 'c']);
-     * assertSame(split_noempty(',', 'a, , , b, c'), ['a', 'b', 'c']);
-     * assertSame(split_noempty(',', 'a, , , b, c', false), ['a', ' ', ' ', ' b', ' c']);
+     * that(split_noempty(',', 'a, b, c'))->isSame(['a', 'b', 'c']);
+     * that(split_noempty(',', 'a, , , b, c'))->isSame(['a', 'b', 'c']);
+     * that(split_noempty(',', 'a, , , b, c', false))->isSame(['a', ' ', ' ', ' b', ' c']);
      * ```
      *
      * @param string $delimiter 区切り文字
@@ -2786,7 +3611,7 @@ if (!isset($excluded_functions["quoteexplode"]) && (!function_exists("ryunosuke\
      * Example:
      * ```php
      * // シンプルな例
-     * assertSame(quoteexplode(',', 'a,b,c\\,d,"e,f"'), [
+     * that(quoteexplode(',', 'a,b,c\\,d,"e,f"'))->isSame([
      *     'a', // 普通に分割される
      *     'b', // 普通に分割される
      *     'c\\,d', // \\ でエスケープしているので区切り文字とみなされない
@@ -2794,14 +3619,14 @@ if (!isset($excluded_functions["quoteexplode"]) && (!function_exists("ryunosuke\
      * ]);
      *
      * // $enclosures で囲い文字の開始・終了文字を明示できる
-     * assertSame(quoteexplode(',', 'a,b,{e,f}', ['{' => '}']), [
+     * that(quoteexplode(',', 'a,b,{e,f}', ['{' => '}']))->isSame([
      *     'a', // 普通に分割される
      *     'b', // 普通に分割される
      *     '{e,f}', // { } で囲まれているので区切り文字とみなされない
      * ]);
      *
      * // このように第3引数に $limit 引数を差し込むことができる
-     * assertSame(quoteexplode(',', 'a,b,{e,f}', 2, ['{' => '}']), [
+     * that(quoteexplode(',', 'a,b,{e,f}', 2, ['{' => '}']))->isSame([
      *     'a',
      *     'b,{e,f}',
      * ]);
@@ -2830,41 +3655,23 @@ if (!isset($excluded_functions["quoteexplode"]) && (!function_exists("ryunosuke\
         }
         $limit = max(1, $limit);
 
-        if (is_string($enclosures)) {
-            $chars = str_split($enclosures);
-            $enclosures = array_combine($chars, $chars);
-        }
-
         $delimiters = arrayize($delimiter);
-        $starts = implode('', array_keys($enclosures));
-        $ends = implode('', $enclosures);
-        $enclosing = [];
         $current = 0;
         $result = [];
         for ($i = 0, $l = strlen($string); $i < $l; $i++) {
-            if ($i !== 0 && $string[$i - 1] === $escape) {
-                continue;
+            if (count($result) === $limit - 1) {
+                break;
             }
-            if (strpos($ends, $string[$i]) !== false) {
-                if ($enclosing && $enclosures[$enclosing[count($enclosing) - 1]] === $string[$i]) {
-                    array_pop($enclosing);
-                    continue;
-                }
+            $i = strpos_quoted($string, $delimiters, $i, $enclosures, $escape);
+            if ($i === false) {
+                break;
             }
-            if (strpos($starts, $string[$i]) !== false) {
-                $enclosing[] = $string[$i];
-                continue;
-            }
-            if (empty($enclosing)) {
-                foreach ($delimiters as $delimiter) {
-                    $delimiterlen = strlen($delimiter);
-                    if (substr_compare($string, $delimiter, $i, $delimiterlen) === 0) {
-                        $result[] = substr($string, $current, $i - $current);
-                        $current = $i + $delimiterlen;
-                        break;
-                    }
-                }
-                if (count($result) === $limit - 1) {
+            foreach ($delimiters as $delimiter) {
+                $delimiterlen = strlen($delimiter);
+                if (substr_compare($string, $delimiter, $i, $delimiterlen) === 0) {
+                    $result[] = substr($string, $current, $i - $current);
+                    $current = $i + $delimiterlen;
+                    $i += $delimiterlen - 1;
                     break;
                 }
             }
@@ -2877,16 +3684,89 @@ if (function_exists("ryunosuke\\dbml\\quoteexplode") && !defined("ryunosuke\\dbm
     define("ryunosuke\\dbml\\quoteexplode", "ryunosuke\\dbml\\quoteexplode");
 }
 
+if (!isset($excluded_functions["strpos_quoted"]) && (!function_exists("ryunosuke\\dbml\\strpos_quoted") || (!false && (new \ReflectionFunction("ryunosuke\\dbml\\strpos_quoted"))->isInternal()))) {
+    /**
+     * クオートを考慮して strpos する
+     *
+     * Example:
+     * ```php
+     * // クオート中は除外される
+     * that(strpos_quoted('hello "this" is world', 'is'))->isSame(13);
+     * // 開始位置やクオート文字は指定できる（5文字目以降の \* に囲まれていない hoge の位置を返す）
+     * that(strpos_quoted('1:hoge, 2:*hoge*, 3:hoge', 'hoge', 5, '*'))->isSame(20);
+     * ```
+     *
+     * @param string $haystack 対象文字列
+     * @param string|iterable $needle 位置を取得したい文字列
+     * @param int $offset 開始位置
+     * @param string|array $enclosure 囲い文字。この文字中にいる $from, $to 文字は走査外になる
+     * @param string $escape エスケープ文字。この文字が前にある $from, $to 文字は走査外になる
+     * @return false|int $needle の位置
+     */
+    function strpos_quoted($haystack, $needle, $offset = 0, $enclosure = "'\"", $escape = '\\')
+    {
+        if (is_string($enclosure) || is_null($enclosure)) {
+            if (strlen($enclosure)) {
+                $chars = str_split($enclosure);
+                $enclosure = array_combine($chars, $chars);
+            }
+            else {
+                $enclosure = [];
+            }
+        }
+        $needles = arrayval($needle);
+
+        $strlen = strlen($haystack);
+
+        if ($offset < 0) {
+            $offset += $strlen;
+        }
+
+        $enclosing = [];
+        for ($i = $offset; $i < $strlen; $i++) {
+            if ($i !== 0 && $haystack[$i - 1] === $escape) {
+                continue;
+            }
+            foreach ($enclosure as $start => $end) {
+                if (substr_compare($haystack, $end, $i, strlen($end)) === 0) {
+                    if ($enclosing && $enclosing[count($enclosing) - 1] === $end) {
+                        array_pop($enclosing);
+                        $i += strlen($end) - 1;
+                        continue 2;
+                    }
+                }
+                if (substr_compare($haystack, $start, $i, strlen($start)) === 0) {
+                    $enclosing[] = $end;
+                    $i += strlen($start) - 1;
+                    continue 2;
+                }
+            }
+
+            if (empty($enclosing)) {
+                foreach ($needles as $needle) {
+                    if (substr_compare($haystack, $needle, $i, strlen($needle)) === 0) {
+                        return $i;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+}
+if (function_exists("ryunosuke\\dbml\\strpos_quoted") && !defined("ryunosuke\\dbml\\strpos_quoted")) {
+    define("ryunosuke\\dbml\\strpos_quoted", "ryunosuke\\dbml\\strpos_quoted");
+}
+
 if (!isset($excluded_functions["str_contains"]) && (!function_exists("ryunosuke\\dbml\\str_contains") || (!false && (new \ReflectionFunction("ryunosuke\\dbml\\str_contains"))->isInternal()))) {
     /**
      * 指定文字列を含むか返す
      *
      * Example:
      * ```php
-     * assertTrue(str_contains('abc', 'b'));
-     * assertTrue(str_contains('abc', 'B', true));
-     * assertTrue(str_contains('abc', ['b', 'x'], false, false));
-     * assertFalse(str_contains('abc', ['b', 'x'], false, true));
+     * that(str_contains('abc', 'b'))->isTrue();
+     * that(str_contains('abc', 'B', true))->isTrue();
+     * that(str_contains('abc', ['b', 'x'], false, false))->isTrue();
+     * that(str_contains('abc', ['b', 'x'], false, true))->isFalse();
      * ```
      *
      * @param string $haystack 対象文字列
@@ -2932,7 +3812,7 @@ if (!isset($excluded_functions["str_chop"]) && (!function_exists("ryunosuke\\dbm
      * ```php
      * // 文字列からパス文字列と拡張子を削ぎ落とす
      * $PATH = '/path/to/something';
-     * assertSame(str_chop("$PATH/hoge.php", "$PATH/", '.php'), 'hoge');
+     * that(str_chop("$PATH/hoge.php", "$PATH/", '.php'))->isSame('hoge');
      * ```
      *
      * @param string $string 対象文字列
@@ -2966,7 +3846,7 @@ if (!isset($excluded_functions["str_lchop"]) && (!function_exists("ryunosuke\\db
      * ```php
      * // 文字列からパス文字列を削ぎ落とす
      * $PATH = '/path/to/something';
-     * assertSame(str_lchop("$PATH/hoge.php", "$PATH/"), 'hoge.php');
+     * that(str_lchop("$PATH/hoge.php", "$PATH/"))->isSame('hoge.php');
      * ```
      *
      * @param string $string 対象文字列
@@ -3004,11 +3884,11 @@ if (!isset($excluded_functions["str_subreplace"]) && (!function_exists("ryunosuk
      * Example:
      * ```php
      * // 1番目（0ベースなので2番目）の x を X に置換
-     * assertSame(str_subreplace('xxx', 'x', [1 => 'X']), 'xXx');
+     * that(str_subreplace('xxx', 'x', [1 => 'X']))->isSame('xXx');
      * // 0番目（最前列）の x を Xa に、-1番目（最後尾）の x を Xz に置換
-     * assertSame(str_subreplace('!xxx!', 'x', [0 => 'Xa', -1 => 'Xz']), '!XaxXz!');
+     * that(str_subreplace('!xxx!', 'x', [0 => 'Xa', -1 => 'Xz']))->isSame('!XaxXz!');
      * // 置換結果は置換対象にならない
-     * assertSame(str_subreplace('xxx', 'x', [0 => 'xxx', 1 => 'X']), 'xxxXx');
+     * that(str_subreplace('xxx', 'x', [0 => 'xxx', 1 => 'X']))->isSame('xxxXx');
      * ```
      *
      * @param string $subject 対象文字列
@@ -3064,6 +3944,88 @@ if (function_exists("ryunosuke\\dbml\\str_subreplace") && !defined("ryunosuke\\d
     define("ryunosuke\\dbml\\str_subreplace", "ryunosuke\\dbml\\str_subreplace");
 }
 
+if (!isset($excluded_functions["str_embed"]) && (!function_exists("ryunosuke\\dbml\\str_embed") || (!false && (new \ReflectionFunction("ryunosuke\\dbml\\str_embed"))->isInternal()))) {
+    /**
+     * エスケープ付きで文字列を置換する
+     *
+     * $replacemap で from -> to 文字列を指定する。
+     * to は文字列と配列を受け付ける。
+     * 文字列の場合は普通に想起される動作で単純な置換となる。
+     * 配列の場合は順次置換していく。要素が足りなくなったら例外を投げる。
+     *
+     * strtr と同様、最も長いキーから置換を行い、置換後の文字列は対象にならない。
+     *
+     * $enclosure で「特定文字に囲まれている」場合を無視することができる。
+     * $escape で「特定文字が前にある」場合を無視することができる。
+     *
+     * Example:
+     * ```php
+     * // 最も単純な置換
+     * that(str_embed('a, b, c', ['a' => 'A', 'b' => 'B', 'c' => 'C']))->isSame('A, B, C');
+     * // 最も長いキーから置換される
+     * that(str_embed('abc', ['a' => 'X', 'ab' => 'AB']))->isSame('ABc');
+     * // 配列を渡すと「N番目の置換」が実現できる（文字列の場合は再利用される）
+     * that(str_embed('a, a, b, b', [
+     *     'a' => 'A',          // 全ての a が A になる
+     *     'b' => ['B1', 'B2'], // 1番目の b が B1, 2番目の b が B2 になる
+     * ]))->isSame('A, A, B1, B2');
+     * // 最も重要な性質として "' で囲まれていると対象にならない
+     * that(str_embed('a, "a", b, "b", b', [
+     *     'a' => 'A',
+     *     'b' => ['B1', 'B2'],
+     * ]))->isSame('A, "a", B1, "b", B2');
+     * ```
+     *
+     * @param string $string 対象文字列
+     * @param array $replacemap 置換文字列
+     * @param string|array $enclosure 囲い文字。この文字中にいる $from, $to 文字は走査外になる
+     * @param string $escape エスケープ文字。この文字が前にある $from, $to 文字は走査外になる
+     * @return string 置換された文字列
+     */
+    function str_embed($string, $replacemap, $enclosure = "'\"", $escape = '\\')
+    {
+        assert(is_iterable($replacemap));
+
+        $string = (string) $string;
+
+        // 長いキーから処理するためソートしておく
+        $replacemap = arrayval($replacemap, false);
+        uksort($replacemap, function ($a, $b) { return strlen($b) - strlen($a); });
+        $srcs = array_keys($replacemap);
+
+        $counter = array_fill_keys(array_keys($replacemap), 0);
+        for ($i = 0; $i < strlen($string); $i++) {
+            $i = strpos_quoted($string, $srcs, $i, $enclosure, $escape);
+            if ($i === false) {
+                break;
+            }
+
+            foreach ($replacemap as $src => $dst) {
+                $srclen = strlen($src);
+                if ($srclen === 0) {
+                    throw new \InvalidArgumentException("src length is 0.");
+                }
+                if (substr_compare($string, $src, $i, $srclen) === 0) {
+                    if (is_array($dst)) {
+                        $n = $counter[$src]++;
+                        if (!isset($dst[$n])) {
+                            throw new \InvalidArgumentException("notfound search string '$src' of {$n}th.");
+                        }
+                        $dst = $dst[$n];
+                    }
+                    $string = substr_replace($string, $dst, $i, $srclen);
+                    $i += strlen($dst) - 1;
+                    break;
+                }
+            }
+        }
+        return $string;
+    }
+}
+if (function_exists("ryunosuke\\dbml\\str_embed") && !defined("ryunosuke\\dbml\\str_embed")) {
+    define("ryunosuke\\dbml\\str_embed", "ryunosuke\\dbml\\str_embed");
+}
+
 if (!isset($excluded_functions["str_between"]) && (!function_exists("ryunosuke\\dbml\\str_between") || (!false && (new \ReflectionFunction("ryunosuke\\dbml\\str_between"))->isInternal()))) {
     /**
      * 指定文字で囲まれた文字列を取得する
@@ -3081,11 +4043,11 @@ if (!isset($excluded_functions["str_between"]) && (!function_exists("ryunosuke\\
      * Example:
      * ```php
      * // $position を利用して "first", "second", "third" を得る（"で囲まれた "blank" は返ってこない）。
-     * assertSame(str_between('{first} and {second} and "{blank}" and {third}', '{', '}', $n), 'first');
-     * assertSame(str_between('{first} and {second} and "{blank}" and {third}', '{', '}', $n), 'second');
-     * assertSame(str_between('{first} and {second} and "{blank}" and {third}', '{', '}', $n), 'third');
+     * that(str_between('{first} and {second} and "{blank}" and {third}', '{', '}', $n))->isSame('first');
+     * that(str_between('{first} and {second} and "{blank}" and {third}', '{', '}', $n))->isSame('second');
+     * that(str_between('{first} and {second} and "{blank}" and {third}', '{', '}', $n))->isSame('third');
      * // ネストしている場合は最も外側を返す
-     * assertSame(str_between('{nest1{nest2{nest3}}}', '{', '}'), 'nest1{nest2{nest3}}');
+     * that(str_between('{nest1{nest2{nest3}}}', '{', '}'))->isSame('nest1{nest2{nest3}}');
      * ```
      *
      * @param string $string 対象文字列
@@ -3102,25 +4064,16 @@ if (!isset($excluded_functions["str_between"]) && (!function_exists("ryunosuke\\
         $fromlen = strlen($from);
         $tolen = strlen($to);
         $position = intval($position);
-        $enclosing = null;
         $nesting = 0;
         $start = null;
         for ($i = $position; $i < $strlen; $i++) {
-            if ($i !== 0 && $string[$i - 1] === $escape) {
-                continue;
-            }
-            if (strpos($enclosure, $string[$i]) !== false) {
-                if ($enclosing === null) {
-                    $enclosing = $string[$i];
-                }
-                elseif ($enclosing === $string[$i]) {
-                    $enclosing = null;
-                }
-                continue;
+            $i = strpos_quoted($string, [$from, $to], $i, $enclosure, $escape);
+            if ($i === false) {
+                break;
             }
 
             // 開始文字と終了文字が重複している可能性があるので $to からチェックする
-            if ($enclosing === null && substr_compare($string, $to, $i, $tolen) === 0) {
+            if (substr_compare($string, $to, $i, $tolen) === 0) {
                 if (--$nesting === 0) {
                     $position = $i + $tolen;
                     return substr($string, $start, $i - $start);
@@ -3130,7 +4083,7 @@ if (!isset($excluded_functions["str_between"]) && (!function_exists("ryunosuke\\
                     $nesting = 0;
                 }
             }
-            if ($enclosing === null && substr_compare($string, $from, $i, $fromlen) === 0) {
+            if (substr_compare($string, $from, $i, $fromlen) === 0) {
                 if ($nesting++ === 0) {
                     $start = $i + $fromlen;
                 }
@@ -3141,6 +4094,116 @@ if (!isset($excluded_functions["str_between"]) && (!function_exists("ryunosuke\\
 }
 if (function_exists("ryunosuke\\dbml\\str_between") && !defined("ryunosuke\\dbml\\str_between")) {
     define("ryunosuke\\dbml\\str_between", "ryunosuke\\dbml\\str_between");
+}
+
+if (!isset($excluded_functions["str_ellipsis"]) && (!function_exists("ryunosuke\\dbml\\str_ellipsis") || (!false && (new \ReflectionFunction("ryunosuke\\dbml\\str_ellipsis"))->isInternal()))) {
+    /**
+     * 文字列を指定幅に丸める
+     *
+     * mb_strimwidth と機能的には同じだが、省略文字の差し込み位置を $pos で指定できる。
+     * $pos は負数が指定できる。負数の場合後ろから数えられる。
+     * 省略した場合は真ん中となる。
+     *
+     * Example:
+     * ```php
+     * // 8文字に丸める（$pos 省略なので真ん中が省略される）
+     * that(str_ellipsis('1234567890', 8, '...'))->isSame('12...890');
+     * // 8文字に丸める（$pos=1 なので1文字目から省略される）
+     * that(str_ellipsis('1234567890', 8, '...', 1))->isSame('1...7890');
+     * // 8文字に丸める（$pos=-1 なので後ろから1文字目から省略される）
+     * that(str_ellipsis('1234567890', 8, '...', -1))->isSame('1234...0');
+     * ```
+     *
+     * @param string $string 対象文字列
+     * @param int $width 丸める幅
+     * @param string $trimmarker 省略文字列
+     * @param int|null $pos 省略記号の差し込み位置
+     * @return string 丸められた文字列
+     */
+    function str_ellipsis($string, $width, $trimmarker = '...', $pos = null)
+    {
+        $string = (string) $string;
+
+        $strlen = mb_strlen($string);
+        if ($strlen <= $width) {
+            return $string;
+        }
+
+        $markerlen = mb_strlen($trimmarker);
+        if ($markerlen >= $width) {
+            return $trimmarker;
+        }
+
+        $length = $width - $markerlen;
+        $pos = $pos ?? $length / 2;
+        if ($pos < 0) {
+            $pos += $length;
+        }
+        $pos = max(0, min($pos, $length));
+
+        return mb_substr_replace($string, $trimmarker, $pos, $strlen - $length);
+    }
+}
+if (function_exists("ryunosuke\\dbml\\str_ellipsis") && !defined("ryunosuke\\dbml\\str_ellipsis")) {
+    define("ryunosuke\\dbml\\str_ellipsis", "ryunosuke\\dbml\\str_ellipsis");
+}
+
+if (!isset($excluded_functions["pascal_case"]) && (!function_exists("ryunosuke\\dbml\\pascal_case") || (!false && (new \ReflectionFunction("ryunosuke\\dbml\\pascal_case"))->isInternal()))) {
+    /**
+     * PascalCase に変換する
+     *
+     * Example:
+     * ```php
+     * that(pascal_case('this_is_a_pen'))->isSame('ThisIsAPen');
+     * ```
+     *
+     * @param string $string 対象文字列
+     * @param string $delimiter デリミタ
+     * @return string 変換した文字列
+     */
+    function pascal_case($string, $delimiter = '_')
+    {
+        return strtr(ucwords(strtr($string, [$delimiter => ' '])), [' ' => '']);
+    }
+}
+if (function_exists("ryunosuke\\dbml\\pascal_case") && !defined("ryunosuke\\dbml\\pascal_case")) {
+    define("ryunosuke\\dbml\\pascal_case", "ryunosuke\\dbml\\pascal_case");
+}
+
+if (!isset($excluded_functions["namespace_split"]) && (!function_exists("ryunosuke\\dbml\\namespace_split") || (!false && (new \ReflectionFunction("ryunosuke\\dbml\\namespace_split"))->isInternal()))) {
+    /**
+     * 文字列を名前空間とローカル名に区切ってタプルで返す
+     *
+     * class_namespace/class_shorten や function_shorten とほぼ同じだが下記の違いがある。
+     *
+     * - あくまで文字列として処理する
+     *     - 例えば class_namespace は get_class されるが、この関数は（いうなれば） strval される
+     * - \\ を trim しないし、特別扱いもしない
+     *     - `ns\\hoge` と `\\ns\\hoge` で返り値が微妙に異なる
+     *     - `ns\\` のような場合は名前空間だけを返す
+     *
+     * Example:
+     * ```php
+     * that(namespace_split('ns\\hoge'))->isSame(['ns', 'hoge']);
+     * that(namespace_split('hoge'))->isSame(['', 'hoge']);
+     * that(namespace_split('ns\\'))->isSame(['ns', '']);
+     * that(namespace_split('\\hoge'))->isSame(['', 'hoge']);
+     * ```
+     *
+     * @param string $string 対象文字列
+     * @return array [namespace, localname]
+     */
+    function namespace_split($string)
+    {
+        $pos = strrpos($string, '\\');
+        if ($pos === false) {
+            return ['', $string];
+        }
+        return [substr($string, 0, $pos), substr($string, $pos + 1)];
+    }
+}
+if (function_exists("ryunosuke\\dbml\\namespace_split") && !defined("ryunosuke\\dbml\\namespace_split")) {
+    define("ryunosuke\\dbml\\namespace_split", "ryunosuke\\dbml\\namespace_split");
 }
 
 if (!isset($excluded_functions["paml_import"]) && (!function_exists("ryunosuke\\dbml\\paml_import") || (!false && (new \ReflectionFunction("ryunosuke\\dbml\\paml_import"))->isInternal()))) {
@@ -3173,7 +4236,7 @@ if (!isset($excluded_functions["paml_import"]) && (!function_exists("ryunosuke\\
      * Example:
      * ```php
      * // こういったスカラー型はほとんど yaml と一緒だが、コロンの後のスペースは不要（あってもよい）
-     * assertSame(paml_import('n:null, f:false, i:123, d:3.14, s:"this is string"'), [
+     * that(paml_import('n:null, f:false, i:123, d:3.14, s:"this is string"'))->isSame([
      *     'n' => null,
      *     'f' => false,
      *     'i' => 123,
@@ -3181,7 +4244,7 @@ if (!isset($excluded_functions["paml_import"]) && (!function_exists("ryunosuke\\
      *     's' => 'this is string',
      * ]);
      * // 配列が使える（キーは連番なら不要）。ネストも可能
-     * assertSame(paml_import('a:[1,2,x:X,3], nest:[a:[b:[c:[X]]]]'), [
+     * that(paml_import('a:[1,2,x:X,3], nest:[a:[b:[c:[X]]]]'))->isSame([
      *     'a'    => [1, 2, 'x' => 'X', 3],
      *     'nest' => [
      *         'a' => [
@@ -3192,7 +4255,7 @@ if (!isset($excluded_functions["paml_import"]) && (!function_exists("ryunosuke\\
      *     ],
      * ]);
      * // bare 文字列で定数が使える
-     * assertSame(paml_import('pv:PHP_VERSION, ao:ArrayObject::STD_PROP_LIST'), [
+     * that(paml_import('pv:PHP_VERSION, ao:ArrayObject::STD_PROP_LIST'))->isSame([
      *     'pv' => \PHP_VERSION,
      *     'ao' => \ArrayObject::STD_PROP_LIST,
      * ]);
@@ -3284,16 +4347,16 @@ if (!isset($excluded_functions["preg_splice"]) && (!function_exists("ryunosuke\\
      * Example:
      * ```php
      * // 数字を除去しつつその除去された数字を得る
-     * assertSame(preg_splice('#\\d+#', '', 'abc123', $m), 'abc');
-     * assertSame($m, ['123']);
+     * that(preg_splice('#\\d+#', '', 'abc123', $m))->isSame('abc');
+     * that($m)->isSame(['123']);
      *
      * // callable だと preg_replace_callback が呼ばれる
-     * assertSame(preg_splice('#[a-z]+#', function($m){return strtoupper($m[0]);}, 'abc123', $m), 'ABC123');
-     * assertSame($m, ['abc']);
+     * that(preg_splice('#[a-z]+#', function($m){return strtoupper($m[0]);}, 'abc123', $m))->isSame('ABC123');
+     * that($m)->isSame(['abc']);
      *
      * // ただし、 文字列 callable は文字列として扱う
-     * assertSame(preg_splice('#[a-z]+#', 'strtoupper', 'abc123', $m), 'strtoupper123');
-     * assertSame($m, ['abc']);
+     * that(preg_splice('#[a-z]+#', 'strtoupper', 'abc123', $m))->isSame('strtoupper123');
+     * that($m)->isSame(['abc']);
      * ```
      *
      * @param string $pattern 正規表現
@@ -3319,6 +4382,113 @@ if (function_exists("ryunosuke\\dbml\\preg_splice") && !defined("ryunosuke\\dbml
     define("ryunosuke\\dbml\\preg_splice", "ryunosuke\\dbml\\preg_splice");
 }
 
+if (!isset($excluded_functions["preg_replaces"]) && (!function_exists("ryunosuke\\dbml\\preg_replaces") || (!false && (new \ReflectionFunction("ryunosuke\\dbml\\preg_replaces"))->isInternal()))) {
+    /**
+     * パターン番号を指定して preg_replace する
+     *
+     * パターン番号を指定してそれのみを置換する。
+     * 名前付きキャプチャを使用している場合はキーに文字列も使える。
+     * 値にクロージャを渡した場合はコールバックされて置換される。
+     *
+     * $replacements に単一文字列を渡した場合、 `[1 => $replacements]` と等しくなる（第1キャプチャを置換）。
+     *
+     * Example:
+     * ```php
+     * // a と z に囲まれた数字を XXX に置換する
+     * that(preg_replaces('#a(\d+)z#', [1 => 'XXX'], 'a123z'))->isSame('aXXXz');
+     * // 名前付きキャプチャも指定できる
+     * that(preg_replaces('#a(?<digit>\d+)z#', ['digit' => 'XXX'], 'a123z'))->isSame('aXXXz');
+     * // クロージャを渡すと元文字列を引数としてコールバックされる
+     * that(preg_replaces('#a(?<digit>\d+)z#', ['digit' => function($src){return $src * 2;}], 'a123z'))->isSame('a246z');
+     * // 複合的なサンプル（a タグの href と target 属性を書き換える）
+     * that(preg_replaces('#<a\s+href="(?<href>.*)"\s+target="(?<target>.*)">#', [
+     *     'href'   => function($href){return strtoupper($href);},
+     *     'target' => function($target){return strtoupper($target);},
+     * ], '<a href="hoge" target="fuga">inner text</a>'))->isSame('<a href="HOGE" target="FUGA">inner text</a>');
+     * ```
+     *
+     * @param string $pattern 正規表現
+     * @param array|string $replacements 置換文字列
+     * @param string $subject 対象文字列
+     * @param int $limit 置換回数
+     * @param null $count 置換回数格納変数
+     * @return string 置換された文字列
+     */
+    function preg_replaces($pattern, $replacements, $subject, $limit = -1, &$count = null)
+    {
+        $offset = 0;
+        $count = 0;
+        if (!is_arrayable($replacements)) {
+            $replacements = [1 => $replacements];
+        }
+
+        preg_match_all($pattern, $subject, $matches, PREG_OFFSET_CAPTURE | PREG_SET_ORDER);
+        foreach ($matches as $match) {
+            if ($limit-- === 0) {
+                break;
+            }
+            $count++;
+
+            foreach ($match as $index => $m) {
+                if ($m[1] >= 0 && $index !== 0 && isset($replacements[$index])) {
+                    $src = $m[0];
+                    $dst = $replacements[$index];
+                    if ($dst instanceof \Closure) {
+                        $dst = $dst($src);
+                    }
+
+                    $srclen = strlen($src);
+                    $dstlen = strlen($dst);
+
+                    $subject = substr_replace($subject, $dst, $offset + $m[1], $srclen);
+                    $offset += $dstlen - $srclen;
+                }
+            }
+        }
+        return $subject;
+    }
+}
+if (function_exists("ryunosuke\\dbml\\preg_replaces") && !defined("ryunosuke\\dbml\\preg_replaces")) {
+    define("ryunosuke\\dbml\\preg_replaces", "ryunosuke\\dbml\\preg_replaces");
+}
+
+if (!isset($excluded_functions["mb_substr_replace"]) && (!function_exists("ryunosuke\\dbml\\mb_substr_replace") || (!false && (new \ReflectionFunction("ryunosuke\\dbml\\mb_substr_replace"))->isInternal()))) {
+    /**
+     * マルチバイト対応 substr_replace
+     *
+     * 本家は配列を与えたりできるが、ややこしいし使う気がしないので未対応。
+     *
+     * Example:
+     * ```php
+     * // 2文字目から5文字を「あいうえお」に置換する
+     * that(mb_substr_replace('０１２３４５６７８９', 'あいうえお', 2, 5))->isSame('０１あいうえお７８９');
+     * ```
+     *
+     * @param string $string 対象文字列
+     * @param string $replacement 置換文字列
+     * @param int $start 開始位置
+     * @param int $length 置換長
+     * @return string 置換した文字列
+     */
+    function mb_substr_replace($string, $replacement, $start, $length = null)
+    {
+        $string = (string) $string;
+
+        $strlen = mb_strlen($string);
+        if ($start < 0) {
+            $start += $strlen;
+        }
+        if ($length < 0) {
+            $length += $strlen - $start;
+        }
+
+        return mb_substr($string, 0, $start) . $replacement . mb_substr($string, $start + $length, null);
+    }
+}
+if (function_exists("ryunosuke\\dbml\\mb_substr_replace") && !defined("ryunosuke\\dbml\\mb_substr_replace")) {
+    define("ryunosuke\\dbml\\mb_substr_replace", "ryunosuke\\dbml\\mb_substr_replace");
+}
+
 if (!isset($excluded_functions["evaluate"]) && (!function_exists("ryunosuke\\dbml\\evaluate") || (!false && (new \ReflectionFunction("ryunosuke\\dbml\\evaluate"))->isInternal()))) {
     /**
      * eval のプロキシ関数
@@ -3340,7 +4510,7 @@ if (!isset($excluded_functions["evaluate"]) && (!function_exists("ryunosuke\\dbm
      * $c = $a + $b;
      * return $c * 3;
      * ';
-     * assertSame(evaluate($phpcode, get_defined_vars()), 9);
+     * that(evaluate($phpcode, get_defined_vars()))->isSame(9);
      * ```
      *
      * @param string $phpcode 実行する php コード
@@ -3407,24 +4577,24 @@ if (!isset($excluded_functions["optional"]) && (!function_exists("ryunosuke\\dbm
      * // null を返すかもしれないステートメント
      * $getobject = function () {return null;};
      * // メソッド呼び出しは null を返す
-     * assertSame(optional($getobject())->method(), null);
+     * that(optional($getobject())->method())->isSame(null);
      * // プロパティアクセスは null を返す
-     * assertSame(optional($getobject())->property, null);
+     * that(optional($getobject())->property)->isSame(null);
      * // empty は true を返す
-     * assertSame(empty(optional($getobject())->nothing), true);
+     * that(empty(optional($getobject())->nothing))->isSame(true);
      * // __isset は false を返す
-     * assertSame(isset(optional($getobject())->nothing), false);
+     * that(isset(optional($getobject())->nothing))->isSame(false);
      * // __toString は '' を返す
-     * assertSame(strval(optional($getobject())), '');
+     * that(strval(optional($getobject())))->isSame('');
      * // __invoke は null を返す
-     * assertSame(call_user_func(optional($getobject())), null);
+     * that(call_user_func(optional($getobject())))->isSame(null);
      * // 配列アクセスは null を返す
-     * assertSame($getobject()['hoge'], null);
+     * that(optional($getobject())['hoge'])->isSame(null);
      * // 空イテレータを返す
-     * assertSame(iterator_to_array(optional($getobject())), []);
+     * that(iterator_to_array(optional($getobject())))->isSame([]);
      *
      * // $expected を与えるとその型以外は NullObject を返す（\ArrayObject はオブジェクトだが stdClass ではない）
-     * assertSame(optional(new \ArrayObject([1]), 'stdClass')->count(), null);
+     * that(optional(new \ArrayObject([1]), 'stdClass')->count())->isSame(null);
      * ```
      *
      * @param object|null $object オブジェクト
@@ -3478,7 +4648,7 @@ if (!isset($excluded_functions["throws"]) && (!function_exists("ryunosuke\\dbml\
      *     throws(new \Exception('throws'));
      * }
      * catch (\Exception $ex) {
-     *     assertSame($ex->getMessage(), 'throws');
+     *     that($ex->getMessage())->isSame('throws');
      * }
      * ```
      *
@@ -3506,12 +4676,12 @@ if (!isset($excluded_functions["try_finally"]) && (!function_exists("ryunosuke\\
      * $finally = function()use(&$finally_count){$finally_count++;};
      * // 例外が飛ぼうと飛ぶまいと $finally は実行される
      * $try = function($a, $b, $c){return [$a, $b, $c];};
-     * assertSame(try_finally($try, $finally, 1, 2, 3), [1, 2, 3]);
-     * assertSame($finally_count, 1); // 呼ばれている
+     * that(try_finally($try, $finally, 1, 2, 3))->isSame([1, 2, 3]);
+     * that($finally_count)->isSame(1); // 呼ばれている
      * // 例外は投げっぱなすが、 $finally は実行される
      * $try = function(){throw new \Exception('tried');};
      * try {try_finally($try, $finally, 1, 2, 3);} catch(\Exception $e){};
-     * assertSame($finally_count, 2); // 呼ばれている
+     * that($finally_count)->isSame(2); // 呼ばれている
      * ```
      *
      * @param callable $try try ブロッククロージャ
@@ -3540,12 +4710,12 @@ if (!isset($excluded_functions["try_catch_finally"]) && (!function_exists("ryuno
      * $finally = function()use(&$finally_count){$finally_count++;};
      * // 例外が飛ぼうと飛ぶまいと $finally は実行される
      * $try = function($a, $b, $c){return [$a, $b, $c];};
-     * assertSame(try_catch_finally($try, null, $finally, 1, 2, 3), [1, 2, 3]);
-     * assertSame($finally_count, 1); // 呼ばれている
+     * that(try_catch_finally($try, null, $finally, 1, 2, 3))->isSame([1, 2, 3]);
+     * that($finally_count)->isSame(1); // 呼ばれている
      * // 例外を投げるが、 $catch で握りつぶす
      * $try = function(){throw new \Exception('tried');};
-     * assertSame(try_catch_finally($try, null, $finally, 1, 2, 3)->getMessage(), 'tried');
-     * assertSame($finally_count, 2); // 呼ばれている
+     * that(try_catch_finally($try, null, $finally, 1, 2, 3)->getMessage())->isSame('tried');
+     * that($finally_count)->isSame(2); // 呼ばれている
      * ```
      *
      * @param callable $try try ブロッククロージャ
@@ -3628,11 +4798,11 @@ if (!isset($excluded_functions["cache"]) && (!function_exists("ryunosuke\\dbml\\
      * // 乱数を返す処理だが、キャッシュされるので同じ値になる
      * $rand1 = cache('rand', $provider);
      * $rand2 = cache('rand', $provider);
-     * assertSame($rand1, $rand2);
+     * that($rand1)->isSame($rand2);
      * // $provider に null を与えると削除される
      * cache('rand', null);
      * $rand3 = cache('rand', $provider);
-     * assertNotSame($rand1, $rand3);
+     * that($rand1)->isNotSame($rand3);
      * ```
      *
      * @param string $key キャッシュのキー
@@ -3733,6 +4903,9 @@ if (!isset($excluded_functions["cache"]) && (!function_exists("ryunosuke\\dbml\\
 
         // flush (for test)
         if ($key === null) {
+            if ($provider === null) {
+                $cacheobject->clear();
+            }
             $cacheobject = null;
             return;
         }
@@ -3767,14 +4940,14 @@ if (!isset($excluded_functions["arrayval"]) && (!function_exists("ryunosuke\\dbm
      * Example:
      * ```php
      * // キャストなので基本的には配列化される
-     * assertSame(arrayval(123), [123]);
-     * assertSame(arrayval('str'), ['str']);
-     * assertSame(arrayval([123]), [123]); // 配列は配列のまま
+     * that(arrayval(123))->isSame([123]);
+     * that(arrayval('str'))->isSame(['str']);
+     * that(arrayval([123]))->isSame([123]); // 配列は配列のまま
      *
      * // $recursive = false にしない限り再帰的に適用される
      * $stdclass = stdclass(['key' => 'val']);
-     * assertSame(arrayval([$stdclass], true), [['key' => 'val']]); // true なので中身も配列化される
-     * assertSame(arrayval([$stdclass], false), [$stdclass]);       // false なので中身は変わらない
+     * that(arrayval([$stdclass], true))->isSame([['key' => 'val']]); // true なので中身も配列化される
+     * that(arrayval([$stdclass], false))->isSame([$stdclass]);       // false なので中身は変わらない
      * ```
      *
      * @param mixed $var array 化する値
@@ -3832,18 +5005,18 @@ if (!isset($excluded_functions["is_empty"]) && (!function_exists("ryunosuke\\dbm
      * Example:
      * ```php
      * // この辺は empty と全く同じ
-     * assertTrue(is_empty(null));
-     * assertTrue(is_empty(false));
-     * assertTrue(is_empty(0));
-     * assertTrue(is_empty(''));
+     * that(is_empty(null))->isTrue();
+     * that(is_empty(false))->isTrue();
+     * that(is_empty(0))->isTrue();
+     * that(is_empty(''))->isTrue();
      * // この辺だけが異なる
-     * assertFalse(is_empty('0'));
+     * that(is_empty('0'))->isFalse();
      * // 第2引数に true を渡すと空の stdClass も empty 判定される
      * $stdclass = new \stdClass();
-     * assertTrue(is_empty($stdclass, true));
+     * that(is_empty($stdclass, true))->isTrue();
      * // フィールドがあれば empty ではない
      * $stdclass->hoge = 123;
-     * assertFalse(is_empty($stdclass, true));
+     * that(is_empty($stdclass, true))->isFalse();
      * ```
      *
      * @param mixed $var 判定する値
@@ -3890,12 +5063,12 @@ if (!isset($excluded_functions["is_primitive"]) && (!function_exists("ryunosuke\
      *
      * Example:
      * ```php
-     * assertTrue(is_primitive(null));
-     * assertTrue(is_primitive(false));
-     * assertTrue(is_primitive(123));
-     * assertTrue(is_primitive(STDIN));
-     * assertFalse(is_primitive(new \stdClass));
-     * assertFalse(is_primitive(['array']));
+     * that(is_primitive(null))->isTrue();
+     * that(is_primitive(false))->isTrue();
+     * that(is_primitive(123))->isTrue();
+     * that(is_primitive(STDIN))->isTrue();
+     * that(is_primitive(new \stdClass))->isFalse();
+     * that(is_primitive(['array']))->isFalse();
      * ```
      *
      * @param mixed $var 調べる値
@@ -3910,6 +5083,67 @@ if (function_exists("ryunosuke\\dbml\\is_primitive") && !defined("ryunosuke\\dbm
     define("ryunosuke\\dbml\\is_primitive", "ryunosuke\\dbml\\is_primitive");
 }
 
+if (!isset($excluded_functions["is_stringable"]) && (!function_exists("ryunosuke\\dbml\\is_stringable") || (!false && (new \ReflectionFunction("ryunosuke\\dbml\\is_stringable"))->isInternal()))) {
+    /**
+     * 変数が文字列化できるか調べる
+     *
+     * 「配列」「__toString を持たないオブジェクト」が false になる。
+     * （厳密に言えば配列は "Array" になるので文字列化できるといえるがここでは考えない）。
+     *
+     * Example:
+     * ```php
+     * // こいつらは true
+     * that(is_stringable(null))->isTrue();
+     * that(is_stringable(true))->isTrue();
+     * that(is_stringable(3.14))->isTrue();
+     * that(is_stringable(STDOUT))->isTrue();
+     * that(is_stringable(new \Exception()))->isTrue();
+     * // こいつらは false
+     * that(is_stringable(new \ArrayObject()))->isFalse();
+     * that(is_stringable([1, 2, 3]))->isFalse();
+     * ```
+     *
+     * @param mixed $var 調べる値
+     * @return bool 文字列化できるなら true
+     */
+    function is_stringable($var)
+    {
+        if (is_array($var)) {
+            return false;
+        }
+        if (is_object($var) && !method_exists($var, '__toString')) {
+            return false;
+        }
+        return true;
+    }
+}
+if (function_exists("ryunosuke\\dbml\\is_stringable") && !defined("ryunosuke\\dbml\\is_stringable")) {
+    define("ryunosuke\\dbml\\is_stringable", "ryunosuke\\dbml\\is_stringable");
+}
+
+if (!isset($excluded_functions["is_arrayable"]) && (!function_exists("ryunosuke\\dbml\\is_arrayable") || (!false && (new \ReflectionFunction("ryunosuke\\dbml\\is_arrayable"))->isInternal()))) {
+    /**
+     * 変数が配列アクセス可能か調べる
+     *
+     * Example:
+     * ```php
+     * that(is_arrayable([]))->isTrue();
+     * that(is_arrayable(new \ArrayObject()))->isTrue();
+     * that(is_arrayable(new \stdClass()))->isFalse();
+     * ```
+     *
+     * @param array $var 調べる値
+     * @return bool 配列アクセス可能なら true
+     */
+    function is_arrayable($var)
+    {
+        return is_array($var) || $var instanceof \ArrayAccess;
+    }
+}
+if (function_exists("ryunosuke\\dbml\\is_arrayable") && !defined("ryunosuke\\dbml\\is_arrayable")) {
+    define("ryunosuke\\dbml\\is_arrayable", "ryunosuke\\dbml\\is_arrayable");
+}
+
 if (!isset($excluded_functions["is_countable"]) && (!function_exists("ryunosuke\\dbml\\is_countable") || (!true && (new \ReflectionFunction("ryunosuke\\dbml\\is_countable"))->isInternal()))) {
     /**
      * 変数が count でカウントできるか調べる
@@ -3918,11 +5152,11 @@ if (!isset($excluded_functions["is_countable"]) && (!function_exists("ryunosuke\
      *
      * Example:
      * ```php
-     * assertTrue(is_countable([1, 2, 3]));
-     * assertTrue(is_countable(new \ArrayObject()));
-     * assertFalse(is_countable((function () { yield 1; })()));
-     * assertFalse(is_countable(1));
-     * assertFalse(is_countable(new \stdClass()));
+     * that(is_countable([1, 2, 3]))->isTrue();
+     * that(is_countable(new \ArrayObject()))->isTrue();
+     * that(is_countable((function () { yield 1; })()))->isFalse();
+     * that(is_countable(1))->isFalse();
+     * that(is_countable(new \stdClass()))->isFalse();
      * ```
      *
      * @polyfill
@@ -3951,13 +5185,13 @@ if (!isset($excluded_functions["var_apply"]) && (!function_exists("ryunosuke\\db
      * Example:
      * ```php
      * // 素の値は素の呼び出しと同じ
-     * assertSame(var_apply(' x ', 'trim'), 'x');
+     * that(var_apply(' x ', 'trim'))->isSame('x');
      * // 配列は中身に適用して配列で返す（再帰）
-     * assertSame(var_apply([' x ', ' y ', [' z ']], 'trim'), ['x', 'y', ['z']]);
+     * that(var_apply([' x ', ' y ', [' z ']], 'trim'))->isSame(['x', 'y', ['z']]);
      * // 第3引数以降は残り引数を意味する
-     * assertSame(var_apply(['!x!', '!y!'], 'trim', '!'), ['x', 'y']);
+     * that(var_apply(['!x!', '!y!'], 'trim', '!'))->isSame(['x', 'y']);
      * // 「まれによくある」の具体例
-     * assertSame(var_apply(['<x>', ['<y>']], 'htmlspecialchars', ENT_QUOTES, 'utf-8'), ['&lt;x&gt;', ['&lt;y&gt;']]);
+     * that(var_apply(['<x>', ['<y>']], 'htmlspecialchars', ENT_QUOTES, 'utf-8'))->isSame(['&lt;x&gt;', ['&lt;y&gt;']]);
      * ```
      *
      * @param mixed $var $callback を適用する値

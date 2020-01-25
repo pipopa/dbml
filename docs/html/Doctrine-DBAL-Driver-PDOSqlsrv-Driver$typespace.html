@@ -54,7 +54,7 @@
 		<span class="label label-info"></span>
 		<span class="label label-info"></span>
 		<span class="label label-deprecated"></span>
-        			<a href="https://github.com/doctrine/dbal/blob/v2.9.2/lib/Doctrine/DBAL/Driver/PDOSqlsrv/Driver.php#L9-L106" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+        			<a href="https://github.com/doctrine/dbal/blob/v2.10.1/lib/Doctrine/DBAL/Driver/PDOSqlsrv/Driver.php#L9-L93" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                     	</div>
 
 	<h2>class <span class="category-name">Doctrine\DBAL\Driver\PDOSqlsrv\Driver</span></h2>
@@ -117,13 +117,14 @@
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/doctrine/dbal/blob/v2.9.2/lib/Doctrine/DBAL/Driver/PDOSqlsrv/Driver.php#L14-L27" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.10.1/lib/Doctrine/DBAL/Driver/PDOSqlsrv/Driver.php#L14-L35" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="Doctrine\DBAL\Driver\PDOSqlsrv\Driver::connect()" tabindex="-1" class="structure-title ">
-                        connect						<small>($params, $username = null, $password = null, $driverOptions = [])</small>
-					</h4>
+                        connect                        	<small>($params, $username = null, $password = null, $driverOptions = []) : <a href="Doctrine-DBAL-Driver-Connection$typespace.html#Doctrine\DBAL\Driver\Connection" class="fqsen "><small>Doctrine\DBAL\Driver\</small><wbr>Connection</a></small>
+						</h4>
 					<div class="inner-item">
-						<div class="description"><p><tag_inheritdoc data-type='' data-description=''>Attempts to create a connection with the database.</tag_inheritdoc></p>
+						<div class="description"><p><tag_inheritdoc data-type='' data-description=''>Attempts to create a connection with the database.</p>
+<p>The usage of NULL to indicate empty username or password is deprecated. Use an empty string instead.</tag_inheritdoc></p>
 </div>
                         	<table class="table">
 		<caption>Parameters</caption>
@@ -190,13 +191,13 @@
 						<span class="label label-danger"></span>
 						<span class="label label-default"></span>
 						<span class="label label-default"></span>
-						<span class="label label-deprecated"></span>
+						<span class="label label-deprecated">deprecated </span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/doctrine/dbal/blob/v2.9.2/lib/Doctrine/DBAL/Driver/PDOSqlsrv/Driver.php#L99-L105" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.10.1/lib/Doctrine/DBAL/Driver/PDOSqlsrv/Driver.php#L84-L92" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
-					<h4 id="Doctrine\DBAL\Driver\PDOSqlsrv\Driver::getName()" tabindex="-1" class="structure-title ">
-                        getName						<small>()</small>
-					</h4>
+					<h4 id="Doctrine\DBAL\Driver\PDOSqlsrv\Driver::getName()" tabindex="-1" class="structure-title strike">
+                        getName                        	<small>() : string</small>
+						</h4>
 					<div class="inner-item">
 						<div class="description"><p><tag_inheritdoc data-type='' data-description=''>Gets the name of the driver.</tag_inheritdoc></p>
 </div>
@@ -243,11 +244,11 @@
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/doctrine/dbal/blob/v2.9.2/lib/Doctrine/DBAL/Driver/AbstractSQLServerDriver.php#L22-L54" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.10.1/lib/Doctrine/DBAL/Driver/AbstractSQLServerDriver.php#L22-L54" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="Doctrine\DBAL\Driver\PDOSqlsrv\Driver::createDatabasePlatformForVersion()" tabindex="-1" class="structure-title ">
-                        createDatabasePlatformForVersion						<small>($version)</small>
-					</h4>
+                        createDatabasePlatformForVersion                        	<small>($version) : <a href="Doctrine-DBAL-Platforms-AbstractPlatform$typespace.html#Doctrine\DBAL\Platforms\AbstractPlatform" class="fqsen "><small>Doctrine\DBAL\Platforms\</small><wbr>AbstractPlatform</a></small>
+						</h4>
 					<div class="inner-item">
 						<div class="description"><p><tag_inheritdoc data-type='' data-description=''>Factory method for creating the appropriate platform instance for the given version.</tag_inheritdoc></p>
 </div>
@@ -310,11 +311,11 @@
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/doctrine/dbal/blob/v2.9.2/lib/Doctrine/DBAL/Driver/AbstractSQLServerDriver.php#L56-L64" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.10.1/lib/Doctrine/DBAL/Driver/AbstractSQLServerDriver.php#L56-L64" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="Doctrine\DBAL\Driver\PDOSqlsrv\Driver::getDatabase()" tabindex="-1" class="structure-title ">
-                        getDatabase						<small>($conn)</small>
-					</h4>
+                        getDatabase                        	<small>($conn) : string</small>
+						</h4>
 					<div class="inner-item">
 						<div class="description"><p><tag_inheritdoc data-type='' data-description=''>Gets the name of the database connected to for this driver.</tag_inheritdoc></p>
 </div>
@@ -366,11 +367,11 @@
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/doctrine/dbal/blob/v2.9.2/lib/Doctrine/DBAL/Driver/AbstractSQLServerDriver.php#L66-L72" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.10.1/lib/Doctrine/DBAL/Driver/AbstractSQLServerDriver.php#L66-L72" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="Doctrine\DBAL\Driver\PDOSqlsrv\Driver::getDatabasePlatform()" tabindex="-1" class="structure-title ">
-                        getDatabasePlatform						<small>()</small>
-					</h4>
+                        getDatabasePlatform                        	<small>() : <a href="Doctrine-DBAL-Platforms-AbstractPlatform$typespace.html#Doctrine\DBAL\Platforms\AbstractPlatform" class="fqsen "><small>Doctrine\DBAL\Platforms\</small><wbr>AbstractPlatform</a></small>
+						</h4>
 					<div class="inner-item">
 						<div class="description"><p><tag_inheritdoc data-type='' data-description=''>Gets the DatabasePlatform instance that provides all the metadata about<br />
 the platform this driver connects to.</tag_inheritdoc></p>
@@ -418,11 +419,11 @@ the platform this driver connects to.</tag_inheritdoc></p>
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/doctrine/dbal/blob/v2.9.2/lib/Doctrine/DBAL/Driver/AbstractSQLServerDriver.php#L74-L80" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/doctrine/dbal/blob/v2.10.1/lib/Doctrine/DBAL/Driver/AbstractSQLServerDriver.php#L74-L80" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="Doctrine\DBAL\Driver\PDOSqlsrv\Driver::getSchemaManager()" tabindex="-1" class="structure-title ">
-                        getSchemaManager						<small>($conn)</small>
-					</h4>
+                        getSchemaManager                        	<small>($conn) : <a href="Doctrine-DBAL-Schema-AbstractSchemaManager$typespace.html#Doctrine\DBAL\Schema\AbstractSchemaManager" class="fqsen "><small>Doctrine\DBAL\Schema\</small><wbr>AbstractSchemaManager</a></small>
+						</h4>
 					<div class="inner-item">
 						<div class="description"><p><tag_inheritdoc data-type='' data-description=''>Gets the SchemaManager that can be used to inspect and change the underlying<br />
 database schema of the platform this driver connects to.</tag_inheritdoc></p>
