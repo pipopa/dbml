@@ -191,7 +191,7 @@ class OperatorTest extends \ryunosuke\Test\AbstractUnitTestCase
             Operator::OP_RANGE_BETWEEN => ['>=', '<='],
         ];
         foreach ($ops as $ope => $op12) {
-            list($ope1, $ope2) = $op12;
+            [$ope1, $ope2] = $op12;
             $operator = new Operator(self::$platform, $ope, 'a', [1, 2]);
             $this->assertOperator("a $ope1 ? AND a $ope2 ?", [1, 2], $operator);
             $this->assertOperator("NOT (a $ope1 ? AND a $ope2 ?)", [1, 2], $operator->not());

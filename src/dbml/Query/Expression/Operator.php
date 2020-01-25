@@ -202,7 +202,7 @@ class Operator implements Queryable
         if (isset(self::$registereds[$this->operator])) {
             $callback = self::$registereds[$this->operator];
             $result = $callback($this->operand1, $this->operand2);
-            list($this->string, $this->params) = first_keyvalue($result);
+            [$this->string, $this->params] = first_keyvalue($result);
         }
         else {
             $methods = [

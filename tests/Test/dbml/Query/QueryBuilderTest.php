@@ -2738,7 +2738,7 @@ SELECT test.* FROM test", $builder);
     {
         $builder->column([
             'test.*' => [
-                'func'   => function () { return function ($arg) { return $this['id'] * $arg; }; },
+                'func' => function () { return function ($arg) { return $this['id'] * $arg; }; },
             ]
         ]);
         $actual = $builder->limit(1)->tuple();

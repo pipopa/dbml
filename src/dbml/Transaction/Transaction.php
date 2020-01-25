@@ -326,7 +326,7 @@ class Transaction
         }
 
         // 変更を戻す(finally 句を模倣)
-        $finally = function () use ($connection, $current_connection, $current_logger, $current_mode, $current_level, $current_savepoint) {
+        return function () use ($connection, $current_connection, $current_logger, $current_mode, $current_level, $current_savepoint) {
             $this->database->setConnection($current_connection);
             $this->database->setMasterMode($current_mode);
             $connection->getConfiguration()->setSQLLogger($current_logger);
@@ -337,8 +337,6 @@ class Transaction
                 $connection->setNestTransactionsWithSavepoints($current_savepoint);
             }
         };
-
-        return $finally;
     }
 
     private function _execute(Connection $connection, $previewMode)

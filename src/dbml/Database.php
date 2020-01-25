@@ -949,7 +949,7 @@ class Database
         }
         // select|entity～ 系
         if (preg_match('/^(select|entity)(.+?)(ForUpdate|InShare)?(OrThrow)?$/ui', $name, $matches)) {
-            list(, $mode, $perform, $lockmode, $orthrow) = array_map('strtolower', $matches + [3 => '', 4 => '']);
+            [, $mode, $perform, $lockmode, $orthrow] = array_map('strtolower', $matches + [3 => '', 4 => '']);
             $select = $this->$mode(...$arguments);
             if ($lockmode) {
                 $select->{"lock$lockmode"}();
@@ -967,7 +967,7 @@ class Database
         }
         // sub～ 系
         if (preg_match('/^subselect(.+?)$/ui', $name, $matches)) {
-            list(, $perform) = array_map('strtolower', $matches);
+            [, $perform] = array_map('strtolower', $matches);
             return $this->subselect(...$arguments)->$perform();
         }
         // affect～OrThrow 系
@@ -1188,10 +1188,10 @@ class Database
                     if ($pcount >= 2) {
                         // mysql の場合は3個来ることがある（暗黙＋明示＋列名）。その場合は最初を捨てて明示を優先する
                         if ($pcount === 3) {
-                            list(, $table, $c) = $parts;
+                            [, $table, $c] = $parts;
                         }
                         else {
-                            list($table, $c) = $parts;
+                            [$table, $c] = $parts;
                         }
 
                         // クエリビルダ経由でエイリアスマップが得られるなら変換ができる
@@ -1458,7 +1458,7 @@ class Database
                 if (count($tableName) !== 1) {
                     throw new \InvalidArgumentException('don\'t specify multiple table.');
                 }
-                list($tableName, $columns) = first_keyvalue($tableName);
+                [$tableName, $columns] = first_keyvalue($tableName);
                 if (count($columns) !== count($data)) {
                     throw new \InvalidArgumentException('specified column and data array are difference.');
                 }
@@ -1499,7 +1499,7 @@ class Database
     {
         $tableAlias = null;
         if (is_array($tableName)) {
-            list($tableAlias, $tableName) = first_keyvalue($tableName);
+            [$tableAlias, $tableName] = first_keyvalue($tableName);
         }
 
         return array_map(function ($cond) use ($tableName, $tableAlias) {
@@ -1549,7 +1549,7 @@ class Database
             return $this->getSlaveConnection()->getSchemaManager()->createSchema();
         }
 
-        list($parentname, $childname) = explode('.', $objectname) + [1 => null];
+        [$parentname, $childname] = explode('.', $objectname) + [1 => null];
         if (isset($childname)) {
             if ($schema->hasTable($parentname)) {
                 $table = $schema->getTable($parentname);
@@ -1750,7 +1750,7 @@ class Database
     /**
      * カラムの型に応じた自動変換処理を登録する
      *
-     * 自動変換がなにかは {@link ryunosuke\dbml\ dbml} を参照。
+     * 自動変換がなにかは {@link \ryunosuke\dbml\ dbml} を参照。
      *
      * ```php
      * $db->setAutoCastType([
@@ -2884,7 +2884,7 @@ class Database
                 }
                 // :区切りで演算子指定モード
                 elseif (strpos($cond, ':') !== false) {
-                    list($cond, $ope) = array_map('trim', explode(':', $cond, 2));
+                    [$cond, $ope] = array_map('trim', explode(':', $cond, 2));
                 }
                 // ? が無いなら column OPERATOR value モード（OPERATOR は型に応じる）
                 elseif (strpos($cond, '?') === false) {
@@ -2980,7 +2980,7 @@ class Database
         $schema = $this->getSchema();
 
         // テーブル名の正規化（tablename as aliasname を受け付ける）
-        list($alias, $tname) = Alias::split($table);
+        [$alias, $tname] = Alias::split($table);
         $tname = $this->convertTableName($tname);
         $alias = $alias ?: $tname;
 
@@ -3020,7 +3020,6 @@ class Database
             if (!$coptions['enable']) {
                 continue;
             }
-            /** @noinspection PhpUndefinedMethodInspection */
             $type = $coptions['type'] ?: $column->getType()->getName();
             $comment = $coptions['comment'] ? $this->getCompatiblePlatform()->commentize($coptions['comment'], true) . ' ' : '';
             $key = $alias . '.' . $cname;
@@ -4615,7 +4614,7 @@ class Database
         $tableName = array_each(TableDescriptor::forge($this, $tableName, []), function (&$carry, TableDescriptor $td) {
             $carry[$td->descriptor] = $td->column;
         }, []);
-        list($tableName, $column) = first_keyvalue($tableName);
+        [$tableName, $column] = first_keyvalue($tableName);
 
         // mysql 以外の RDBMS はローカルファイルの取り込みに対応してないようなので mysql の LOAD DATA FILE を直書きしている（つまり native ≒ mysql）
         if ($options['native']) {
@@ -4803,7 +4802,7 @@ class Database
     {
         $tableName = $this->_preaffect($tableName, $data);
         if (is_array($tableName)) {
-            list($tableName, $data) = first_keyvalue($tableName);
+            [$tableName, $data] = first_keyvalue($tableName);
         }
         $tableName = $this->convertTableName($tableName);
 
@@ -4884,7 +4883,7 @@ class Database
     {
         $tableName = $this->_preaffect($tableName, $data);
         if (is_array($tableName)) {
-            list($tableName, $data) = first_keyvalue($tableName);
+            [$tableName, $data] = first_keyvalue($tableName);
         }
         $tableName = $this->convertTableName($tableName);
 
@@ -4954,7 +4953,7 @@ class Database
     {
         $tableName = $this->_preaffect($tableName, $insertData);
         if (is_array($tableName)) {
-            list($tableName, $insertData) = first_keyvalue($tableName);
+            [$tableName, $insertData] = first_keyvalue($tableName);
         }
         $tableName = $this->convertTableName($tableName);
 
@@ -5234,7 +5233,7 @@ class Database
             return $affected;
         }
         if (is_array($tableName)) {
-            list($tableName, $data) = first_keyvalue($tableName);
+            [$tableName, $data] = first_keyvalue($tableName);
         }
 
         $tableName = $this->convertTableName($tableName);
@@ -5332,7 +5331,7 @@ class Database
             return $this->executeUpdate($this->getCompatiblePlatform()->convertUpdateQuery($tableName), $tableName->getParams());
         }
         if (is_array($tableName)) {
-            list($tableName, $data) = first_keyvalue($tableName);
+            [$tableName, $data] = first_keyvalue($tableName);
         }
 
         $tableName = $this->convertTableName($tableName);
@@ -5740,7 +5739,7 @@ class Database
             throw new \InvalidArgumentException('upsert is not supported QueryBuilder.');
         }
         if (is_array($tableName)) {
-            list($tableName, $insertData) = first_keyvalue($tableName);
+            [$tableName, $insertData] = first_keyvalue($tableName);
             if ($updateData && !is_hasharray($updateData)) {
                 $updateData = array_combine(array_keys($insertData), $updateData);
             }
@@ -5839,7 +5838,7 @@ class Database
             throw new \InvalidArgumentException('upsert is not supported QueryBuilder.');
         }
         if (is_array($tableName)) {
-            list($tableName, $insertData) = first_keyvalue($tableName);
+            [$tableName, $insertData] = first_keyvalue($tableName);
             if ($updateData && !is_hasharray($updateData)) {
                 $updateData = array_combine(array_keys($insertData), $updateData);
             }

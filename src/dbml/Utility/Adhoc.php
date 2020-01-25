@@ -257,13 +257,13 @@ class Adhoc
     public static function parseYmdHis($string)
     {
         // 空白文字で日・時を分割
-        list($date, $time) = preg_split('#[\s　]#u', preg_replace('#^[\s　]+|[\s　]+$#u', '', $string)) + [1 => ''];
+        [$date, $time] = preg_split('#[\s　]#u', preg_replace('#^[\s　]+|[\s　]+$#u', '', $string)) + [1 => ''];
 
         // 日の数値のみで分割
-        list($y, $m, $d) = preg_split('#[^\d]+#u', $date, -1, PREG_SPLIT_NO_EMPTY) + [0 => false, 1 => false, 2 => false];
+        [$y, $m, $d] = preg_split('#[^\d]+#u', $date, -1, PREG_SPLIT_NO_EMPTY) + [0 => false, 1 => false, 2 => false];
         // ただし "2014/12" と "12/24" の区別はつかないので字数で判断
         if (strlen($y) <= 2) {
-            list($y, $m, $d) = [false, $y, $m];
+            [$y, $m, $d] = [false, $y, $m];
         }
         // 4桁年しかサポートしない（mysql がサポートしてない）
         if ($y !== false && strlen($y) < 4) {
@@ -271,7 +271,7 @@ class Adhoc
         }
 
         // 時の数値のみで分割
-        list($h, $i, $s) = preg_split('#[^\d]+#u', $time, -1, PREG_SPLIT_NO_EMPTY) + [0 => false, 1 => false, 2 => false];
+        [$h, $i, $s] = preg_split('#[^\d]+#u', $time, -1, PREG_SPLIT_NO_EMPTY) + [0 => false, 1 => false, 2 => false];
 
         // 全部 false なら NG
         if ($y === false && $m === false && $d === false && $h === false && $i === false && $s === false) {

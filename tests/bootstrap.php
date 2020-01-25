@@ -20,13 +20,13 @@ require_once __DIR__ . '/classess.php';
             @mkdir("$tmpdir/dbml", 0777, true);
             putenv("TMPDIR=$tmpdir/dbml");
         }
-    };
+    }
 
     if (DIRECTORY_SEPARATOR === '\\') {
         setlocale(LC_CTYPE, 'C');
     }
 
-// なぜか sqlite は外部キーをサポートしていないことになってるので無理やり対応させた driver を設定しておく
+    // なぜか sqlite は外部キーをサポートしていないことになってるので無理やり対応させた driver を設定しておく
     $ref = new ReflectionProperty('\\Doctrine\\DBAL\\DriverManager', '_driverMap');
     $ref->setAccessible(true);
     $driverMap = $ref->getValue(null);

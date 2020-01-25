@@ -103,7 +103,7 @@ benchmark([
     'dbal' => function () use ($connection) {
         $articles = $connection->executeQuery('SELECT article_id, article.* FROM article')->fetchAll(\PDO::FETCH_ASSOC | \PDO::FETCH_UNIQUE);
         $article_ids = implode(',', array_map([$connection, 'quote'], array_keys($articles)));
-        $comments = $connection->executeQuery("SELECT article_id, seq, comment.* FROM comment WHERE article_id IN ($article_ids)")->fetchAll(\PDO::FETCH_ASSOC | \PDO::FETCH_GROUP);
+        $comments = $connection->executeQuery("SELECT article_id, comment.* FROM comment WHERE article_id IN ($article_ids)")->fetchAll(\PDO::FETCH_ASSOC | \PDO::FETCH_GROUP);
         foreach ($articles as $n => $article) {
             $articles[$n]['title'] = strtoupper($article['title']);
             foreach ($comments[$article['article_id']] as $comment) {
@@ -114,7 +114,7 @@ benchmark([
         return $articles;
     },
     'dbml' => function () use ($database) {
-        $articles = $database->selectAssoc([
+        return $database->selectAssoc([
             'article.*' => [
                 'title'              => function ($title) { return strtoupper($title); },
                 'comment comments.*' => [
@@ -122,7 +122,6 @@ benchmark([
                 ],
             ],
         ]);
-        return $articles;
     },
 ]);
 

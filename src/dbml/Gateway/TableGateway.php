@@ -1221,8 +1221,7 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
 
         // スコープを呼ぶたびにコピーが生成されるのは無駄なので clone する（ただし、1度だけ）
         if ($force || $this->original === $this) {
-            $that = clone $this;
-            return $that;
+            return clone $this;
         }
         return $this;
     }

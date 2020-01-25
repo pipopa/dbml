@@ -46,7 +46,7 @@ trait IteratorTrait
     public function setProvider($caller)
     {
         if (is_array($caller) && count($caller) === 1) {
-            list($caller, $args) = first_keyvalue($caller);
+            [$caller, $args] = first_keyvalue($caller);
             $caller = function () use ($caller) { return $this->$caller(...func_get_args()); };
         }
         elseif (is_string($caller)) {

@@ -260,7 +260,6 @@ class Yielder implements \Iterator
                 foreach ($this->current as $v) {
                     return $v;
                 }
-            /** @noinspection PhpMissingBreakStatementInspection */
             case Database::METHOD_PAIRS:
                 $flg = false;
                 foreach ($this->current as $v) {

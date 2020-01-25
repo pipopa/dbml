@@ -18,13 +18,11 @@ namespace {
 
     /**
      * @param $object
-     * @return Database|Schema|QueryBuilder|TableGateway|Paginator|Sequencer|CompatiblePlatform|Operator|Expression|Entity|Transaction|Yielder|AbstractGenerator
+     * @return object|Database|Schema|QueryBuilder|TableGateway|Paginator|Sequencer|CompatiblePlatform|Operator|Expression|Entity|Transaction|Yielder|AbstractGenerator
      */
     function L($object)
     {
-        /** @noinspection PhpIncompatibleReturnTypeInspection */
-        return new class($object)
-        {
+        return new class($object) {
             private $object;
 
             public function __construct($object)

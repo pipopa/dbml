@@ -321,8 +321,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
         // $this だと gc されずに参照が残り続けるので無名クラスのコンテキストにする（どうせ実行時に再バインドされる）
         $this->setProvider(\Closure::bind(function () {
             return $this->array();
-        }, new class()
-        {
+        }, new class() {
         }));
     }
 
@@ -712,7 +711,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
 
             // null はダミーとして扱い、取得しない
             if ($column === null) {
-                // dummy
+                assert(true); // for inspection
             }
             // 配列は subselect 化
             elseif (is_array($column)) {
@@ -808,7 +807,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
             else {
                 foreach (split_noempty(',', (string) $column) as $col) {
                     // エイリアスをバラす
-                    list($key, $col) = Alias::split($col, $key);
+                    [$key, $col] = Alias::split($col, $key);
                     $result[] = Alias::forge($key, $prefix . $col, $prefix);
                 }
             }
@@ -857,7 +856,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
                 if (array_filter($keys, 'is_int') !== $keys) {
                     return false;
                 }
-                list(, , $alias) = $matches + [2 => '*'];
+                [, , $alias] = $matches + [2 => '*'];
                 $wcond = [];
                 foreach ($froms as $from) {
                     if ($alias === '*' || $from['alias'] === $alias) {
@@ -873,7 +872,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
                 if (count($keys) > 1) {
                     return false;
                 }
-                list(, $column) = explode('.', $cond, 2);
+                [, $column] = explode('.', $cond, 2);
                 $subcond = [];
                 foreach ($froms as $from) {
                     $columns = $this->database->getSchema()->getTableColumns($from['table']);
@@ -892,7 +891,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
                 if (count($keys) > 1) {
                     return false;
                 }
-                list($subkey, $subcolumn) = explode('/', $cond, 2);
+                [$subkey, $subcolumn] = explode('/', $cond, 2);
                 if (isset($this->subbuilders[$subkey])) {
                     $this->subbuilders[$subkey]->$subtype([$subcolumn => $param]);
                 }
@@ -1030,7 +1029,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
             // 修飾をバラす
             $col = $column;
             if (strpos($col, '.') !== false) {
-                list($modifier, $col) = explode('.', $col, 2);
+                [$modifier, $col] = explode('.', $col, 2);
             }
 
             // FROM 句と比較
@@ -1080,7 +1079,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
                 $select = $select->getActual();
             }
             if (is_string($select) && strpos($select, '..') === 0) {
-                list(, $pcol) = explode('..', $select, 2);
+                [, $pcol] = explode('..', $select, 2);
                 $pcolumns[$palias ?: $pcol] = $pcol;
                 unset($selects[$n]);
             }
@@ -1856,10 +1855,10 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
 
         // $table, $alias の解決（配列・ビルダ・文字列を受け入れる）
         if (is_array($table)) {
-            list($alias, $table) = first_keyvalue($table);
+            [$alias, $table] = first_keyvalue($table);
         }
         if (!$alias && is_string($table)) {
-            list($alias, $table) = Alias::split($table, $alias);
+            [$alias, $table] = Alias::split($table, $alias);
         }
         if ($table instanceof Queryable) {
             if ($alias === null) {
@@ -1872,7 +1871,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
             if ($fkeyname !== '') {
                 $fkey = $schema->getForeignTable($fkeyname);
                 if ($fkey) {
-                    list($local, $foreign) = first_keyvalue($fkey);
+                    [$local, $foreign] = first_keyvalue($fkey);
                     if ($table === $local) {
                         $fromAlias = array_search($foreign, $froms, true);
                     }
@@ -2160,7 +2159,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
             foreach (arrayize($groups) as $tbl => $arg) {
                 foreach (arrayize($arg) as $col) {
                     if (is_string($col) && strpos($col, '/') !== false) {
-                        list($t, $col) = explode('/', $col, 2);
+                        [$t, $col] = explode('/', $col, 2);
                         $this->getSubbuilder($t)->addGroupBy($col);
                     }
                     elseif (isset($this->subbuilders[$tbl])) {
@@ -2316,7 +2315,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
             }
             foreach ($sort as $col => $ord) {
                 if (is_string($col) && strpos($col, '/') !== false) {
-                    list($col, $column) = explode('/', $col, 2);
+                    [$col, $column] = explode('/', $col, 2);
                     $ord = [$column => $ord];
                 }
                 if (isset($this->subbuilders[$col])) {
@@ -2475,7 +2474,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
             }
             $c = count($count);
             if ($c === 1) {
-                list($offset, $count) = first_keyvalue($count);
+                [$offset, $count] = first_keyvalue($count);
             }
             elseif ($c === 2) {
                 $offset = array_shift($count);
@@ -2695,6 +2694,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
 
         if ($that->sqlParts['groupBy'] || $that->sqlParts['having']) {
             if ($that->sqlParts['having']) {
+                assert(true); // for inspection
                 // having があるときは select をクリアすることは出来ない(select as alias が条件に使われているかもしれない)
                 // が、消さないと mysql で「1060: Duplicate column name」が出る可能性がある
                 // ひとまず安全を取り、消さない方向で↑が出たら呼び出し側で重複カラムを取り除く使い方とする
@@ -3106,7 +3106,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
                 }
                 else {
                     if (is_array($vals)) {
-                        list($k, $v) = first_keyvalue($vals);
+                        [$k, $v] = first_keyvalue($vals);
                         $vals = $this->database->raw($k, $v);
                     }
                     $columns[is_int($cond) ? " $cond" : $cond] = $vals;

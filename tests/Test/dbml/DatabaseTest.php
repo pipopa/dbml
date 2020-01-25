@@ -418,17 +418,16 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
         $database = self::getDummyDatabase();
         $this->assertInstanceOf(CompatiblePlatform::class, $database->getCompatiblePlatform());
 
+        $cplatform = new class(new SqlitePlatform()) extends CompatiblePlatform {
+        };
+
         // クラス名
-        eval('class CPlatform extends \\ryunosuke\\dbml\\Metadata\\CompatiblePlatform{}');
         $database = new Database(DriverManager::getConnection(['url' => 'sqlite:///:memory:']), [
-            'compatiblePlatform' => 'CPlatform'
+            'compatiblePlatform' => get_class($cplatform)
         ]);
-        $this->assertInstanceOf('CPlatform', $database->getCompatiblePlatform());
+        $this->assertInstanceOf(get_class($cplatform), $database->getCompatiblePlatform());
 
         // インスタンス
-        $cplatform = new class(new SqlitePlatform()) extends CompatiblePlatform
-        {
-        };
         $database = new Database(DriverManager::getConnection(['url' => 'sqlite:///:memory:']), [
             'compatiblePlatform' => $cplatform
         ]);
@@ -1902,7 +1901,6 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
         $database->exportJson($database->select('test'), [], [], $path);
         $this->assertJson(file_get_contents($path));
 
-        /** @noinspection PhpUndefinedMethodInspection */
         $this->assertException(new \BadMethodCallException('undefined'), L($database)->exportHoge($database->select('test'), [], [], $path));
     }
 
@@ -5422,11 +5420,11 @@ anywhere.enable = 1
         ]);
         $this->assertEquals([
             [
-                'pie'   => 3.14,
-                'C1'    => [
+                'pie' => 3.14,
+                'C1'  => [
                     11 => ['name' => 'c1name1'],
                 ],
-                'C2'    => [
+                'C2'  => [
                     21 => ['name' => 'c2name1'],
                 ],
             ],

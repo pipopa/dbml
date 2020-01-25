@@ -1006,7 +1006,6 @@ AND ((flag=1))", "$gw");
             $this->assertEquals('SELECT * FROM test WHERE test.id = ? /* lock for write */', $log['sql']);
             $this->assertEquals([1], $log['params']);
 
-            /** @noinspection PhpUndefinedMethodInspection */
             $this->assertException('record', L($gateway)->findInShareOrThrow(0));
             $log = $logger->queries[3];
             $this->assertEquals('SELECT * FROM test WHERE test.id = ? /* lock for read */', $log['sql']);
@@ -1222,8 +1221,7 @@ AND ((flag=1))", "$gw");
             return;
         }
 
-        $gateway = new class($database, 'test') extends TableGateway
-        {
+        $gateway = new class($database, 'test') extends TableGateway {
             public $called = [];
 
             public function insert($data)

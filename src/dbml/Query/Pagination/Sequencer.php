@@ -67,7 +67,7 @@ class Sequencer implements \IteratorAggregate, \Countable
     {
         $this->builder = $builder;
         $this->setProvider(function () {
-            list($key, $value) = first_keyvalue($this->condition);
+            [$key, $value] = first_keyvalue($this->condition);
             $order = !($value >= 0 xor $this->order);
             $bind = intval(abs($value)) ?: '';
             $currentby = $this->builder->getQueryPart('orderBy');

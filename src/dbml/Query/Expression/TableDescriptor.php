@@ -19,7 +19,7 @@ use function ryunosuke\dbml\throws;
 /**
  * テーブル記法の実装クラス
  *
- * テーブル記法の概念については {@link ryunosuke\dbml\ dbml} を参照。
+ * テーブル記法の概念については {@link \ryunosuke\dbml\ dbml} を参照。
  * なお、内部的に使用されるだけで能動的に new したり活用されたりするようなクラスではない。
  *
  * 下記に記法としての定義を記載する。組み合わせた場合の使用例は {@link QueryBuilder::column()} を参照。
@@ -408,7 +408,7 @@ class TableDescriptor
 
         $descriptor = preg_splice('`#((\d+)?\-?(\d+)?)`ui', '', trim($descriptor), $m);
         if (isset($m[1])) {
-            list($offset, $limit) = explode('-', $m[1]) + [1 => ''];
+            [$offset, $limit] = explode('-', $m[1]) + [1 => ''];
             if (strlen($offset) && strlen($limit)) {
                 $this->offset = (int) $offset;
                 $this->limit = $limit - $offset;
@@ -453,7 +453,7 @@ class TableDescriptor
                 $args = str_between($item, '(', ')');
                 if ($args !== false) {
                     $item = str_replace("($args)", '', $item);
-                    $sargs = eval("return [$args];");
+                    $sargs = json_decode("[$args]");
                 }
                 $carry[$item] = $sargs;
             }, null);

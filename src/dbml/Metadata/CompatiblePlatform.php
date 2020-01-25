@@ -504,7 +504,7 @@ class CompatiblePlatform /*extends AbstractPlatform*/
 
         // カラムが1つなら IN で事足りるので場合分け
         if (count($first) === 1) {
-            list($key) = first_keyvalue($first);
+            [$key] = first_keyvalue($first);
             $andconds = [];
             foreach ($wheres as $where) {
                 $v = $where[$key];
