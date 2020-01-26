@@ -228,6 +228,11 @@ class CompatiblePlatformTest extends \ryunosuke\Test\AbstractUnitTestCase
         $this->assertEquals('', $cplatform->quoteIdentifierIfNeeded(''));
         $this->assertEquals('hogera', $cplatform->quoteIdentifierIfNeeded('hogera'));
         $this->assertEquals($platform->quoteSingleIdentifier('WHERE'), $cplatform->quoteIdentifierIfNeeded('WHERE'));
+
+        if ($platform instanceof PostgreSqlPlatform) {
+            $this->assertEquals('aaa', $cplatform->quoteIdentifierIfNeeded('aaa'));
+            $this->assertEquals($platform->quoteSingleIdentifier('AAA'), $cplatform->quoteIdentifierIfNeeded('AAA'));
+        }
     }
 
     /**

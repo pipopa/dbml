@@ -273,6 +273,11 @@ class CompatiblePlatform /*extends AbstractPlatform*/
             return $this->platform->quoteSingleIdentifier($word);
         }
 
+        // PostgreSql は識別子が小文字に正規化されるのでエイリアスがブレる
+        if ($this->platform instanceof PostgreSqlPlatform && strtolower($word) !== $word) {
+            return $this->platform->quoteSingleIdentifier($word);
+        }
+
         return $word;
     }
 
