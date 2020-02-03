@@ -1634,7 +1634,7 @@ FROM t_article Article", $Article->column([
         ], $rows);
 
         $rows = $test1->assoc([
-            'tests2s{id}' => $test2->subselectPairs('*'),
+            'tests2s{id}' => $test2->subpairs('*'),
         ], ['id' => 1]);
         $this->assertEquals([
             1 => [

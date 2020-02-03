@@ -484,23 +484,30 @@ use function ryunosuke\dbml\try_finally;
  * }
  *
  * @method QueryBuilder           subselectArray($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
- *     指定して子供レコード（array）を表すサブビルダを返す（<@uses Database::subselect()> を参照）
+ *     子供レコード（array）を表すサブビルダを返す（<@uses Database::subselect()> を参照）
  * }
  * @method QueryBuilder           subselectAssoc($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
- *     指定して子供レコード（assoc）を表すサブビルダを返す（<@uses Database::subselect()> を参照）
+ *     子供レコード（assoc）を表すサブビルダを返す（<@uses Database::subselect()> を参照）
  * }
  * @method QueryBuilder           subselectLists($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
- *     指定して子供レコード（lists）を表すサブビルダを返す（<@uses Database::subselect()> を参照）
+ *     子供レコード（lists）を表すサブビルダを返す（<@uses Database::subselect()> を参照）
  * }
  * @method QueryBuilder           subselectPairs($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
- *     指定して子供レコード（pairs）を表すサブビルダを返す（<@uses Database::subselect()> を参照）
+ *     子供レコード（pairs）を表すサブビルダを返す（<@uses Database::subselect()> を参照）
  * }
  * @method QueryBuilder           subselectTuple($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
- *     指定して子供レコード（tuple）を表すサブビルダを返す（<@uses Database::subselect()> を参照）
+ *     子供レコード（tuple）を表すサブビルダを返す（<@uses Database::subselect()> を参照）
  * }
  * @method QueryBuilder           subselectValue($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
- *     指定して子供レコード（value）を表すサブビルダを返す（<@uses Database::subselect()> を参照）
+ *     子供レコード（value）を表すサブビルダを返す（<@uses Database::subselect()> を参照）
  * }
+ *
+ * @method QueryBuilder subarray($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {{@link subselectArray()} のエイリアス@inheritdoc subselectArray()}
+ * @method QueryBuilder subassoc($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {{@link subselectAssoc()} のエイリアス@inheritdoc subselectAssoc()}
+ * @method QueryBuilder sublists($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {{@link subselectLists()} のエイリアス@inheritdoc subselectLists()}
+ * @method QueryBuilder subpairs($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {{@link subselectPairs()} のエイリアス@inheritdoc subselectPairs()}
+ * @method QueryBuilder subtuple($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {{@link subselectTuple()} のエイリアス@inheritdoc subselectTuple()}
+ * @method QueryBuilder subvalue($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {{@link subselectValue()} のエイリアス@inheritdoc subselectValue()}
  *
  * @method QueryBuilder           select($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
  *     駆動表を省略できる <@uses Database::select()>
@@ -856,8 +863,8 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
         }
 
         // subselect 系
-        if (preg_match('/^subselect?(.+?)$/ui', $name, $matches)) {
-            return $this->database->$name(...array_values($this->getScopeParams(...$arguments)));
+        if (preg_match('/^sub(select)?(.+?)$/ui', $name, $matches)) {
+            return $this->database->{"subselect{$matches[2]}"}(...array_values($this->getScopeParams(...$arguments)));
         }
 
         // find メソッド（tuple メソッドの特別版とみなせる）
