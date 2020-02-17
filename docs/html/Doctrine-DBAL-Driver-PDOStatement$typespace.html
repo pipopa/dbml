@@ -54,7 +54,7 @@
 		<span class="label label-info"></span>
 		<span class="label label-info">iterateable</span>
 		<span class="label label-deprecated"></span>
-        			<a href="https://github.com/doctrine/dbal/blob/v2.10.1/lib/Doctrine/DBAL/Driver/PDOStatement.php#L16-L228" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+        			<a href="https://github.com/doctrine/dbal/blob/2.10.2/lib/Doctrine/DBAL/Driver/PDOStatement.php#L16-L234" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                     	</div>
 
 	<h2>class <span class="category-name">Doctrine\DBAL\Driver\PDOStatement</span></h2>
@@ -147,7 +147,7 @@ Used by all PDO-based drivers.</p>
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-protected">protected</span>
-                        			<a href="https://github.com/doctrine/dbal/blob/v2.10.1/lib/Doctrine/DBAL/Driver/PDOStatement.php#L40-L45" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/doctrine/dbal/blob/2.10.2/lib/Doctrine/DBAL/Driver/PDOStatement.php#L40-L45" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="Doctrine\DBAL\Driver\PDOStatement::__construct()" tabindex="-1" class="structure-title ">
                         __construct                        	<small>() : void</small>
@@ -187,7 +187,7 @@ Used by all PDO-based drivers.</p>
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/doctrine/dbal/blob/v2.10.1/lib/Doctrine/DBAL/Driver/PDOStatement.php#L47-L71" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/doctrine/dbal/blob/2.10.2/lib/Doctrine/DBAL/Driver/PDOStatement.php#L47-L71" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="Doctrine\DBAL\Driver\PDOStatement::setFetchMode()" tabindex="-1" class="structure-title ">
                         setFetchMode                        	<small>($fetchMode, $arg2 = null, $arg3 = null) : bool</small>
@@ -253,7 +253,7 @@ Used by all PDO-based drivers.</p>
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/doctrine/dbal/blob/v2.10.1/lib/Doctrine/DBAL/Driver/PDOStatement.php#L73-L85" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/doctrine/dbal/blob/2.10.2/lib/Doctrine/DBAL/Driver/PDOStatement.php#L73-L85" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="Doctrine\DBAL\Driver\PDOStatement::bindValue()" tabindex="-1" class="structure-title ">
                         bindValue                        	<small>($param, $value, $type = Doctrine\DBAL\ParameterType::STRING) : bool</small>
@@ -330,60 +330,38 @@ fetchAll(), fetchArray(), fetchColumn(), fetchAssoc() methods to have the named 
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/doctrine/dbal/blob/v2.10.1/lib/Doctrine/DBAL/Driver/PDOStatement.php#L87-L99" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/doctrine/dbal/blob/2.10.2/lib/Doctrine/DBAL/Driver/PDOStatement.php#L87-L105" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="Doctrine\DBAL\Driver\PDOStatement::bindParam()" tabindex="-1" class="structure-title ">
                         bindParam                        	<small>($column, &amp;$variable, $type = Doctrine\DBAL\ParameterType::STRING, $length = null, $driverOptions = null) : bool</small>
 						</h4>
 					<div class="inner-item">
-						<div class="description"><p><tag_inheritdoc data-type='' data-description=''>Binds a PHP variable to a corresponding named (not supported by mysqli driver, see comment below) or question<br />
-mark placeholder in the SQL statement that was use to prepare the statement. Unlike PDOStatement-&gt;bindValue(),<br />
-the variable is bound as a reference and will only be evaluated at the time<br />
-that PDOStatement-&gt;execute() is called.</p>
-<p>As mentioned above, the named parameters are not natively supported by the mysqli driver, use executeQuery(),<br />
-fetchAll(), fetchArray(), fetchColumn(), fetchAssoc() methods to have the named parameter emulated by doctrine.</p>
-<p>Most parameters are input parameters, that is, parameters that are<br />
-used in a read-only fashion to build up the query. Some drivers support the invocation<br />
-of stored procedures that return data as output parameters, and some also as input/output<br />
-parameters that both send in data and are updated to receive it.</tag_inheritdoc></p>
-</div>
+						<div class="description"></div>
                         	<table class="table">
 		<caption>Parameters</caption>
 		<tbody>
         			<tr>
 				<td class="type">mixed</td>
 				<td class="rest">$column</td>
-				<td class="desc"><p>Parameter identifier. For a prepared statement using named placeholders,</p>
-<pre><code>                      this will be a parameter name of the form :name. For a prepared statement using
-                      question mark placeholders, this will be the 1-indexed position of the parameter.
-</code></pre>
-</td>
+				<td class="desc"></td>
 			</tr>
         			<tr>
 				<td class="type">mixed</td>
 				<td class="rest">&amp;$variable</td>
-				<td class="desc"><p>Name of the PHP variable to bind to the SQL statement parameter.</p>
-</td>
+				<td class="desc"></td>
 			</tr>
         			<tr>
 				<td class="type">int</td>
 				<td class="rest">$type = Doctrine\DBAL\ParameterType::STRING</td>
-				<td class="desc"><p>Explicit data type for the parameter using the <tag_link data-kind='fqsen' data-type-category='class' data-type-fqsen='Doctrine\DBAL\ParameterType' data-type-array='0' data-description='Doctrine\DBAL\ParameterType'>Doctrine\DBAL\ParameterType</tag_link></p>
-<pre><code>                      constants. To return an INOUT parameter from a stored procedure, use the bitwise
-                      OR operator to set the PDO::PARAM_INPUT_OUTPUT bits for the data_type parameter.
-</code></pre>
-</td>
+				<td class="desc"></td>
 			</tr>
         			<tr>
 				<td class="type">int<span class="type-separator"></span><wbr>null</td>
 				<td class="rest">$length = null</td>
-				<td class="desc"><p>You must specify maxlength when using an OUT bind</p>
-<pre><code>                      so that PHP allocates enough memory to hold the returned value.
-</code></pre>
-</td>
+				<td class="desc"></td>
 			</tr>
         			<tr>
-				<td class="type"></td>
+				<td class="type">mixed</td>
 				<td class="rest">$driverOptions = null</td>
 				<td class="desc"></td>
 			</tr>
@@ -394,8 +372,7 @@ parameters that both send in data and are updated to receive it.</tag_inheritdoc
 		<tbody>
 		<tr>
 			<td class="type">bool</td>
-			<td class="desc"><p>TRUE on success or FALSE on failure.</p>
-</td>
+			<td class="desc"></td>
 			<td class="rest"></td>
 		</tr>
 		</tbody>
@@ -427,7 +404,7 @@ parameters that both send in data and are updated to receive it.</tag_inheritdoc
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/doctrine/dbal/blob/v2.10.1/lib/Doctrine/DBAL/Driver/PDOStatement.php#L101-L113" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/doctrine/dbal/blob/2.10.2/lib/Doctrine/DBAL/Driver/PDOStatement.php#L107-L119" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="Doctrine\DBAL\Driver\PDOStatement::closeCursor()" tabindex="-1" class="structure-title ">
                         closeCursor                        	<small>() : bool</small>
@@ -478,7 +455,7 @@ parameters that both send in data and are updated to receive it.</tag_inheritdoc
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/doctrine/dbal/blob/v2.10.1/lib/Doctrine/DBAL/Driver/PDOStatement.php#L115-L125" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/doctrine/dbal/blob/2.10.2/lib/Doctrine/DBAL/Driver/PDOStatement.php#L121-L131" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="Doctrine\DBAL\Driver\PDOStatement::execute()" tabindex="-1" class="structure-title ">
                         execute                        	<small>($params = null) : bool</small>
@@ -542,7 +519,7 @@ parameter values.</tag_inheritdoc></p>
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/doctrine/dbal/blob/v2.10.1/lib/Doctrine/DBAL/Driver/PDOStatement.php#L127-L143" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/doctrine/dbal/blob/2.10.2/lib/Doctrine/DBAL/Driver/PDOStatement.php#L133-L149" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="Doctrine\DBAL\Driver\PDOStatement::fetch()" tabindex="-1" class="structure-title ">
                         fetch                        	<small>($fetchMode = null, $cursorOrientation = PDO::FETCH_ORI_NEXT, $cursorOffset = 0) : mixed</small>
@@ -631,7 +608,7 @@ parameter values.</tag_inheritdoc></p>
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/doctrine/dbal/blob/v2.10.1/lib/Doctrine/DBAL/Driver/PDOStatement.php#L145-L174" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/doctrine/dbal/blob/2.10.2/lib/Doctrine/DBAL/Driver/PDOStatement.php#L151-L180" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="Doctrine\DBAL\Driver\PDOStatement::fetchAll()" tabindex="-1" class="structure-title ">
                         fetchAll                        	<small>($fetchMode = null, $fetchArgument = null, $ctorArgs = null) : mixed[]</small>
@@ -713,7 +690,7 @@ parameter values.</tag_inheritdoc></p>
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/doctrine/dbal/blob/v2.10.1/lib/Doctrine/DBAL/Driver/PDOStatement.php#L176-L186" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/doctrine/dbal/blob/2.10.2/lib/Doctrine/DBAL/Driver/PDOStatement.php#L182-L192" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="Doctrine\DBAL\Driver\PDOStatement::fetchColumn()" tabindex="-1" class="structure-title ">
                         fetchColumn                        	<small>($columnIndex = 0) : mixed<span class="type-separator"></span><wbr>false</small>

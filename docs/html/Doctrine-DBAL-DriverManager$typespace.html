@@ -54,7 +54,7 @@
 		<span class="label label-info"></span>
 		<span class="label label-info"></span>
 		<span class="label label-deprecated"></span>
-        			<a href="https://github.com/doctrine/dbal/blob/v2.10.1/lib/Doctrine/DBAL/DriverManager.php#L33-L442" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+        			<a href="https://github.com/doctrine/dbal/blob/2.10.2/lib/Doctrine/DBAL/DriverManager.php#L33-L429" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                     	</div>
 
 	<h2>class <span class="category-name">Doctrine\DBAL\DriverManager</span></h2>
@@ -83,7 +83,7 @@
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/doctrine/dbal/blob/v2.10.1/lib/Doctrine/DBAL/DriverManager.php#L84-L200" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/doctrine/dbal/blob/2.10.2/lib/Doctrine/DBAL/DriverManager.php#L84-L187" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="Doctrine\DBAL\DriverManager::getConnection()" tabindex="-1" class="structure-title ">
                         getConnection                        	<small>($params, $config = null, $eventManager = null) : <a href="Doctrine-DBAL-Connection$typespace.html#Doctrine\DBAL\Connection" class="fqsen "><small>Doctrine\DBAL\</small><wbr>Connection</a></small>
@@ -93,20 +93,8 @@
 This method returns a Doctrine\DBAL\Connection which wraps the underlying<br />
 driver connection.</p>
 <p>$params must contain at least one of the following.</p>
-<p>Either 'driver' with one of the following values:</p>
-<pre><code>pdo_mysql
-pdo_sqlite
-pdo_pgsql
-pdo_oci (unstable)
-pdo_sqlsrv
-pdo_sqlsrv
-mysqli
-sqlanywhere
-sqlsrv
-ibm_db2 (unstable)
-drizzle_pdo_mysql
-</code></pre>
-<p>OR 'driverClass' that contains the full class name (with namespace) of the<br />
+<p>Either 'driver' with one of the array keys of <tag_link data-kind='fqsen' data-type-category='property' data-type-fqsen='Doctrine\DBAL\DriverManager::$_driverMap' data-type-array='0' data-description='Doctrine\DBAL\DriverManager::$_driverMap'>Doctrine\DBAL\DriverManager::$_driverMap</tag_link>,<br />
+OR 'driverClass' that contains the full class name (with namespace) of the<br />
 driver class to instantiate.</p>
 <p>Other (optional) parameters:</p>
 <p><b>user (string)</b>:<br />
@@ -184,7 +172,7 @@ The driver class to use.</p>
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/doctrine/dbal/blob/v2.10.1/lib/Doctrine/DBAL/DriverManager.php#L202-L210" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/doctrine/dbal/blob/2.10.2/lib/Doctrine/DBAL/DriverManager.php#L189-L197" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="Doctrine\DBAL\DriverManager::getAvailableDrivers()" tabindex="-1" class="structure-title ">
                         getAvailableDrivers                        	<small>() : array<span class="type-separator"></span><wbr>string[]</small>

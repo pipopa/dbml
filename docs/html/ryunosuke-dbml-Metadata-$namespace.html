@@ -87,7 +87,7 @@
 							<span class="label label-info"></span>
 							<span class="label label-info"></span>
 							<span class="label label-deprecated"></span>
-                            			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Metadata/Schema.php#L20-L696" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                            			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Metadata/Schema.php#L21-L689" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
             						</div>
 						<h4 id="ryunosuke\dbml\Metadata\Schema" tabindex="-1" class="structure-title ">
 							<a href="ryunosuke-dbml-Metadata-Schema$typespace.html#ryunosuke\dbml\Metadata\Schema">Schema</a>
@@ -102,31 +102,9 @@
 VIEW は 外部キーやインデックスこそ張れないが、 SELECT 系なら TABLE と同様の操作ができる。<br />
 更新可能 VIEW ならおそらく更新も可能である。</p>
 <h3>メタ情報</h3>
-<p>テーブルやカラムコメントには ini 形式でメタ情報を埋め込むことができる。<br />
-設定されているメタ情報は <code>getTableColumnMetadata</code> メソッドで取得することができる。<br />
+<p>setTableColumn でスキーマの型やメタ情報を変更・追加することが出来る。<br />
+設定されているスキーマ・メタ情報は <code>getTableColumnMetadata</code> メソッドで取得することができる。<br />
 （ただし、現在のところこのメタ情報を活用している機能は非常に少なく、実質 anywhere のみ）。</p>
-<pre><code class="language-sql">CREATE TABLE t_table (
-c_column INT COMMENT 'これはカラムコメントです
-anywhere.keyonly = 1
-anywhere.greedy = 0
-;↑はカラムのメタ属性です'
-)
-COMMENT='これはテーブルコメントです
-anywhere.keyonly = 1
-anywhere.greedy = 0
-;↑はテーブルのメタ属性です'
-</code></pre>
-<p>メタ情報は php の <code>parse_ini_string</code> で行われるが、ドット区切りで配列の階層を持つことができる。<br />
-つまり上記のメタ情報は</p>
-<pre><code class="language-php">[
-    'anywhere' =&gt; [
-        'keyonly' =&gt; 1,
-        'greedy'  =&gt; 0,
-    ],
-]
-</code></pre>
-<p>と解釈される。<br />
-メタ文字列は可能な限り ini としてパースしようとし、いかなる適当な文字列でも警告は出ない。</p>
 </div>
 						</div>
 						<div class="attribute">

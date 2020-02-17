@@ -52,15 +52,13 @@
 <h3>データベーススキーマ</h3>
 <p>まず大前提として<strong>別スキーマへのクエリは一切サポートしない</strong>。<br />
 ただし、 <tag_link data-kind='fqsen' data-type-category='class' data-type-fqsen='ryunosuke\dbml\Gateway\TableGateway' data-type-array='0' data-description='ryunosuke\dbml\Gateway\TableGateway'>ryunosuke\dbml\Gateway\TableGateway</tag_link> や <tag_link data-kind='fqsen' data-type-category='class' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder'>ryunosuke\dbml\Query\QueryBuilder</tag_link> の話であり、 <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::fetchArray()' data-type-array='0' data-description='ryunosuke\dbml\Database::fetchArray()'>ryunosuke\dbml\Database::fetchArray()</tag_link> などで直接クエリを投げる場合はこの限りではない。</p>
-<p>テーブルやカラムのコメントにはメタ情報として ini 形式の文字列を埋め込むことができる。<br />
-これに関しては <tag_link data-kind='fqsen' data-type-category='class' data-type-fqsen='ryunosuke\dbml\Metadata\Schema' data-type-array='0' data-description='ryunosuke\dbml\Metadata\Schema'>ryunosuke\dbml\Metadata\Schema</tag_link> も参照。</p>
-<p>上記のようなメタ情報やスキーマ情報はキャッシュに保存される。<br />
+<p>スキーマ情報はキャッシュに保存される。<br />
 このキャッシュは <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::__construct()' data-type-array='0' data-description='ryunosuke\dbml\Database::__construct()'>ryunosuke\dbml\Database::__construct()</tag_link> のオプションで指定する。<br />
 結構な勢いでスキーマを漁るので、何らかの永続キャッシュ（FilesystemCache や ApcuCache など）を使用したほうが良い。</p>
 <h3>テーブル記法</h3>
 <p>各クラスの各メソッドで引数名が <code>$tableDescriptor</code> となっているものは下記の記法を受け入れる（<tag_link data-kind='fqsen' data-type-category='class' data-type-fqsen='ryunosuke\dbml\Query\Expression\TableDescriptor' data-type-array='0' data-description='ryunosuke\dbml\Query\Expression\TableDescriptor'>ryunosuke\dbml\Query\Expression\TableDescriptor</tag_link> から抜粋）。</p>
 <ul>
-<li>base: <code>'(joinsign)tablename(pkval)@scope:fkeyname[condition]+order-by#offset-limit AS Alias.col1, col2 AS C2'</code></li>
+<li>base: <code>'(joinsign)tablename(pkval)@scope:fkeyname[condition]&lt;groupby&gt;+order-by#offset-limit AS Alias.col1, col2 AS C2'</code></li>
 </ul>
 <table>
 <thead>
@@ -74,8 +72,9 @@
 <tr><td align="left">:fkeyname</td><td align="center">任意</td><td align="left">JOIN に使用する外部キー名を指定する</td></tr>
 <tr><td align="left">[condition]</td><td align="center">任意</td><td align="left">JOIN に使用する結合条件を yaml で指定する（where 記法）</td></tr>
 <tr><td align="left">{condition}</td><td align="center">任意</td><td align="left">JOIN に使用する結合条件を yaml で指定する（カラム結合）</td></tr>
-<tr><td align="left">#offset-limit</td><td align="center">任意</td><td align="left">LIMIT, OFFSET を指定する</td></tr>
+<tr><td align="left"><groupby></td><td align="center">任意</td><td align="left">GROUP BY を指定する</td></tr>
 <tr><td align="left">+order-by</td><td align="center">任意</td><td align="left">ORDER BY を指定する</td></tr>
+<tr><td align="left">#offset-limit</td><td align="center">任意</td><td align="left">LIMIT, OFFSET を指定する</td></tr>
 <tr><td align="left">AS Alias</td><td align="center">任意</td><td align="left">テーブルエイリアスを指定する</td></tr>
 <tr><td align="left">.col1, col2 AS C2</td><td align="center">任意</td><td align="left">取得するカラムを指定する</td></tr>
 </tbody>
@@ -88,7 +87,7 @@
 <li>subselect: <code>'base/base'</code></li>
 </ul>
 <p>この記法を<strong>テーブル記法</strong>と呼称する。<br />
-端的に言えば SQL の「SELECT 句」「FROM 句」「JOIN 句」「WHERE 句」「ORDER 句」「LIMIT 句」をすべてひっくるめて文字列で指定できるイメージである。</p>
+端的に言えば SQL の「SELECT 句」「FROM 句」「JOIN 句」「WHERE 句」「GROUP 句」「ORDER 句」「LIMIT 句」をすべてひっくるめて文字列で指定できるイメージである。</p>
 <p>いくつかの例を以下に記す。</p>
 <h4>base</h4>
 <pre><code class="language-php"># tablename 以外の省略可能なものを省略した最もシンプルな例
@@ -527,7 +526,7 @@ orderBy は select に含めて指定すれば実現できるし、having も my
 							<span class="label label-info"></span>
 							<span class="label label-info"></span>
 							<span class="label label-deprecated"></span>
-                            			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Database.php#L45-L6092" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                            			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Database.php#L45-L6226" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
             						</div>
 						<h4 id="ryunosuke\dbml\Database" tabindex="-1" class="structure-title ">
 							<a href="ryunosuke-dbml-Database$typespace.html#ryunosuke\dbml\Database">Database</a>

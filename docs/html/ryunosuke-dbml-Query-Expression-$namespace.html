@@ -61,7 +61,7 @@
 							<span class="label label-info"></span>
 							<span class="label label-info"></span>
 							<span class="label label-deprecated"></span>
-                            			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/Expression/TableDescriptor.php#L19-L579" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                            			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/Expression/TableDescriptor.php#L19-L617" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
             						</div>
 						<h4 id="ryunosuke\dbml\Query\Expression\TableDescriptor" tabindex="-1" class="structure-title ">
 							<a href="ryunosuke-dbml-Query-Expression-TableDescriptor$typespace.html#ryunosuke\dbml\Query\Expression\TableDescriptor">TableDescriptor</a>
@@ -71,7 +71,7 @@
 <p>テーブル記法の概念については <tag_link data-kind='fqsen' data-type-category='type' data-type-fqsen='ryunosuke\dbml\' data-type-array='0' data-description='dbml'>dbml</tag_link> を参照。<br />
 なお、内部的に使用されるだけで能動的に new したり活用されたりするようなクラスではない。</p>
 <p>下記に記法としての定義を記載する。組み合わせた場合の使用例は <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::column()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::column()'>ryunosuke\dbml\Query\QueryBuilder::column()</tag_link> を参照。</p>
-<p><code>'(joinsign)tablename(pkval)@scope:fkeyname[condition]+order-by#offset-limit AS Alias.col1, col2 AS C2'</code></p>
+<p><code>'(joinsign)tablename(pkval)@scope:fkeyname[condition]&lt;groupby&gt;+order-by#offset-limit AS Alias.col1, col2 AS C2'</code></p>
 <table>
 <thead>
 <tr><th align="left">要素</th><th align="center">必須</th><th align="left">説明</th></tr>
@@ -84,6 +84,7 @@
 <tr><td align="left">:fkeyname</td><td align="center">任意</td><td align="left">JOIN に使用する外部キー名を指定する</td></tr>
 <tr><td align="left">[condition]</td><td align="center">任意</td><td align="left">絞り込み条件を yaml で指定する（where 記法）</td></tr>
 <tr><td align="left">{condition}</td><td align="center">任意</td><td align="left">絞り込み条件を yaml で指定する（カラム結合）</td></tr>
+<tr><td align="left"><groupby></td><td align="center">任意</td><td align="left">GROUP BY を指定する</td></tr>
 <tr><td align="left">+order-by</td><td align="center">任意</td><td align="left">ORDER BY を指定する</td></tr>
 <tr><td align="left">#offset-limit</td><td align="center">任意</td><td align="left">LIMIT, OFFSET を指定する</td></tr>
 <tr><td align="left">AS Alias</td><td align="center">任意</td><td align="left">テーブルエイリアスを指定する</td></tr>
@@ -141,6 +142,13 @@
 <p>テーブルのサフィックスとして yaml 記法で絞り込み条件を表す。</p>
 <ul>
 <li>e.g. <code>tablename{selfid: otherid}</code> （<code>selfid = otherid</code> となる（カラムで結合する））</li>
+</ul>
+<h4><groupby></h4>
+<p>テーブルのサフィックスとして &lt;group-key&gt; で GROUP BY を表す。<br />
+"+" プレフィックスで昇順、 "-" プレフィックスで降順を表す。各指定の明確な区切りはない（≒[+-] のどちらかは必須）。</p>
+<ul>
+<li>e.g. <code>tablename&lt;id&gt;</code> （<code>GROUP BY id</code> となる）</li>
+<li>e.g. <code>tablename&lt;year, month&gt;</code> （<code>GROUP BY year, month</code> となる）</li>
 </ul>
 <h4>+order-by</h4>
 <p>テーブルのサフィックスとして [+-]columnname で ORDER BY を表す。<br />
@@ -255,34 +263,7 @@
 							<span class="label label-info"></span>
 							<span class="label label-info"></span>
 							<span class="label label-deprecated"></span>
-                            			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/Expression/SelectOption.php#L5-L72" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
-            						</div>
-						<h4 id="ryunosuke\dbml\Query\Expression\SelectOption" tabindex="-1" class="structure-title ">
-							<a href="ryunosuke-dbml-Query-Expression-SelectOption$typespace.html#ryunosuke\dbml\Query\Expression\SelectOption">SelectOption</a>
-						</h4>
-						<div class="inner-item">
-							<div class="description"><p>SELECT オプションクラス</p>
-<p>このクラスのインスタンスを select すると、カラムとして追加されるのではなく、 SELECT 句の冒頭にカンマ無しで展開される。<br />
-<code>SELECT OPT1 OPT2 column1, column2</code> のような形を実現するためのクラス。</p>
-<pre><code class="language-php">$db-&gt;select('tablename.columname')-&gt;addSelectOption(SelectOption::DISTINCT);
-// SELECT DISTINCT columnname FROM tablename
-</code></pre>
-</div>
-						</div>
-						<div class="attribute">
-							<span class="label label-default"></span>
-							<span class="label label-default"></span>
-						</div>
-						<div class="clearfix"></div>
-					</li>
-                					<li class="structure-item">
-						<div class="attribute">
-							<span class="label label-danger"></span>
-							<span class="label label-warning"></span>
-							<span class="label label-info"></span>
-							<span class="label label-info"></span>
-							<span class="label label-deprecated"></span>
-                            			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/Expression/Operator.php#L16-L405" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                            			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/Expression/Operator.php#L20-L482" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
             						</div>
 						<h4 id="ryunosuke\dbml\Query\Expression\Operator" tabindex="-1" class="structure-title ">
 							<a href="ryunosuke-dbml-Query-Expression-Operator$typespace.html#ryunosuke\dbml\Query\Expression\Operator">Operator</a>
@@ -291,7 +272,7 @@
 							<div class="description"><p>演算子を表すクラス</p>
 <p>内部的に使用されるだけで、明示的に使用する箇所はほとんど無い。<br />
 ただし、下記の演算子登録を使用する場合は <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\Expression\Operator::define()' data-type-array='0' data-description='ryunosuke\dbml\Query\Expression\Operator::define()'>ryunosuke\dbml\Query\Expression\Operator::define()</tag_link> で登録する必要がある。</p>
-<p>組み込みの演算子は下記。これらは何もしなくても whereInto で使用することができる。</p>
+<p>組み込みの演算子は下記。これらは何もしなくても <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::whereInto()' data-type-array='0' data-description='ryunosuke\dbml\Database::whereInto()'>ryunosuke\dbml\Database::whereInto()</tag_link> で使用することができる。</p>
 <table>
 <thead>
 <tr><th align="left">operator</th><th align="left">result</th><th align="left">説明</th></tr>
@@ -314,8 +295,45 @@ Operator::define('FISOR', function ($column, $params) {
 });
 
 # すると whereInto の演算子指定で使用できるようになる
-$db-&gt;whereInto(['col:FISOR' =&gt; [1, 2]]);
+$db-&gt;whereInto([
+    'col:FISOR' =&gt; [1, 2],
+]);
 // WHERE FIND_IN_SET(1, col) OR FIND_IN_SET(2, col)
+
+# 上記のような定義や is, equal などの組み込みの特殊なメソッドの返り値は whereInto で直接指定できる
+$db-&gt;whereInto([
+    'colA' =&gt; Operator::FISOR(1, 2),
+    'colB' =&gt; Operator::in(1, 2),
+    'colC' =&gt; Operator::between(1, 2),
+]);
+// WHERE FIND_IN_SET(1, colA) OR FIND_IN_SET(2, col) AND colB IN (1, 2) AND colB BETWEEN 1 AND 2
+</code></pre>
+</div>
+						</div>
+						<div class="attribute">
+							<span class="label label-default"></span>
+							<span class="label label-default"></span>
+						</div>
+						<div class="clearfix"></div>
+					</li>
+                					<li class="structure-item">
+						<div class="attribute">
+							<span class="label label-danger"></span>
+							<span class="label label-warning"></span>
+							<span class="label label-info"></span>
+							<span class="label label-info"></span>
+							<span class="label label-deprecated"></span>
+                            			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/Expression/SelectOption.php#L5-L72" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+            						</div>
+						<h4 id="ryunosuke\dbml\Query\Expression\SelectOption" tabindex="-1" class="structure-title ">
+							<a href="ryunosuke-dbml-Query-Expression-SelectOption$typespace.html#ryunosuke\dbml\Query\Expression\SelectOption">SelectOption</a>
+						</h4>
+						<div class="inner-item">
+							<div class="description"><p>SELECT オプションクラス</p>
+<p>このクラスのインスタンスを select すると、カラムとして追加されるのではなく、 SELECT 句の冒頭にカンマ無しで展開される。<br />
+<code>SELECT OPT1 OPT2 column1, column2</code> のような形を実現するためのクラス。</p>
+<pre><code class="language-php">$db-&gt;select('tablename.columname')-&gt;addSelectOption(SelectOption::DISTINCT);
+// SELECT DISTINCT columnname FROM tablename
 </code></pre>
 </div>
 						</div>

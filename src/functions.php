@@ -134,474 +134,498 @@ if (!defined("ryunosuke\\dbml\\KEYWORDS")) {
         122 => "IS",
         123 => "ISOLATION",
         124 => "JOIN",
-        125 => "KEY",
-        126 => "KEYS",
-        127 => "KILL",
-        128 => "LAST_INSERT_ID",
-        129 => "LEADING",
-        130 => "LEFT",
-        131 => "LEVEL",
-        132 => "LIKE",
-        133 => "LIMIT",
-        134 => "LINEAR",
-        135 => "LINES",
-        136 => "LOAD",
-        137 => "LOCAL",
-        138 => "LOCK",
-        139 => "LOCKS",
-        140 => "LOGS",
-        141 => "LOW_PRIORITY",
-        142 => "MARIA",
-        143 => "MASTER",
-        144 => "MASTER_CONNECT_RETRY",
-        145 => "MASTER_HOST",
-        146 => "MASTER_LOG_FILE",
-        147 => "MATCH",
-        148 => "MAX_CONNECTIONS_PER_HOUR",
-        149 => "MAX_QUERIES_PER_HOUR",
-        150 => "MAX_ROWS",
-        151 => "MAX_UPDATES_PER_HOUR",
-        152 => "MAX_USER_CONNECTIONS",
-        153 => "MEDIUM",
-        154 => "MERGE",
-        155 => "MINUTE",
-        156 => "MINUTE_SECOND",
-        157 => "MIN_ROWS",
-        158 => "MODE",
-        159 => "MODIFY",
-        160 => "MONTH",
-        161 => "MRG_MYISAM",
-        162 => "MYISAM",
-        163 => "NAMES",
-        164 => "NATURAL",
-        165 => "NOT",
-        166 => "NOW()",
-        167 => "NULL",
-        168 => "OFFSET",
-        169 => "ON",
-        170 => "ON DELETE",
-        171 => "ON UPDATE",
-        172 => "OPEN",
-        173 => "OPTIMIZE",
-        174 => "OPTION",
-        175 => "OPTIONALLY",
-        176 => "OR",
-        177 => "ORDER",
-        178 => "BY",
-        179 => "OUTER",
-        180 => "OUTFILE",
-        181 => "PACK_KEYS",
-        182 => "PAGE",
-        183 => "PARTIAL",
-        184 => "PARTITION",
-        185 => "PARTITIONS",
-        186 => "PASSWORD",
-        187 => "PRIMARY",
-        188 => "PRIVILEGES",
-        189 => "PROCEDURE",
-        190 => "PROCESS",
-        191 => "PROCESSLIST",
-        192 => "PURGE",
-        193 => "QUICK",
-        194 => "RAID0",
-        195 => "RAID_CHUNKS",
-        196 => "RAID_CHUNKSIZE",
-        197 => "RAID_TYPE",
-        198 => "RANGE",
-        199 => "READ",
-        200 => "READ_ONLY",
-        201 => "READ_WRITE",
-        202 => "REFERENCES",
-        203 => "REGEXP",
-        204 => "RELOAD",
-        205 => "RENAME",
-        206 => "REPAIR",
-        207 => "REPEATABLE",
-        208 => "REPLACE",
-        209 => "REPLICATION",
-        210 => "RESET",
-        211 => "RESTORE",
-        212 => "RESTRICT",
-        213 => "RETURN",
-        214 => "RETURNS",
-        215 => "REVOKE",
-        216 => "RIGHT",
-        217 => "RLIKE",
-        218 => "ROLLBACK",
-        219 => "ROW",
-        220 => "ROWS",
-        221 => "ROW_FORMAT",
-        222 => "SECOND",
-        223 => "SECURITY",
-        224 => "SELECT",
-        225 => "SEPARATOR",
-        226 => "SERIALIZABLE",
-        227 => "SESSION",
-        228 => "SET",
-        229 => "SHARE",
-        230 => "SHOW",
-        231 => "SHUTDOWN",
-        232 => "SLAVE",
-        233 => "SONAME",
-        234 => "SOUNDS",
-        235 => "SQL",
-        236 => "SQL_AUTO_IS_NULL",
-        237 => "SQL_BIG_RESULT",
-        238 => "SQL_BIG_SELECTS",
-        239 => "SQL_BIG_TABLES",
-        240 => "SQL_BUFFER_RESULT",
-        241 => "SQL_CACHE",
-        242 => "SQL_CALC_FOUND_ROWS",
-        243 => "SQL_LOG_BIN",
-        244 => "SQL_LOG_OFF",
-        245 => "SQL_LOG_UPDATE",
-        246 => "SQL_LOW_PRIORITY_UPDATES",
-        247 => "SQL_MAX_JOIN_SIZE",
-        248 => "SQL_NO_CACHE",
-        249 => "SQL_QUOTE_SHOW_CREATE",
-        250 => "SQL_SAFE_UPDATES",
-        251 => "SQL_SELECT_LIMIT",
-        252 => "SQL_SLAVE_SKIP_COUNTER",
-        253 => "SQL_SMALL_RESULT",
-        254 => "SQL_WARNINGS",
-        255 => "START",
-        256 => "STARTING",
-        257 => "STATUS",
-        258 => "STOP",
-        259 => "STORAGE",
-        260 => "STRAIGHT_JOIN",
-        261 => "STRING",
-        262 => "STRIPED",
-        263 => "SUPER",
-        264 => "TABLE",
-        265 => "TABLES",
-        266 => "TEMPORARY",
-        267 => "TERMINATED",
-        268 => "THEN",
-        269 => "TO",
-        270 => "TRAILING",
-        271 => "TRANSACTIONAL",
-        272 => "TRUE",
-        273 => "TRUNCATE",
-        274 => "TYPE",
-        275 => "TYPES",
-        276 => "UNCOMMITTED",
-        277 => "UNION",
-        278 => "UNION ALL",
-        279 => "UNIQUE",
-        280 => "UNLOCK",
-        281 => "UNSIGNED",
-        282 => "UPDATE",
-        283 => "USAGE",
-        284 => "USE",
-        285 => "USING",
-        286 => "VALUES",
-        287 => "VARIABLES",
-        288 => "VIEW",
-        289 => "WHEN",
-        290 => "WHERE",
-        291 => "WITH",
-        292 => "WORK",
-        293 => "WRITE",
-        294 => "XOR",
-        295 => "YEAR_MONTH",
-        296 => "ABS",
-        297 => "ACOS",
-        298 => "ADDDATE",
-        299 => "ADDTIME",
-        300 => "AES_DECRYPT",
-        301 => "AES_ENCRYPT",
-        302 => "AREA",
-        303 => "ASBINARY",
-        304 => "ASCII",
-        305 => "ASIN",
-        306 => "ASTEXT",
-        307 => "ATAN",
-        308 => "ATAN2",
-        309 => "AVG",
-        310 => "BDMPOLYFROMTEXT",
-        311 => "BDMPOLYFROMWKB",
-        312 => "BDPOLYFROMTEXT",
-        313 => "BDPOLYFROMWKB",
-        314 => "BENCHMARK",
-        315 => "BIN",
-        316 => "BIT_AND",
-        317 => "BIT_COUNT",
-        318 => "BIT_LENGTH",
-        319 => "BIT_OR",
-        320 => "BIT_XOR",
-        321 => "BOUNDARY",
-        322 => "BUFFER",
-        323 => "CAST",
-        324 => "CEIL",
-        325 => "CEILING",
-        326 => "CENTROID",
-        327 => "CHAR",
-        328 => "CHARACTER_LENGTH",
-        329 => "CHARSET",
-        330 => "CHAR_LENGTH",
-        331 => "COALESCE",
-        332 => "COERCIBILITY",
-        333 => "COLLATION",
-        334 => "COMPRESS",
-        335 => "CONCAT",
-        336 => "CONCAT_WS",
-        337 => "CONNECTION_ID",
-        338 => "CONTAINS",
-        339 => "CONV",
-        340 => "CONVERT",
-        341 => "CONVERT_TZ",
-        342 => "CONVEXHULL",
-        343 => "COS",
-        344 => "COT",
-        345 => "COUNT",
-        346 => "CRC32",
-        347 => "CROSSES",
-        348 => "CURDATE",
-        349 => "CURRENT_DATE",
-        350 => "CURRENT_TIME",
-        351 => "CURRENT_TIMESTAMP",
-        352 => "CURRENT_USER",
-        353 => "CURTIME",
-        354 => "DATABASE",
-        355 => "DATE",
-        356 => "DATEDIFF",
-        357 => "DATE_ADD",
-        358 => "DATE_DIFF",
-        359 => "DATE_FORMAT",
-        360 => "DATE_SUB",
-        361 => "DAY",
-        362 => "DAYNAME",
-        363 => "DAYOFMONTH",
-        364 => "DAYOFWEEK",
-        365 => "DAYOFYEAR",
-        366 => "DECODE",
-        367 => "DEFAULT",
-        368 => "DEGREES",
-        369 => "DES_DECRYPT",
-        370 => "DES_ENCRYPT",
-        371 => "DIFFERENCE",
-        372 => "DIMENSION",
-        373 => "DISJOINT",
-        374 => "DISTANCE",
-        375 => "ELT",
-        376 => "ENCODE",
-        377 => "ENCRYPT",
-        378 => "ENDPOINT",
-        379 => "ENVELOPE",
-        380 => "EQUALS",
-        381 => "EXP",
-        382 => "EXPORT_SET",
-        383 => "EXTERIORRING",
-        384 => "EXTRACT",
-        385 => "EXTRACTVALUE",
-        386 => "FIELD",
-        387 => "FIND_IN_SET",
-        388 => "FLOOR",
-        389 => "FORMAT",
-        390 => "FOUND_ROWS",
-        391 => "FROM_DAYS",
-        392 => "FROM_UNIXTIME",
-        393 => "GEOMCOLLFROMTEXT",
-        394 => "GEOMCOLLFROMWKB",
-        395 => "GEOMETRYCOLLECTION",
-        396 => "GEOMETRYCOLLECTIONFROMTEXT",
-        397 => "GEOMETRYCOLLECTIONFROMWKB",
-        398 => "GEOMETRYFROMTEXT",
-        399 => "GEOMETRYFROMWKB",
-        400 => "GEOMETRYN",
-        401 => "GEOMETRYTYPE",
-        402 => "GEOMFROMTEXT",
-        403 => "GEOMFROMWKB",
-        404 => "GET_FORMAT",
-        405 => "GET_LOCK",
-        406 => "GLENGTH",
-        407 => "GREATEST",
-        408 => "GROUP_CONCAT",
-        409 => "GROUP_UNIQUE_USERS",
-        410 => "HEX",
-        411 => "HOUR",
-        412 => "IF",
-        413 => "IFNULL",
-        414 => "INET_ATON",
-        415 => "INET_NTOA",
-        416 => "INSERT",
-        417 => "INSTR",
-        418 => "INTERIORRINGN",
-        419 => "INTERSECTION",
-        420 => "INTERSECTS",
-        421 => "INTERVAL",
-        422 => "ISCLOSED",
-        423 => "ISEMPTY",
-        424 => "ISNULL",
-        425 => "ISRING",
-        426 => "ISSIMPLE",
-        427 => "IS_FREE_LOCK",
-        428 => "IS_USED_LOCK",
-        429 => "LAST_DAY",
-        430 => "LAST_INSERT_ID",
-        431 => "LCASE",
-        432 => "LEAST",
-        433 => "LEFT",
-        434 => "LENGTH",
-        435 => "LINEFROMTEXT",
-        436 => "LINEFROMWKB",
-        437 => "LINESTRING",
-        438 => "LINESTRINGFROMTEXT",
-        439 => "LINESTRINGFROMWKB",
-        440 => "LN",
-        441 => "LOAD_FILE",
-        442 => "LOCALTIME",
-        443 => "LOCALTIMESTAMP",
-        444 => "LOCATE",
-        445 => "LOG",
-        446 => "LOG10",
-        447 => "LOG2",
-        448 => "LOWER",
-        449 => "LPAD",
-        450 => "LTRIM",
-        451 => "MAKEDATE",
-        452 => "MAKETIME",
-        453 => "MAKE_SET",
-        454 => "MASTER_POS_WAIT",
-        455 => "MAX",
-        456 => "MBRCONTAINS",
-        457 => "MBRDISJOINT",
-        458 => "MBREQUAL",
-        459 => "MBRINTERSECTS",
-        460 => "MBROVERLAPS",
-        461 => "MBRTOUCHES",
-        462 => "MBRWITHIN",
-        463 => "MD5",
-        464 => "MICROSECOND",
-        465 => "MID",
-        466 => "MIN",
-        467 => "MINUTE",
-        468 => "MLINEFROMTEXT",
-        469 => "MLINEFROMWKB",
-        470 => "MOD",
-        471 => "MONTH",
-        472 => "MONTHNAME",
-        473 => "MPOINTFROMTEXT",
-        474 => "MPOINTFROMWKB",
-        475 => "MPOLYFROMTEXT",
-        476 => "MPOLYFROMWKB",
-        477 => "MULTILINESTRING",
-        478 => "MULTILINESTRINGFROMTEXT",
-        479 => "MULTILINESTRINGFROMWKB",
-        480 => "MULTIPOINT",
-        481 => "MULTIPOINTFROMTEXT",
-        482 => "MULTIPOINTFROMWKB",
-        483 => "MULTIPOLYGON",
-        484 => "MULTIPOLYGONFROMTEXT",
-        485 => "MULTIPOLYGONFROMWKB",
-        486 => "NAME_CONST",
-        487 => "NULLIF",
-        488 => "NUMGEOMETRIES",
-        489 => "NUMINTERIORRINGS",
-        490 => "NUMPOINTS",
-        491 => "OCT",
-        492 => "OCTET_LENGTH",
-        493 => "OLD_PASSWORD",
-        494 => "ORD",
-        495 => "OVERLAPS",
-        496 => "PASSWORD",
-        497 => "PERIOD_ADD",
-        498 => "PERIOD_DIFF",
-        499 => "PI",
-        500 => "POINT",
-        501 => "POINTFROMTEXT",
-        502 => "POINTFROMWKB",
-        503 => "POINTN",
-        504 => "POINTONSURFACE",
-        505 => "POLYFROMTEXT",
-        506 => "POLYFROMWKB",
-        507 => "POLYGON",
-        508 => "POLYGONFROMTEXT",
-        509 => "POLYGONFROMWKB",
-        510 => "POSITION",
-        511 => "POW",
-        512 => "POWER",
-        513 => "QUARTER",
-        514 => "QUOTE",
-        515 => "RADIANS",
-        516 => "RAND",
-        517 => "RELATED",
-        518 => "RELEASE_LOCK",
-        519 => "REPEAT",
-        520 => "REPLACE",
-        521 => "REVERSE",
-        522 => "RIGHT",
-        523 => "ROUND",
-        524 => "ROW_COUNT",
-        525 => "RPAD",
-        526 => "RTRIM",
-        527 => "SCHEMA",
-        528 => "SECOND",
-        529 => "SEC_TO_TIME",
-        530 => "SESSION_USER",
-        531 => "SHA",
-        532 => "SHA1",
-        533 => "SIGN",
-        534 => "SIN",
-        535 => "SLEEP",
-        536 => "SOUNDEX",
-        537 => "SPACE",
-        538 => "SQRT",
-        539 => "SRID",
-        540 => "STARTPOINT",
-        541 => "STD",
-        542 => "STDDEV",
-        543 => "STDDEV_POP",
-        544 => "STDDEV_SAMP",
-        545 => "STRCMP",
-        546 => "STR_TO_DATE",
-        547 => "SUBDATE",
-        548 => "SUBSTR",
-        549 => "SUBSTRING",
-        550 => "SUBSTRING_INDEX",
-        551 => "SUBTIME",
-        552 => "SUM",
-        553 => "SYMDIFFERENCE",
-        554 => "SYSDATE",
-        555 => "SYSTEM_USER",
-        556 => "TAN",
-        557 => "TIME",
-        558 => "TIMEDIFF",
-        559 => "TIMESTAMP",
-        560 => "TIMESTAMPADD",
-        561 => "TIMESTAMPDIFF",
-        562 => "TIME_FORMAT",
-        563 => "TIME_TO_SEC",
-        564 => "TOUCHES",
-        565 => "TO_DAYS",
-        566 => "TRIM",
-        567 => "TRUNCATE",
-        568 => "UCASE",
-        569 => "UNCOMPRESS",
-        570 => "UNCOMPRESSED_LENGTH",
-        571 => "UNHEX",
-        572 => "UNIQUE_USERS",
-        573 => "UNIX_TIMESTAMP",
-        574 => "UPDATEXML",
-        575 => "UPPER",
-        576 => "USER",
-        577 => "UTC_DATE",
-        578 => "UTC_TIME",
-        579 => "UTC_TIMESTAMP",
-        580 => "UUID",
-        581 => "VARIANCE",
-        582 => "VAR_POP",
-        583 => "VAR_SAMP",
-        584 => "VERSION",
-        585 => "WEEK",
-        586 => "WEEKDAY",
-        587 => "WEEKOFYEAR",
-        588 => "WITHIN",
-        589 => "X",
-        590 => "Y",
-        591 => "YEAR",
-        592 => "YEARWEEK",
+        125 => "JSON_ARRAY",
+        126 => "JSON_ARRAY_APPEND",
+        127 => "JSON_ARRAY_INSERT",
+        128 => "JSON_CONTAINS",
+        129 => "JSON_CONTAINS_PATH",
+        130 => "JSON_DEPTH",
+        131 => "JSON_EXTRACT",
+        132 => "JSON_INSERT",
+        133 => "JSON_KEYS",
+        134 => "JSON_LENGTH",
+        135 => "JSON_MERGE_PATCH",
+        136 => "JSON_MERGE_PRESERVE",
+        137 => "JSON_OBJECT",
+        138 => "JSON_PRETTY",
+        139 => "JSON_QUOTE",
+        140 => "JSON_REMOVE",
+        141 => "JSON_REPLACE",
+        142 => "JSON_SEARCH",
+        143 => "JSON_SET",
+        144 => "JSON_STORAGE_SIZE",
+        145 => "JSON_TYPE",
+        146 => "JSON_UNQUOTE",
+        147 => "JSON_VALID",
+        148 => "KEY",
+        149 => "KEYS",
+        150 => "KILL",
+        151 => "LAST_INSERT_ID",
+        152 => "LEADING",
+        153 => "LEFT",
+        154 => "LEVEL",
+        155 => "LIKE",
+        156 => "LIMIT",
+        157 => "LINEAR",
+        158 => "LINES",
+        159 => "LOAD",
+        160 => "LOCAL",
+        161 => "LOCK",
+        162 => "LOCKS",
+        163 => "LOGS",
+        164 => "LOW_PRIORITY",
+        165 => "MARIA",
+        166 => "MASTER",
+        167 => "MASTER_CONNECT_RETRY",
+        168 => "MASTER_HOST",
+        169 => "MASTER_LOG_FILE",
+        170 => "MATCH",
+        171 => "MAX_CONNECTIONS_PER_HOUR",
+        172 => "MAX_QUERIES_PER_HOUR",
+        173 => "MAX_ROWS",
+        174 => "MAX_UPDATES_PER_HOUR",
+        175 => "MAX_USER_CONNECTIONS",
+        176 => "MEDIUM",
+        177 => "MERGE",
+        178 => "MINUTE",
+        179 => "MINUTE_SECOND",
+        180 => "MIN_ROWS",
+        181 => "MODE",
+        182 => "MODIFY",
+        183 => "MONTH",
+        184 => "MRG_MYISAM",
+        185 => "MYISAM",
+        186 => "NAMES",
+        187 => "NATURAL",
+        188 => "NOT",
+        189 => "NOW()",
+        190 => "NULL",
+        191 => "OFFSET",
+        192 => "ON",
+        193 => "ON DELETE",
+        194 => "ON UPDATE",
+        195 => "OPEN",
+        196 => "OPTIMIZE",
+        197 => "OPTION",
+        198 => "OPTIONALLY",
+        199 => "OR",
+        200 => "ORDER",
+        201 => "BY",
+        202 => "OUTER",
+        203 => "OUTFILE",
+        204 => "PACK_KEYS",
+        205 => "PAGE",
+        206 => "PARTIAL",
+        207 => "PARTITION",
+        208 => "PARTITIONS",
+        209 => "PASSWORD",
+        210 => "PRIMARY",
+        211 => "PRIVILEGES",
+        212 => "PROCEDURE",
+        213 => "PROCESS",
+        214 => "PROCESSLIST",
+        215 => "PURGE",
+        216 => "QUICK",
+        217 => "RAID0",
+        218 => "RAID_CHUNKS",
+        219 => "RAID_CHUNKSIZE",
+        220 => "RAID_TYPE",
+        221 => "RANGE",
+        222 => "READ",
+        223 => "READ_ONLY",
+        224 => "READ_WRITE",
+        225 => "REFERENCES",
+        226 => "REGEXP",
+        227 => "RELOAD",
+        228 => "RENAME",
+        229 => "REPAIR",
+        230 => "REPEATABLE",
+        231 => "REPLACE",
+        232 => "REPLICATION",
+        233 => "RESET",
+        234 => "RESTORE",
+        235 => "RESTRICT",
+        236 => "RETURN",
+        237 => "RETURNS",
+        238 => "REVOKE",
+        239 => "RIGHT",
+        240 => "RLIKE",
+        241 => "ROLLBACK",
+        242 => "ROLLUP",
+        243 => "ROW",
+        244 => "ROWS",
+        245 => "ROW_FORMAT",
+        246 => "SECOND",
+        247 => "SECURITY",
+        248 => "SELECT",
+        249 => "SEPARATOR",
+        250 => "SERIALIZABLE",
+        251 => "SESSION",
+        252 => "SET",
+        253 => "SHARE",
+        254 => "SHOW",
+        255 => "SHUTDOWN",
+        256 => "SLAVE",
+        257 => "SONAME",
+        258 => "SOUNDS",
+        259 => "SQL",
+        260 => "SQL_AUTO_IS_NULL",
+        261 => "SQL_BIG_RESULT",
+        262 => "SQL_BIG_SELECTS",
+        263 => "SQL_BIG_TABLES",
+        264 => "SQL_BUFFER_RESULT",
+        265 => "SQL_CACHE",
+        266 => "SQL_CALC_FOUND_ROWS",
+        267 => "SQL_LOG_BIN",
+        268 => "SQL_LOG_OFF",
+        269 => "SQL_LOG_UPDATE",
+        270 => "SQL_LOW_PRIORITY_UPDATES",
+        271 => "SQL_MAX_JOIN_SIZE",
+        272 => "SQL_NO_CACHE",
+        273 => "SQL_QUOTE_SHOW_CREATE",
+        274 => "SQL_SAFE_UPDATES",
+        275 => "SQL_SELECT_LIMIT",
+        276 => "SQL_SLAVE_SKIP_COUNTER",
+        277 => "SQL_SMALL_RESULT",
+        278 => "SQL_WARNINGS",
+        279 => "START",
+        280 => "STARTING",
+        281 => "STATUS",
+        282 => "STOP",
+        283 => "STORAGE",
+        284 => "STRAIGHT_JOIN",
+        285 => "STRING",
+        286 => "STRIPED",
+        287 => "SUPER",
+        288 => "TABLE",
+        289 => "TABLES",
+        290 => "TEMPORARY",
+        291 => "TERMINATED",
+        292 => "THEN",
+        293 => "TO",
+        294 => "TRAILING",
+        295 => "TRANSACTIONAL",
+        296 => "TRUE",
+        297 => "TRUNCATE",
+        298 => "TYPE",
+        299 => "TYPES",
+        300 => "UNCOMMITTED",
+        301 => "UNION",
+        302 => "UNION ALL",
+        303 => "UNIQUE",
+        304 => "UNLOCK",
+        305 => "UNSIGNED",
+        306 => "UPDATE",
+        307 => "USAGE",
+        308 => "USE",
+        309 => "USING",
+        310 => "VALUES",
+        311 => "VARIABLES",
+        312 => "VIEW",
+        313 => "WHEN",
+        314 => "WHERE",
+        315 => "WITH",
+        316 => "WORK",
+        317 => "WRITE",
+        318 => "XOR",
+        319 => "YEAR_MONTH",
+        320 => "ABS",
+        321 => "ACOS",
+        322 => "ADDDATE",
+        323 => "ADDTIME",
+        324 => "AES_DECRYPT",
+        325 => "AES_ENCRYPT",
+        326 => "AREA",
+        327 => "ASBINARY",
+        328 => "ASCII",
+        329 => "ASIN",
+        330 => "ASTEXT",
+        331 => "ATAN",
+        332 => "ATAN2",
+        333 => "AVG",
+        334 => "BDMPOLYFROMTEXT",
+        335 => "BDMPOLYFROMWKB",
+        336 => "BDPOLYFROMTEXT",
+        337 => "BDPOLYFROMWKB",
+        338 => "BENCHMARK",
+        339 => "BIN",
+        340 => "BIT_AND",
+        341 => "BIT_COUNT",
+        342 => "BIT_LENGTH",
+        343 => "BIT_OR",
+        344 => "BIT_XOR",
+        345 => "BOUNDARY",
+        346 => "BUFFER",
+        347 => "CAST",
+        348 => "CEIL",
+        349 => "CEILING",
+        350 => "CENTROID",
+        351 => "CHAR",
+        352 => "CHARACTER_LENGTH",
+        353 => "CHARSET",
+        354 => "CHAR_LENGTH",
+        355 => "COALESCE",
+        356 => "COERCIBILITY",
+        357 => "COLLATION",
+        358 => "COMPRESS",
+        359 => "CONCAT",
+        360 => "CONCAT_WS",
+        361 => "CONNECTION_ID",
+        362 => "CONTAINS",
+        363 => "CONV",
+        364 => "CONVERT",
+        365 => "CONVERT_TZ",
+        366 => "CONVEXHULL",
+        367 => "COS",
+        368 => "COT",
+        369 => "COUNT",
+        370 => "CRC32",
+        371 => "CROSSES",
+        372 => "CURDATE",
+        373 => "CURRENT_DATE",
+        374 => "CURRENT_TIME",
+        375 => "CURRENT_TIMESTAMP",
+        376 => "CURRENT_USER",
+        377 => "CURTIME",
+        378 => "DATABASE",
+        379 => "DATE",
+        380 => "DATEDIFF",
+        381 => "DATE_ADD",
+        382 => "DATE_DIFF",
+        383 => "DATE_FORMAT",
+        384 => "DATE_SUB",
+        385 => "DAY",
+        386 => "DAYNAME",
+        387 => "DAYOFMONTH",
+        388 => "DAYOFWEEK",
+        389 => "DAYOFYEAR",
+        390 => "DECODE",
+        391 => "DEFAULT",
+        392 => "DEGREES",
+        393 => "DES_DECRYPT",
+        394 => "DES_ENCRYPT",
+        395 => "DIFFERENCE",
+        396 => "DIMENSION",
+        397 => "DISJOINT",
+        398 => "DISTANCE",
+        399 => "ELT",
+        400 => "ENCODE",
+        401 => "ENCRYPT",
+        402 => "ENDPOINT",
+        403 => "ENVELOPE",
+        404 => "EQUALS",
+        405 => "EXP",
+        406 => "EXPORT_SET",
+        407 => "EXTERIORRING",
+        408 => "EXTRACT",
+        409 => "EXTRACTVALUE",
+        410 => "FIELD",
+        411 => "FIND_IN_SET",
+        412 => "FLOOR",
+        413 => "FORMAT",
+        414 => "FOUND_ROWS",
+        415 => "FROM_DAYS",
+        416 => "FROM_UNIXTIME",
+        417 => "GEOMCOLLFROMTEXT",
+        418 => "GEOMCOLLFROMWKB",
+        419 => "GEOMETRYCOLLECTION",
+        420 => "GEOMETRYCOLLECTIONFROMTEXT",
+        421 => "GEOMETRYCOLLECTIONFROMWKB",
+        422 => "GEOMETRYFROMTEXT",
+        423 => "GEOMETRYFROMWKB",
+        424 => "GEOMETRYN",
+        425 => "GEOMETRYTYPE",
+        426 => "GEOMFROMTEXT",
+        427 => "GEOMFROMWKB",
+        428 => "GET_FORMAT",
+        429 => "GET_LOCK",
+        430 => "GLENGTH",
+        431 => "GREATEST",
+        432 => "GROUP_CONCAT",
+        433 => "GROUP_UNIQUE_USERS",
+        434 => "HEX",
+        435 => "HOUR",
+        436 => "IF",
+        437 => "IFNULL",
+        438 => "INET_ATON",
+        439 => "INET_NTOA",
+        440 => "INSERT",
+        441 => "INSTR",
+        442 => "INTERIORRINGN",
+        443 => "INTERSECTION",
+        444 => "INTERSECTS",
+        445 => "INTERVAL",
+        446 => "ISCLOSED",
+        447 => "ISEMPTY",
+        448 => "ISNULL",
+        449 => "ISRING",
+        450 => "ISSIMPLE",
+        451 => "IS_FREE_LOCK",
+        452 => "IS_USED_LOCK",
+        453 => "LAST_DAY",
+        454 => "LAST_INSERT_ID",
+        455 => "LCASE",
+        456 => "LEAST",
+        457 => "LEFT",
+        458 => "LENGTH",
+        459 => "LINEFROMTEXT",
+        460 => "LINEFROMWKB",
+        461 => "LINESTRING",
+        462 => "LINESTRINGFROMTEXT",
+        463 => "LINESTRINGFROMWKB",
+        464 => "LN",
+        465 => "LOAD_FILE",
+        466 => "LOCALTIME",
+        467 => "LOCALTIMESTAMP",
+        468 => "LOCATE",
+        469 => "LOG",
+        470 => "LOG10",
+        471 => "LOG2",
+        472 => "LOWER",
+        473 => "LPAD",
+        474 => "LTRIM",
+        475 => "MAKEDATE",
+        476 => "MAKETIME",
+        477 => "MAKE_SET",
+        478 => "MASTER_POS_WAIT",
+        479 => "MAX",
+        480 => "MBRCONTAINS",
+        481 => "MBRDISJOINT",
+        482 => "MBREQUAL",
+        483 => "MBRINTERSECTS",
+        484 => "MBROVERLAPS",
+        485 => "MBRTOUCHES",
+        486 => "MBRWITHIN",
+        487 => "MD5",
+        488 => "MICROSECOND",
+        489 => "MID",
+        490 => "MIN",
+        491 => "MINUTE",
+        492 => "MLINEFROMTEXT",
+        493 => "MLINEFROMWKB",
+        494 => "MOD",
+        495 => "MONTH",
+        496 => "MONTHNAME",
+        497 => "MPOINTFROMTEXT",
+        498 => "MPOINTFROMWKB",
+        499 => "MPOLYFROMTEXT",
+        500 => "MPOLYFROMWKB",
+        501 => "MULTILINESTRING",
+        502 => "MULTILINESTRINGFROMTEXT",
+        503 => "MULTILINESTRINGFROMWKB",
+        504 => "MULTIPOINT",
+        505 => "MULTIPOINTFROMTEXT",
+        506 => "MULTIPOINTFROMWKB",
+        507 => "MULTIPOLYGON",
+        508 => "MULTIPOLYGONFROMTEXT",
+        509 => "MULTIPOLYGONFROMWKB",
+        510 => "NAME_CONST",
+        511 => "NULLIF",
+        512 => "NUMGEOMETRIES",
+        513 => "NUMINTERIORRINGS",
+        514 => "NUMPOINTS",
+        515 => "OCT",
+        516 => "OCTET_LENGTH",
+        517 => "OLD_PASSWORD",
+        518 => "ORD",
+        519 => "OVERLAPS",
+        520 => "PASSWORD",
+        521 => "PERIOD_ADD",
+        522 => "PERIOD_DIFF",
+        523 => "PI",
+        524 => "POINT",
+        525 => "POINTFROMTEXT",
+        526 => "POINTFROMWKB",
+        527 => "POINTN",
+        528 => "POINTONSURFACE",
+        529 => "POLYFROMTEXT",
+        530 => "POLYFROMWKB",
+        531 => "POLYGON",
+        532 => "POLYGONFROMTEXT",
+        533 => "POLYGONFROMWKB",
+        534 => "POSITION",
+        535 => "POW",
+        536 => "POWER",
+        537 => "QUARTER",
+        538 => "QUOTE",
+        539 => "RADIANS",
+        540 => "RAND",
+        541 => "RELATED",
+        542 => "RELEASE_LOCK",
+        543 => "REPEAT",
+        544 => "REPLACE",
+        545 => "REVERSE",
+        546 => "RIGHT",
+        547 => "ROUND",
+        548 => "ROW_COUNT",
+        549 => "RPAD",
+        550 => "RTRIM",
+        551 => "SCHEMA",
+        552 => "SECOND",
+        553 => "SEC_TO_TIME",
+        554 => "SESSION_USER",
+        555 => "SHA",
+        556 => "SHA1",
+        557 => "SIGN",
+        558 => "SIN",
+        559 => "SLEEP",
+        560 => "SOUNDEX",
+        561 => "SPACE",
+        562 => "SQRT",
+        563 => "SRID",
+        564 => "STARTPOINT",
+        565 => "STD",
+        566 => "STDDEV",
+        567 => "STDDEV_POP",
+        568 => "STDDEV_SAMP",
+        569 => "STRCMP",
+        570 => "STR_TO_DATE",
+        571 => "SUBDATE",
+        572 => "SUBSTR",
+        573 => "SUBSTRING",
+        574 => "SUBSTRING_INDEX",
+        575 => "SUBTIME",
+        576 => "SUM",
+        577 => "SYMDIFFERENCE",
+        578 => "SYSDATE",
+        579 => "SYSTEM_USER",
+        580 => "TAN",
+        581 => "TIME",
+        582 => "TIMEDIFF",
+        583 => "TIMESTAMP",
+        584 => "TIMESTAMPADD",
+        585 => "TIMESTAMPDIFF",
+        586 => "TIME_FORMAT",
+        587 => "TIME_TO_SEC",
+        588 => "TOUCHES",
+        589 => "TO_DAYS",
+        590 => "TRIM",
+        591 => "TRUNCATE",
+        592 => "UCASE",
+        593 => "UNCOMPRESS",
+        594 => "UNCOMPRESSED_LENGTH",
+        595 => "UNHEX",
+        596 => "UNIQUE_USERS",
+        597 => "UNIX_TIMESTAMP",
+        598 => "UPDATEXML",
+        599 => "UPPER",
+        600 => "USER",
+        601 => "UTC_DATE",
+        602 => "UTC_TIME",
+        603 => "UTC_TIMESTAMP",
+        604 => "UUID",
+        605 => "VARIANCE",
+        606 => "VAR_POP",
+        607 => "VAR_SAMP",
+        608 => "VERSION",
+        609 => "WEEK",
+        610 => "WEEKDAY",
+        611 => "WEEKOFYEAR",
+        612 => "WITHIN",
+        613 => "X",
+        614 => "Y",
+        615 => "YEAR",
+        616 => "YEARWEEK",
     ]);
 }
 
@@ -631,9 +655,14 @@ if (!isset($excluded_functions["arrayize"]) && (!function_exists("ryunosuke\\dbm
         $result = [];
         foreach ($variadic as $arg) {
             if (!is_array($arg)) {
-                $arg = [$arg];
+                $result[] = $arg;
             }
-            $result = array_merge($result, $arg);
+            elseif (!is_hasharray($arg)) {
+                $result = array_merge($result, $arg);
+            }
+            else {
+                $result += $arg;
+            }
         }
         return $result;
     }
@@ -695,7 +724,7 @@ if (!isset($excluded_functions["first_key"]) && (!function_exists("ryunosuke\\db
             return $default;
         }
         /** @noinspection PhpUnusedLocalVariableInspection */
-        list($k, $v) = first_keyvalue($array);
+        [$k, $v] = first_keyvalue($array);
         return $k;
     }
 }
@@ -725,7 +754,7 @@ if (!isset($excluded_functions["first_value"]) && (!function_exists("ryunosuke\\
             return $default;
         }
         /** @noinspection PhpUnusedLocalVariableInspection */
-        list($k, $v) = first_keyvalue($array);
+        [$k, $v] = first_keyvalue($array);
         return $v;
     }
 }
@@ -783,7 +812,7 @@ if (!isset($excluded_functions["last_key"]) && (!function_exists("ryunosuke\\dbm
             return $default;
         }
         /** @noinspection PhpUnusedLocalVariableInspection */
-        list($k, $v) = last_keyvalue($array);
+        [$k, $v] = last_keyvalue($array);
         return $k;
     }
 }
@@ -813,7 +842,7 @@ if (!isset($excluded_functions["last_value"]) && (!function_exists("ryunosuke\\d
             return $default;
         }
         /** @noinspection PhpUnusedLocalVariableInspection */
-        list($k, $v) = last_keyvalue($array);
+        [$k, $v] = last_keyvalue($array);
         return $v;
     }
 }
@@ -996,11 +1025,11 @@ if (!isset($excluded_functions["array_strpad"]) && (!function_exists("ryunosuke\
     {
         $key_suffix = '';
         if (is_array($key_prefix)) {
-            list($key_suffix, $key_prefix) = $key_prefix + [1 => ''];
+            [$key_suffix, $key_prefix] = $key_prefix + [1 => ''];
         }
         $val_suffix = '';
         if (is_array($val_prefix)) {
-            list($val_suffix, $val_prefix) = $val_prefix + [1 => ''];
+            [$val_suffix, $val_prefix] = $val_prefix + [1 => ''];
         }
 
         $enable_key = strlen($key_prefix) || strlen($key_suffix);
@@ -1174,6 +1203,10 @@ if (!isset($excluded_functions["array_put"]) && (!function_exists("ryunosuke\\db
      * また、**int を与えても同様の動作**となる。
      * 第3引数に配列を指定すると潜って設定する。
      *
+     * 第4引数で追加する条件クロージャを指定できる。
+     * クロージャには `(追加する要素, 追加するキー, 追加される元配列)` が渡ってくる。
+     * このクロージャが false 相当を返した時は追加されないようになる。
+     *
      * array_set における $require_return は廃止している。
      * これはもともと end や last_key が遅かったのでオプショナルにしていたが、もう改善しているし、7.3 から array_key_last があるので、呼び元で適宜使えば良い。
      *
@@ -1193,14 +1226,19 @@ if (!isset($excluded_functions["array_put"]) && (!function_exists("ryunosuke\\db
      * // 第3引数で配列を指定
      * that(array_put($array, 'Z', ['x', 'y', 'z']))->isSame('z');
      * that($array)->isSame(['a' => 'A', 'B', 'Z', 'Z', 'z' => 'Z', 'x' => ['y' => ['z' => 'Z']]]);
+     * // 第4引数で条件を指定（キーが存在するなら追加しない）
+     * that(array_put($array, 'Z', 'z', function ($v, $k, $array){return !isset($array[$k]);}))->isSame(false);
+     * // 第4引数で条件を指定（値が存在するなら追加しない）
+     * that(array_put($array, 'Z', null, function ($v, $k, $array){return !in_array($v, $array);}))->isSame(false);
      * ```
      *
      * @param array $array 配列
      * @param mixed $value 設定する値
      * @param array|string|int|null $key 設定するキー
-     * @return string|int 設定したキー
+     * @param callable|null $condition 追加する条件
+     * @return string|int|false 設定したキー
      */
-    function array_put(&$array, $value, $key = null)
+    function array_put(&$array, $value, $key = null, $condition = null)
     {
         if (is_array($key)) {
             $k = array_shift($key);
@@ -1208,10 +1246,16 @@ if (!isset($excluded_functions["array_put"]) && (!function_exists("ryunosuke\\db
                 if (is_array($array) && array_key_exists($k, $array) && !is_array($array[$k])) {
                     throw new \InvalidArgumentException('$array[$k] is not array.');
                 }
-                return array_put(...[&$array[$k], $value, $key]);
+                return array_put(...[&$array[$k], $value, $key, $condition]);
             }
             else {
-                return array_put(...[&$array, $value, $k]);
+                return array_put(...[&$array, $value, $k, $condition]);
+            }
+        }
+
+        if ($condition !== null) {
+            if (!$condition($value, $key, $array)) {
+                return false;
             }
         }
 
@@ -1426,6 +1470,66 @@ if (function_exists("ryunosuke\\dbml\\array_find") && !defined("ryunosuke\\dbml\
     define("ryunosuke\\dbml\\array_find", "ryunosuke\\dbml\\array_find");
 }
 
+if (!isset($excluded_functions["array_rekey"]) && (!function_exists("ryunosuke\\dbml\\array_rekey") || (!false && (new \ReflectionFunction("ryunosuke\\dbml\\array_rekey"))->isInternal()))) {
+    /**
+     * キーをマップ配列・callable で置換する
+     *
+     * 変換先・返り値が null だとその要素は取り除かれる。
+     * callable 指定時の引数は `(キー, 値, 連番インデックス, 対象配列そのもの)` が渡ってくる。
+     *
+     * Example:
+     * ```php
+     * $array = ['a' => 'A', 'b' => 'B', 'c' => 'C'];
+     * // a は x に c は z に置換される
+     * that(array_rekey($array, ['a' => 'x', 'c' => 'z']))->isSame(['x' => 'A', 'b' => 'B', 'z' => 'C']);
+     * // b は削除され c は z に置換される
+     * that(array_rekey($array, ['b' => null, 'c' => 'z']))->isSame(['a' => 'A', 'z' => 'C']);
+     * // キーの交換にも使える（a ⇔ c）
+     * that(array_rekey($array, ['a' => 'c', 'c' => 'a']))->isSame(['c' => 'A', 'b' => 'B', 'a' => 'C']);
+     * // callable
+     * that(array_rekey($array, 'strtoupper'))->isSame(['A' => 'A', 'B' => 'B', 'C' => 'C']);
+     * ```
+     *
+     * @param iterable $array 対象配列
+     * @param array|callable $keymap マップ配列かキーを返すクロージャ
+     * @return array キーが置換された配列
+     */
+    function array_rekey($array, $keymap)
+    {
+        // 互換性のため callable は配列以外に限定する
+        $callable = ($keymap instanceof \Closure) || (!is_array($keymap) && is_callable($keymap));
+        if ($callable) {
+            $keymap = func_user_func_array($keymap);
+        }
+
+        $result = [];
+        $n = 0;
+        foreach ($array as $k => $v) {
+            if ($callable) {
+                $k = $keymap($k, $v, $n, $array);
+                // null は突っ込まない（除去）
+                if ($k !== null) {
+                    $result[$k] = $v;
+                }
+            }
+            elseif (array_key_exists($k, $keymap)) {
+                // null は突っ込まない（除去）
+                if ($keymap[$k] !== null) {
+                    $result[$keymap[$k]] = $v;
+                }
+            }
+            else {
+                $result[$k] = $v;
+            }
+            $n++;
+        }
+        return $result;
+    }
+}
+if (function_exists("ryunosuke\\dbml\\array_rekey") && !defined("ryunosuke\\dbml\\array_rekey")) {
+    define("ryunosuke\\dbml\\array_rekey", "ryunosuke\\dbml\\array_rekey");
+}
+
 if (!isset($excluded_functions["array_map_key"]) && (!function_exists("ryunosuke\\dbml\\array_map_key") || (!false && (new \ReflectionFunction("ryunosuke\\dbml\\array_map_key"))->isInternal()))) {
     /**
      * キーをマップして変換する
@@ -1555,6 +1659,111 @@ if (function_exists("ryunosuke\\dbml\\array_maps") && !defined("ryunosuke\\dbml\
     define("ryunosuke\\dbml\\array_maps", "ryunosuke\\dbml\\array_maps");
 }
 
+if (!isset($excluded_functions["array_kvmap"]) && (!function_exists("ryunosuke\\dbml\\array_kvmap") || (!false && (new \ReflectionFunction("ryunosuke\\dbml\\array_kvmap"))->isInternal()))) {
+    /**
+     * 配列の各キー・値にコールバックを適用する
+     *
+     * $callback は (キー, 値, $callback) が渡ってくるので 「その位置に配置したい配列」を返せばそこに置換される。
+     * つまり、空配列を返せばそのキー・値は消えることになるし、複数の配列を返せば要素が増えることになる。
+     * ただし、数値キーは新しく採番される。
+     * null を返すと特別扱いで、そのキー・値をそのまま維持する。
+     * iterable を返す必要があるが、もし iterable でない場合は配列キャストされる。
+     *
+     * 「map も filter も可能でキー変更可能」というとてもマッチョな関数。
+     * 実質的には「数値キーが再採番される再帰的でない array_convert」のように振る舞う。
+     * ただし、再帰処理はないので自前で管理する必要がある。
+     *
+     * Example:
+     * ```php
+     * $array = [
+     *    'a' => 'A',
+     *    'b' => 'B',
+     *    'c' => 'C',
+     *    'd' => 'D',
+     * ];
+     * // キーに '_' 、値に 'prefix-' を付与。'b' は一切何もしない。'c' は値のみ。'd' はそれ自体伏せる
+     * that(array_kvmap($array, function($k, $v){
+     *     if ($k === 'b') return null;
+     *     if ($k === 'd') return [];
+     *     if ($k !== 'c') $k = "_$k";
+     *     return [$k => "prefix-$v"];
+     * }))->isSame([
+     *     '_a' => 'prefix-A',
+     *     'b'  => 'B',
+     *     'c'  => 'prefix-C',
+     * ]);
+     *
+     * // 複数返せばその分増える（要素の水増し）
+     * that(array_kvmap($array, function($k, $v){
+     *     return [
+     *         "{$k}1" => "{$v}1",
+     *         "{$k}2" => "{$v}2",
+     *     ];
+     * }))->isSame([
+     *    'a1' => 'A1',
+     *    'a2' => 'A2',
+     *    'b1' => 'B1',
+     *    'b2' => 'B2',
+     *    'c1' => 'C1',
+     *    'c2' => 'C2',
+     *    'd1' => 'D1',
+     *    'd2' => 'D2',
+     * ]);
+     *
+     * // $callback には $callback 自体も渡ってくるので再帰も比較的楽に書ける
+     * that(array_kvmap([
+     *     'x' => [
+     *         'X',
+     *         'y' => [
+     *             'Y',
+     *             'z' => ['Z'],
+     *         ],
+     *     ],
+     * ], function($k, $v, $callback){
+     *     // 配列だったら再帰する
+     *     return ["_$k" => is_array($v) ? array_kvmap($v, $callback) : "prefix-$v"];
+     * }))->isSame([
+     *     "_x" => [
+     *         "_0" => "prefix-X",
+     *         "_y" => [
+     *             "_0" => "prefix-Y",
+     *             "_z" => [
+     *                 "_0" => "prefix-Z",
+     *             ],
+     *         ],
+     *     ],
+     * ]);
+     * ```
+     *
+     * @param iterable $array 対象配列
+     * @param callable $callback 適用するコールバック
+     * @return array 変換された配列
+     */
+    function array_kvmap($array, $callback)
+    {
+        $result = [];
+        foreach ($array as $k => $v) {
+            $kv = $callback($k, $v, $callback) ?? [$k => $v];
+            if (!is_iterable($kv)) {
+                $kv = [$kv];
+            }
+            // $result = array_merge($result, $kv); // 遅すぎる
+            foreach ($kv as $k2 => $v2) {
+                if (is_int($k2)) {
+                    $result[] = $v2;
+                }
+                else {
+                    $result[$k2] = $v2;
+                }
+            }
+        }
+        return $result;
+    }
+}
+if (function_exists("ryunosuke\\dbml\\array_kvmap") && !defined("ryunosuke\\dbml\\array_kvmap")) {
+    define("ryunosuke\\dbml\\array_kvmap", "ryunosuke\\dbml\\array_kvmap");
+}
+
 if (!isset($excluded_functions["array_kmap"]) && (!function_exists("ryunosuke\\dbml\\array_kmap") || (!false && (new \ReflectionFunction("ryunosuke\\dbml\\array_kmap"))->isInternal()))) {
     /**
      * キーも渡ってくる array_map
@@ -1637,7 +1846,7 @@ if (!isset($excluded_functions["array_nmap"]) && (!function_exists("ryunosuke\\d
             if (empty($n)) {
                 throw new \InvalidArgumentException('array $n is empty.');
             }
-            list($kn, $vn) = first_keyvalue($n);
+            [$kn, $vn] = first_keyvalue($n);
 
             // array_insert は負数も受け入れられるが、それを考慮しだすともう収拾がつかない
             if ($kn < 0 || $vn < 0) {
@@ -2020,7 +2229,9 @@ if (!isset($excluded_functions["array_order"]) && (!function_exists("ryunosuke\\
                 // でないなら通した値で比較
                 else {
                     $arg = array_map($order, $columns);
-                    $type = $ref->hasReturnType() ? $ref->getReturnType()->getName() : gettype(reset($arg));
+                    /** @var \ReflectionNamedType $rtype */
+                    $rtype = $ref->getReturnType();
+                    $type = $rtype ? $rtype->getName() : gettype(reset($arg));
                     $args[] = $arg;
                     $args[] = SORT_ASC;
                     $args[] = $type === 'string' ? SORT_STRING : SORT_NUMERIC;
@@ -2364,38 +2575,35 @@ if (!isset($excluded_functions["array_flatten"]) && (!function_exists("ryunosuke
      * ```
      *
      * @param iterable $array 対象配列
-     * @param string|null $delimiter キーの区切り文字。 null を与えると連番になる
+     * @param string|\Closure|null $delimiter キーの区切り文字。 null を与えると連番になる
      * @return array フラット化された配列
      */
     function array_flatten($array, $delimiter = null)
     {
-        // 要素追加について、 array_set だと目に見えて速度低下したのでベタに if else で分岐する
-        $core = function ($array, $delimiter) use (&$core) {
-            $result = [];
+        $result = [];
+        $core = function ($array, $delimiter, $parents) use (&$core, &$result) {
             foreach ($array as $k => $v) {
+                $keys = $parents;
+                $keys[] = $k;
                 if (is_iterable($v)) {
-                    foreach ($core($v, $delimiter) as $ik => $iv) {
-                        if ($delimiter === null) {
-                            $result[] = $iv;
-                        }
-                        else {
-                            $result[$k . $delimiter . $ik] = $iv;
-                        }
-                    }
+                    $core($v, $delimiter, $keys);
                 }
                 else {
                     if ($delimiter === null) {
                         $result[] = $v;
                     }
+                    elseif ($delimiter instanceof \Closure) {
+                        $result[$delimiter($keys)] = $v;
+                    }
                     else {
-                        $result[$k] = $v;
+                        $result[implode($delimiter, $keys)] = $v;
                     }
                 }
             }
-            return $result;
         };
 
-        return $core($array, $delimiter);
+        $core($array, $delimiter, []);
+        return $result;
     }
 }
 if (function_exists("ryunosuke\\dbml\\array_flatten") && !defined("ryunosuke\\dbml\\array_flatten")) {
@@ -2481,6 +2689,73 @@ if (!isset($excluded_functions["array_nest"]) && (!function_exists("ryunosuke\\d
 }
 if (function_exists("ryunosuke\\dbml\\array_nest") && !defined("ryunosuke\\dbml\\array_nest")) {
     define("ryunosuke\\dbml\\array_nest", "ryunosuke\\dbml\\array_nest");
+}
+
+if (!isset($excluded_functions["date_fromto"]) && (!function_exists("ryunosuke\\dbml\\date_fromto") || (!false && (new \ReflectionFunction("ryunosuke\\dbml\\date_fromto"))->isInternal()))) {
+    /**
+     * 日時っぽい文字列とフォーマットを与えると取りうる範囲を返す
+     *
+     * 与えられた日時の最大の切り捨て日時と最小の切り上げ日時の配列を返す。
+     * 日付文字列はある程度よしなに補完される（例えば "2014/12" は"2014年12月01日" と解釈されるし "12/24" は "今年12月24日" と解釈される）。
+     *
+     * Example:
+     * ```php
+     * that(date_fromto('Y/m/d H:i:s', '2010/11'))->isSame(["2010/11/01 00:00:00", "2010/12/01 00:00:00"]);
+     * that(date_fromto('Y/m/d H:i:s', '2010/11/24'))->isSame(["2010/11/24 00:00:00", "2010/11/25 00:00:00"]);
+     * that(date_fromto('Y/m/d H:i:s', '2010/11/24 13'))->isSame(["2010/11/24 13:00:00", "2010/11/24 14:00:00"]);
+     * that(date_fromto('Y/m/d H:i:s', '2010/11/24 13:24'))->isSame(["2010/11/24 13:24:00", "2010/11/24 13:25:00"]);
+     * ```
+     *
+     * @param string $format フォーマット。 null を与えるとタイムスタンプで返す
+     * @param string $datetimestring 日時データ
+     * @return array|null [from ～ to] な配列。解釈できない場合は null
+     */
+    function date_fromto($format, $datetimestring)
+    {
+        $parsed = date_parse($datetimestring);
+        if (true
+            && $parsed['year'] === false
+            && $parsed['month'] === false
+            && $parsed['day'] === false
+            && $parsed['hour'] === false
+            && $parsed['minute'] === false
+            && $parsed['second'] === false) {
+            return null;
+        }
+
+        [$date, $time] = preg_split('#[T\s　]#u', $datetimestring, -1, PREG_SPLIT_NO_EMPTY) + [0 => '', 1 => ''];
+        [$y, $m, $d] = preg_split('#[^\d]+#u', $date, -1, PREG_SPLIT_NO_EMPTY) + [0 => null, 1 => null, 2 => null];
+        [$h, $i, $s] = preg_split('#[^\d]+#u', $time, -1, PREG_SPLIT_NO_EMPTY) + [0 => null, 1 => null, 2 => null];
+
+        // "2014/12" と "12/24" の区別はつかないので字数で判断
+        if (strlen($y) <= 2) {
+            [$y, $m, $d] = [null, $y, $m];
+        }
+        // 時刻区切りなし
+        if (strlen($h) > 2) {
+            [$h, $i, $s] = str_split($h, 2) + [0 => null, 1 => null, 2 => null];
+        }
+
+        // 文字列表現で妥当性を検証
+        $strtime = sprintf('%04d-%02d-%02d %02d:%02d:%02d', $y ?? 1000, $m ?? 1, $d ?? 1, $h ?? 1, $i ?? 1, $s ?? 1);
+        $datetime = date_create_from_format('Y-m-d H:i:s', $strtime);
+        if (!$datetime || $datetime->format('Y-m-d H:i:s') !== $strtime) {
+            return null;
+        }
+
+        $y = $y ?? idate('Y');
+        $ld = $d ?? idate('t', mktime(0, 0, 0, $m ?? 12, 1, $y));
+
+        $min = mktime($h ?? 0, $i ?? 0, $s ?? 0, $m ?? 1, $d ?? 1, $y);
+        $max = mktime($h ?? 23, $i ?? 59, $s ?? 59, $m ?? 12, $d ?? $ld, $y) + 1;
+        if ($format === null) {
+            return [$min, $max];
+        }
+        return [date($format, $min), date($format, $max)];
+    }
+}
+if (function_exists("ryunosuke\\dbml\\date_fromto") && !defined("ryunosuke\\dbml\\date_fromto")) {
+    define("ryunosuke\\dbml\\date_fromto", "ryunosuke\\dbml\\date_fromto");
 }
 
 if (!isset($excluded_functions["file_set_contents"]) && (!function_exists("ryunosuke\\dbml\\file_set_contents") || (!false && (new \ReflectionFunction("ryunosuke\\dbml\\file_set_contents"))->isInternal()))) {
@@ -2701,7 +2976,8 @@ if (!isset($excluded_functions["delegate"]) && (!function_exists("ryunosuke\\dbm
                 return function (...$_) use ($invoker, $callable) { return $invoker($callable, func_get_args()); };
             default:
                 $args = implode(',', array_map(function ($v) { return '$_' . $v; }, array_keys(array_fill(1, $arity, null))));
-                return eval('return function (' . $args . ') use ($invoker, $callable) { return $invoker($callable, func_get_args()); };');
+                $stmt = 'return function (' . $args . ') use ($invoker, $callable) { return $invoker($callable, func_get_args()); };';
+                return eval($stmt);
         }
     }
 }
@@ -2782,10 +3058,10 @@ if (!isset($excluded_functions["reflect_callable"]) && (!function_exists("ryunos
             return new \ReflectionFunction($callable);
         }
         else {
-            list($class, $method) = explode('::', $call_name, 2);
+            [$class, $method] = explode('::', $call_name, 2);
             // for タイプ 5: 相対指定による静的クラスメソッドのコール (PHP 5.3.0 以降)
             if (strpos($method, 'parent::') === 0) {
-                list(, $method) = explode('::', $method);
+                [, $method] = explode('::', $method);
                 return (new \ReflectionClass($class))->getParentClass()->getMethod($method);
             }
             return new \ReflectionMethod($class, $method);
@@ -2794,45 +3070,6 @@ if (!isset($excluded_functions["reflect_callable"]) && (!function_exists("ryunos
 }
 if (function_exists("ryunosuke\\dbml\\reflect_callable") && !defined("ryunosuke\\dbml\\reflect_callable")) {
     define("ryunosuke\\dbml\\reflect_callable", "ryunosuke\\dbml\\reflect_callable");
-}
-
-if (!isset($excluded_functions["call_safely"]) && (!function_exists("ryunosuke\\dbml\\call_safely") || (!false && (new \ReflectionFunction("ryunosuke\\dbml\\call_safely"))->isInternal()))) {
-    /**
-     * エラーを例外に変換するブロックでコールバックを実行する
-     *
-     * Example:
-     * ```php
-     * try {
-     *     call_safely(function(){return $v;});
-     * }
-     * catch (\Exception $ex) {
-     *     that($ex->getMessage())->isSame('Undefined variable: v');
-     * }
-     * ```
-     *
-     * @param callable $callback 実行するコールバック
-     * @param mixed $variadic $callback に渡される引数（可変引数）
-     * @return mixed $callback の返り値
-     */
-    function call_safely($callback, ...$variadic)
-    {
-        set_error_handler(function ($errno, $errstr, $errfile, $errline) {
-            if (error_reporting() === 0) {
-                return false;
-            }
-            throw new \ErrorException($errstr, 0, $errno, $errfile, $errline);
-        });
-
-        try {
-            return $callback(...$variadic);
-        }
-        finally {
-            restore_error_handler();
-        }
-    }
-}
-if (function_exists("ryunosuke\\dbml\\call_safely") && !defined("ryunosuke\\dbml\\call_safely")) {
-    define("ryunosuke\\dbml\\call_safely", "ryunosuke\\dbml\\call_safely");
 }
 
 if (!isset($excluded_functions["parameter_length"]) && (!function_exists("ryunosuke\\dbml\\parameter_length") || (!false && (new \ReflectionFunction("ryunosuke\\dbml\\parameter_length"))->isInternal()))) {
@@ -3002,7 +3239,7 @@ if (!isset($excluded_functions["sql_quote"]) && (!function_exists("ryunosuke\\db
      * - null は NULL になる
      * - 数字はそのまま数字になる
      * - bool は 0 or 1 になる
-     * - それ以外は addslashes される
+     * - それ以外は addcslashes される
      *
      * Example:
      * ```php
@@ -3026,7 +3263,7 @@ if (!isset($excluded_functions["sql_quote"]) && (!function_exists("ryunosuke\\db
         if (is_bool($value)) {
             return (int) $value;
         }
-        return "'" . addslashes("$value") . "'";
+        return "'" . addcslashes((string) $value, "\0\e\f\n\r\t\v'\\") . "'";
     }
 }
 if (function_exists("ryunosuke\\dbml\\sql_quote") && !defined("ryunosuke\\dbml\\sql_quote")) {
@@ -3319,7 +3556,7 @@ if (!isset($excluded_functions["sql_format"]) && (!function_exists("ryunosuke\\d
                     case "TABLE":
                         // CREATE TABLE tablename は括弧があるので何もしなくて済むが、
                         // ALTER TABLE tablename は括弧がなく ADD などで始まるので特別分岐
-                        list($index, $name, $comments) = $seek($index, +1);
+                        [$index, $name, $comments] = $seek($index, +1);
                         $result[] = $MARK_SP . $virttoken . $MARK_SP . ($MARK_SP . implode('', $comments) . $MARK_CE) . $name . $MARK_SP;
                         if ($context !== 'CREATE' && $context !== 'DROP') {
                             $result[] = $MARK_BR;
@@ -4289,7 +4526,7 @@ if (!isset($excluded_functions["paml_import"]) && (!function_exists("ryunosuke\\
             $key = null;
             $kv = array_map('trim', quoteexplode(':', $value, 2, $escapers));
             if (count($kv) === 2) {
-                list($key, $value) = $kv;
+                [$key, $value] = $kv;
             }
 
             $prefix = $value[0] ?? null;
@@ -4599,7 +4836,7 @@ if (!isset($excluded_functions["optional"]) && (!function_exists("ryunosuke\\dbm
      *
      * @param object|null $object オブジェクト
      * @param string $expected 期待するクラス名。指定した場合は is_a される
-     * @return mixed $object がオブジェクトならそのまま返し、違うなら NullObject を返す
+     * @return object $object がオブジェクトならそのまま返し、違うなら NullObject を返す
      */
     function optional($object, $expected = null)
     {
@@ -4611,8 +4848,7 @@ if (!isset($excluded_functions["optional"]) && (!function_exists("ryunosuke\\dbm
 
         static $nullobject = null;
         if ($nullobject === null) {
-            $nullobject = new class implements \ArrayAccess, \IteratorAggregate
-            {
+            $nullobject = new class implements \ArrayAccess, \IteratorAggregate {
                 // @formatter:off
                 public function __isset($name) { return false; }
                 public function __get($name) { return null; }
@@ -4629,6 +4865,7 @@ if (!isset($excluded_functions["optional"]) && (!function_exists("ryunosuke\\dbm
                 // @formatter:on
             };
         }
+        /** @var object $nullobject */
         return $nullobject;
     }
 }
@@ -4813,8 +5050,7 @@ if (!isset($excluded_functions["cache"]) && (!function_exists("ryunosuke\\dbml\\
     function cache($key, $provider, $namespace = null)
     {
         static $cacheobject;
-        $cacheobject = $cacheobject ?? new class(cachedir())
-            {
+        $cacheobject = $cacheobject ?? new class(cachedir()) {
                 const CACHE_EXT = '.php-cache';
 
                 /** @var string キャッシュディレクトリ */

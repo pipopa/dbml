@@ -54,7 +54,7 @@
 		<span class="label label-info"></span>
 		<span class="label label-info"></span>
 		<span class="label label-deprecated"></span>
-        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/Expression/TableDescriptor.php#L19-L579" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/Expression/TableDescriptor.php#L19-L617" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                     	</div>
 
 	<h2>class <span class="category-name">ryunosuke\dbml\Query\Expression\TableDescriptor</span></h2>
@@ -63,7 +63,7 @@
 <p>テーブル記法の概念については <tag_link data-kind='fqsen' data-type-category='type' data-type-fqsen='ryunosuke\dbml\' data-type-array='0' data-description='dbml'>dbml</tag_link> を参照。<br />
 なお、内部的に使用されるだけで能動的に new したり活用されたりするようなクラスではない。</p>
 <p>下記に記法としての定義を記載する。組み合わせた場合の使用例は <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::column()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::column()'>ryunosuke\dbml\Query\QueryBuilder::column()</tag_link> を参照。</p>
-<p><code>'(joinsign)tablename(pkval)@scope:fkeyname[condition]+order-by#offset-limit AS Alias.col1, col2 AS C2'</code></p>
+<p><code>'(joinsign)tablename(pkval)@scope:fkeyname[condition]&lt;groupby&gt;+order-by#offset-limit AS Alias.col1, col2 AS C2'</code></p>
 <table>
 <thead>
 <tr><th align="left">要素</th><th align="center">必須</th><th align="left">説明</th></tr>
@@ -76,6 +76,7 @@
 <tr><td align="left">:fkeyname</td><td align="center">任意</td><td align="left">JOIN に使用する外部キー名を指定する</td></tr>
 <tr><td align="left">[condition]</td><td align="center">任意</td><td align="left">絞り込み条件を yaml で指定する（where 記法）</td></tr>
 <tr><td align="left">{condition}</td><td align="center">任意</td><td align="left">絞り込み条件を yaml で指定する（カラム結合）</td></tr>
+<tr><td align="left"><groupby></td><td align="center">任意</td><td align="left">GROUP BY を指定する</td></tr>
 <tr><td align="left">+order-by</td><td align="center">任意</td><td align="left">ORDER BY を指定する</td></tr>
 <tr><td align="left">#offset-limit</td><td align="center">任意</td><td align="left">LIMIT, OFFSET を指定する</td></tr>
 <tr><td align="left">AS Alias</td><td align="center">任意</td><td align="left">テーブルエイリアスを指定する</td></tr>
@@ -133,6 +134,13 @@
 <p>テーブルのサフィックスとして yaml 記法で絞り込み条件を表す。</p>
 <ul>
 <li>e.g. <code>tablename{selfid: otherid}</code> （<code>selfid = otherid</code> となる（カラムで結合する））</li>
+</ul>
+<h4><groupby></h4>
+<p>テーブルのサフィックスとして &lt;group-key&gt; で GROUP BY を表す。<br />
+"+" プレフィックスで昇順、 "-" プレフィックスで降順を表す。各指定の明確な区切りはない（≒[+-] のどちらかは必須）。</p>
+<ul>
+<li>e.g. <code>tablename&lt;id&gt;</code> （<code>GROUP BY id</code> となる）</li>
+<li>e.g. <code>tablename&lt;year, month&gt;</code> （<code>GROUP BY year, month</code> となる）</li>
 </ul>
 <h4>+order-by</h4>
 <p>テーブルのサフィックスとして [+-]columnname で ORDER BY を表す。<br />
@@ -198,7 +206,7 @@
             				<li class="structure-item">
 					<div class="attribute">
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/Expression/TableDescriptor.php#L187-L188" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/Expression/TableDescriptor.php#L197-L198" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\Expression\TableDescriptor::META_CHARACTORS" tabindex="-1" class="structure-title">
 						<small>string[]</small>
@@ -219,7 +227,7 @@
 						<span class="label label-default"></span>
 						<span class="label label-primary">magic</span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/Expression/TableDescriptor.php#L167-L167" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/Expression/TableDescriptor.php#L176-L176" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\Expression\TableDescriptor::$descriptor" tabindex="-1" class="structure-title">
 						<small>mixed</small>
@@ -234,7 +242,7 @@
 						<span class="label label-default"></span>
 						<span class="label label-primary">magic</span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/Expression/TableDescriptor.php#L168-L168" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/Expression/TableDescriptor.php#L177-L177" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\Expression\TableDescriptor::$joinsign" tabindex="-1" class="structure-title">
 						<small>string</small>
@@ -249,7 +257,7 @@
 						<span class="label label-default"></span>
 						<span class="label label-primary">magic</span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/Expression/TableDescriptor.php#L169-L169" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/Expression/TableDescriptor.php#L178-L178" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\Expression\TableDescriptor::$table" tabindex="-1" class="structure-title">
 						<small>string</small>
@@ -264,7 +272,7 @@
 						<span class="label label-default"></span>
 						<span class="label label-primary">magic</span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/Expression/TableDescriptor.php#L170-L170" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/Expression/TableDescriptor.php#L179-L179" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\Expression\TableDescriptor::$alias" tabindex="-1" class="structure-title">
 						<small>string</small>
@@ -279,7 +287,7 @@
 						<span class="label label-default"></span>
 						<span class="label label-primary">magic</span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/Expression/TableDescriptor.php#L172-L172" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/Expression/TableDescriptor.php#L181-L181" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\Expression\TableDescriptor::$jointable" tabindex="-1" class="structure-title">
 						<small><a href="ryunosuke-dbml-Query-Expression-TableDescriptor$typespace.html#ryunosuke\dbml\Query\Expression\TableDescriptor" class="fqsen "><small>ryunosuke\dbml\Query\Expression\</small><wbr>TableDescriptor</a>[]</small>
@@ -294,7 +302,7 @@
 						<span class="label label-default"></span>
 						<span class="label label-primary">magic</span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/Expression/TableDescriptor.php#L173-L173" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/Expression/TableDescriptor.php#L182-L182" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\Expression\TableDescriptor::$scope" tabindex="-1" class="structure-title">
 						<small>array</small>
@@ -309,7 +317,7 @@
 						<span class="label label-default"></span>
 						<span class="label label-primary">magic</span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/Expression/TableDescriptor.php#L174-L174" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/Expression/TableDescriptor.php#L183-L183" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\Expression\TableDescriptor::$condition" tabindex="-1" class="structure-title">
 						<small>array</small>
@@ -324,7 +332,7 @@
 						<span class="label label-default"></span>
 						<span class="label label-primary">magic</span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/Expression/TableDescriptor.php#L175-L175" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/Expression/TableDescriptor.php#L184-L184" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\Expression\TableDescriptor::$fkeyname" tabindex="-1" class="structure-title">
 						<small>string</small>
@@ -339,7 +347,22 @@
 						<span class="label label-default"></span>
 						<span class="label label-primary">magic</span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/Expression/TableDescriptor.php#L176-L176" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/Expression/TableDescriptor.php#L185-L185" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="ryunosuke\dbml\Query\Expression\TableDescriptor::$group" tabindex="-1" class="structure-title">
+						<small>array</small>
+						$group						<var></var>
+					</h4>
+					<div class="inner-item">
+						<div class="description"></div>
+                                                					</div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-primary">magic</span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/Expression/TableDescriptor.php#L186-L186" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\Expression\TableDescriptor::$order" tabindex="-1" class="structure-title">
 						<small>array</small>
@@ -354,7 +377,7 @@
 						<span class="label label-default"></span>
 						<span class="label label-primary">magic</span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/Expression/TableDescriptor.php#L177-L177" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/Expression/TableDescriptor.php#L187-L187" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\Expression\TableDescriptor::$offset" tabindex="-1" class="structure-title">
 						<small>int</small>
@@ -369,7 +392,7 @@
 						<span class="label label-default"></span>
 						<span class="label label-primary">magic</span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/Expression/TableDescriptor.php#L178-L178" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/Expression/TableDescriptor.php#L188-L188" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\Expression\TableDescriptor::$limit" tabindex="-1" class="structure-title">
 						<small>int</small>
@@ -384,7 +407,7 @@
 						<span class="label label-default"></span>
 						<span class="label label-primary">magic</span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/Expression/TableDescriptor.php#L179-L179" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/Expression/TableDescriptor.php#L189-L189" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\Expression\TableDescriptor::$column" tabindex="-1" class="structure-title">
 						<small>array</small>
@@ -399,7 +422,7 @@
 						<span class="label label-default"></span>
 						<span class="label label-primary">magic</span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/Expression/TableDescriptor.php#L180-L180" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/Expression/TableDescriptor.php#L190-L190" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\Expression\TableDescriptor::$key" tabindex="-1" class="structure-title">
 						<small>string</small>
@@ -414,7 +437,7 @@
 						<span class="label label-default"></span>
 						<span class="label label-primary">magic</span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/Expression/TableDescriptor.php#L183-L183" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/Expression/TableDescriptor.php#L193-L193" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\Expression\TableDescriptor::$remaining" tabindex="-1" class="structure-title">
 						<small>string</small>
@@ -429,7 +452,7 @@
 						<span class="label label-default"></span>
 						<span class="label label-primary">magic</span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/Expression/TableDescriptor.php#L171-L171" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/Expression/TableDescriptor.php#L180-L180" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\Expression\TableDescriptor::$jointype" tabindex="-1" class="structure-title">
 						<small>string</small>
@@ -444,7 +467,7 @@
 						<span class="label label-default"></span>
 						<span class="label label-primary">magic</span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/Expression/TableDescriptor.php#L181-L181" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/Expression/TableDescriptor.php#L191-L191" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\Expression\TableDescriptor::$accessor" tabindex="-1" class="structure-title">
 						<small>string</small>
@@ -459,7 +482,7 @@
 						<span class="label label-default"></span>
 						<span class="label label-primary">magic</span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/Expression/TableDescriptor.php#L182-L182" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/Expression/TableDescriptor.php#L192-L192" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\Expression\TableDescriptor::$fkeysuffix" tabindex="-1" class="structure-title">
 						<small>string</small>
@@ -483,7 +506,7 @@
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/Expression/TableDescriptor.php#L313-L355" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/Expression/TableDescriptor.php#L340-L382" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\Expression\TableDescriptor::forge()" tabindex="-1" class="structure-title ">
                         forge                        	<small>($database, $descriptor, $columnIfString = [&quot;*&quot;]) : <a href="ryunosuke-dbml-Query-Expression-TableDescriptor$typespace.html#ryunosuke\dbml\Query\Expression\TableDescriptor" class="fqsen "><small>ryunosuke\dbml\Query\Expression\</small><wbr>TableDescriptor</a>[]</small>
@@ -542,7 +565,7 @@
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/Expression/TableDescriptor.php#L357-L556" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/Expression/TableDescriptor.php#L384-L594" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\Expression\TableDescriptor::__construct()" tabindex="-1" class="structure-title ">
                         __construct                        	<small>($database, $descriptor, $cols) : void</small>
@@ -600,7 +623,7 @@
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/Expression/TableDescriptor.php#L558-L578" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Query/Expression/TableDescriptor.php#L596-L616" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="ryunosuke\dbml\Query\Expression\TableDescriptor::__get()" tabindex="-1" class="structure-title ">
                         __get                        	<small>($name) : void</small>

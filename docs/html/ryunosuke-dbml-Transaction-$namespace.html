@@ -207,7 +207,7 @@ $tx-&gt;perform(); // =3
 							<span class="label label-info"></span>
 							<span class="label label-info"></span>
 							<span class="label label-deprecated"></span>
-                            			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction/Logger.php#L12-L248" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                            			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Transaction/Logger.php#L12-L293" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
             						</div>
 						<h4 id="ryunosuke\dbml\Transaction\Logger" tabindex="-1" class="structure-title ">
 							<a href="ryunosuke-dbml-Transaction-Logger$typespace.html#ryunosuke\dbml\Transaction\Logger">Logger</a>
@@ -238,8 +238,12 @@ $db = new Database($connection, [
 別にグローバルなロガーとして設定しても問題はない。</p>
 <h3>buffer オプションについて</h3>
 <p>コンストラクタオプションで buffer を渡すと下記のような動作モードになる。<br />
-fastcgi_finish_request など、クライアントに速度を意識させない方法があるなら基本的には true を推奨する。<br />
-BLOB INSERT が多いとか、軽めのクエリの数が多いとか、要件に応じて適時変更したほうが良い。</p>
+fastcgi_finish_request など、クライアントに速度を意識させない方法があるなら基本的には array を推奨する。<br />
+BLOB INSERT が多いとか、軽めのクエリの数が多いとか、バッチで動いているとか、要件・状況に応じて適時変更したほうが良い。</p>
+<h4>false</h4>
+<p>逐次書き込む。</p>
+<p>逐次変換処理は行われるがメモリは一切消費しないし、ロックも伴わない。<br />
+ただし、逐次書き込むので<strong>ログがリクエスト単位にならない</strong>（別リクエストの割り込みログが発生する）。</p>
 <h4>int</h4>
 <p>指定されたサイズでバッファリングして終了時に書き込む（超えた分は一時ファイル書き出し）。</p>
 <p>メモリには優しいが、逐次ログの変換処理が発生するため、場合によっては動作速度があまりよろしくない。<br />
@@ -249,10 +253,11 @@ BLOB INSERT が多いとか、軽めのクエリの数が多いとか、要件�
 <p>ログの変換処理が逐次行われず、終了時に変換と書き込みを行うので、 fastcgi_finish_request があるなら（クライアントの）動作速度に一切の影響を与えない。<br />
 ただし、 長大なクエリや BLOB INSERT などもすべて蓄えるのでメモリには優しくない。<br />
 終了時にロックして書き込むので<strong>ログがリクエスト単位になる</strong>（別リクエストの割り込みログが発生しない）。</p>
-<h4>false</h4>
-<p>逐次書き込む。</p>
-<p>逐次変換処理は行われるがメモリは一切消費しないし、ロックも伴わない。<br />
-ただし、逐次書き込むので<strong>ログがリクエスト単位にならない</strong>（別リクエストの割り込みログが発生する）。</p>
+<h4>array</h4>
+<p>指定されたサイズまでは配列に溜め込んで、それ以上はバッファリングして終了時に書き込む。</p>
+<p>上記の int と true の合わせ技（2要素の配列で指定する）。<br />
+http のときは全部配列に収まるように、 batch のときは溢れてもいいようなサイズを設定すれば共通の設定を使い回せる。<br />
+終了時にロックして書き込むので<strong>ログがリクエスト単位になる</strong>（別リクエストの割り込みログが発生しない）。</p>
 </div>
 						</div>
 						<div class="attribute">
