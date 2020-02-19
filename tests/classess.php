@@ -74,10 +74,10 @@ namespace ryunosuke\Test {
             }
         }
 
-        public function executeUpdate($query, iterable $params = [])
+        public function executeAffect($query, iterable $params = [])
         {
             $this->is_dirty = true;
-            return parent::executeUpdate($query, $params);
+            return parent::executeAffect($query, $params);
         }
 
         /**

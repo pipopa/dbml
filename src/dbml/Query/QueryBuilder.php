@@ -3594,9 +3594,9 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
      * // この段階では state: active は固定されているが、:id は未確定
      * $stmt = $qb->getPreparedStatement();
      * // ここで実行することで id: 1 がプリペアで実行される
-     * $stmt->executeQuery(['id' => 1]); // SELECT t_article.* FROM t_article WHERE (id = 1) AND (state = "active")
+     * $stmt->executeSelect(['id' => 1]); // SELECT t_article.* FROM t_article WHERE (id = 1) AND (state = "active")
      * // さらに続けてプリペアで id: 2 を実行できる
-     * $stmt->executeQuery(['id' => 2]); // SELECT t_article.* FROM t_article WHERE (id = 2) AND (state = "active")
+     * $stmt->executeSelect(['id' => 2]); // SELECT t_article.* FROM t_article WHERE (id = 2) AND (state = "active")
      * ```
      *
      * @return $this 自分自身

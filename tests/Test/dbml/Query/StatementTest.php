@@ -68,18 +68,18 @@ class StatementTest extends \ryunosuke\Test\AbstractUnitTestCase
             ]
         ];
 
-        // executeQuery はスレーブに接続されるのでエラーにならないはず
+        // executeSelect はスレーブに接続されるのでエラーにならないはず
         $stmt = new Statement('select ? as hoge, :fuga as fuga from test_slave', ['hoge'], $database);
-        $this->assertEquals($expected, $stmt->executeQuery([':fuga' => 'fuga'])->fetchAll());
+        $this->assertEquals($expected, $stmt->executeSelect([':fuga' => 'fuga'])->fetchAll());
 
-        // executeUpdate はマスターに接続されるのでエラーにならないはず
+        // executeAffect はマスターに接続されるのでエラーにならないはず
         $stmt = new Statement('select ? as hoge, :fuga as fuga from test_master', ['hoge'], $database);
-        $this->assertEquals($expected, $stmt->executeUpdate([':fuga' => 'fuga'])->fetchAll());
+        $this->assertEquals($expected, $stmt->executeAffect([':fuga' => 'fuga'])->fetchAll());
 
         // connection を指定すればそれが使われるはず
         $stmt = new Statement('select ? as hoge, :fuga as fuga from test_master', ['hoge'], $database);
-        $this->assertEquals($expected, $stmt->executeQuery([':fuga' => 'fuga'], $master)->fetchAll());
+        $this->assertEquals($expected, $stmt->executeSelect([':fuga' => 'fuga'], $master)->fetchAll());
         $stmt = new Statement('select ? as hoge, :fuga as fuga from test_slave', ['hoge'], $database);
-        $this->assertEquals($expected, $stmt->executeQuery([':fuga' => 'fuga'], $slave)->fetchAll());
+        $this->assertEquals($expected, $stmt->executeSelect([':fuga' => 'fuga'], $slave)->fetchAll());
     }
 }

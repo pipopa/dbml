@@ -1123,19 +1123,19 @@ class Database
     private function _sqlToStmt($sql, iterable $params, Connection $connection)
     {
         if ($sql instanceof Statement) {
-            $stmt = $sql->executeQuery($params, $connection);
+            $stmt = $sql->executeSelect($params, $connection);
         }
         elseif ($sql instanceof QueryBuilder) {
             $stmt = $sql->getPreparedStatement();
             if ($stmt) {
-                $stmt = $stmt->executeQuery($params, $connection);
+                $stmt = $stmt->executeSelect($params, $connection);
             }
             else {
-                $stmt = $this->executeQuery($this->_builderToSql($sql, $params), $params);
+                $stmt = $this->executeSelect($this->_builderToSql($sql, $params), $params);
             }
         }
         else {
-            $stmt = $this->executeQuery($sql, $params);
+            $stmt = $this->executeSelect($sql, $params);
         }
         $stmt->setFetchMode($this->getCheckSameColumn() ? \PDO::FETCH_NAMED : \PDO::FETCH_ASSOC);
 
@@ -2772,8 +2772,8 @@ class Database
      * $stmt = $db->prepareDelete('table_name', ['id = :id']);    // prepare するときは本来ならこのように指定すべきだが・・・
      * $stmt = $db->prepareDelete('table_name', ['id' => ':id']); // このようなミスがよくある（これは id = ":id" に展開されるのでエラーになる）
      * $stmt = $db->prepareDelete('table_name', ':id');           // このように指定したほうが平易で良い。そしてこの時点で id = :id になるので・・・
-     * $stmt->executeUpdate(['id' => 1]);                         // WHERE id = 1 で実行できる
-     * $stmt->executeUpdate(['id' => 2]);                         // WHERE id = 2 で実行できる
+     * $stmt->executeAffect(['id' => 1]);                         // WHERE id = 1 で実行できる
+     * $stmt->executeAffect(['id' => 2]);                         // WHERE id = 2 で実行できる
      *
      * # No.23（最高にややこしいが、実用上は「OR する場合は配列で包む」という認識でまず事足りるはず）
      * # 原則として配列間は AND で結合される。しかし、要素を配列で包むと、現在のコンテキストとは逆（AND なら OR、OR なら AND）の演算子で結合させることができる
@@ -4101,7 +4101,7 @@ class Database
     {
         $builder = $this->selectAggregate($aggregation, $column, $where, $groupBy, $having);
 
-        $stmt = $this->executeQuery($builder, $builder->getParams());
+        $stmt = $this->executeSelect($builder, $builder->getParams());
 
         $cast = function ($var) {
             if ((!is_int($var) && !is_float($var)) && preg_match('#^-?([1-9]\d*|0)(\.\d+)?$#u', (string) $var, $match)) {
@@ -4351,8 +4351,8 @@ class Database
      * // prepare した地点で疑問符パラメータである name は固定される
      * $stmt = $db->prepare('UPDATE t_table SET name = ? WHERE id = :id', ['hoge']);
      * // あとから id パラメータを与えて実行することができる
-     * $stmt->executeUpdate(['id' => 1]); // UPDATE t_table SET name = 'hoge' WHERE id = 1
-     * $stmt->executeUpdate(['id' => 2]); // UPDATE t_table SET name = 'hoge' WHERE id = 2
+     * $stmt->executeAffect(['id' => 1]); // UPDATE t_table SET name = 'hoge' WHERE id = 1
+     * $stmt->executeAffect(['id' => 2]); // UPDATE t_table SET name = 'hoge' WHERE id = 2
      *
      * // SELECT
      * // 得られた Statement は fetchXXX に与えることができる
@@ -4367,16 +4367,16 @@ class Database
      * $db->fetchTuple($stmt, ['id' => 2]); // SELECT * FROM t_table WHERE id = 2
      * // INSERT
      * $stmt = $db->prepareInsert('t_table', [':id', ':name']);
-     * $stmt->executeUpdate(['id' => 101, 'name' => 'hoge']);
-     * $stmt->executeUpdate(['id' => 102, 'name' => 'fuga']);
+     * $stmt->executeAffect(['id' => 101, 'name' => 'hoge']);
+     * $stmt->executeAffect(['id' => 102, 'name' => 'fuga']);
      * // UPDATE
      * $stmt = $db->prepareUpdate('t_table', [':name'], [':id']);
-     * $stmt->executeUpdate(['id' => 101, 'name' => 'HOGE']);
-     * $stmt->executeUpdate(['id' => 102, 'name' => 'FUGA']);
+     * $stmt->executeAffect(['id' => 101, 'name' => 'HOGE']);
+     * $stmt->executeAffect(['id' => 102, 'name' => 'FUGA']);
      * // DELETE
      * $stmt = $db->prepareDelete('t_table', [':id']);
-     * $stmt->executeUpdate(['id' => 101]);
-     * $stmt->executeUpdate(['id' => 102]);
+     * $stmt->executeAffect(['id' => 101]);
+     * $stmt->executeAffect(['id' => 102]);
      * ```
      *
      * @used-by prepareSelect()
@@ -4401,7 +4401,30 @@ class Database
     /**
      * 取得系クエリを実行する
      *
-     * @inheritdoc Connection::executeQuery
+     * @inheritdoc Connection::executeQuery()
+     */
+    public function executeSelect($query, iterable $params = [])
+    {
+        /** @noinspection PhpDeprecationInspection */
+        return $this->executeQuery($query, $params);
+    }
+
+    /**
+     * 更新系クエリを実行する
+     *
+     * @inheritdoc Connection::executeUpdate()
+     */
+    public function executeAffect($query, iterable $params = [])
+    {
+        /** @noinspection PhpDeprecationInspection for compatible */
+        return $this->executeUpdate($query, $params);
+    }
+
+    /**
+     * 取得系クエリを実行する
+     *
+     * @deprecated for compatible
+     * @inheritdoc executeSelect()
      */
     public function executeQuery($query, iterable $params = [])
     {
@@ -4425,7 +4448,8 @@ class Database
     /**
      * 更新系クエリを実行する
      *
-     * @inheritdoc Connection::executeUpdate
+     * @deprecated for compatible
+     * @inheritdoc executeAffect()
      */
     public function executeUpdate($query, iterable $params = [])
     {
@@ -4749,7 +4773,7 @@ class Database
                 }
                 $sql[] = "(" . implode(', ', $vars) . ") SET " . implode(', ', $sets);
             }
-            return $this->executeUpdate(implode(" ", $sql));
+            return $this->executeAffect(implode(" ", $sql));
         }
         else {
             $file = new \SplFileObject($filename);
@@ -4807,7 +4831,7 @@ class Database
 
                 if (++$n === $options['chunk']) {
                     $sql = sprintf($template, implode(', ', $colnames), implode(', ', $values));
-                    $affected[] = $this->executeUpdate($sql, $params);
+                    $affected[] = $this->executeAffect($sql, $params);
                     $n = 0;
                     $values = $params = [];
                 }
@@ -4815,7 +4839,7 @@ class Database
 
             if ($values) {
                 $sql = sprintf($template, implode(', ', $colnames), implode(', ', $values));
-                $affected[] = $this->executeUpdate($sql, $params);
+                $affected[] = $this->executeAffect($sql, $params);
             }
             if ($this->getUnsafeOption('dryrun') || $this->getUnsafeOption('preparing')) {
                 return $options['chunk'] ? $affected : reset($affected);
@@ -4855,7 +4879,7 @@ class Database
 
         $sql = "INSERT INTO $tableName " . concat('(', implode(', ', $columns), ') ') . $query;
 
-        return $this->executeUpdate($sql, $params);
+        return $this->executeAffect($sql, $params);
     }
 
     /**
@@ -4916,7 +4940,7 @@ class Database
 
             if (++$n === $chunk) {
                 $sql = sprintf($template, implode(', ', $columns), implode(', ', $values));
-                $affected[] = $this->executeUpdate($sql, $params);
+                $affected[] = $this->executeAffect($sql, $params);
                 $n = 0;
                 $values = [];
                 $params = [];
@@ -4925,7 +4949,7 @@ class Database
 
         if ($values) {
             $sql = sprintf($template, implode(', ', $columns), implode(', ', $values));
-            $affected[] = $this->executeUpdate($sql, $params);
+            $affected[] = $this->executeAffect($sql, $params);
         }
 
         if ($this->getUnsafeOption('dryrun') || $this->getUnsafeOption('preparing')) {
@@ -4984,7 +5008,7 @@ class Database
         $condition[] = $this->getCompatiblePlatform()->getPrimaryCondition(array_uncolumns($pkcols), $tableName);
         $criteria = $this->whereInto($condition, $params);
 
-        return $this->executeUpdate("UPDATE $tableName SET $sets" . ' WHERE ' . implode(' AND ', Adhoc::wrapParentheses($criteria)), $params);
+        return $this->executeAffect("UPDATE $tableName SET $sets" . ' WHERE ' . implode(' AND ', Adhoc::wrapParentheses($criteria)), $params);
     }
 
     /**
@@ -5079,7 +5103,7 @@ class Database
 
             if (++$n === $chunk) {
                 $sql = sprintf($template, implode(', ', $columns), implode(', ', $values), $updates);
-                $affected[] = $this->executeUpdate($sql, array_merge($params, $updateParams));
+                $affected[] = $this->executeAffect($sql, array_merge($params, $updateParams));
                 $n = 0;
                 $values = [];
                 $params = [];
@@ -5088,7 +5112,7 @@ class Database
 
         if ($values) {
             $sql = sprintf($template, implode(', ', $columns), implode(', ', $values), $updates);
-            $affected[] = $this->executeUpdate($sql, array_merge($params, $updateParams));
+            $affected[] = $this->executeAffect($sql, array_merge($params, $updateParams));
         }
 
         if ($this->getUnsafeOption('dryrun') || $this->getUnsafeOption('preparing')) {
@@ -5200,7 +5224,7 @@ class Database
             else {
                 // @codeCoverageIgnoreStart
                 if (isset($stmt)) {
-                    $stmt->executeUpdate($row);
+                    $stmt->executeAffect($row);
                 }
                 else {
                     $this->modify($tableName, $row);
@@ -5345,7 +5369,7 @@ class Database
         else {
             $sql .= "SET " . array_sprintf($set, '%2$s = %1$s', ', ');
         }
-        $affected = $this->executeUpdate($sql, $params);
+        $affected = $this->executeAffect($sql, $params);
         if (!is_int($affected)) {
             return $affected;
         }
@@ -5412,7 +5436,7 @@ class Database
 
         if ($tableName instanceof QueryBuilder) {
             $tableName->set($data + $tableName->getColval())->andWhere($identifier);
-            return $this->executeUpdate($this->getCompatiblePlatform()->convertUpdateQuery($tableName), $tableName->getParams());
+            return $this->executeAffect($this->getCompatiblePlatform()->convertUpdateQuery($tableName), $tableName->getParams());
         }
         if (is_array($tableName)) {
             [$tableName, $data] = first_keyvalue($tableName);
@@ -5427,7 +5451,7 @@ class Database
         $criteria = $this->whereInto($this->_prewhere($tableName, $identifier), $params);
 
         $ignore = array_get($opt, 'ignore') ? $this->getCompatiblePlatform()->getIgnoreSyntax() . ' ' : '';
-        $affected = $this->executeUpdate("UPDATE {$ignore}$tableName SET $sets" . ($criteria ? ' WHERE ' . implode(' AND ', Adhoc::wrapParentheses($criteria)) : ''), $params);
+        $affected = $this->executeAffect("UPDATE {$ignore}$tableName SET $sets" . ($criteria ? ' WHERE ' . implode(' AND ', Adhoc::wrapParentheses($criteria)) : ''), $params);
         if (!is_int($affected)) {
             return $affected;
         }
@@ -5475,7 +5499,7 @@ class Database
 
         if ($tableName instanceof QueryBuilder) {
             $tableName->andWhere($identifier);
-            return $this->executeUpdate($this->getCompatiblePlatform()->convertDeleteQuery($tableName, []), $tableName->getParams());
+            return $this->executeAffect($this->getCompatiblePlatform()->convertDeleteQuery($tableName, []), $tableName->getParams());
         }
 
         $tableName = $this->convertTableName($tableName);
@@ -5484,7 +5508,7 @@ class Database
         $criteria = $this->whereInto($this->_prewhere($tableName, $identifier), $params);
 
         $ignore = array_get($opt, 'ignore') ? $this->getCompatiblePlatform()->getIgnoreSyntax() . ' ' : '';
-        $affected = $this->executeUpdate("DELETE {$ignore}FROM $tableName" . ($criteria ? ' WHERE ' . implode(' AND ', Adhoc::wrapParentheses($criteria)) : ''), $params);
+        $affected = $this->executeAffect("DELETE {$ignore}FROM $tableName" . ($criteria ? ' WHERE ' . implode(' AND ', Adhoc::wrapParentheses($criteria)) : ''), $params);
         if (!is_int($affected)) {
             return $affected;
         }
@@ -5557,7 +5581,7 @@ class Database
         $criteria = $this->whereInto($identifier, $params);
 
         $ignore = array_get($opt, 'ignore') ? $this->getCompatiblePlatform()->getIgnoreSyntax() . ' ' : '';
-        $affected = $this->executeUpdate("DELETE {$ignore}FROM $tableName" . ($criteria ? ' WHERE ' . implode(' AND ', Adhoc::wrapParentheses($criteria)) : ''), $params);
+        $affected = $this->executeAffect("DELETE {$ignore}FROM $tableName" . ($criteria ? ' WHERE ' . implode(' AND ', Adhoc::wrapParentheses($criteria)) : ''), $params);
         if (!is_int($affected)) {
             return $affected;
         }
@@ -5639,7 +5663,7 @@ class Database
         $criteria = $this->whereInto($identifier, $params);
 
         $ignore = array_get($opt, 'ignore') ? $this->getCompatiblePlatform()->getIgnoreSyntax() . ' ' : '';
-        $affected[] = $this->executeUpdate("DELETE {$ignore}FROM $tableName" . ($criteria ? ' WHERE ' . implode(' AND ', Adhoc::wrapParentheses($criteria)) : ''), $params);
+        $affected[] = $this->executeAffect("DELETE {$ignore}FROM $tableName" . ($criteria ? ' WHERE ' . implode(' AND ', Adhoc::wrapParentheses($criteria)) : ''), $params);
 
         if ($this->getUnsafeOption('dryrun')) {
             return $affected;
@@ -5975,7 +5999,7 @@ class Database
             $sql .= "SET " . array_sprintf($sets1, '%2$s = %1$s', ', ');
         }
         $sql .= ' ' . $this->getCompatiblePlatform()->getMergeSQL($sets2, $pkname);
-        $affected = $this->executeUpdate($sql, $params);
+        $affected = $this->executeAffect($sql, $params);
         if (!is_int($affected)) {
             return $affected;
         }
@@ -6040,7 +6064,7 @@ class Database
         $sql .= "SELECT " . implode(', ', $selects) . " FROM (SELECT NULL) __T ";
         $sql .= "LEFT JOIN $tableName ON " . ($criteria ? implode(' AND ', Adhoc::wrapParentheses($criteria)) : '1=0');
 
-        $affected = $this->executeUpdate($sql, $params);
+        $affected = $this->executeAffect($sql, $params);
         if (!is_int($affected)) {
             return $affected;
         }
@@ -6110,7 +6134,7 @@ class Database
         $select = $this->select([$sourceTable => $overrideSet], $where);
         $sql = "INSERT INTO $targetTable (" . implode(', ', array_keys($overrideSet)) . ") $select";
 
-        return $this->executeUpdate($sql, array_merge($params, $select->getParams()));
+        return $this->executeAffect($sql, array_merge($params, $select->getParams()));
     }
 
     /**
@@ -6129,7 +6153,7 @@ class Database
     {
         $tableName = $this->convertTableName($tableName);
         $sql = $this->getCompatiblePlatform()->getTruncateTableSQL($tableName, $cascade);
-        $affected = $this->executeUpdate($sql);
+        $affected = $this->executeAffect($sql);
         if (!$this->getCompatiblePlatform()->supportsResetAutoIncrementOnTruncate() && $this->getSchema()->getTableAutoIncrement($tableName)) {
             $this->resetAutoIncrement($tableName);
         }
@@ -6163,7 +6187,7 @@ class Database
 
         $queries = $this->getCompatiblePlatform()->getResetSequenceExpression($tableName, $autocolumn->getName(), $seq);
         foreach ($queries as $query) {
-            $this->executeUpdate($query);
+            $this->executeAffect($query);
         }
     }
 

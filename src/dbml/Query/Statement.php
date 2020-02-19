@@ -96,9 +96,10 @@ class Statement implements Queryable
      * @param Connection $connection コネクション
      * @return \Doctrine\DBAL\Statement stmt オブジェクト
      */
-    public function executeQuery(iterable $params = [], Connection $connection = null)
+    public function executeSelect(iterable $params = [], Connection $connection = null)
     {
-        return $this->_execute($params, $connection ?: $this->database->getSlaveConnection());
+        /** @noinspection PhpDeprecationInspection for compatible */
+        return $this->executeQuery($params, $connection);
     }
 
     /**
@@ -107,6 +108,29 @@ class Statement implements Queryable
      * @param array $params 追加パラメータ
      * @param Connection $connection コネクション
      * @return \Doctrine\DBAL\Statement stmt オブジェクト
+     */
+    public function executeAffect(iterable $params = [], Connection $connection = null)
+    {
+        /** @noinspection PhpDeprecationInspection for compatible */
+        return $this->executeUpdate($params, $connection);
+    }
+
+    /**
+     * 取得系クエリとして実行する
+     *
+     * @deprecated for compatible
+     * @inheritdoc executeSelect()
+     */
+    public function executeQuery(iterable $params = [], Connection $connection = null)
+    {
+        return $this->_execute($params, $connection ?: $this->database->getSlaveConnection());
+    }
+
+    /**
+     * 更新系クエリとして実行する
+     *
+     * @deprecated for compatible
+     * @inheritdoc executeAffect()
      */
     public function executeUpdate(iterable $params = [], Connection $connection = null)
     {

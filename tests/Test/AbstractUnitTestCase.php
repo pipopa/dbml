@@ -683,7 +683,7 @@ abstract class AbstractUnitTestCase extends TestCase
     public static function supportSyntax(Database $database, $syntax)
     {
         try {
-            $database->executeQuery("$syntax");
+            $database->executeSelect("$syntax");
             return true;
         }
         catch (\Exception $e) {

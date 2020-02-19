@@ -749,7 +749,7 @@ AND ((flag=1))", "$gw");
         // select
         $stmt = $gateway->where(['name' => 'b'])->prepareSelect('*', ['id = :id']);
         $this->assertEquals("SELECT test.* FROM test WHERE (test.name = 'b') AND (id = '1')", $queryInto($stmt, ['id' => 1]));
-        $this->assertEquals($stmt->executeQuery(['id' => 2])->fetchAll(), $gateway->array('*', ['id' => 2]));
+        $this->assertEquals($stmt->executeSelect(['id' => 2])->fetchAll(), $gateway->array('*', ['id' => 2]));
 
         $stmt = $database->foreign_p()->where(['name' => 'a'])->prepareSelect([
             'submax'   => $database->foreign_c1()->submax('id'),
@@ -772,8 +772,8 @@ AND ((flag=1))", "$gw");
         if (!$cplatform->supportsIdentityUpdate()) {
             $database->getConnection()->exec($cplatform->getIdentityInsertSQL($gateway->tableName(), true));
         }
-        $stmt->executeUpdate(['id' => 101, 'name' => 'XXX']);
-        $stmt->executeUpdate(['id' => 102, 'name' => 'YYY']);
+        $stmt->executeAffect(['id' => 101, 'name' => 'XXX']);
+        $stmt->executeAffect(['id' => 102, 'name' => 'YYY']);
         if (!$cplatform->supportsIdentityUpdate()) {
             $database->getConnection()->exec($cplatform->getIdentityInsertSQL($gateway->tableName(), false));
         }
@@ -782,15 +782,15 @@ AND ((flag=1))", "$gw");
         // update
         $stmt = $gateway->prepareUpdate([':name'], ['id = :id']);
         $this->assertEquals("UPDATE test SET name = 'xxx' WHERE id = '1'", $queryInto($stmt, ['id' => 1, 'name' => 'xxx']));
-        $stmt->executeUpdate(['id' => 101, 'name' => 'updateXXX']);
-        $stmt->executeUpdate(['id' => 102, 'name' => 'updateYYY']);
+        $stmt->executeAffect(['id' => 101, 'name' => 'updateXXX']);
+        $stmt->executeAffect(['id' => 102, 'name' => 'updateYYY']);
         $this->assertEquals(['updateXXX', 'updateYYY'], $gateway->lists('name', ['id' => [101, 102]]));
 
         // delete
         $stmt = $gateway->prepareDelete(['id = :id']);
         $this->assertEquals("DELETE FROM test WHERE id = '1'", $queryInto($stmt, ['id' => 1]));
-        $stmt->executeUpdate(['id' => 101]);
-        $stmt->executeUpdate(['id' => 102]);
+        $stmt->executeAffect(['id' => 101]);
+        $stmt->executeAffect(['id' => 102]);
         $this->assertEquals([], $gateway->lists('name', ['id' => [101, 102]]));
     }
 
@@ -1451,7 +1451,7 @@ AND ((flag=1))", "$gw");
 
         // for SQLServer
         if (!$database->getCompatiblePlatform()->supportsIdentityUpdate()) {
-            $database->executeUpdate($database->getCompatiblePlatform()->getIdentityInsertSQL('test', false));
+            $database->executeAffect($database->getCompatiblePlatform()->getIdentityInsertSQL('test', false));
         }
     }
 

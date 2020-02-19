@@ -926,8 +926,8 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
     {
         // select
         $stmt = $database->prepareSelect('test', ['id' => $database->raw(':id')]);
-        $this->assertEquals($stmt->executeQuery(['id' => 1])->fetchAll(), $database->fetchArray($stmt, ['id' => 1]));
-        $this->assertEquals($stmt->executeQuery(['id' => 2])->fetchAll(), $database->fetchArray($stmt, ['id' => 2]));
+        $this->assertEquals($stmt->executeSelect(['id' => 1])->fetchAll(), $database->fetchArray($stmt, ['id' => 1]));
+        $this->assertEquals($stmt->executeSelect(['id' => 2])->fetchAll(), $database->fetchArray($stmt, ['id' => 2]));
 
         // select in subquery
         $stmt = $database->prepareSelect([
@@ -940,16 +940,16 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
             $database->subexists('foreign_c1'),
             $database->notSubexists('foreign_c2'),
         ]);
-        $this->assertEquals($stmt->executeQuery(['id' => 1])->fetchAll(), $database->fetchArray($stmt, ['id' => 1]));
-        $this->assertEquals($stmt->executeQuery(['id' => 2])->fetchAll(), $database->fetchArray($stmt, ['id' => 2]));
+        $this->assertEquals($stmt->executeSelect(['id' => 1])->fetchAll(), $database->fetchArray($stmt, ['id' => 1]));
+        $this->assertEquals($stmt->executeSelect(['id' => 2])->fetchAll(), $database->fetchArray($stmt, ['id' => 2]));
 
         // insert
         $stmt = $database->prepareInsert('test', ['id' => $database->raw(':id'), ':name']);
         if (!$database->getCompatiblePlatform()->supportsIdentityUpdate()) {
             $database->getConnection()->exec($database->getCompatiblePlatform()->getIdentityInsertSQL('test', true));
         }
-        $stmt->executeUpdate(['id' => 101, 'name' => 'XXX']);
-        $stmt->executeUpdate(['id' => 102, 'name' => 'YYY']);
+        $stmt->executeAffect(['id' => 101, 'name' => 'XXX']);
+        $stmt->executeAffect(['id' => 102, 'name' => 'YYY']);
         if (!$database->getCompatiblePlatform()->supportsIdentityUpdate()) {
             $database->getConnection()->exec($database->getCompatiblePlatform()->getIdentityInsertSQL('test', false));
         }
@@ -957,36 +957,36 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
 
         // update
         $stmt = $database->prepareUpdate('test', [':name'], ['id = :id']);
-        $stmt->executeUpdate(['id' => 101, 'name' => 'updateXXX']);
-        $stmt->executeUpdate(['id' => 102, 'name' => 'updateYYY']);
+        $stmt->executeAffect(['id' => 101, 'name' => 'updateXXX']);
+        $stmt->executeAffect(['id' => 102, 'name' => 'updateYYY']);
         $this->assertEquals(['updateXXX', 'updateYYY'], $database->selectLists('test.name', ['id' => [101, 102]]));
 
         // :hoge, :fuga の簡易記法
         $stmt = $database->prepareUpdate('test', [':name'], [':id']);
-        $stmt->executeUpdate(['id' => 101, 'name' => 'bindXXX']);
-        $stmt->executeUpdate(['id' => 102, 'name' => 'bindYYY']);
+        $stmt->executeAffect(['id' => 101, 'name' => 'bindXXX']);
+        $stmt->executeAffect(['id' => 102, 'name' => 'bindYYY']);
         $this->assertEquals(['bindXXX', 'bindYYY'], $database->selectLists('test.name', ['id' => [101, 102]]));
 
         // delete
         $stmt = $database->prepareDelete('test', ['id = :id']);
-        $stmt->executeUpdate(['id' => 101]);
-        $stmt->executeUpdate(['id' => 102]);
+        $stmt->executeAffect(['id' => 101]);
+        $stmt->executeAffect(['id' => 102]);
         $this->assertEquals([], $database->selectLists('test.name', ['id' => [101, 102]]));
 
         if ($database->getCompatiblePlatform()->supportsReplace()) {
             // replace
             $stmt = $database->prepareReplace('test', [':id', ':name', ':data']);
-            $stmt->executeUpdate(['id' => 101, 'name' => 'replaceXXX', 'data' => '']);
-            $stmt->executeUpdate(['id' => 102, 'name' => 'replaceXXX', 'data' => '']);
+            $stmt->executeAffect(['id' => 101, 'name' => 'replaceXXX', 'data' => '']);
+            $stmt->executeAffect(['id' => 102, 'name' => 'replaceXXX', 'data' => '']);
             $this->assertEquals(['replaceXXX', 'replaceXXX'], $database->selectLists('test.name', ['id' => [101, 102]]));
         }
 
         if ($database->getCompatiblePlatform()->supportsMerge()) {
             // modify
             $stmt = $database->prepareModify('test', [':id', ':name', ':data']);
-            $stmt->executeUpdate(['id' => 101, 'name' => 'modifyXXX', 'data' => '']);
-            $stmt->executeUpdate(['id' => 102, 'name' => 'modifyYYY', 'data' => '']);
-            $stmt->executeUpdate(['id' => 103, 'name' => 'modifyZZZ', 'data' => '']);
+            $stmt->executeAffect(['id' => 101, 'name' => 'modifyXXX', 'data' => '']);
+            $stmt->executeAffect(['id' => 102, 'name' => 'modifyYYY', 'data' => '']);
+            $stmt->executeAffect(['id' => 103, 'name' => 'modifyZZZ', 'data' => '']);
             $this->assertEquals(['modifyXXX', 'modifyYYY', 'modifyZZZ'], $database->selectLists('test.name', ['id' => [101, 102, 103]]));
         }
 
@@ -1092,25 +1092,25 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
         $database->getConnection()->getConfiguration()->setSQLLogger($logger);
 
         $database->setInjectCallStack('DatabaseTest.php');
-        $database->executeQuery('select * from test');
+        $database->executeSelect('select * from test');
         $this->assertContains(__FILE__, $logger->queries[1]['sql']);
 
         $database->setInjectCallStack('!vendor');
-        $database->executeQuery('select * from test');
+        $database->executeSelect('select * from test');
         $this->assertContains('Database.php#', $logger->queries[2]['sql']);
         $this->assertNotContains('phpunit', $logger->queries[2]['sql']);
 
         $database->setInjectCallStack(['DatabaseTest.php', '!phpunit']);
-        $database->executeQuery('select * from test');
+        $database->executeSelect('select * from test');
         $this->assertContains(__FILE__, $logger->queries[3]['sql']);
         $this->assertNotContains('phpunit', $logger->queries[3]['sql']);
 
         $database->setInjectCallStack('DatabaseTest.php');
-        $database->executeUpdate("update test set name='hoge'");
+        $database->executeAffect("update test set name='hoge'");
         $this->assertContains(__FILE__, $logger->queries[4]['sql']);
 
         $database->setInjectCallStack(function ($path) { return preg_match('/phpunit$/', $path); });
-        $database->executeUpdate("update test set name='hoge'");
+        $database->executeAffect("update test set name='hoge'");
         $this->assertContains('phpunit#', $logger->queries[5]['sql']);
 
         $database->setInjectCallStack(null);
@@ -2448,7 +2448,7 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
      * @dataProvider provideDatabase
      * @param Database $database
      */
-    function test_executeQuery_and_Update($database)
+    function test_executeSelect_and_Update($database)
     {
         $database->insert('noauto', ['id' => false, 'name' => 'hoge']);
         $database->insert('noauto', ['id' => true, 'name' => 'fuga']);
@@ -2747,7 +2747,7 @@ IGNORE 0 LINES
         }
 
         // for mysql 8.0
-        $database->executeUpdate('SET GLOBAL local_infile= 1');
+        $database->executeAffect('SET GLOBAL local_infile= 1');
 
         $csvfile = sys_get_temp_dir() . '/load.csv';
 
@@ -3336,7 +3336,7 @@ ON DUPLICATE KEY UPDATE id = VALUES(id), name = VALUES(name)", $affected);
             $this->assertEquals("INSERT INTO test SET name = 'zz'", $sql);
 
             if ($database->getPlatform() instanceof MySqlPlatform) {
-                $database->executeUpdate($sql);
+                $database->executeAffect($sql);
                 $this->assertEquals('zz', $database->selectValue('test.name', [], ['id' => 'desc'], 1));
             }
         }
@@ -4315,11 +4315,11 @@ ON DUPLICATE KEY UPDATE id = VALUES(id), name = VALUES(name)", $affected);
         // DBMS によって挙動が違うし、そもそもエラーになるものもあるので mysql のみ
         if ($database->getConnection()->getDatabasePlatform() instanceof MySqlPlatform) {
             $mode = $database->fetchValue('SELECT @@SESSION.sql_mode');
-            $database->executeUpdate("SET @@SESSION.sql_mode := ''");
+            $database->executeAffect("SET @@SESSION.sql_mode := ''");
             $pk = $database->insertOrThrow('nullable', ['name' => '', 'cint' => '', 'cfloat' => '', 'cdecimal' => '']);
             $row = $database->selectTuple('nullable.!id', $pk);
             $this->assertSame(['name' => '', 'cint' => '0', 'cfloat' => '0', 'cdecimal' => '0.00'], $row);
-            $database->executeUpdate("SET @@SESSION.sql_mode := '$mode'");
+            $database->executeAffect("SET @@SESSION.sql_mode := '$mode'");
         }
 
         $database->setConvertEmptyToNull(true);
