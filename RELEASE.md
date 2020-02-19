@@ -21,6 +21,27 @@
 - Entity 消したい。使わない…
 - phpstorm と相性が悪いのでマジックメソッドを撲滅したい
 
+## 2.0.1
+
+- [feature][QueryBuilder] on メソッドを追加してサブクエリとの JOIN 機能を強化
+- [feature][QueryBuilder] operatize を実装
+- [feature][Operator] default の行値式対応
+- [feature][Database] echoPhpStormMeta を実装
+- [feature][Database] getAffectedRows メソッドを追加
+- [feature][TableDescriptor] group 記述を追加
+- [feature][Logger] array モードを新設
+- [feature][Generator] ArrayGenerator の assoc 対応
+- [feature][Operator] マジックメソッドで左辺未設定インスタンスを返せるように変更
+- [feature][TableGateway] sub系のエイリアスメソッドを用意
+- [feature][TableGateway] export系メソッドを用意
+- [feature][TableGateway] スコープ定義のインスタンス返しの対応
+- [refactor][all] doctrine 由来のメソッド名を独自体系に変更
+  - deprecated Database::executeQuery, use Database::executeSelect
+  - deprecated Database::executeUpdate, use Database::executeAffect
+- [fixbug][Logger] バイナリ時の表示を修正
+- [fixbug][Database] modify でエラーになることがある不具合を修正
+- [change][Schema] テーブル・カラムの ini 仕様を廃止
+
 ## 2.0.0
 
 - [feature][all] 各所で iterable を受けられるように修正
