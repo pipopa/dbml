@@ -116,6 +116,7 @@ ACTUAL
         @unlink($logs);
         $logger = new Logger([
             'destination' => $logs,
+            'buffer'      => false,
         ]);
 
         $logger->log('select ?', [9]);
@@ -129,12 +130,36 @@ ACTUAL
         $resource = fopen(sys_get_temp_dir() . '/query.log', 'w+');
         $logger = new Logger([
             'destination' => $resource,
+            'buffer'      => false,
         ]);
 
         $logger->log('select ?', [9]);
 
         rewind($resource);
         $this->assertEquals("select 9\n", stream_get_contents($resource));
+    }
+
+    function test_middle_resource()
+    {
+        $resource = fopen(sys_get_temp_dir() . '/query.log', 'w+');
+        $logger = new Logger([
+            'destination' => $resource,
+            'buffer'      => [100, 100],
+        ]);
+
+        $logger->log('select 1, ?', [str_repeat('x', 30)]);
+        $logger->log('select 2, ?', [str_repeat('x', 30)]);
+        $logger->log('select 3, ?', [str_repeat('x', 30)]);
+        $logger->log('select 4, ?', [str_repeat('x', 30)]);
+
+        unset($logger);
+
+        rewind($resource);
+        $this->assertEquals("select 1, 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
+select 2, 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
+select 3, 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
+select 4, 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
+", stream_get_contents($resource));
     }
 
     function test_closure()

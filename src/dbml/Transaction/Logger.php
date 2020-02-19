@@ -41,8 +41,15 @@ use function ryunosuke\dbml\str_ellipsis;
  * ### buffer オプションについて
  *
  * コンストラクタオプションで buffer を渡すと下記のような動作モードになる。
- * fastcgi_finish_request など、クライアントに速度を意識させない方法があるなら基本的には true を推奨する。
- * BLOB INSERT が多いとか、軽めのクエリの数が多いとか、要件に応じて適時変更したほうが良い。
+ * fastcgi_finish_request など、クライアントに速度を意識させない方法があるなら基本的には array を推奨する。
+ * BLOB INSERT が多いとか、軽めのクエリの数が多いとか、バッチで動いているとか、要件・状況に応じて適時変更したほうが良い。
+ *
+ * #### false
+ *
+ * 逐次書き込む。
+ *
+ * 逐次変換処理は行われるがメモリは一切消費しないし、ロックも伴わない。
+ * ただし、逐次書き込むので**ログがリクエスト単位にならない**（別リクエストの割り込みログが発生する）。
  *
  * #### int
  *
@@ -59,12 +66,13 @@ use function ryunosuke\dbml\str_ellipsis;
  * ただし、 長大なクエリや BLOB INSERT などもすべて蓄えるのでメモリには優しくない。
  * 終了時にロックして書き込むので**ログがリクエスト単位になる**（別リクエストの割り込みログが発生しない）。
  *
- * #### false
+ * #### array
  *
- * 逐次書き込む。
+ * 指定されたサイズまでは配列に溜め込んで、それ以上はバッファリングして終了時に書き込む。
  *
- * 逐次変換処理は行われるがメモリは一切消費しないし、ロックも伴わない。
- * ただし、逐次書き込むので**ログがリクエスト単位にならない**（別リクエストの割り込みログが発生する）。
+ * 上記の int と true の合わせ技（2要素の配列で指定する）。
+ * http のときは全部配列に収まるように、 batch のときは溢れてもいいようなサイズを設定すれば共通の設定を使い回せる。
+ * 終了時にロックして書き込むので**ログがリクエスト単位になる**（別リクエストの割り込みログが発生しない）。
  */
 class Logger implements SQLLogger
 {
@@ -73,8 +81,17 @@ class Logger implements SQLLogger
     /** @var resource|\Closure ログハンドル */
     private $handle;
 
-    /** @var resource|array|null ログバッファ */
-    private $buffer;
+    /** @var int array 用の現在のバッファサイズ */
+    private $bufferSize;
+
+    /** @var int array 用の最大のバッファサイズ */
+    private $bufferLimit;
+
+    /** @var resource 一時リソースログバッファ */
+    private $resourceBuffer;
+
+    /** @var array 一時配列ログバッファ */
+    private $arrayBuffer;
 
     public static function getDefaultOptions()
     {
@@ -84,7 +101,7 @@ class Logger implements SQLLogger
             // $sql, $params, $types の文字列化コールバック
             'callback'    => self::simple(),
             // バッファリングモード（true だと 配列に溜め込む。数値だとバッファサイズになる。destination が Closure の場合は無効）
-            'buffer'      => false,
+            'buffer'      => [1024 * 1024 * 8],
             // flock するか否か
             'lockmode'    => true,
         ];
@@ -181,11 +198,18 @@ class Logger implements SQLLogger
 
         $this->handle = is_string($destination) ? fopen($destination, 'ab') : $destination;
 
-        if (is_numeric($buffer)) {
-            $this->buffer = fopen("php://temp/maxmemory:{$buffer}", 'r+b');
+        $this->bufferSize = 0;
+        $this->bufferLimit = 0;
+        if (is_array($buffer)) {
+            $this->bufferLimit = $buffer[0];
+            $this->resourceBuffer = fopen("php://temp/maxmemory:" . ($buffer[1] ?? $buffer[0]), 'r+b');
+            $this->arrayBuffer = [];
+        }
+        elseif (is_int($buffer)) {
+            $this->resourceBuffer = fopen("php://temp/maxmemory:{$buffer}", 'r+b');
         }
         elseif ($buffer) {
-            $this->buffer = [];
+            $this->arrayBuffer = [];
         }
     }
 
@@ -193,7 +217,7 @@ class Logger implements SQLLogger
     {
         $this->OptionTrait__destruct();
 
-        if ($this->buffer === null) {
+        if ($this->resourceBuffer === null && $this->arrayBuffer === null) {
             return;
         }
 
@@ -203,15 +227,15 @@ class Logger implements SQLLogger
             flock($this->handle, LOCK_EX);
         }
 
-        if (is_array($this->buffer)) {
-            foreach ($this->buffer as $log) {
+        if (is_resource($this->resourceBuffer)) {
+            rewind($this->resourceBuffer);
+            stream_copy_to_stream($this->resourceBuffer, $this->handle);
+            fclose($this->resourceBuffer);
+        }
+        if (is_array($this->arrayBuffer)) {
+            foreach ($this->arrayBuffer as $log) {
                 fwrite($this->handle, $this->_stringify(...$log) . "\n");
             }
-        }
-        else {
-            rewind($this->buffer);
-            stream_copy_to_stream($this->buffer, $this->handle);
-            fclose($this->buffer);
         }
 
         if ($locking) {
@@ -228,17 +252,29 @@ class Logger implements SQLLogger
 
     public function log($sql, array $params = [], array $types = [])
     {
-        if (is_array($this->buffer)) {
-            $this->buffer[] = [$sql, $params, $types];
+        // arrayBuffer を優先するため下記の順番を変えてはならない
+        if (is_array($this->arrayBuffer)) {
+            $this->arrayBuffer[] = [$sql, $params, $types];
         }
-        elseif (is_resource($this->buffer)) {
-            fwrite($this->buffer, $this->_stringify($sql, $params, $types) . "\n");
+        elseif (is_resource($this->resourceBuffer)) {
+            fwrite($this->resourceBuffer, $this->_stringify($sql, $params, $types) . "\n");
         }
         elseif (is_resource($this->handle)) {
             fwrite($this->handle, $this->_stringify($sql, $params, $types) . "\n");
         }
         else {
             ($this->handle)($this->_stringify($sql, $params, $types));
+        }
+
+        if ($this->bufferLimit) {
+            $this->bufferSize += strlen($sql) + array_sum(array_map('strlen', $params));
+            if ($this->bufferSize > $this->bufferLimit) {
+                foreach ($this->arrayBuffer as $log) {
+                    fwrite($this->resourceBuffer, $this->_stringify(...$log) . "\n");
+                }
+                $this->arrayBuffer = [];
+                $this->bufferSize = 0;
+            }
         }
     }
 
