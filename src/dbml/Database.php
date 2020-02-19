@@ -606,6 +606,9 @@ class Database
     /** @var \ArrayObject 「未初期化なら生成して返す」系のメソッドのキャッシュ */
     private $cache;
 
+    /** @var int */
+    private $affectedRows;
+
     public static function getDefaultOptions()
     {
         $default_options = [
@@ -4359,7 +4362,8 @@ class Database
 
         // コンテキストを戻すための try～catch
         try {
-            return $this->getMasterConnection()->executeUpdate($query, $params);
+            $this->affectedRows = null;
+            return $this->affectedRows = $this->getMasterConnection()->executeUpdate($query, $params);
         }
         catch (\Exception $ex) {
             $this->unstackAll();
@@ -6064,6 +6068,18 @@ class Database
         foreach ($queries as $query) {
             $this->executeUpdate($query);
         }
+    }
+
+    /**
+     * 最後に更新した行数を返す
+     *
+     * 実行していない or 直前のクエリが失敗していた場合は null を返す。
+     *
+     * @return int|null 更新した行数
+     */
+    public function getAffectedRows()
+    {
+        return $this->affectedRows;
     }
 
     /**

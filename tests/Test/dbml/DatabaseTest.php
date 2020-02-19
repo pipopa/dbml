@@ -30,6 +30,7 @@ use ryunosuke\Test\Entity\ManagedComment;
 use function ryunosuke\dbml\array_order;
 use function ryunosuke\dbml\mkdir_p;
 use function ryunosuke\dbml\rm_rf;
+use function ryunosuke\dbml\try_null;
 
 class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
 {
@@ -5622,6 +5623,29 @@ anywhere.enable = 1
         $this->assertEquals(['id' => 55], $database->insertOrThrow('auto', ['name' => 'hoge']));
 
         $this->assertException('is not auto incremental', L($database)->resetAutoIncrement('noauto', 1));
+    }
+
+    /**
+     * @dataProvider provideDatabase
+     * @param Database $database
+     */
+    function test_getAffectedRows($database)
+    {
+        $pk = $database->insertOrThrow('test', ['name' => 'hoge']);
+        $this->assertEquals(1, $database->getAffectedRows());
+
+        $database->update('test', ['name' => 'fuga'], ['id' => 0]);
+        $this->assertEquals(0, $database->getAffectedRows());
+        $database->update('test', ['name' => 'fuga'], $pk);
+        $this->assertEquals(1, $database->getAffectedRows());
+
+        $database->delete('test', ['id' => 0]);
+        $this->assertEquals(0, $database->getAffectedRows());
+        $database->delete('test', $pk);
+        $this->assertEquals(1, $database->getAffectedRows());
+
+        try_null([$database, 'delete'], 'test', 'unknown = 1');
+        $this->assertNull($database->getAffectedRows());
     }
 
     /**
