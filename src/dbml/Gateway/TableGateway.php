@@ -483,6 +483,16 @@ use function ryunosuke\dbml\try_finally;
  *     レコード群を[key => value]で少しずつ返す（<@uses Database::yieldPairs()> を参照）
  * }
  *
+ * @method int                exportArray($config = [], $tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
+ *     レコード群を php 配列でエクスポートする（<@uses Database::exportArray()> を参照）
+ * }
+ * @method int                exportCsv($config = [], $tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
+ *     レコード群を CSV でエクスポートする（<@uses Database::exportCsv()> を参照）
+ * }
+ * @method int                exportJson($config = [], $tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
+ *     レコード群を JSON でエクスポートする（<@uses Database::exportJson()> を参照）
+ * }
+ *
  * @method QueryBuilder           subselectArray($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []) {
  *     子供レコード（array）を表すサブビルダを返す（<@uses Database::subselect()> を参照）
  * }
@@ -884,6 +894,13 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
         // yield 系メソッド
         if (preg_match('/^yield/ui', $name, $matches)) {
             return $this->database->$name($this->select(...$arguments));
+        }
+
+        // export 系メソッド
+        if (preg_match('/^export/ui', $name, $matches)) {
+            $config = (array)array_shift($arguments);
+            $file = array_get($config, 'file');
+            return $this->database->$name($this->select(...$arguments), [], $config, $file);
         }
 
         // builder への移譲系メソッド

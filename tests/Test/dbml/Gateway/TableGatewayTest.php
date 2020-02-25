@@ -13,6 +13,8 @@ use ryunosuke\dbml\Query\Statement;
 use ryunosuke\Test\Database;
 use ryunosuke\Test\Entity\Article;
 use ryunosuke\Test\Platforms\SqlitePlatform;
+use function ryunosuke\dbml\csv_import;
+use function ryunosuke\dbml\json_import;
 
 class TableGatewayTest extends \ryunosuke\Test\AbstractUnitTestCase
 {
@@ -649,6 +651,30 @@ AND ((flag=1))", "$gw");
         $this->assertEquals($gateway->assoc(), iterator_to_array($gateway->yieldAssoc()));
         $this->assertEquals($gateway->lists(), iterator_to_array($gateway->yieldLists()));
         $this->assertEquals($gateway->pairs(), iterator_to_array($gateway->yieldPairs()));
+    }
+
+    /**
+     * @dataProvider provideGateway
+     * @param TableGateway $gateway
+     * @param Database $database
+     */
+    function test_export($gateway, $database)
+    {
+        // 正しく移譲できていることが担保できれば結果はどうでもいい
+        $gateway = $gateway->column(['id'])->where(['id' => [1, 2, 3]]);
+        $file = sys_get_temp_dir() . '/exportfile.txt';
+        $expected = $gateway->array(['name']);
+
+        $gateway->exportArray(['file' => $file], ['name']);
+        $this->assertEquals($expected, include $file);
+
+        $gateway->exportCsv(['file' => $file], ['name']);
+        $this->assertEquals($expected, csv_import(file_get_contents($file), ['headers' => ['id', 'name']]));
+
+        $gateway->exportJson(['file' => $file], ['name']);
+        $this->assertEquals($expected, json_import(file_get_contents($file)));
+
+        $this->assertException("export type 'undefined'", L($gateway)->exportUndefined([]));
     }
 
     /**
