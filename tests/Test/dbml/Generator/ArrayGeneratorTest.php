@@ -71,4 +71,28 @@ class ArrayGeneratorTest extends \ryunosuke\Test\AbstractUnitTestCase
             ],
         ], require $path);
     }
+
+    /**
+     * @dataProvider provideDatabase
+     * @param Database $database
+     */
+    function test_assoc($database)
+    {
+        $path = tempnam(sys_get_temp_dir(), 'export');
+
+        $y = new Yielder($database->executeQuery('select * from test'), $database->getConnection());
+        $g = new ArrayGenerator([
+            'assoc' => false,
+        ]);
+        $g->generate($path, $y);
+        $rows = $database->fetchAssoc('select * from test');
+        $this->assertEquals(array_values($rows), require $path);
+
+        $y = new Yielder($database->executeQuery('select * from test'), $database->getConnection());
+        $g = new ArrayGenerator([
+            'assoc' => true,
+        ]);
+        $g->generate($path, $y);
+        $this->assertEquals($rows, require $path);
+    }
 }
