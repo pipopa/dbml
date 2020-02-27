@@ -277,6 +277,14 @@ AND ((flag=1))", "$gw");
                 'where'  => ['id <> ?' => $notid],
             ];
         });
+        $gateway->addScope('this', function ($column, $notid = -1) {
+            /** @var TableGateway $this */
+            return $this->column([
+                'calias' => $column,
+            ])->where([
+                'id <> ?' => $notid,
+            ]);
+        });
 
         // 何もしなくてもデフォルトスコープが適用されるはず
         $this->assertEquals('SELECT NOW() FROM test T', (string) $gateway->as('T')->select());
@@ -302,13 +310,18 @@ AND ((flag=1))", "$gw");
         $this->assertEquals('SELECT NOW(), T.col1, T.col2 FROM test T WHERE (T.id <> ?) AND (T.name = ?)', $select);
         $this->assertEquals([-1, 'a'], $select->getParams());
 
+        // スコーピングが適用されるはず
+        $select = $gateway->as('T')->scope('this', 'col1')->select('col2', ['name' => 'a']);
+        $this->assertEquals('SELECT NOW(), T.col1 AS calias, T.col2 FROM test T WHERE (T.id <> ?) AND (T.name = ?)', $select);
+        $this->assertEquals([-1, 'a'], $select->getParams());
+
         // 本体には一切影響がないはず
         $this->assertEquals(['' => []], self::forcedRead($gateway, 'activeScopes'));
 
         // スコープはインスタンス間で共用されるはず
         $gw = $gateway->as('GW');
         $gw->addScope('common', 'NOW()');
-        $this->assertEquals('NOW()', $gateway->getScopeParts('common')['column']);
+        $this->assertEquals(['NOW()'], $gateway->getScopeParts('common')['column']);
 
         // 存在しないスコープは例外が飛ぶはず
         $this->assertException('undefined', L($gateway)->scope('hogera'));
@@ -402,7 +415,7 @@ AND ((flag=1))", "$gw");
             'column'  => ['NOW()', 'name', 'id'],
             'where'   => ['name="a"', 'id' => 2, 'name="x"'],
             'orderBy' => ['id DESC'],
-            'limit'   => 999,
+            'limit'   => [999],
             'groupBy' => [],
             'having'  => [],
         ], $gateway->getScopeParts('mixmix'));

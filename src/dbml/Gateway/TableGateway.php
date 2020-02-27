@@ -88,6 +88,7 @@ use function ryunosuke\dbml\try_finally;
  * `addScope` の引数はクエリビルダ引数と全く同じだが、第1引数のみ Closure を受け付ける。
  * Closure を受けたスコープはクエリビルダ引数を返す必要があるが、引数を受けられるのでパラメータ付きスコープを定義することができる。
  * また、 Closure 内の `$this` は「その時点の Gateway インスタンス」を指すように bind される。これにより `$this->alias` などが使用でき、当たっているスコープやエイリアス名などが取得できる。
+ * さらに `$this` に下記の `column` `where` `orderBy` などを適用して return すればクエリビルダ引数を返さなくてもメソッドベースで適用できる。
  *
  * `scoping` を使用するとスコープを登録せずにその場限りのスコープを当てることができる。
  * また `column` `where` `orderBy` などの個別メソッドがあり、句別にスコープを当てることもできる。
@@ -103,6 +104,10 @@ use function ryunosuke\dbml\try_finally;
  *         'orderBy' => 'create_date DESC',
  *         'limit'   => $limit,
  *     ];
+ * });
+ * // 上記の this 返し版（意味は同じ）
+ * $gw->addScope('latest', function ($limit = 10) {
+ *     return $this->orderBy('create_date DESC')->limit($limit);
  * });
  *
  * // 有効レコードを全取得する（'active' スコープで縛る）
@@ -898,7 +903,7 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
 
         // export 系メソッド
         if (preg_match('/^export/ui', $name, $matches)) {
-            $config = (array)array_shift($arguments);
+            $config = (array) array_shift($arguments);
             $file = array_get($config, 'file');
             return $this->database->$name($this->select(...$arguments), [], $config, $file);
         }
@@ -1530,7 +1535,14 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
             $scope = $tableDescriptor;
         }
         else {
-            $scope = array_combine(QueryBuilder::CLAUSES, [$tableDescriptor, $where, $orderBy, $limit, $groupBy, $having]);
+            $scope = array_combine(QueryBuilder::CLAUSES, [
+                arrayize($tableDescriptor),
+                arrayize($where),
+                arrayize($orderBy),
+                arrayize($limit),
+                arrayize($groupBy),
+                arrayize($having)
+            ]);
         }
         $this->scopes[$name] = $scope;
         return $this;
@@ -1629,8 +1641,8 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
     public function scoping($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
     {
         $that = $this->clone();
-        $hash = spl_object_hash($that) . count($that->scopes);
-        $that->scopes[$hash] = array_combine(QueryBuilder::CLAUSES, [$tableDescriptor, $where, $orderBy, $limit, $groupBy, $having]);
+        $hash = spl_object_id($that) . '_' . count($that->scopes);
+        $that->addScope($hash, ...func_get_args());
         $that->activeScopes[$hash] = [];
         return $that;
     }
@@ -1782,7 +1794,23 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
             if (!$params && array_key_exists($name, $this->activeScopes)) {
                 $params = $this->activeScopes[$name];
             }
-            $scope = $scope->call($this, ...$params) + self::$defargs;
+            $currents = $this->activeScopes;
+            $scope = $scope->call($this, ...$params);
+            if ($scope instanceof TableGateway) {
+                $that = $scope;
+                $scope = self::$defargs;
+                foreach (array_diff_key($that->activeScopes, $currents) as $name => $args) {
+                    $scope = array_merge_recursive($scope, $that->scopes[$name]);
+
+                    // limit は配列とスカラーで扱いが異なるので「指定されていたら上書き」という挙動にする
+                    if ($that->scopes[$name]['limit']) {
+                        $scope['limit'] = $that->scopes[$name]['limit'];
+                    }
+                }
+            }
+            else {
+                $scope += self::$defargs;
+            }
         }
         return $scope;
     }
@@ -1799,43 +1827,41 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
      */
     public function getScopeParams($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
     {
-        // 修飾子の解決
-        $aname = $this->descriptor();
-
         // スコープの解決
-        $scopes = array_map([$this, 'getScopeParts'], array_keys($this->activeScopes));
-        $scopes[] = array_combine(QueryBuilder::CLAUSES, [$tableDescriptor, $where, $orderBy, $limit, $groupBy, $having]);
+        $that = ($tableDescriptor || $where || $orderBy || $limit || $groupBy || $having) ? $this->scoping(...func_get_args()) : $this;
+        $scopes = array_map([$that, 'getScopeParts'], array_keys($that->activeScopes));
+
+        // 修飾子の解決
+        $aname = $that->descriptor();
 
         // JOIN の解決
-        $column = array_each($this->joins, function (&$carry, TableGateway $join) use ($aname) {
+        $column = array_each($that->joins, function (&$carry, TableGateway $join) use ($aname) {
             $joinname = $join->joinParams['type'] . $join->descriptor();
             $carry[$aname][$joinname] = $join;
         }, [$aname => []]);
 
         // スコープを順に適用
-        $where = $orderBy = $limit = $groupBy = $having = [];
+        $sargs = ['column' => $column] + self::$defargs;
         foreach ($scopes as $scope) {
-            $column = array_merge_recursive($column, [$aname => $scope['column']]);
-            $where = array_merge_recursive($where, arrayize($scope['where']));
-            $orderBy = array_merge_recursive($orderBy, arrayize($scope['orderBy']));
-            $groupBy = array_merge_recursive($groupBy, arrayize($scope['groupBy']));
-            $having = array_merge_recursive($having, arrayize($scope['having']));
+            $scope['column'] = [$aname => $scope['column']];
+
+            $sargs = array_merge_recursive($sargs, $scope);
 
             // limit は配列とスカラーで扱いが異なるので「指定されていたら上書き」という挙動にする
             if ($scope['limit']) {
-                $limit = $scope['limit'];
+                $sargs['limit'] = $scope['limit'];
             }
         }
 
         // 修飾子を付加して返す（$column はビルダ側で付けてくれるので不要）
-        $alias = $this->modifier();
+        $alias = $that->modifier();
         return array_combine(QueryBuilder::CLAUSES, [
-            $column,
-            Adhoc::modifier($alias, $where),
-            Adhoc::modifier($alias, $orderBy),
-            $limit,
-            Adhoc::modifier($alias, $groupBy),
-            Adhoc::modifier($alias, $having),
+            $sargs['column'],
+            Adhoc::modifier($alias, $sargs['where']),
+            Adhoc::modifier($alias, $sargs['orderBy']),
+            $sargs['limit'],
+            Adhoc::modifier($alias, $sargs['groupBy']),
+            Adhoc::modifier($alias, $sargs['having']),
         ]);
     }
 
