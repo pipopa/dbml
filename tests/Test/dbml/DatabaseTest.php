@@ -20,6 +20,7 @@ use ryunosuke\dbml\Gateway\TableGateway;
 use ryunosuke\dbml\Generator\Yielder;
 use ryunosuke\dbml\Metadata\CompatiblePlatform;
 use ryunosuke\dbml\Query\Expression\Expression;
+use ryunosuke\dbml\Query\Expression\Operator;
 use ryunosuke\dbml\Query\QueryBuilder;
 use ryunosuke\dbml\Transaction\Logger;
 use ryunosuke\dbml\Transaction\Transaction;
@@ -1555,6 +1556,12 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
         $this->assertEquals(['FUNC(?)'], $whereInto([new Expression('FUNC(?)', [99])]));
         $this->assertEquals([99], $params);
 
+        $this->assertEquals(['col IN (?,?)'], $whereInto(['col' => Operator::is(1, 2)]));
+        $this->assertEquals([1, 2], $params);
+
+        $this->assertEquals(['col IS NULL'], $whereInto(['col' => Operator::is(null)]));
+        $this->assertEquals([], $params);
+
         $this->assertEquals(['(SELECT test.hoge FROM test)'], $whereInto([$database->select('test.hoge')]));
         $this->assertEquals([], $params);
 
@@ -1570,6 +1577,11 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
         $this->assertException(
             new \InvalidArgumentException('notfound search string'),
             L($database)->whereInto(['hoge = ?' => [[1, 2], 3]], $params)
+        );
+
+        $this->assertException(
+            new \UnexpectedValueException('both specified'),
+            L($database)->whereInto(['col:OP' => Operator::is(null)], $params)
         );
     }
 

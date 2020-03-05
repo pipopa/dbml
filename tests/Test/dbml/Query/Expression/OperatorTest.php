@@ -39,6 +39,16 @@ class OperatorTest extends \ryunosuke\Test\AbstractUnitTestCase
         $this->assertEquals('columnName BETWEEN ? AND ?', $actual);
         $this->assertEquals([1, 2], $actual->getParams());
 
+        $actual = Operator::MATCH('hoge');
+        $actual->lazy('columnName');
+        $this->assertEquals('MATCH (columnName) AGAINST (?)', $actual);
+        $this->assertEquals(['hoge'], $actual->getParams());
+
+        $actual = Operator::equal('hoge');
+        $actual->lazy('columnName');
+        $this->assertEquals('columnName = ?', $actual);
+        $this->assertEquals(['hoge'], $actual->getParams());
+
         $this->assertException(new \InvalidArgumentException('length must be greater than 2'), function () {
             /** @noinspection PhpUndefinedMethodInspection */
             Operator::hoge('columnName');
@@ -91,6 +101,10 @@ class OperatorTest extends \ryunosuke\Test\AbstractUnitTestCase
         // NULL (IN)
         $operator = new Operator(self::$platform, Operator::COLVAL, 'hoge', []);
         $this->assertOperator('hoge IN (NULL)', [], $operator);
+
+        // NULLIN
+        $operator = new Operator(self::$platform, Operator::COLVAL, 'hoge', [1, null]);
+        $this->assertOperator('hoge IN (?,?) OR hoge IS NULL', [1, null], $operator);
 
         // 行値式
         $operator = new Operator(self::$platform, Operator::COLVAL, '(hoge, fuga)', [[1, 2], [3, 4]]);

@@ -2676,7 +2676,8 @@ class Database
      * | 25 | `[QueryBuilder]`                               | 略                                 | QueryBuilder の文字列表現をそのまま埋め込む。EXISTS などでよく使用されるが、使い方を誤ると「Operand should contain 1 column(s)」とか「Subquery returns more than 1 row」とか言われるので注意
      * | 26 | `['hoge' => QueryBuilder]`                     | 略                                 | キー付きで QueryBuilder を渡すとサブクエリで条件演算される。左記の場合は `hoge IN (QueryBuilder)` となる
      * | 27 | `[Operator]`                                   | 略                                 | 条件式の代わりに `Operator` インスタンスを渡すことができるが、難解なので説明は省略
-     * | 28 | `['hoge' => function () {}]`                   | 略                                 | クロージャを渡すとクロージャの実行結果が「あたかもそこにあるかのように」振る舞う
+     * | 28 | `['hoge' => Operator::equal(1)]`               | 略                                 | No.5 と同じだが、 equal を別のメソッドに変えればシンプルな key => value 配列を保ちつつ演算子が使える
+     * | 31 | `['hoge' => function () {}]`                   | 略                                 | クロージャを渡すとクロージャの実行結果が「あたかもそこにあるかのように」振る舞う
      *
      * No.9,10 の演算子は `LIKE` や `BETWEEN` 、 `IS NULL` 、範囲指定できる独自の `[~]` 演算子などがある。
      * 組み込みの演算子は {@link Operator} を参照。
@@ -2766,7 +2767,16 @@ class Database
      * ];
      * // WHERE EXISTS(SELECT * FROM subtable) AND (subid1 IN (SELECT subid FROM subtable)) AND (subid2 = (SELECT subid FROM subtable))
      *
-     * # No.28（クロージャを使うと三項演算子を駆使する必要はない上、スコープを閉じ込めることができる）
+     * # No.28（Operator::method を呼ぶと左辺がキーで遅延設定される）
+     * $wheres = [
+     *     // like を呼べばキーに演算子を埋め込まなくても LIKE できる
+     *     'name' => Operator::like('hoge'),
+     *     // not も使える
+     *     'text' => Operator::like('hoge')->not(),
+     * ];
+     * // WHERE name LIKE '%hoge%' AND NOT(text LIKE '%hoge%')
+     *
+     * # No.31（クロージャを使うと三項演算子を駆使する必要はない上、スコープを閉じ込めることができる）
      * $wheres = [
      *     // $condition 次第で EXISTS したい（この程度なら三項演算子で十分だが、もっと複雑だと三項演算子で救いきれない）
      *     function ($db) use ($condition) {
@@ -2854,6 +2864,17 @@ class Database
                 if ($CANDOR === 'NOT') {
                     $nots = $this->whereInto(arrayize($value), $params, $andor, $filterd);
                     array_put($criteria, 'NOT (' . implode(" $orand ", Adhoc::wrapParentheses($nots)) . ')', null, function ($v) { return !Adhoc::is_empty($v); });
+                    continue;
+                }
+                // Operator は列を後定義したものを
+                if ($value instanceof Operator) {
+                    if (strpos($cond, ':') !== false) {
+                        throw new \UnexpectedValueException('OPFUNC and :OP both specified.');
+                    }
+                    $value->lazy($cond, $this->getCompatiblePlatform());
+                    if ($value->getQuery()) {
+                        $criteria[] = $value->merge($params);
+                    }
                     continue;
                 }
                 // Queryable はマージしたものを

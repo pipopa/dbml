@@ -8,18 +8,20 @@ use ryunosuke\dbml\Utility\Adhoc;
 use function ryunosuke\dbml\array_depth;
 use function ryunosuke\dbml\array_each;
 use function ryunosuke\dbml\array_flatten;
+use function ryunosuke\dbml\array_kvmap;
 use function ryunosuke\dbml\arrayize;
 use function ryunosuke\dbml\arrayval;
 use function ryunosuke\dbml\first_keyvalue;
 use function ryunosuke\dbml\str_subreplace;
 
+// @formatter:off
 /**
  * 演算子を表すクラス
  *
  * 内部的に使用されるだけで、明示的に使用する箇所はほとんど無い。
  * ただし、下記の演算子登録を使用する場合は {@link define()} で登録する必要がある。
  *
- * 組み込みの演算子は下記。これらは何もしなくても whereInto で使用することができる。
+ * 組み込みの演算子は下記。これらは何もしなくても {@link Database::whereInto()} で使用することができる。
  *
  * | operator                                       | result                                       | 説明
  * |:--                                             |:--                                           |:--
@@ -40,10 +42,41 @@ use function ryunosuke\dbml\str_subreplace;
  * });
  *
  * # すると whereInto の演算子指定で使用できるようになる
- * $db->whereInto(['col:FISOR' => [1, 2]]);
+ * $db->whereInto([
+ *     'col:FISOR' => [1, 2],
+ * ]);
  * // WHERE FIND_IN_SET(1, col) OR FIND_IN_SET(2, col)
+ *
+ * # 上記のような定義や is, equal などの組み込みの特殊なメソッドの返り値は whereInto で直接指定できる
+ * $db->whereInto([
+ *     'colA' => Operator::FISOR(1, 2),
+ *     'colB' => Operator::in(1, 2),
+ *     'colC' => Operator::between(1, 2),
+ * ]);
+ * // WHERE FIND_IN_SET(1, colA) OR FIND_IN_SET(2, col) AND colB IN (1, 2) AND colB BETWEEN 1 AND 2
  * ```
+ *
+ * @method static $this is(...$args) {値に応じてよしなに等価比較}
+ * @method static $this equal($value) {= 演算子}
+ * @method static $this spaceship($value) {<=> 演算子}
+ * @method static $this in(...$args) {IN 演算子}
+ * @method static $this nullIn(...$args) {NULL 許容 IN 演算子}
+ * @method static $this lt($value) {< 演算子}
+ * @method static $this lte($value) {<= 演算子}
+ * @method static $this gt($value) {> 演算子}
+ * @method static $this gte($value) {>= 演算子}
+ * @method static $this between($min, $max) {BETWEEN 演算子}
+ * @method static $this range($min, $max) {(~) 演算子}
+ * @method static $this rangeLte($min, $max) {[~) 演算子}
+ * @method static $this rangeGte($min, $max) {(~] 演算子}
+ * @method static $this like($word) {LIKE 演算子}
+ * @method static $this likeLeft($word) {%LIKE 演算子}
+ * @method static $this likeRight($word) {LIKE% 演算子}
+ * @method static $this likeIn($word) {LIKEIN 演算子}
+ * @method static $this likeInLeft($word) {%LIKEIN 演算子}
+ * @method static $this likeInRight($word) {LIKEIN% 演算子}
  */
+// @formatter:on
 class Operator implements Queryable
 {
     /// 内部演算子
@@ -51,10 +84,15 @@ class Operator implements Queryable
     public const COLVAL = '__COLVAL__';
 
     /// 標準演算子
+    public const OP_EQUAL     = '=';
     public const OP_SPACESHIP = '<=>';
     public const OP_IS_NULL   = 'IS NULL';
     public const OP_BETWEEN   = 'BETWEEN';
     public const OP_IN        = 'IN';
+    public const OP_LT        = '<';
+    public const OP_LTE       = '<=';
+    public const OP_GT        = '>';
+    public const OP_GTE       = '>=';
 
     /// 拡張LIKE演算子
     public const OP_RIGHT_LIKE = 'LIKE%';
@@ -62,14 +100,40 @@ class Operator implements Queryable
     public const OP_BOTH_LIKE  = '%LIKE%';
 
     /// 独自演算子
-    public const OP_NULLIN        = 'NULLIN';  // x IN (1, 2, 3) OR x IS NULL
+    public const OP_NULLIN        = 'NULLIN';   // x IN (1, 2, 3) OR x IS NULL
     public const OP_RIGHT_LIKEIN  = 'LIKEIN%';  // x LIKE "hoge%" OR x LIKE "fuga%"
     public const OP_LEFT_LIKEIN   = '%LIKEIN';  // x LIKE "%hoge" OR x LIKE "%fuga"
     public const OP_BOTH_LIKEIN   = '%LIKEIN%'; // x LIKE "%hoge%" OR x LIKE "%fuga%"
-    public const OP_RANGE         = '(~)';     // x > 1  && x <  9
-    public const OP_RANGE_LTE     = '[~)';     // x >= 1 && x <  9
-    public const OP_RANGE_GTE     = '(~]';     // x > 1 && x <= 9
-    public const OP_RANGE_BETWEEN = '[~]';     // x >= 1 && x <= 9
+    public const OP_RANGE         = '(~)';      // x > 1 && x <  9
+    public const OP_RANGE_LTE     = '[~)';      // x >= 1 && x <  9
+    public const OP_RANGE_GTE     = '(~]';      // x > 1 && x <= 9
+    public const OP_RANGE_BETWEEN = '[~]';      // x >= 1 && x <= 9
+
+    private const METHODS = [
+        ''                     => ['magic' => '', 'method' => ['_default' => []]],
+        self::COLVAL           => ['magic' => 'is', 'method' => ['_colval' => []]],
+        self::RAW              => ['magic' => '', 'method' => ['_raw' => []]],
+        self::OP_EQUAL         => ['magic' => 'equal', 'method' => ['_default' => []]],
+        self::OP_SPACESHIP     => ['magic' => 'spaceship', 'method' => ['_spaceship' => []]],
+        self::OP_IS_NULL       => ['magic' => '', 'method' => ['_isnull' => []]],
+        self::OP_BETWEEN       => ['magic' => 'between', 'method' => ['_between' => []]],
+        self::OP_IN            => ['magic' => 'in', 'method' => ['_in' => [false]]],
+        self::OP_NULLIN        => ['magic' => 'nullIn', 'method' => ['_in' => [true]]],
+        self::OP_RIGHT_LIKE    => ['magic' => 'likeRight', 'method' => ['_like' => ['', '%']]],
+        self::OP_LEFT_LIKE     => ['magic' => 'likeLeft', 'method' => ['_like' => ['%', '']]],
+        self::OP_BOTH_LIKE     => ['magic' => 'like', 'method' => ['_like' => ['%', '%']]],
+        self::OP_RIGHT_LIKEIN  => ['magic' => 'likeInRight', 'method' => ['_likein' => ['', '%']]],
+        self::OP_LEFT_LIKEIN   => ['magic' => 'likeInLeft', 'method' => ['_likein' => ['%', '']]],
+        self::OP_BOTH_LIKEIN   => ['magic' => 'likeIn', 'method' => ['_likein' => ['%', '%']]],
+        self::OP_LT            => ['magic' => 'lt', 'method' => ['_default' => []]],
+        self::OP_LTE           => ['magic' => 'lte', 'method' => ['_default' => []]],
+        self::OP_GT            => ['magic' => 'gt', 'method' => ['_default' => []]],
+        self::OP_GTE           => ['magic' => 'gte', 'method' => ['_default' => []]],
+        self::OP_RANGE         => ['magic' => 'range', 'method' => ['_range' => ['>', '<']]],
+        self::OP_RANGE_LTE     => ['magic' => 'rangeLte', 'method' => ['_range' => ['>=', '<']]],
+        self::OP_RANGE_GTE     => ['magic' => 'rangeGte', 'method' => ['_range' => ['>', '<=']]],
+        self::OP_RANGE_BETWEEN => ['magic' => '', 'method' => ['_range' => ['>=', '<=']]],
+    ];
 
     /** @var \Closure[] 外部注入演算子 */
     private static $registereds = [];
@@ -121,12 +185,29 @@ class Operator implements Queryable
      *
      * これらはそれぞれ等価になる（$platform は optional）。
      *
+     * 下記の特殊なメソッド名はカラムを指定せずに値だけを指定できる（$platform も不要）。
+     *
+     * - is
+     * - equal
+     * - 他多数（クラスの method を参照）
+     *
+     * これを利用すると {@link Database::whereInto()} で演算子を指定せずシンプルな条件指定が出来るようになる（クラス冒頭を参照）。
+     *
      * @param string $operator 演算子
      * @param array $operands 演算値
      * @return $this Operator インスタンス
      */
     public static function __callStatic($operator, $operands)
     {
+        static $magics = null;
+        $magics = $magics ?? array_kvmap(self::METHODS, function ($k, $v) { return [$v['magic'] => $k]; });
+        if (isset(self::$registereds[$operator])) {
+            return new Operator(null, $operator, null, $operands);
+        }
+        if (($funcname = $magics[$operator] ?? null) !== null) {
+            return new Operator(null, $funcname, null, $operands);
+        }
+
         if (count($operands) < 2) {
             throw new \InvalidArgumentException('argument\'s length must be greater than 2.');
         }
@@ -205,28 +286,8 @@ class Operator implements Queryable
             [$this->string, $this->params] = first_keyvalue($result);
         }
         else {
-            $methods = [
-                ''                     => ['_default' => []],
-                self::COLVAL           => ['_colval' => []],
-                self::RAW              => ['_raw' => []],
-                self::OP_SPACESHIP     => ['_spaceship' => []],
-                self::OP_IS_NULL       => ['_isnull' => []],
-                self::OP_BETWEEN       => ['_between' => []],
-                self::OP_IN            => ['_in' => [false]],
-                self::OP_NULLIN        => ['_in' => [true]],
-                self::OP_RIGHT_LIKE    => ['_like' => ['', '%']],
-                self::OP_LEFT_LIKE     => ['_like' => ['%', '']],
-                self::OP_BOTH_LIKE     => ['_like' => ['%', '%']],
-                self::OP_RIGHT_LIKEIN  => ['_likein' => ['', '%']],
-                self::OP_LEFT_LIKEIN   => ['_likein' => ['%', '']],
-                self::OP_BOTH_LIKEIN   => ['_likein' => ['%', '%']],
-                self::OP_RANGE         => ['_range' => ['>', '<']],
-                self::OP_RANGE_LTE     => ['_range' => ['>=', '<']],
-                self::OP_RANGE_GTE     => ['_range' => ['>', '<=']],
-                self::OP_RANGE_BETWEEN => ['_range' => ['>=', '<=']],
-            ];
-            $method = $methods[strlen($this->operator) ? strtoupper($this->operator) : self::COLVAL] ?? $methods[''];
-            foreach ($method as $name => $args) {
+            $method = self::METHODS[strlen($this->operator) ? strtoupper($this->operator) : self::COLVAL] ?? self::METHODS[''];
+            foreach ($method['method'] as $name => $args) {
                 $this->$name(...$args);
             }
         }
@@ -275,10 +336,10 @@ class Operator implements Queryable
         }
         elseif ($this->isarray) {
             $this->operator = self::OP_IN;
-            $this->_in(false);
+            $this->_in(in_array(null, $this->operand2, true));
         }
         else {
-            $this->operator = '=';
+            $this->operator = self::OP_EQUAL;
             $this->_default();
         }
     }
@@ -368,6 +429,20 @@ class Operator implements Queryable
         $this->string = null;
 
         $this->not = true;
+        return $this;
+    }
+
+    /**
+     * callStatic で作成したインスタンスを後初期化する
+     *
+     * @param CompatiblePlatform $platform プラットフォーム
+     * @param string $operand1 演算値1
+     * @return $this 自分自身
+     */
+    public function lazy($operand1, $platform = null)
+    {
+        $this->platform = $platform ?? $this->platform;
+        $this->operand1 = $operand1;
         return $this;
     }
 
