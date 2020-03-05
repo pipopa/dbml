@@ -35,24 +35,24 @@ class LoggerTest extends \ryunosuke\Test\AbstractUnitTestCase
         $simple = Logger::simple();
         $this->assertEquals(<<<EXPECTED
 select 'abcdefghijklmnopqrstuvwxyz', 2
-where 'abcdefgh' and 1
+where 'abcdefgh' and 1 and 'binary(6162635C3078797A)'
 EXPECTED
             , $simple(<<<ACTUAL
 select ?, ?
-where ? and ?
+where ? and ? and ?
 ACTUAL
-                , ['abcdefghijklmnopqrstuvwxyz', 2, 'abcdefgh', true], []));
+                , ['abcdefghijklmnopqrstuvwxyz', 2, 'abcdefgh', true, 'abc\0xyz'], []));
 
         $simple10 = Logger::simple(10);
         $this->assertEquals(<<<EXPECTED
 select 'abc...wxyz', 2
-where 'abcdefgh' and 1
+where 'abcdefgh' and 1 and 'binary(616...797A)'
 EXPECTED
             , $simple10(<<<ACTUAL
 select ?, ?
-where ? and ?
+where ? and ? and ?
 ACTUAL
-                , ['abcdefghijklmnopqrstuvwxyz', 2, 'abcdefgh', true], []));
+                , ['abcdefghijklmnopqrstuvwxyz', 2, 'abcdefgh', true, 'abc\0xyz'], []));
     }
 
     function test_pretty()

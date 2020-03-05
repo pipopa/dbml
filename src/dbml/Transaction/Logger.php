@@ -116,11 +116,20 @@ class Logger implements SQLLogger
     public static function simple($trimsize = null)
     {
         return function ($sql, $params, $types) use ($trimsize) {
-            if ($trimsize !== null) {
-                foreach ($params as $k => $param) {
-                    if (is_string($param) || (is_object($param) && is_stringable($param))) {
-                        $params[$k] = str_ellipsis($param, $trimsize);
+            foreach ($params as $k => $param) {
+                if (is_string($param) || (is_object($param) && is_stringable($param))) {
+                    $param = (string) $param;
+                    if (strpos($param, '\0') !== false) {
+                        $param = bin2hex($param);
+                        if ($trimsize !== null) {
+                            $param = str_ellipsis($param, $trimsize);
+                        }
+                        $param = 'binary(' . strtoupper($param) . ')';
                     }
+                    elseif ($trimsize !== null) {
+                        $param = str_ellipsis($param, $trimsize);
+                    }
+                    $params[$k] = $param;
                 }
             }
             return sql_bind(trim($sql), $params);
