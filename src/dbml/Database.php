@@ -2240,7 +2240,7 @@ class Database
      */
     public function addForeignKey($localTable, $foreignTable, $columnsMap, $fkname = null)
     {
-        $columnsMap = Adhoc::to_hash($columnsMap);
+        $columnsMap = array_rekey(arrayize($columnsMap), function ($k, $v) { return is_int($k) ? $v : $k; });
 
         // 省略時は自動命名
         if (!$fkname) {
@@ -2267,7 +2267,7 @@ class Database
      */
     public function ignoreForeignKey($localTable, $foreignTable, $columnsMap)
     {
-        $columnsMap = Adhoc::to_hash($columnsMap);
+        $columnsMap = array_rekey(arrayize($columnsMap), function ($k, $v) { return is_int($k) ? $v : $k; });
 
         // 外部キーオブジェクトの生成
         $fk = new ForeignKeyConstraint(array_keys($columnsMap), $foreignTable, array_values($columnsMap));
@@ -2806,9 +2806,9 @@ class Database
                     $cds = [];
                     foreach ($value as $op => $vs) {
                         $ors = $this->whereInto([$op => $vs], $params, $orand, $filterd);
-                        Adhoc::array_push($cds, implode(" $andor ", Adhoc::wrapParentheses($ors)));
+                        array_put($cds, implode(" $andor ", Adhoc::wrapParentheses($ors)), null, function ($v) { return !Adhoc::is_empty($v); });
                     }
-                    Adhoc::array_push($criteria, implode(" $andor ", Adhoc::wrapParentheses($cds)));
+                    array_put($criteria, implode(" $andor ", Adhoc::wrapParentheses($cds)), null, function ($v) { return !Adhoc::is_empty($v); });
                     continue;
                 }
 
@@ -2844,13 +2844,13 @@ class Database
                 $CANDOR = strtoupper($cond);
                 if ($CANDOR === 'AND' || $CANDOR === 'OR') {
                     $ors = $this->whereInto(arrayize($value), $params, $CANDOR === 'AND' ? 'OR' : 'AND', $filterd);
-                    Adhoc::array_push($criteria, implode(" $CANDOR ", Adhoc::wrapParentheses($ors)));
+                    array_put($criteria, implode(" $CANDOR ", Adhoc::wrapParentheses($ors)), null, function ($v) { return !Adhoc::is_empty($v); });
                     continue;
                 }
                 // 同じく、NOT も特別扱い
                 if ($CANDOR === 'NOT') {
                     $nots = $this->whereInto(arrayize($value), $params, $andor, $filterd);
-                    Adhoc::array_push($criteria, 'NOT (' . implode(" $orand ", Adhoc::wrapParentheses($nots)) . ')');
+                    array_put($criteria, 'NOT (' . implode(" $orand ", Adhoc::wrapParentheses($nots)) . ')', null, function ($v) { return !Adhoc::is_empty($v); });
                     continue;
                 }
                 // Queryable はマージしたものを
@@ -2867,11 +2867,7 @@ class Database
                     $subvalues = [];
                     foreach ($value as $k => $v) {
                         if ($v instanceof Queryable) {
-                            $subparams = [];
-                            $subquerys[$k] = $v->merge($subparams);
-                            foreach ($subparams as $sp) {
-                                $subvalues[] = $sp;
-                            }
+                            $subquerys[$k] = $v->merge($subvalues);
                         }
                         else {
                             $subvalues[] = $v;
@@ -2999,7 +2995,7 @@ class Database
 
         // 検索ワードの正規化
         $is_numeric = $quoted ? false : is_numeric($word);
-        $ymdhis = $quoted ? false : Adhoc::parseYmdHis($word);
+        $date_fromto = $quoted ? false : date_fromto(null, $word);
         if ($quoted) {
             $inwords = '%' . $this->getCompatiblePlatform()->escapeLike($word) . '%';
         }
@@ -3046,24 +3042,24 @@ class Database
                 case Types::DATETIMETZ_IMMUTABLE:
                 case Types::DATE_MUTABLE:
                 case Types::DATE_IMMUTABLE:
-                    if ($ymdhis) {
+                    if ($date_fromto) {
                         if (!$coptions['greedy'] && $is_numeric) {
                             break;
                         }
-                        $format = '%04d-%02d-%02d';
+                        $format = 'Y-m-d';
                         if ($type !== Types::DATE_MUTABLE && $type !== Types::DATE_IMMUTABLE) {
-                            $format .= ' %02d:%02d:%02d';
+                            $format .= ' H:i:s';
                         }
-                        $from = Adhoc::fillYmdHis($ymdhis, true);
-                        $to = Adhoc::fillYmdHis($ymdhis, false);
-                        $where[$comment . $key . " BETWEEN ? AND ?"] = [vsprintf($format, $from), vsprintf($format, $to)];
+                        $from = date($format, $date_fromto[0]);
+                        $to = date($format, $date_fromto[1] - 1);
+                        $where[$comment . $key . " BETWEEN ? AND ?"] = [$from, $to];
                     }
                     break;
 
                 // 包含系
                 case Types::STRING:
                 case Types::TEXT:
-                    if (!$coptions['greedy'] && ($is_numeric || $ymdhis)) {
+                    if (!$coptions['greedy'] && ($is_numeric || $date_fromto)) {
                         break;
                     }
                     $collate = '';
@@ -4675,7 +4671,7 @@ class Database
             $columns = $column ?: array_keys(array_filter($this->getSchema()->getTableColumns($tableName), function (Column $column) {
                 return !($column->getCustomSchemaOptions()['virtual'] ?? false);
             }));
-            $colnames = array_filter(array_keys(Adhoc::to_hash($columns)), 'strlen');
+            $colnames = array_filter(array_keys(array_rekey($columns, function ($k, $v) { return is_int($k) ? $v : $k; })), 'strlen');
             $template = "INSERT INTO $tableName (%s) VALUES %s";
 
             $affected = [];

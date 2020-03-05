@@ -28,6 +28,7 @@ use function ryunosuke\dbml\array_lookup;
 use function ryunosuke\dbml\array_map_filter;
 use function ryunosuke\dbml\array_maps;
 use function ryunosuke\dbml\array_order;
+use function ryunosuke\dbml\array_put;
 use function ryunosuke\dbml\array_set;
 use function ryunosuke\dbml\array_sprintf;
 use function ryunosuke\dbml\array_strpad;
@@ -990,7 +991,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
         $ands = [];
         foreach ($predicates as $cond) {
             $placeholders = $this->database->whereInto(arrayize($cond), $params, 'OR', $this->emptyCondition);
-            Adhoc::array_push($ands, implode(' AND ', Adhoc::wrapParentheses($placeholders)));
+            array_put($ands, implode(' AND ', Adhoc::wrapParentheses($placeholders)), null, function ($v) { return !Adhoc::is_empty($v); });
         }
 
         if ($ands) {

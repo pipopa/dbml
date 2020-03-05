@@ -11,9 +11,10 @@ use Doctrine\DBAL\Schema\SchemaException;
 use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Schema\View;
 use Doctrine\DBAL\Types\Type;
-use ryunosuke\dbml\Utility\Adhoc;
 use function ryunosuke\dbml\array_each;
+use function ryunosuke\dbml\array_nest;
 use function ryunosuke\dbml\array_pickup;
+use function ryunosuke\dbml\array_rekey;
 use function ryunosuke\dbml\array_unset;
 use function ryunosuke\dbml\arrayize;
 
@@ -33,37 +34,9 @@ use function ryunosuke\dbml\arrayize;
  *
  * ### メタ情報
  *
- * テーブルやカラムコメントには ini 形式でメタ情報を埋め込むことができる。
- * 設定されているメタ情報は `getTableColumnMetadata` メソッドで取得することができる。
+ * setTableColumn でスキーマの型やメタ情報を変更・追加することが出来る。
+ * 設定されているスキーマ・メタ情報は `getTableColumnMetadata` メソッドで取得することができる。
  * （ただし、現在のところこのメタ情報を活用している機能は非常に少なく、実質 anywhere のみ）。
- *
- * ```sql
- * CREATE TABLE t_table (
- * c_column INT COMMENT 'これはカラムコメントです
- * anywhere.keyonly = 1
- * anywhere.greedy = 0
- * ;↑はカラムのメタ属性です'
- * )
- * COMMENT='これはテーブルコメントです
- * anywhere.keyonly = 1
- * anywhere.greedy = 0
- * ;↑はテーブルのメタ属性です'
- * ```
- *
- * メタ情報は php の `parse_ini_string` で行われるが、ドット区切りで配列の階層を持つことができる。
- * つまり上記のメタ情報は
- *
- * ```php
- * [
- *     'anywhere' => [
- *         'keyonly' => 1,
- *         'greedy'  => 0,
- *     ],
- * ]
- * ```
- *
- * と解釈される。
- * メタ文字列は可能な限り ini としてパースしようとし、いかなる適当な文字列でも警告は出ない。
  */
 class Schema
 {
@@ -282,14 +255,33 @@ class Schema
      */
     public function getTableColumnMetadata($table_name, $column_name = null)
     {
+        // for compatible
+        $parse_ini = function ($inistring) use (&$parse_ini) {
+            $entries = @parse_ini_string($inistring);
+            if ($entries === false) {
+                $entries = [];
+                // エラー起因の行を吹き飛ばして再帰（なんかここまでするなら自前パースのほうが楽な気が・・・）
+                $le = error_get_last();
+                if (preg_match('#on line (\d+)#ui', $le['message'], $m)) {
+                    $lines = preg_split('#\R#u', $inistring);
+                    unset($lines[$m[1] - 1]);
+                    $entries = $parse_ini(implode("\n", $lines));
+                }
+                return $entries;
+            }
+
+            return array_nest($entries, '.');
+        };
+
         $tid = $table_name . '.';
         $cid = $tid . $column_name;
         if (!isset($this->tableColumnMetadata[$cid])) {
             $table = $this->getTable($table_name);
 
             if (!isset($this->tableColumnMetadata[$tid])) {
-                $this->tableColumnMetadata[$tid] = $this->_cache("$tid-metaoption.pson", function () use ($table) {
-                    return Adhoc::parse_ini($table->hasOption('comment') ? $table->getOption('comment') : '');
+                $this->tableColumnMetadata[$tid] = $this->_cache("$tid-metaoption.pson", function () use ($table, $parse_ini) {
+                    // for compatible
+                    return $parse_ini($table->hasOption('comment') ? $table->getOption('comment') : '');
                 });
             }
 
@@ -297,8 +289,9 @@ class Schema
                 if (!$table->hasColumn($column_name)) {
                     throw SchemaException::columnDoesNotExist($column_name, $table_name);
                 }
-                $this->tableColumnMetadata[$cid] = $this->_cache("$cid-metaoption.pson", function () use ($table, $column_name) {
-                    return Adhoc::parse_ini($table->getColumn($column_name)->getComment());
+                $this->tableColumnMetadata[$cid] = $this->_cache("$cid-metaoption.pson", function () use ($table, $column_name, $parse_ini) {
+                    // for compatible
+                    return $parse_ini($table->getColumn($column_name)->getComment());
                 });
             }
         }
@@ -500,7 +493,7 @@ class Schema
     {
         $fkname = $fkname ?? ($localTable . '_' . $foreignTable . '_' . count($this->lazyForeignKeys[$localTable] ?? []));
         $this->lazyForeignKeys[$localTable][$fkname] = function () use ($localTable, $foreignTable, $columnsMap, $fkname) {
-            $columnsMap = Adhoc::to_hash($columnsMap);
+            $columnsMap = array_rekey(arrayize($columnsMap), function ($k, $v) { return is_int($k) ? $v : $k; });
             $fk = new ForeignKeyConstraint(array_keys($columnsMap), $foreignTable, array_values($columnsMap), $fkname);
             $fk->setLocalTable($this->getTable($localTable));
             return $fk;

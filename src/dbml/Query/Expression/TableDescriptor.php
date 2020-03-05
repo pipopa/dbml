@@ -5,9 +5,9 @@ namespace ryunosuke\dbml\Query\Expression;
 use ryunosuke\dbml\Database;
 use ryunosuke\dbml\Gateway\TableGateway;
 use ryunosuke\dbml\Query\QueryBuilder;
-use ryunosuke\dbml\Utility\Adhoc;
 use function ryunosuke\dbml\array_each;
 use function ryunosuke\dbml\array_put;
+use function ryunosuke\dbml\array_rekey;
 use function ryunosuke\dbml\arrayize;
 use function ryunosuke\dbml\concat;
 use function ryunosuke\dbml\preg_splice;
@@ -479,7 +479,11 @@ class TableDescriptor
             $this->condition = array_merge($this->condition, $database->parseYaml(trim($condition1)));
         }
         if ($condition2 !== null) {
-            $this->condition = array_merge($this->condition, [(object) Adhoc::to_hash((array) $database->parseYaml(trim($condition2)))]);
+            $this->condition = array_merge($this->condition, [
+                (object) array_rekey((array) $database->parseYaml(trim($condition2)), function ($k, $v) {
+                    return is_int($k) ? $v : $k;
+                })
+            ]);
         }
 
         $this->column = split_noempty(',', $column);
