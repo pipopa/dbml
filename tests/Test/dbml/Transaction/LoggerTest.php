@@ -79,8 +79,7 @@ ACTUAL
         $this->assertEquals(<<<EXPECTED
 select 'abc...wxyz', 2, '  a  
   b  
-  c  ' as white where 'abcdefgh' and 'X
-Y'
+  c  ' as white where 'abcdefgh' and 'X\\nY'
 EXPECTED
             , $oneline(<<<ACTUAL
 select ?, ?, '  a  

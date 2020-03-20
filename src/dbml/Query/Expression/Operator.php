@@ -73,9 +73,9 @@ use function ryunosuke\dbml\str_subreplace;
  * @method static $this like($word) {LIKE 演算子}
  * @method static $this likeLeft($word) {%LIKE 演算子}
  * @method static $this likeRight($word) {LIKE% 演算子}
- * @method static $this likeIn($word) {LIKEIN 演算子}
- * @method static $this likeInLeft($word) {%LIKEIN 演算子}
- * @method static $this likeInRight($word) {LIKEIN% 演算子}
+ * @method static $this likeIn(...$words) {LIKEIN 演算子}
+ * @method static $this likeInLeft(...$words) {%LIKEIN 演算子}
+ * @method static $this likeInRight(...$words) {LIKEIN% 演算子}
  */
 // @formatter:on
 class Operator implements Queryable

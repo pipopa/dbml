@@ -22,7 +22,7 @@ class Alias
     private $modifier;
 
     /** @var bool 位置確保用のプレースホルダーか */
-    private $placeholdable = false;
+    private $placeholdable;
 
     /**
      * インスタンスを返す

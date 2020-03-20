@@ -1705,7 +1705,7 @@ class Database
             return "/**\n$comments\n */\ntrait $name{}\n";
         };
         $namespace = $namespace ? "\nnamespace $namespace;\n" : '';
-        $result = "<?php\n$namespace\n// this code auto generated.\n\n// @formatter:off\n\n";
+        $result = "<?php\n$namespace\n// this code auto generated.\n\n// @formatter\x3Aoff\n\n"; // 文字列内だけど phpstorm が反応する
         $result .= $gen($database, "Database") . "\n";
         $result .= $gen($gateway, "TableGateway") . "\n";
         $result .= array_sprintf($gateways, $gen, "\n") . "\n";
@@ -2541,8 +2541,7 @@ class Database
      */
     public function binder()
     {
-        return new class extends \ArrayObject
-        {
+        return new class extends \ArrayObject {
             public function __invoke($param)
             {
                 if ($param instanceof Queryable) {
@@ -6216,9 +6215,11 @@ class Database
     {
         static $cache = [];
         if (!$usecache || !isset($cache[$yaml])) {
-            $cache[$yaml] = call_safely(function ($yaml) {
-                return $this->getUnsafeOption('yamlParser')($yaml);
-            }, $yaml);
+            $result = $this->getUnsafeOption('yamlParser')($yaml);
+            if (is_string($result)) {
+                throw new \InvalidArgumentException("syntax error ($yaml)");
+            }
+            $cache[$yaml] = $result;
         }
         return $cache[$yaml];
     }

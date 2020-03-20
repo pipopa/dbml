@@ -2,27 +2,9 @@
 
 namespace {
 
-    use ryunosuke\dbml\Database;
-    use ryunosuke\dbml\Entity\Entity;
-    use ryunosuke\dbml\Gateway\TableGateway;
-    use ryunosuke\dbml\Generator\AbstractGenerator;
-    use ryunosuke\dbml\Generator\Yielder;
-    use ryunosuke\dbml\Metadata\CompatiblePlatform;
-    use ryunosuke\dbml\Metadata\Schema;
-    use ryunosuke\dbml\Query\Expression\Expression;
-    use ryunosuke\dbml\Query\Expression\Operator;
-    use ryunosuke\dbml\Query\Pagination\Paginator;
-    use ryunosuke\dbml\Query\Pagination\Sequencer;
-    use ryunosuke\dbml\Query\QueryBuilder;
-    use ryunosuke\dbml\Transaction\Transaction;
-
-    /**
-     * @param $object
-     * @return object|Database|Schema|QueryBuilder|TableGateway|Paginator|Sequencer|CompatiblePlatform|Operator|Expression|Entity|Transaction|Yielder|AbstractGenerator
-     */
     function L($object)
     {
-        return new class($object) {
+        $dummy = new class($object) {
             private $object;
 
             public function __construct($object)
@@ -48,6 +30,8 @@ namespace {
                 };
             }
         };
+        /** @var object $dummy */
+        return $dummy ?: $object;
     }
 }
 
@@ -60,7 +44,7 @@ namespace ryunosuke\Test {
      *
      * 行を変更したら戻したり SQLServer 用の小細工オーバーライド。
      *
-     * @mixin \Annotation\Database
+     * @mixin \ryunosuke\Test\dbml\Annotation\Database
      */
     class Database extends \ryunosuke\dbml\Database
     {
@@ -148,7 +132,7 @@ namespace ryunosuke\Test\Gateway {
     use ryunosuke\dbml\Database;
 
     /**
-     * @mixin \Annotation\TableGateway
+     * @mixin \ryunosuke\Test\dbml\Annotation\TableGateway
      */
     class TableGateway extends \ryunosuke\dbml\Gateway\TableGateway
     {
@@ -156,7 +140,7 @@ namespace ryunosuke\Test\Gateway {
 
     class Article extends TableGateway
     {
-        use \Annotation\ArticleTableGateway;
+        use \ryunosuke\Test\dbml\Annotation\ArticleTableGateway;
 
         protected $defaultIteration  = 'assoc';
         protected $defaultJoinMethod = 'left';
@@ -178,7 +162,7 @@ namespace ryunosuke\Test\Gateway {
 
     class Comment extends TableGateway
     {
-        use \Annotation\CommentTableGateway;
+        use \ryunosuke\Test\dbml\Annotation\CommentTableGateway;
 
         public function __construct(Database $database, $table_name)
         {
@@ -199,7 +183,7 @@ namespace ryunosuke\Test\Gateway {
 namespace ryunosuke\Test\Entity {
 
     /**
-     * @mixin \Annotation\ArticleEntity
+     * @mixin \ryunosuke\Test\dbml\Annotation\ArticleEntity
      * @property Comment $comment
      * @property Comment $Comment
      * @property Comment[] $comments
@@ -209,7 +193,7 @@ namespace ryunosuke\Test\Entity {
     }
 
     /**
-     * @mixin \Annotation\CommentEntity
+     * @mixin \ryunosuke\Test\dbml\Annotation\CommentEntity
      * @property Article $Article
      */
     class Comment extends \ryunosuke\dbml\Entity\Entity
@@ -217,7 +201,7 @@ namespace ryunosuke\Test\Entity {
     }
 
     /**
-     * @mixin \Annotation\CommentEntity
+     * @mixin \ryunosuke\Test\dbml\Annotation\CommentEntity
      * @property Article $Article
      */
     class ManagedComment extends \ryunosuke\dbml\Entity\Entity

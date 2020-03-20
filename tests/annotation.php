@@ -1,6 +1,6 @@
 <?php
 
-namespace Annotation;
+namespace ryunosuke\Test\dbml\Annotation;
 
 // this code auto generated.
 

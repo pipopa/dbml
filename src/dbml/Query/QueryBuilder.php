@@ -1812,7 +1812,6 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
             }
 
             foreach ($descriptor->jointable as $join) {
-                /** @var TableDescriptor $join */
                 $jointable = $join->descriptor;
                 $jcondition = $join->condition;
                 $key = $join->key;

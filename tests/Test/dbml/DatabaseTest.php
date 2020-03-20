@@ -575,19 +575,8 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
         $this->assertEquals(['a', 'b', 'c'], $database->parseYaml('[a, b, c]', false));
         $this->assertEquals((object) ['a' => 'A'], $database->parseYaml('{a: A}', false));
         $this->assertEquals(['a' => 1, 'b' => 2], $database->parseYaml('[a: 1, b: 2]', false));
-
-        if (function_exists('yaml_parse')) {
-            $database = $database->context()->setYamlParser('yaml_parse');
-
-            // パース可能
-            $this->assertEquals(['a', 'b', 'c'], $database->parseYaml('[a, b, c]', false));
-            $this->assertEquals(['a' => 'A'], $database->parseYaml('{a: A}', false));
-            $this->assertEquals([['a' => 1], ['b' => 2]], $database->parseYaml('[a: 1, b: 2]', false));
-            // 不正なシンタックス
-            $this->assertException('parsing error encountered', L($database)->parseYaml('[a,b,c', false));
-            // 不正でも@で抑制すれば例外は飛ばないようにしてある
-            $this->assertEquals(false, @$database->parseYaml('[a,b,c', false));
-        }
+        // 不正なシンタックス
+        $this->assertException('syntax error', L($database)->parseYaml('[a,b,c', false));
     }
 
     function test_setLogger()
@@ -2393,8 +2382,8 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
      */
     function test_echoAnnotation($database)
     {
-        $annotation = $database->echoAnnotation('Annotation', __DIR__ . '/../../annotation.php');
-        $this->assertContains('namespace Annotation;', $annotation);
+        $annotation = $database->echoAnnotation('ryunosuke\\Test\\dbml\\Annotation', __DIR__ . '/../../annotation.php');
+        $this->assertContains('namespace ryunosuke\\Test\\dbml\\Annotation;', $annotation);
         $this->assertContains('trait Database{}', $annotation);
         $this->assertContains('trait TableGateway{}', $annotation);
         $this->assertContains('trait ArticleTableGateway{}', $annotation);
@@ -4220,10 +4209,10 @@ ON DUPLICATE KEY UPDATE id = VALUES(id), name = VALUES(name)", $affected);
 
         // mysql の strict モード
 
-        $database->modify('t_article', ['article_id' => 9,'title' => 'newN', 'checks' => 'newC']);
+        $database->modify('t_article', ['article_id' => 9, 'title' => 'newN', 'checks' => 'newC']);
         $this->assertEquals(['title' => 'newN', 'checks' => 'newC'], $database->selectTuple('t_article.title,checks', ['article_id' => 9]));
 
-        $database->modify('t_article', ['article_id' => 9,'title' => 'repN']);
+        $database->modify('t_article', ['article_id' => 9, 'title' => 'repN']);
         $this->assertEquals(['title' => 'repN', 'checks' => 'newC'], $database->selectTuple('t_article.title,checks', ['article_id' => 9]));
 
         $this->assertException(new \InvalidArgumentException('is not supported Q'), L($database)->modify('test.name', ['X' => 'Y']));
