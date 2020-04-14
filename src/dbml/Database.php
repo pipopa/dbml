@@ -5851,6 +5851,19 @@ class Database
         $updateData = $this->_normalize($tableName, $updateData);
         $updateData = $this->getCompatiblePlatform()->convertMergeData($insertData, $updateData);
 
+        // mysql の strict モードだと insert 時点で default value エラーが出るので抑制する
+        $schema = $this->getSchema();
+        $pkcols = $schema->getTablePrimaryColumns($tableName);
+        $pkvals = array_intersect_key($insertData, $pkcols);
+        if (array_all($pkvals, function ($v) { return $v !== null; }, false)) {
+            $required = array_filter(array_diff_key($schema->getTableColumns($tableName), $pkcols), function (Column $column) use ($insertData) {
+                return $column->getNotnull() && $column->getDefault() === null && !array_key_exists($column->getName(), $insertData);
+            });
+            if ($required) {
+                $insertData += array_intersect_key($this->selectTuple($tableName, $pkvals) ?: [], $required);
+            }
+        }
+
         $params = [];
         $sets1 = $this->bindInto($insertData, $params);
         $condition = array_get($opt, 'where');
@@ -5862,7 +5875,7 @@ class Database
         }
         $sets2 = $this->bindInto($updateData, $params);
 
-        $pkname = $this->getSchema()->getTablePrimaryKey($tableName)->getName();
+        $pkname = $schema->getTablePrimaryKey($tableName)->getName();
 
         $cplatform = $this->getCompatiblePlatform();
         $ignore = array_get($opt, 'ignore') ? $cplatform->getIgnoreSyntax() . ' ' : '';

@@ -4192,6 +4192,14 @@ ON DUPLICATE KEY UPDATE id = VALUES(id), name = VALUES(name)", $affected);
         $database->modify('test', ['id' => $id, 'name' => 'repN', 'data' => 'repD'], ['name' => 'upN', 'data' => 'upD']);
         $this->assertEquals(['name' => 'upN', 'data' => 'upD'], $database->selectTuple('test.name,data', ['id' => $id]));
 
+        // mysql の strict モード
+
+        $database->modify('t_article', ['article_id' => 9,'title' => 'newN', 'checks' => 'newC']);
+        $this->assertEquals(['title' => 'newN', 'checks' => 'newC'], $database->selectTuple('t_article.title,checks', ['article_id' => 9]));
+
+        $database->modify('t_article', ['article_id' => 9,'title' => 'repN']);
+        $this->assertEquals(['title' => 'repN', 'checks' => 'newC'], $database->selectTuple('t_article.title,checks', ['article_id' => 9]));
+
         $this->assertException(new \InvalidArgumentException('is not supported Q'), L($database)->modify('test.name', ['X' => 'Y']));
     }
 
