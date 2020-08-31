@@ -5456,6 +5456,156 @@ class Database
     }
 
     /**
+     * 自身 modify + 子テーブルの changeArray を行う
+     *
+     * フレームワークや ORM における save に近い。
+     * 自身に関しては単純に「有ったら update/無かったら insert」を行い、キーが子テーブルである場合はさらにそれで changeArray する。
+     * changeArray なので自身以外の興味の範囲外のレコードは消え去る。
+     * つまりいわゆる「関連テーブルも含めた保存」になる。
+     *
+     * ネスト可能。「親に紐づく子に紐づく孫レコード」も再帰的に処理される。
+     *
+     * ```php
+     * # 親 -> 子 -> 孫を処理
+     * $db->save('t_parent', [
+     *     'parent_name' => 'parent1',
+     *     't_child'     => [
+     *         [
+     *             'child_name' => 'child11',
+     *             't_grand'    => [
+     *                 [
+     *                     'grand_name' => 'grand111',
+     *                 ],
+     *                 [
+     *                     'grand_name' => 'grand112',
+     *                 ],
+     *             ],
+     *         ],
+     *         [
+     *             'child_name' => 'child12',
+     *             't_grand'    => [
+     *                 [
+     *                     'grand_name' => 'grand121',
+     *                 ],
+     *                 [
+     *                     'grand_name' => 'grand122',
+     *                 ],
+     *             ],
+     *         ],
+     *     ],
+     * ]);
+     *
+     * # まずはメインである親が modify される
+     * // INSERT INTO
+     * //   t_parent(parent_id, parent_name)
+     * // VALUES
+     * //   (1, 'parent1')
+     * // ON DUPLICATE KEY UPDATE
+     * //   parent_id = VALUES(parent_id),
+     * //   parent_name = VALUES(parent_name)
+     *
+     * # 次に子が changeArray される
+     * // INSERT INTO
+     * //   t_child(child_id, child_name, parent_id)
+     * // VALUES
+     * //   (1, 'child11', 60),
+     * //   (2, 'child12', 60)
+     * // ON DUPLICATE KEY UPDATE
+     * //   child_id = VALUES(child_id),
+     * //   child_name = VALUES(child_name),
+     * //   parent_id = VALUES(parent_id)
+     * // changeArray で興味のない行は吹き飛ぶ
+     * // DELETE FROM t_child WHERE (t_child.parent_id IN(1)) AND (NOT(t_child.child_id IN(1, 2)))
+     *
+     * # 最後に孫が changeArray される
+     * // INSERT INTO
+     * //   t_grand(grand_id, grand_name, child_id)
+     * // VALUES
+     * //   (1, 'grand111', 1),
+     * //   (2, 'grand112', 1),
+     * //   (3, 'grand121', 2),
+     * //   (4, 'grand122', 2)
+     * // ON DUPLICATE KEY UPDATE
+     * //   grand_id = VALUES(grand_id),
+     * //   grand_name = VALUES(grand_name),
+     * //   child_id = VALUES(child_id)
+     * // changeArray で興味のない行は吹き飛ぶ
+     * // DELETE FROM t_grand WHERE (t_grand.child_id IN(1, 2)) AND (NOT(t_grand.grand_id IN(1, 2, 3, 4)))
+     * ```
+     *
+     * @param string|array $tableName テーブル名
+     * @param array $data 階層を持ったデータ配列
+     * @return array 階層を持った主キー配列
+     */
+    public function save($tableName, $data)
+    {
+        // 隠し引数 $opt
+        $opt = func_num_args() === 3 ? func_get_arg(2) : [];
+
+        $TABLE_SEPARATOR = '/';
+        $INDEX_SEPARATOR = '#';
+        $SEPARATOR_REGEX = "#[" . preg_quote("{$TABLE_SEPARATOR}{$INDEX_SEPARATOR}", '#') . "]#";
+
+        $tableName = $this->convertTableName($tableName);
+        $schema = $this->getSchema();
+
+        $single_mode = !is_indexarray($data);
+        if ($single_mode) {
+            $data = [$data];
+        }
+
+        // ツリー構造を、キーに親情報を持ったフラット構造に変換する
+        $flatten = function ($tname, $rows, $key, &$dataarray) use (&$flatten, $schema, $INDEX_SEPARATOR, $TABLE_SEPARATOR) {
+            assert(is_indexarray($rows), "$tname rows is not index array");
+            $tname = $this->convertTableName($tname);
+            $key .= ($key ? $TABLE_SEPARATOR : '') . $tname . $INDEX_SEPARATOR;
+            foreach ($rows as $n => $row) {
+                // 出現順もそれなりに大事なのでまず子供行を抽出してから親行の処理をする
+                $children = array_filter($row, function ($crow, $col) use ($tname, $schema) {
+                    return is_array($crow) && $schema->getForeignColumns($tname, $this->convertTableName($col));
+                }, ARRAY_FILTER_USE_BOTH);
+
+                // 親を処理してから抽出しておいた子行で再帰
+                $id = $key . $n;
+                $dataarray[$tname][$id] = array_diff_key($row, $children);
+                foreach ($children as $c => $v) {
+                    $flatten($c, $v, $id, $dataarray);
+                }
+            }
+        };
+        $flatten($tableName, $data, null, $dataarray);
+
+        // フラット構造になったので縦断的に changeArray ができ、キーに親情報があるので復元・主キー設定もできる
+        $primaries = [];
+        $result = [];
+        foreach ($dataarray as $tname => $rows) {
+            // 子行に親の主キー（外部キー）を設定する。そのキーは後で削除に使うため別変数に溜めておく
+            $parents = [];
+            foreach ($rows as $id => $row) {
+                $key = '';
+                foreach (explode($TABLE_SEPARATOR, $id) as $keyn) {
+                    $key .= $keyn;
+                    [$cname,] = explode($INDEX_SEPARATOR, $keyn);
+                    foreach ($schema->getForeignColumns($cname, $tname) as $ck => $pk) {
+                        if (isset($primaries[$cname][$key][$pk])) {
+                            $rows[$id][$ck] = $parents["$tname.$pk"][$key] = $primaries[$cname][$key][$pk];
+                        }
+                    }
+                    $key .= $TABLE_SEPARATOR;
+                }
+            }
+
+            // changeArray すれば主キーが得られる。主キーが得られれば外部キーに設定できるし返り値用に整形できる
+            $primaries[$tname] = $this->changeArray($tname, $rows, $parents ?: false);
+            foreach ($primaries[$tname] as $id => $pkval) {
+                array_put($result, $pkval, preg_split($SEPARATOR_REGEX, $id));
+            }
+        }
+
+        return $single_mode ? $result[$tableName][0] : $result[$tableName];
+    }
+
+    /**
      * INSERT 構文
      *
      * ```php

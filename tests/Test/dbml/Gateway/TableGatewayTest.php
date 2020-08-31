@@ -1283,7 +1283,7 @@ AND ((flag=1))", "$gw");
      * @param TableGateway $gateway
      * @param Database $database
      */
-    function test_modify($gateway, $database)
+    function test_affect($gateway, $database)
     {
         /// 「正しく委譲されているか？」が確認できればいいので細かい動作はテストしない
 
@@ -1600,6 +1600,81 @@ AND ((flag=1))", "$gw");
         if (!$database->getCompatiblePlatform()->supportsIdentityUpdate()) {
             $database->executeAffect($database->getCompatiblePlatform()->getIdentityInsertSQL('test', false));
         }
+    }
+
+    /**
+     * @dataProvider provideGateway
+     * @param TableGateway $gateway
+     * @param Database $database
+     */
+    function test_save($gateway, $database)
+    {
+        $t_article = new TableGateway($database, 't_article');
+
+        $primary = $t_article->save([
+            'article_id' => 3,
+            'title'      => 'saved',
+            'checks'     => '',
+            't_comment'  => [
+                [
+                    'comment' => 'saved comment',
+                ]
+            ],
+        ]);
+        $this->assertEquals([
+            'article_id' => 3,
+            't_comment'  => [
+                [
+                    'comment_id' => 4
+                ],
+            ],
+        ], $primary);
+
+        $primary = $t_article->save([
+            'article_id' => $primary['article_id'],
+            'title'      => 'saved2',
+            'checks'     => '',
+            't_comment'  => [
+                [
+                    'comment' => 'saved comment',
+                ],
+                [
+                    'comment' => 'saved comment',
+                ],
+            ],
+        ]);
+        $this->assertEquals([
+            'article_id' => 3,
+            't_comment'  => [
+                [
+                    'comment_id' => 5,
+                ],
+                [
+                    'comment_id' => 6,
+                ],
+            ],
+        ], $primary);
+
+        $article = $t_article->pk($primary['article_id'])->tuple([
+            'article_id',
+            't_comment comments' => [
+                'comment_id'
+            ],
+        ]);
+        $this->assertEquals([
+            'article_id' => 3,
+            'comments'   => [
+                5 => [
+                    'comment_id' => 5,
+                ],
+                6 => [
+                    'comment_id' => 6,
+                ],
+            ],
+        ], $article);
+
+        $this->assertEquals(3, $database->count('t_article'));
+        $this->assertEquals(5, $database->count('t_comment'));
     }
 
     /**

@@ -2681,8 +2681,276 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
                     ],
                 ],
             ],
-        ], $database->selectAssoc('g_ancestor.***'));
+        ], $database->selectAssoc('g_ancestor/g_parent/g_child'));
         $this->assertEquals(14, $affected);
+    }
+
+    /**
+     * @dataProvider provideDatabase
+     * @param Database $database
+     */
+    function test_save($database)
+    {
+        $database->delete('g_ancestor');
+
+        $g_ancestor = 0;
+        $g_parent = 0;
+        $g_child = 0;
+        $g_grand1 = 0;
+        $g_grand2 = 0;
+
+        $database->save('g_ancestor', [
+            [
+                'ancestor_id'   => 1,
+                'ancestor_name' => 'A',
+                'g_parent'      => [
+                    [
+                        'parent_id'   => 1,
+                        'parent_name' => 'AA',
+                        'g_child'     => [
+                            [
+                                'child_id'   => 1,
+                                'child_name' => 'AAA',
+                            ],
+                            [
+                                'child_id'   => 2,
+                                'child_name' => 'AAB',
+                            ],
+                        ],
+                    ],
+                    [
+                        'parent_id'   => 2,
+                        'parent_name' => 'AB',
+                        'g_child'     => [
+                            [
+                                'child_id'   => 3,
+                                'child_name' => 'ABA',
+                            ],
+                            [
+                                'child_id'   => 4,
+                                'child_name' => 'ABB',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+            [
+                'ancestor_id'   => 2,
+                'ancestor_name' => 'B',
+                'g_parent'      => [
+                    [
+                        'parent_id'   => 3,
+                        'parent_name' => 'BA',
+                        'g_child'     => [
+                            [
+                                'child_id'   => 5,
+                                'child_name' => 'BAA',
+                            ],
+                            [
+                                'child_id'   => 6,
+                                'child_name' => 'BAB',
+                            ],
+                        ],
+                    ],
+                    [
+                        'parent_id'   => 4,
+                        'parent_name' => 'BB',
+                        'g_child'     => [
+                            [
+                                'child_id'   => 7,
+                                'child_name' => 'BBA',
+                            ],
+                            [
+                                'child_id'   => 8,
+                                'child_name' => 'BBB',
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ]);
+
+        $this->assertEquals($g_ancestor += 2, $database->count('g_ancestor')); // 新規作成なので +2行
+        $this->assertEquals($g_parent += 4, $database->count('g_parent'));     // 2行に2行ずつなので +4行
+        $this->assertEquals($g_child += 8, $database->count('g_child'));       // 4行に2行ずつなので +8行
+
+        // g_ancestor * 1 * g_parent * 2 * g_child * 2 + g_grand1 * 2 を完全新規作成
+        $primary = $database->save('g_ancestor', [
+            'ancestor_name' => 'C',
+            'g_parent'      => [
+                [
+                    'parent_name' => 'CA',
+                    'g_child'     => [
+                        [
+                            'child_name' => 'CAA',
+                        ],
+                        [
+                            'child_name' => 'CAB',
+                        ],
+                    ],
+                    'g_grand1'    => [
+                        [
+                            'grand1_name' => 'CAA',
+                        ],
+                        [
+                            'grand1_name' => 'CAB',
+                        ],
+                    ],
+                ],
+                [
+                    'parent_name' => 'AB',
+                    'g_child'     => [
+                        [
+                            'child_name' => 'CBA',
+                        ],
+                        [
+                            'child_name' => 'CBB',
+                        ],
+                    ],
+                    'g_grand1'    => [
+                        [
+                            'grand1_name' => 'CBA',
+                        ],
+                        [
+                            'grand1_name' => 'CBB',
+                        ],
+                    ],
+                ],
+            ],
+        ]);
+
+        $this->assertEquals($g_ancestor += 1, $database->count('g_ancestor')); // 新規作成なので +1行
+        $this->assertEquals($g_parent += 2, $database->count('g_parent'));     // 1行に2行ずつなので +2行
+        $this->assertEquals($g_child += 4, $database->count('g_child'));       // 2行に2行ずつなので +4行
+        $this->assertEquals($g_grand1 += 4, $database->count('g_grand1'));     // 2行に2行ずつなので +4行
+
+        $this->assertEquals([
+            "ancestor_id" => 3,
+            "g_parent"    => [
+                [
+                    "parent_id" => 5,
+                    "g_child"   => [
+                        [
+                            "child_id" => 9,
+                        ],
+                        [
+                            "child_id" => 10,
+                        ],
+                    ],
+                    "g_grand1"  => [
+                        [
+                            "grand_id" => 1,
+                        ],
+                        [
+                            "grand_id" => 2,
+                        ],
+                    ],
+                ],
+                [
+                    "parent_id" => 6,
+                    "g_child"   => [
+                        [
+                            "child_id" => 11,
+                        ],
+                        [
+                            "child_id" => 12,
+                        ],
+                    ],
+                    "g_grand1"  => [
+                        [
+                            "grand_id" => 3,
+                        ],
+                        [
+                            "grand_id" => 4,
+                        ],
+                    ],
+                ],
+            ],
+        ], $primary);
+
+        // g_ancestor * 1 * g_parent * 1 * g_child * 0 を変更
+        $primary = $database->save('g_ancestor', [
+            "ancestor_id"   => 3,
+            'ancestor_name' => 'X',
+            'g_parent'      => [
+                [
+                    'parent_name' => 'XX',
+                    'g_child'     => [],
+                ],
+            ],
+        ]);
+
+        $this->assertEquals($g_ancestor += 0, $database->count('g_ancestor')); // 作成していないので 0行
+        $this->assertEquals($g_parent -= 1, $database->count('g_parent'));     // 1行しか与えていないので -1行
+        $this->assertEquals($g_child -= 4, $database->count('g_child'));       // 1行しか与えていないので -4行
+        $this->assertEquals($g_grand1 -= 4, $database->count('g_grand1'));     // 1行も与えていないので -4行
+
+        $this->assertEquals([
+            "ancestor_id" => 3,
+            "g_parent"    => [
+                [
+                    "parent_id" => 7,
+                ],
+            ],
+        ], $primary);
+
+        if ($database->getSchema()->hasTable('g_grand2')) {
+            $primary = $database->save('g_ancestor', [
+                "ancestor_id"   => 3,
+                'ancestor_name' => 'X2',
+                'g_parent'      => [
+                    [
+                        "parent_id"   => 7,
+                        'parent_name' => 'X2X',
+                        'g_child'     => [
+                            [
+                                'child_name' => 'XXX',
+                            ],
+                        ],
+                        'g_grand1'    => [
+                            [
+                                'grand1_name' => 'X2XX',
+                            ],
+                        ],
+                        'g_grand2'    => [
+                            [
+                                'grand2_name' => 'X2XY',
+                            ],
+                        ],
+                    ],
+                ],
+            ]);
+
+            $this->assertEquals($g_ancestor += 0, $database->count('g_ancestor'));
+            $this->assertEquals($g_parent += 0, $database->count('g_parent'));
+            $this->assertEquals($g_child += 1, $database->count('g_child'));
+            $this->assertEquals($g_grand1 += 1, $database->count('g_grand1'));
+            $this->assertEquals($g_grand2 += 1, $database->count('g_grand2'));
+
+            $this->assertEquals([
+                "ancestor_id" => 3,
+                "g_parent"    => [
+                    [
+                        "parent_id" => 7,
+                        'g_child'   => [
+                            [
+                                'child_id' => 13,
+                            ],
+                        ],
+                        "g_grand1"  => [
+                            [
+                                "grand_id" => 5,
+                            ],
+                        ],
+                        "g_grand2"  => [
+                            [
+                                "grand_id" => 1,
+                            ],
+                        ],
+                    ],
+                ],
+            ], $primary);
+        }
     }
 
     /**

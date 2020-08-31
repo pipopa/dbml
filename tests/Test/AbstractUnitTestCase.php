@@ -4,6 +4,7 @@ namespace ryunosuke\Test;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
+use Doctrine\DBAL\Platforms\SQLServerPlatform;
 use Doctrine\DBAL\Schema\AbstractAsset;
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\ForeignKeyConstraint;
@@ -304,8 +305,15 @@ abstract class AbstractUnitTestCase extends TestCase
                                 new Column('parent_name', Type::getType('string'), ['length' => 32]),
                                 new Column('ancestor_id', Type::getType('integer'), []),
                             ],
-                            [new Index('PRIMARY', ['parent_id'], true, true)],
-                            [new ForeignKeyConstraint(['ancestor_id'], 'g_ancestor', ['ancestor_id'], 'fkey_generation1')]
+                            [
+                                new Index('PRIMARY', ['parent_id'], true, true),
+                                new Index('SECONDARY10', ['parent_id', 'ancestor_id'], true),
+                            ],
+                            [
+                                new ForeignKeyConstraint(['ancestor_id'], 'g_ancestor', ['ancestor_id'], 'fkey_generation1', [
+                                    'onDelete' => 'CASCADE'
+                                ]),
+                            ]
                         ),
                         new Table('g_child',
                             [
@@ -314,8 +322,47 @@ abstract class AbstractUnitTestCase extends TestCase
                                 new Column('parent_id', Type::getType('integer'), []),
                             ],
                             [new Index('PRIMARY', ['child_id'], true, true)],
-                            [new ForeignKeyConstraint(['parent_id'], 'g_parent', ['parent_id'], 'fkey_generation2')]
+                            [
+                                new ForeignKeyConstraint(['parent_id'], 'g_parent', ['parent_id'], 'fkey_generation2', [
+                                    'onDelete' => 'CASCADE'
+                                ])
+                            ]
                         ),
+                        new Table('g_grand1',
+                            [
+                                new Column('grand_id', Type::getType('integer'), ['autoincrement' => true]),
+                                new Column('parent_id', Type::getType('integer'), []),
+                                new Column('ancestor_id', Type::getType('integer'), []),
+                                new Column('grand1_name', Type::getType('string'), ['length' => 32]),
+                            ],
+                            [new Index('PRIMARY', ['grand_id'], true, true)],
+                            [
+                                new ForeignKeyConstraint(['ancestor_id'], 'g_ancestor', ['ancestor_id'], 'fkey_generation3_1', []),
+                                new ForeignKeyConstraint(['parent_id'], 'g_parent', ['parent_id'], 'fkey_generation3_2', [
+                                    'onDelete' => 'CASCADE'
+                                ]),
+                            ]
+                        ),
+                        function (Connection $connection) {
+                            // 謎のエラーが出るのでさしあたり除外
+                            if ($connection->getDatabasePlatform() instanceof SQLServerPlatform) {
+                                return;
+                            }
+                            $connection->getSchemaManager()->createTable(new Table('g_grand2',
+                                [
+                                    new Column('grand_id', Type::getType('integer'), ['autoincrement' => true]),
+                                    new Column('parent_id', Type::getType('integer'), []),
+                                    new Column('ancestor_id', Type::getType('integer'), []),
+                                    new Column('grand2_name', Type::getType('string'), ['length' => 32]),
+                                ],
+                                [new Index('PRIMARY', ['grand_id'], true, true)],
+                                [
+                                    new ForeignKeyConstraint(['parent_id', 'ancestor_id'], 'g_parent', ['parent_id', 'ancestor_id'], 'fkey_generation3', [
+                                        'onDelete' => 'CASCADE'
+                                    ])
+                                ]
+                            ));
+                        },
                         new Table('horizontal1',
                             [
                                 new Column('id', Type::getType('integer'), ['autoincrement' => true]),

@@ -2274,6 +2274,17 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
     }
 
     /**
+     * 駆動表を省略できる <@uses Database::save()>
+     *
+     * @inheritdoc Database::save()
+     */
+    public function save($data)
+    {
+        $this->resetResult();
+        return $this->database->save($this->tableName, $data, ...array_slice(func_get_args(), 1));
+    }
+
+    /**
      * 駆動表を省略できる <@uses Database::insert()>
      *
      * @inheritdoc Database::insert()
