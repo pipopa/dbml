@@ -81,7 +81,8 @@ class OperatorTest extends \ryunosuke\Test\AbstractUnitTestCase
         $operator = new Operator(self::$platform, 'def', 'a', 'a');
         $this->assertOperator('a DEF ?', ['a'], $operator);
         $this->assertOperator('NOT (a DEF ?)', ['a'], $operator->not());
-        $this->assertException('contains 1 elements', L(new Operator(self::$platform, 'def', 'a', [1, 2]))->getQuery());
+        $this->assertOperator('(a,b) DEF', [], new Operator(self::$platform, 'def', '(a,b)', []));
+        $this->assertOperator('(a,b) DEF (?,?)', [1, 2], new Operator(self::$platform, 'def', '(a,b)', [1, 2]));
     }
 
     function test_op_colval()

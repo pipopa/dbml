@@ -11,6 +11,7 @@ use function ryunosuke\dbml\array_flatten;
 use function ryunosuke\dbml\array_kvmap;
 use function ryunosuke\dbml\arrayize;
 use function ryunosuke\dbml\arrayval;
+use function ryunosuke\dbml\concat;
 use function ryunosuke\dbml\first_keyvalue;
 use function ryunosuke\dbml\str_subreplace;
 
@@ -301,10 +302,11 @@ class Operator implements Queryable
 
     private function _default()
     {
-        if (count($this->operand2) !== 1) {
-            throw new \UnexpectedValueException("DEFAULT's operand2 must be array contains 1 elements.");
+        $operands = implode(',', array_fill(0, count($this->operand2), '?'));
+        if (count($this->operand2) > 1){
+            $operands = "($operands)";
         }
-        $this->string = $this->operand1 . ' ' . strtoupper($this->operator) . ' ?';
+        $this->string = $this->operand1 . ' ' . strtoupper($this->operator) . concat(' ', $operands);
         $this->params = $this->operand2;
     }
 
