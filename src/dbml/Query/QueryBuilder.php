@@ -11,6 +11,7 @@ use ryunosuke\dbml\Mixin\IteratorTrait;
 use ryunosuke\dbml\Mixin\OptionTrait;
 use ryunosuke\dbml\Query\Expression\Alias;
 use ryunosuke\dbml\Query\Expression\Expression;
+use ryunosuke\dbml\Query\Expression\Operator;
 use ryunosuke\dbml\Query\Expression\SelectOption;
 use ryunosuke\dbml\Query\Expression\TableDescriptor;
 use ryunosuke\dbml\Query\Pagination\Paginator;
@@ -213,20 +214,21 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
 
     /** @var array SQL の各句 */
     private $sqlParts = [
-        'comment' => [],
-        'option'  => [],
-        'select'  => [],
-        'union'   => [],
-        'from'    => [],
-        'join'    => [],
-        'hint'    => [],
-        'colval'  => [],
-        'where'   => [],
-        'groupBy' => [],
-        'having'  => [],
-        'orderBy' => [],
-        'offset'  => null,
-        'limit'   => null,
+        'comment'  => [],
+        'option'   => [],
+        'select'   => [],
+        'union'    => [],
+        'from'     => [],
+        'join'     => [],
+        'hint'     => [],
+        'colval'   => [],
+        'where'    => [],
+        'groupBy'  => [],
+        'having'   => [],
+        'orderBy'  => [],
+        'offset'   => null,
+        'limit'    => null,
+        'operator' => null,
     ];
 
     /** @var string 生成した SQL（キャッシュ） */
@@ -1442,6 +1444,38 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
             }
         }
         return true;
+    }
+
+    /**
+     * 自身がサブクエリ化されたときの演算を定義する
+     *
+     * ```php
+     * # コメントを10つ以上持つ記事を返す
+     * $db->select('t_article A', [
+     *     $db->subcount('t_comment C')->operatize('>=', 10),
+     * ]);
+     * // SELECT A.* FROM t_article A WHERE (SELECT COUNT(*) FROM t_comment C WHERE C.article_id = A.article_id) >= 10
+     * ```
+     *
+     * @param string|null $operator 演算子
+     * @param mixed $operands 右オペランド
+     * @return $this 自分自身
+     */
+    public function operatize($operator, $operands = [])
+    {
+        if ($operator === null) {
+            $this->sqlParts['operator'] = null;
+            return $this->_dirty();
+        }
+
+        $platform = $this->database->getCompatiblePlatform();
+        if (strpos($operator, '?') === false) {
+            $this->sqlParts['operator'] = new Operator($platform, $operator, ' ', $operands);
+        }
+        else {
+            $this->sqlParts['operator'] = new Operator($platform, Operator::RAW, $operator, $operands);
+        }
+        return $this->_dirty();
     }
 
     /**
@@ -3552,7 +3586,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
 
     public function getQuery()
     {
-        return "($this)";
+        return "($this)" . concat(' ', trim($this->sqlParts['operator']));
     }
 
     public function getParams($queryPartName = null)

@@ -14,6 +14,7 @@ use Doctrine\DBAL\Types\Type;
 use ryunosuke\dbml\Entity\Entity;
 use ryunosuke\dbml\Query\Expression\Alias;
 use ryunosuke\dbml\Query\Expression\Expression;
+use ryunosuke\dbml\Query\Expression\Operator;
 use ryunosuke\dbml\Query\Expression\SelectOption;
 use ryunosuke\dbml\Query\QueryBuilder;
 use ryunosuke\Test\Database;
@@ -3263,6 +3264,38 @@ INNER JOIN t_leaf ON (t_leaf.leaf_root_id = t_root.root_id) AND (t_leaf.leaf_roo
 
         $builder->setSubwhere('test2', 'T2');
         $this->assertQuery('NOT EXISTS (SELECT * FROM test1 T1 WHERE T1.id1 = T2.id2)', $builder->notExists());
+    }
+
+    /**
+     * @dataProvider provideQueryBuilder
+     * @param QueryBuilder $builder
+     * @param Database $database
+     */
+    function test_operatize($builder, $database)
+    {
+        $builder->reset()->operatize('=', 99);
+        $this->assertInstanceOf(Operator::class, $builder->getQueryPart('operator'));
+        $builder->operatize(null);
+        $this->assertNull($builder->getQueryPart('operator'));
+        $builder->reset()->operatize('=', 99)->reset();
+        $this->assertNull($builder->getQueryPart('operator'));
+
+        $builder->reset()->column('foreign_p P')->where([
+            'id' => 1,
+            $database->subcount('foreign_c1')->operatize('= 10'),
+            $database->submax('foreign_c2.cid')->operatize('>= ?', 20),
+            $database->subsum('foreign_c2.seq')->operatize('BETWEEN', [30, 40]),
+        ]);
+        $qi = function ($str) use ($database) {
+            return $database->getPlatform()->quoteSingleIdentifier($str);
+        };
+        $this->assertQuery("SELECT P.* FROM foreign_p P WHERE (id = ?)
+AND ((SELECT COUNT(*) AS {$qi('*@count')} FROM foreign_c1 WHERE foreign_c1.id = P.id) = 10)
+AND ((SELECT MAX(foreign_c2.cid) AS {$qi('foreign_c2.cid@max')} FROM foreign_c2 WHERE foreign_c2.cid = P.id) >= ?)
+AND ((SELECT SUM(foreign_c2.seq) AS {$qi('foreign_c2.seq@sum')} FROM foreign_c2 WHERE foreign_c2.cid = P.id) BETWEEN ? AND ?)"
+            , $builder);
+        $this->assertEquals([1, 20, 30, 40], $builder->getParams());
+
     }
 
     /**
