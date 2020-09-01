@@ -1203,7 +1203,7 @@ class Database
                         }
 
                         // カラムが存在するなら convert
-                        if (isset($table_columns[$table][$c])) {
+                        if (is_string($table) && isset($table_columns[$table][$c])) {
                             $type = $table_columns[$table][$c];
                             $typename = $type->getName();
                             if (isset($cast_type[$typename]['select'])) {

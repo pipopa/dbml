@@ -766,7 +766,7 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
         // 外部キーを削除すると・・・
         $fkey = $database->ignoreForeignKey('foreign_c1', 'foreign_p', 'id');
         // リレーションが消えるはず
-        $this->assertException('nocondition join foreign_c1<->foreign_p', L($database)->select('foreign_p P + foreign_c1 C'));
+        $this->assertContains('ON 1', (string ) $database->select('foreign_p P + foreign_c1 C'));
         // 戻り値は外部キーオブジェクトのはず
         $this->assertInstanceOf(Schema\ForeignKeyConstraint::class, $fkey);
 
@@ -774,7 +774,7 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
         $this->assertException('foreign key is not found', L($database)->ignoreForeignKey('foreign_c1', 'foreign_p', 'id'));
 
         // まず test1<->test2 のリレーションがないことを担保して・・・
-        $this->assertException('nocondition join foreign_c1<->foreign_p', L($database)->select('foreign_p P + foreign_c1 C'));
+        $this->assertContains('ON 1', (string ) $database->select('foreign_p P + foreign_c1 C'));
         // 仮想キーを追加すると・・・
         $database->addForeignKey('foreign_c1', 'foreign_p', 'id');
         // リレーションが発生するはず

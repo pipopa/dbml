@@ -2808,6 +2808,26 @@ SELECT test.* FROM test", $builder);
      * @dataProvider provideQueryBuilder
      * @param QueryBuilder $builder
      */
+    function test_join_on($builder)
+    {
+        $subuilder = clone $builder;
+        $subuilder->column('test2')->where('1=1');
+
+        $builder->column(['test1', '+t' => $subuilder]);
+        $this->assertQuery('SELECT test1.* FROM test1 INNER JOIN (SELECT test2.* FROM test2 WHERE 1=1) t ON 1', $builder);
+
+        $subuilder->on([
+            '2=2',
+            'id' => 3,
+        ]);
+        $builder->column(['test1', '+t' => $subuilder]);
+        $this->assertQuery('SELECT test1.* FROM test1 INNER JOIN (SELECT test2.* FROM test2 WHERE 1=1) t ON (2=2) AND (id = ?)', $builder);
+    }
+
+    /**
+     * @dataProvider provideQueryBuilder
+     * @param QueryBuilder $builder
+     */
     function test_join_subquery($builder)
     {
         $db = $builder->getDatabase();
@@ -2833,7 +2853,7 @@ SELECT test.* FROM test", $builder);
         ]);
         $this->assertQuery("SELECT P.*, C1.*, C2.* FROM foreign_p P LEFT JOIN foreign_c1 C1 ON C1.id = P.id LEFT JOIN foreign_c2 C2 ON C2.cid = P.id", $builder);
 
-        $this->assertException('nocondition join', L($builder)->column([
+        $this->assertQuery("SELECT C1.*, C2.* FROM foreign_c1 C1 INNER JOIN foreign_c2 C2 ON 1", $builder->column([
             '+foreign_c1 C1.*' => [],
             '+foreign_c2 C2.*' => [],
         ]));

@@ -243,6 +243,9 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
     /** @var mixed|null php レイヤのソート順 */
     private $phpOrders;
 
+    /** @var array join されたときの ON 条件 */
+    private $onConditions = [];
+
     /** @var array ラッピング文字列配列 */
     private $wrappers = [];
 
@@ -2002,15 +2005,15 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
         $qb = new QueryBuilder($this->database);
         $qb->sqlParts = $this->sqlParts;
         $qb->where($condition);
-        if (empty($qb->sqlParts['where'])) {
-            throw new \InvalidArgumentException("can't nocondition join $table<->$fromTable.");
+        if ($table instanceof QueryBuilder) {
+            $qb->andWhere($table->onConditions);
         }
 
         $this->sqlParts['join'][$fromAlias][] = [
             'type'      => $type,
             'table'     => $table,
             'alias'     => $alias,
-            'condition' => new Expression(implode(' AND ', Adhoc::wrapParentheses($qb->sqlParts['where'])), $qb->getParams('where')),
+            'condition' => new Expression(implode(' AND ', Adhoc::wrapParentheses($qb->sqlParts['where'] ?: [1])), $qb->getParams('where')),
         ];
 
         return $this->_dirty();
@@ -2059,6 +2062,45 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
     public function join($type, $table, $on, $fkeyname = null, $from = null)
     {
         return $this->from($table, null, $type, $on, $fkeyname, $from);
+    }
+
+    /**
+     * 自身が JOIN されたときの ON 条件を設定する
+     *
+     * ```php
+     * # 記事とそれに紐づく最新のコメントを JOIN して取得
+     * $db->select([
+     *     't_article A' => [
+     *         'article_id',
+     *         '<t.maxid'     => $db->select([
+     *             't_comment' => [
+     *                 'article_id',
+     *                 'maxid' => 'MAX(comment_id)',
+     *             ],
+     *         ])->groupBy('article_id')->on('t.article_id = A.article_id'),
+     *         '<t_comment C' => [
+     *             '!article_id',
+     *             ['C.comment_id = t.maxid'],
+     *         ],
+     *     ],
+     * ]);
+     * // SELECT A.article_id, t.maxid, C.comment_id, C.comment
+     * // FROM t_article A
+     * // LEFT JOIN (
+     * //   SELECT t_comment.article_id, MAX(comment_id) AS maxid
+     * //   FROM t_comment GROUP BY article_id
+     * // ) t ON t.article_id = A.article_id
+     * // LEFT JOIN t_comment C ON (C.article_id = A.article_id) AND (C.comment_id = t.maxid)
+     *
+     *```
+     *
+     * @param mixed $condition ON 条件
+     * @return $this 自分自身
+     */
+    public function on($condition)
+    {
+        $this->onConditions = arrayize($condition);
+        return $this->_dirty();
     }
 
     /**
