@@ -2408,6 +2408,20 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
      * @dataProvider provideDatabase
      * @param Database $database
      */
+    function test_echoPhpStormMeta($database)
+    {
+        $phpstorm_meta = $database->echoPhpStormMeta(false, __DIR__ . '/../../../.phpstorm.meta.php');
+        $this->assertContains('namespace PHPSTORM_META', $phpstorm_meta);
+        $this->assertContains('DateTime::class', $phpstorm_meta);
+        $this->assertContains('new \\ryunosuke\\dbml\\Entity\\Entityable', $phpstorm_meta);
+        $this->assertContains('new \\ryunosuke\\Test\\Entity\\Article', $phpstorm_meta);
+        $this->assertContains('new \\ryunosuke\\Test\\Entity\\Comment', $phpstorm_meta);
+    }
+
+    /**
+     * @dataProvider provideDatabase
+     * @param Database $database
+     */
     function test_getEmptyRecord($database)
     {
         // テーブル指定は配列で返るはず

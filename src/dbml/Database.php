@@ -597,6 +597,33 @@ class Database
         'CROSS' => '*',
     ];
 
+    public static $typeMap = [
+        Types::ARRAY                => ['array', 'string'],
+        Types::SIMPLE_ARRAY         => ['array', 'string'],
+        Types::JSON                 => ['array', 'string'],
+        Types::OBJECT               => ['object', 'string'],
+        Types::BOOLEAN              => ['bool'],
+        Types::INTEGER              => ['int'],
+        Types::SMALLINT             => ['int'],
+        Types::BIGINT               => ['int', 'string'],
+        Types::DECIMAL              => ['float', 'string'],
+        Types::FLOAT                => ['float'],
+        Types::STRING               => ['string'],
+        Types::TEXT                 => ['string'],
+        Types::BINARY               => ['string'],
+        Types::BLOB                 => ['string'],
+        Types::GUID                 => ['string'],
+        Types::DATETIME_MUTABLE     => [\DateTime::class, 'string'],
+        Types::DATETIME_IMMUTABLE   => [\DateTimeImmutable::class, 'string'],
+        Types::DATETIMETZ_MUTABLE   => [\DateTime::class, 'string'],
+        Types::DATETIMETZ_IMMUTABLE => [\DateTimeImmutable::class, 'string'],
+        Types::DATE_MUTABLE         => [\DateTime::class, 'string'],
+        Types::DATE_IMMUTABLE       => [\DateTimeImmutable::class, 'string'],
+        Types::TIME_MUTABLE         => [\DateTime::class, 'string'],
+        Types::TIME_IMMUTABLE       => [\DateTimeImmutable::class, 'string'],
+        Types::DATEINTERVAL         => [\DateInterval::class, 'string'],
+    ];
+
     /** @var Connection[] */
     private $connections;
 
@@ -1627,33 +1654,6 @@ class Database
         $args1 = '$tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = []';
         $args2 = '$variadic_primary, $tableDescriptor = []';
 
-        $typeMap = [
-            Types::ARRAY                => 'array|string',
-            Types::SIMPLE_ARRAY         => 'array|string',
-            Types::JSON                 => 'array|string',
-            Types::OBJECT               => 'object|string',
-            Types::BOOLEAN              => 'bool',
-            Types::INTEGER              => 'int',
-            Types::SMALLINT             => 'int',
-            Types::BIGINT               => 'int|string',
-            Types::DECIMAL              => 'float',
-            Types::FLOAT                => 'float',
-            Types::STRING               => 'string',
-            Types::TEXT                 => 'string',
-            Types::BINARY               => 'string',
-            Types::BLOB                 => 'string',
-            Types::GUID                 => 'string',
-            Types::DATETIME_MUTABLE     => '\\DateTime|string',
-            Types::DATETIME_IMMUTABLE   => '\\DateTimeImmutable|string',
-            Types::DATETIMETZ_MUTABLE   => '\\DateTime|string',
-            Types::DATETIMETZ_IMMUTABLE => '\\DateTimeImmutable|string',
-            Types::DATE_MUTABLE         => '\\DateTime|string',
-            Types::DATE_IMMUTABLE       => '\\DateTimeImmutable|string',
-            Types::TIME_MUTABLE         => '\\DateTime|string',
-            Types::TIME_IMMUTABLE       => '\\DateTimeImmutable|string',
-            Types::DATEINTERVAL         => '\\DateInterval|string',
-        ];
-
         $database = [];
         $gateway = [];
         $gateways = [];
@@ -1692,9 +1692,10 @@ class Database
  * @method array|\\{$eclass}       tupleOrThrow($args1)
  * @method array|\\{$eclass}       findOrThrow($args2)",
                 ];
-                $entities["{$ename}Entity"] = array_map(function (Column $column) use ($typeMap) {
+                $entities["{$ename}Entity"] = array_map(function (Column $column) {
                     $typename = $column->getType()->getName();
-                    return sprintf(" * @property %s \$%s", $typeMap[$typename] ?? $typename, $column->getName());
+                    $typenames = static::$typeMap[$typename] ?? [$typename];
+                    return sprintf(" * @property %s \$%s", implode('|', $typenames), $column->getName());
                 }, $this->getSchema()->getTableColumns($tname));
             }
         }
@@ -1709,6 +1710,68 @@ class Database
         $result .= $gen($gateway, "TableGateway") . "\n";
         $result .= array_sprintf($gateways, $gen, "\n") . "\n";
         $result .= array_sprintf($entities, $gen, "\n");
+
+        if ($filename) {
+            file_set_contents($filename, $result);
+        }
+        return $result;
+    }
+
+    /**
+     * コード補完用の phpstorm.meta を取得する
+     *
+     * 存在するテーブル名や tableMapper などを利用して phpstorm.meta を作成する。
+     *
+     * @param bool $innerOnly namespace PHPSTORM_META のような外側を含めるか
+     * @param string $filename ファイルとして吐き出す先
+     * @return string phpstorm.meta の内容
+     */
+    public function echoPhpStormMeta($innerOnly = false, $filename = null)
+    {
+        $export = function ($value, $nest = 0, $parents = []) use (&$export) {
+            if (!is_array($value)) {
+                return var_export($value, true);
+            }
+
+            $keys = array_map($export, array_combine($keys = array_keys($value), $keys));
+            $maxlen = max(array_map('strlen', $keys));
+
+            $lines = [];
+            foreach ($value as $k => $v) {
+                $ks = $keys[$k];
+                $ls = str_repeat(' ', ($nest + 1) * 4);
+                $ms = str_repeat(' ', $maxlen - strlen($keys[$k]));
+                $vs = class_exists($v) ? "$v::class" : var_export($v, true);
+                $lines[] = "{$ls}{$ks}{$ms} => {$vs}";
+            }
+            $lines[] = "";
+            return "[\n" . implode(",\n", $lines) . str_repeat(' ', $nest * 4) . "]";
+        };
+
+        $entities = [];
+        foreach ($this->getSchema()->getTableNames() as $tname) {
+            $entityname = $this->getEntityClass($tname);
+            if (trim($entityname, '\\') === Entity::class) {
+                $entityname = Entityable::class;
+            }
+
+            $columns = array_map(function (Column $column) {
+                $typename = $column->getType()->getName();
+                return (static::$typeMap[$typename] ?? [$typename])[0];
+            }, $this->getSchema()->getTableColumns($tname));
+            $entities[$entityname] = ($entities[$entityname] ?? []) + $columns;
+        }
+
+        $result = '';
+        foreach ($entities as $entityname => $entity) {
+            $result .= "
+    override(new \\$entityname,
+        map({$export($entity, 2)})
+    );";
+        }
+        if (!$innerOnly) {
+            $result = "<?php\nnamespace PHPSTORM_META {\n$result\n}";
+        }
 
         if ($filename) {
             file_set_contents($filename, $result);
