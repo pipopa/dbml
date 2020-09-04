@@ -1771,7 +1771,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
      */
     public function column($tableDescriptor)
     {
-        return $this->resetQueryPart(['select', 'from', 'join', 'where', 'orderBy'])->addColumn($tableDescriptor);
+        return $this->resetQueryPart(['select', 'from', 'join', 'where', 'groupBy', 'orderBy'])->addColumn($tableDescriptor);
     }
 
     /**
@@ -1791,6 +1791,9 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
 
             $this->from($descriptor->table, $descriptor->alias, $descriptor->jointype, $descriptor->condition, $descriptor->fkeyname, $parent);
 
+            if ($descriptor->group) {
+                $this->addGroupBy([$descriptor->accessor => $descriptor->group]);
+            }
             if ($descriptor->order) {
                 $this->addOrderBy(array_strpad($descriptor->order, $descriptor->accessor . '.'));
             }

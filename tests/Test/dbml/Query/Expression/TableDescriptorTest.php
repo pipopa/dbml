@@ -87,6 +87,10 @@ class TableDescriptorTest extends \ryunosuke\Test\AbstractUnitTestCase
         $this->assertEquals(['test'], array_map($of, TableDescriptor::forge($database, 'test')));
         $this->assertEquals(['test1', 'test2'], array_map($of, TableDescriptor::forge($database, 'test1,test2')));
         $this->assertEquals(['test1', '+test2'], array_map($of, TableDescriptor::forge($database, 'test1+test2')));
+        $this->assertEquals(['test1', '<test2'], array_map($of, TableDescriptor::forge($database, 'test1<test2')));
+        $this->assertEquals(['test1', '>test2'], array_map($of, TableDescriptor::forge($database, 'test1>test2')));
+        $this->assertEquals(['test1<test2>'], array_map($of, TableDescriptor::forge($database, 'test1<test2>')));
+        $this->assertEquals(['test1', '<test2', '>test3'], array_map($of, TableDescriptor::forge($database, 'test1<test2>test3')));
         $this->assertEquals(['test1', '+test2'], array_map($of, TableDescriptor::forge($database, [
             'test1'  => [],
             '+test2' => [],
@@ -114,6 +118,8 @@ class TableDescriptorTest extends \ryunosuke\Test\AbstractUnitTestCase
             'jointable'  => [],
             'scope'      => [],
             'condition'  => [],
+            'group'      => [],
+            'order'      => [],
             'fkeyname'   => null,
             'column'     => [],
             'key'        => 'test',
@@ -232,6 +238,13 @@ class TableDescriptorTest extends \ryunosuke\Test\AbstractUnitTestCase
             ]);
         }
 
+        // GROUP
+        $this->assertDescriptor(new TableDescriptor($database, 'foreign_c1<id, cid>', []), [
+            'table' => 'foreign_c1',
+            'group' => ['id', 'cid'],
+            'key'   => 'foreign_c1<id, cid>',
+        ]);
+
         // ORDER
         $this->assertDescriptor(new TableDescriptor($database, 'foreign_c1+aid-did', []), [
             'table' => 'foreign_c1',
@@ -283,18 +296,19 @@ class TableDescriptorTest extends \ryunosuke\Test\AbstractUnitTestCase
                 'on1 = 1',
             ],
             'fkeyname'  => 'fkeyname',
+            'group'     => ['id', 'cid'],
             'order'     => ['aid' => 'ASC', 'did' => 'DESC'],
             'offset'    => 10,
             'limit'     => 10,
             'column'    => ['id as ID'],
-            'key'       => 't_article(1)@@scope1@scope2(1, 2):fkeyname[on1 = 1] T',
+            'key'       => 't_article(1)@@scope1@scope2(1, 2):fkeyname[on1 = 1]<id, cid> T',
         ];
-        $this->assertDescriptor(new TableDescriptor($database, 't_article(1)@@scope1@scope2(1, 2):fkeyname[on1 = 1]+aid-did#10-20 AS T.id as ID', []), $expected);
-        $this->assertDescriptor(new TableDescriptor($database, 't_article(1)#10-20@@scope1@scope2(1, 2)[on1 = 1]+aid-did:fkeyname AS T.id as ID', []), $expected);
-        $this->assertDescriptor(new TableDescriptor($database, 't_article(1):fkeyname@@scope1@scope2(1, 2)+aid-did#10-20[on1 = 1] AS T.id as ID', []), $expected);
-        $this->assertDescriptor(new TableDescriptor($database, 't_article(1):fkeyname[on1 = 1]+aid-did#10-20@@scope1@scope2(1, 2) AS T.id as ID', []), $expected);
-        $this->assertDescriptor(new TableDescriptor($database, 't_article(1)+aid-did#10-20[on1 = 1]@@scope1@scope2(1, 2):fkeyname AS T.id as ID', []), $expected);
-        $this->assertDescriptor(new TableDescriptor($database, 't_article(1)[on1 = 1]+aid-did#10-20:fkeyname@@scope1@scope2(1, 2) AS T.id as ID', []), $expected);
+        $this->assertDescriptor(new TableDescriptor($database, 't_article(1)<id, cid>@@scope1@scope2(1, 2):fkeyname[on1 = 1]+aid-did#10-20 AS T.id as ID', []), $expected);
+        $this->assertDescriptor(new TableDescriptor($database, 't_article(1)#10-20@@scope1@scope2(1, 2)[on1 = 1]+aid-did<id, cid>:fkeyname AS T.id as ID', []), $expected);
+        $this->assertDescriptor(new TableDescriptor($database, 't_article(1):fkeyname@@scope1@scope2<id, cid>(1, 2)+aid-did#10-20[on1 = 1] AS T.id as ID', []), $expected);
+        $this->assertDescriptor(new TableDescriptor($database, 't_article(1):fkeyname[on1 = 1]+aid-did#10-20<id, cid>@@scope1@scope2(1, 2) AS T.id as ID', []), $expected);
+        $this->assertDescriptor(new TableDescriptor($database, 't_article(1)+aid-did#10-20[on1 = 1]@@scope1@scope2(1, 2):fkeyname<id, cid> AS T.id as ID', []), $expected);
+        $this->assertDescriptor(new TableDescriptor($database, 't_article(1)[on1 = 1]+aid-did<id, cid>#10-20:fkeyname@@scope1@scope2(1, 2) AS T.id as ID', []), $expected);
 
         // JOIN
         $td = new TableDescriptor($database, '+t_table T', [

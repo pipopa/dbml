@@ -24,7 +24,7 @@ use function ryunosuke\dbml\throws;
  *
  * 下記に記法としての定義を記載する。組み合わせた場合の使用例は {@link QueryBuilder::column()} を参照。
  *
- * `'(joinsign)tablename(pkval)@scope:fkeyname[condition]+order-by#offset-limit AS Alias.col1, col2 AS C2'`
+ * `'(joinsign)tablename(pkval)@scope:fkeyname[condition]<groupby>+order-by#offset-limit AS Alias.col1, col2 AS C2'`
  *
  * | 要素               | 必須 | 説明
  * |:--                 |:--:  |:--
@@ -35,6 +35,7 @@ use function ryunosuke\dbml\throws;
  * | :fkeyname          | 任意 | JOIN に使用する外部キー名を指定する
  * | [condition]        | 任意 | 絞り込み条件を yaml で指定する（where 記法）
  * | {condition}        | 任意 | 絞り込み条件を yaml で指定する（カラム結合）
+ * | <groupby>          | 任意 | GROUP BY を指定する
  * | +order-by          | 任意 | ORDER BY を指定する
  * | #offset-limit      | 任意 | LIMIT, OFFSET を指定する
  * | AS Alias           | 任意 | テーブルエイリアスを指定する
@@ -102,6 +103,14 @@ use function ryunosuke\dbml\throws;
  * テーブルのサフィックスとして yaml 記法で絞り込み条件を表す。
  *
  * - e.g. `tablename{selfid: otherid}` （`selfid = otherid` となる（カラムで結合する））
+ *
+ * #### <groupby>
+ *
+ * テーブルのサフィックスとして <group-key> で GROUP BY を表す。
+ * "+" プレフィックスで昇順、 "-" プレフィックスで降順を表す。各指定の明確な区切りはない（≒[+-] のどちらかは必須）。
+ *
+ * - e.g. `tablename<id>` （`GROUP BY id` となる）
+ * - e.g. `tablename<year, month>` （`GROUP BY year, month` となる）
  *
  * #### +order-by
  *
@@ -173,6 +182,7 @@ use function ryunosuke\dbml\throws;
  * @property array $scope
  * @property array $condition
  * @property string $fkeyname
+ * @property array $group
  * @property array $order
  * @property int $offset
  * @property int $limit
@@ -211,6 +221,9 @@ class TableDescriptor
     /** @var string 外部キー名 */
     private $fkeyname;
 
+    /** @var array GROUP */
+    private $group = [];
+
     /** @var array 並び順 */
     private $order = [];
 
@@ -237,12 +250,26 @@ class TableDescriptor
             $brace_count = 0;
             $current = 0;
             $result = [];
+            $tagging = false;
             for ($i = 0, $l = strlen($string); $i < $l; $i++) {
                 if (strpos('([{', $string[$i]) !== false) {
                     $brace_count++;
                     continue;
                 }
                 if (strpos(')]}', $string[$i]) !== false) {
+                    $brace_count--;
+                    continue;
+                }
+                if ($string[$i] === '<' && ($p = strpos($string, '>', $i + 1)) !== false) {
+                    $next = $string[$p + 1] ?? '';
+                    if (!(ctype_alpha($next) || $next === '_' || $next === ' ')) {
+                        $tagging = true;
+                        $brace_count++;
+                        continue;
+                    }
+                }
+                if ($string[$i] === '>' && $tagging) {
+                    $tagging = false;
                     $brace_count--;
                     continue;
                 }
@@ -388,6 +415,9 @@ class TableDescriptor
         $descriptor = preg_splice("`(\{.+\})`ui", '', trim($descriptor), $m);
         $condition2 = $m[1] ?? null;
 
+        $descriptor = preg_splice("`(\<.+\>)`ui", '', trim($descriptor), $m);
+        $group = $m[1] ?? null;
+
         $descriptor = preg_splice("`(:[_0-9a-z]*)`ui", '', trim($descriptor), $m);
         $fkeyname = $m[1] ?? null;
 
@@ -445,7 +475,7 @@ class TableDescriptor
             }
         }
 
-        $this->key = $this->joinsign . $this->table . $primary . $scope . $fkeyname . $condition1 . $condition2 . concat(' ', $this->alias);
+        $this->key = $this->joinsign . $this->table . $primary . $scope . $fkeyname . $condition1 . $condition2 . $group . concat(' ', $this->alias);
 
         if ($scope !== null) {
             $this->scope = array_each(array_slice(explode('@', $scope), 1), function (&$carry, $item) {
@@ -484,6 +514,10 @@ class TableDescriptor
                     return is_int($k) ? $v : $k;
                 })
             ]);
+        }
+
+        if ($group !== null) {
+            $this->group = split_noempty(',', preg_replace('#^<|>$#u', '', $group));
         }
 
         $this->column = split_noempty(',', $column);

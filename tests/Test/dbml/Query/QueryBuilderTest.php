@@ -753,6 +753,19 @@ GREATEST(1,2,3) FROM test1', $builder);
      * @dataProvider provideQueryBuilder
      * @param QueryBuilder $builder
      */
+    function test_column_group($builder)
+    {
+        $builder->column('t_article<article_id>');
+        $this->assertQuery("SELECT t_article.* FROM t_article GROUP BY t_article.article_id", $builder);
+
+        $builder->column(['t_article A<article_id, title>']);
+        $this->assertQuery("SELECT A.* FROM t_article A GROUP BY A.article_id, A.title", $builder);
+    }
+
+    /**
+     * @dataProvider provideQueryBuilder
+     * @param QueryBuilder $builder
+     */
     function test_column_order($builder)
     {
         $builder->column('t_article -article_id');

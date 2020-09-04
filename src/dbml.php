@@ -18,7 +18,7 @@
  *
  * 各クラスの各メソッドで引数名が `$tableDescriptor` となっているものは下記の記法を受け入れる（{@link TableDescriptor} から抜粋）。
  *
- * - base: `'(joinsign)tablename(pkval)@scope:fkeyname[condition]+order-by#offset-limit AS Alias.col1, col2 AS C2'`
+ * - base: `'(joinsign)tablename(pkval)@scope:fkeyname[condition]<groupby>+order-by#offset-limit AS Alias.col1, col2 AS C2'`
  *
  * | 要素               | 必須 | 説明
  * |:--                 |:--:  |:--
@@ -29,8 +29,9 @@
  * | :fkeyname          | 任意 | JOIN に使用する外部キー名を指定する
  * | [condition]        | 任意 | JOIN に使用する結合条件を yaml で指定する（where 記法）
  * | {condition}        | 任意 | JOIN に使用する結合条件を yaml で指定する（カラム結合）
- * | #offset-limit      | 任意 | LIMIT, OFFSET を指定する
+ * | <groupby>          | 任意 | GROUP BY を指定する
  * | +order-by          | 任意 | ORDER BY を指定する
+ * | #offset-limit      | 任意 | LIMIT, OFFSET を指定する
  * | AS Alias           | 任意 | テーブルエイリアスを指定する
  * | .col1, col2 AS C2  | 任意 | 取得するカラムを指定する
  *
@@ -42,7 +43,7 @@
  * - subselect: `'base/base'`
  *
  * この記法を**テーブル記法**と呼称する。
- * 端的に言えば SQL の「SELECT 句」「FROM 句」「JOIN 句」「WHERE 句」「ORDER 句」「LIMIT 句」をすべてひっくるめて文字列で指定できるイメージである。
+ * 端的に言えば SQL の「SELECT 句」「FROM 句」「JOIN 句」「WHERE 句」「GROUP 句」「ORDER 句」「LIMIT 句」をすべてひっくるめて文字列で指定できるイメージである。
  *
  * いくつかの例を以下に記す。
  *
