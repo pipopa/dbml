@@ -145,6 +145,7 @@ use function ryunosuke\dbml\try_finally;
  * ありがちなのは上記の例で言うと `delete_flg = 0` をデフォルトスコープにしているときで、このとき `$gw->update(['delete_flg' => 1], ['primary_id' => 99])` として無効化しようとしても無効化されない。
  * デフォルトスコープの `delete_flg = 0` が当たってヒットしなくなるからである。
  * 基本的に insert/update/delete にスコープを当てるときは `noscope` や `unscope` でデフォルトスコープを外したほうが無難。
+ * あるいは ignoreAffectScope でデフォルトスコープを外しておく。
  *
  * スコープが当たっているクエリビルダは `select` メソッドで取得できる。
  * ただ1点注意として、スコープを当てても**オリジナルのインスタンスは変更されない。変更が適用された別のインスタンスを返す。**
@@ -259,6 +260,9 @@ use function ryunosuke\dbml\try_finally;
  *
  *     @param string $string {@link Database::JOIN_MAPPER} のいずれかのキー
  * }
+ *
+ * @method array                  getIgnoreAffectScope() {更新時に無視するスコープ名を返す}
+ * @method $this                  setIgnoreAffectScope(array $ignoreAffectScope) {更新時に無視するスコープ名を設定する}
  *
  * @method $this                  joinOn(TableGateway $table, $on) {
  *     結合方法が INNER で結合条件指定の <@uses TableGateway::join()>
@@ -752,6 +756,8 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
             'defaultIteration'  => 'array',
             // マジック JOIN 時のデフォルトモード
             'defaultJoinMethod' => 'auto',
+            // affect 系で無視するスコープ
+            'ignoreAffectScope' => [], // for compatible. In the future the default will be ['']
         ];
     }
 
@@ -1043,7 +1049,7 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
 
     private function _rewhere(&$where)
     {
-        $sp = $this->getScopeParams([], $where);
+        $sp = $this->getScopeParamsForAffect([], $where);
         $where = $sp['where'];
 
         // 集約系はどうしようもないので例外（集約を利用した update/delete なんて考慮したくない）
@@ -1866,6 +1872,28 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
     }
 
     /**
+     * 更新用の {@link getScopeParams()}
+     *
+     * @inheritdoc getScopeParams()
+     */
+    public function getScopeParamsForAffect($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
+    {
+        $activeScopes = $this->activeScopes;
+        foreach ($this->getUnsafeOption('ignoreAffectScope') as $scope) {
+            unset($this->activeScopes[$scope]);
+        }
+
+        try {
+            $result = $this->getScopeParams(...func_get_args());
+        }
+        finally {
+            $this->activeScopes = $activeScopes;
+        }
+
+        return $result;
+    }
+
+    /**
      * 主キー値指定の where メソッド
      *
      * 主キーの値だけを与えて {@link where()} する。
@@ -2105,7 +2133,7 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
     public function insert($data)
     {
         $this->resetResult();
-        $sp = $this->getScopeParams([]);
+        $sp = $this->getScopeParamsForAffect([]);
         if (false
             || 1 < count($sp['column'])
             || 0 < count($sp['where'])

@@ -1360,7 +1360,7 @@ AND ((flag=1))", "$gw");
      * @param TableGateway $gateway
      * @param Database $database
      */
-    function test_scoped_modify($gateway, $database)
+    function test_scoped_affect($gateway, $database)
     {
         $logger = new DebugStack();
         $lastsql = function () use ($logger) {
@@ -1388,6 +1388,12 @@ AND ((flag=1))", "$gw");
         // scope の where が効いた delete になる
         $gateway->where(['id' => 1])->delete();
         $this->assertEquals(['DELETE FROM test WHERE test.id = ?' => [1]], $lastsql());
+
+        // scope の where が効いていない update になる
+        $gateway->addScope('hogehoge', [], ['id' => 1]);
+        $gateway->setIgnoreAffectScope(['hogehoge']);
+        $gateway->update(['name' => 'XXX']);
+        $this->assertEquals(['UPDATE test SET name = ?' => ['XXX']], $lastsql());
 
         // ORDER,LIMIT が効いた update になる
         if ($database->getPlatform() instanceof SqlitePlatform) {
