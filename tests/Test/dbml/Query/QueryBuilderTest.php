@@ -684,13 +684,29 @@ GREATEST(1,2,3) FROM test1', $builder);
     /**
      * @dataProvider provideQueryBuilder
      * @param QueryBuilder $builder
+     * @param Database $database
      */
-    function test_column_scope($builder)
+    function test_column_scope($builder, $database)
     {
         // シンプル
         $builder->column('Article@scope1@scope2(9)');
         $this->assertQuery("SELECT Article.*, NOW() FROM t_article Article WHERE Article.article_id = ?", $builder);
         $this->assertEquals([9], $builder->getParams());
+
+        // デフォルトの適用
+        $database->t_article->addScope('dddscope', ['title'], ['article_id > ?' => 0]);
+        $builder->setDefaultScope(['dddscope']);
+
+        $builder->column('Article(9)');
+        $this->assertQuery("SELECT Article.*, Article.title FROM t_article Article WHERE (Article.article_id = ?) AND (Article.article_id > ?)", $builder);
+        $this->assertEquals([9, 0], $builder->getParams());
+
+        $builder->column('Article@scope2(9)');
+        $this->assertQuery("SELECT Article.*, Article.title FROM t_article Article WHERE (Article.article_id > ?) AND (Article.article_id = ?)", $builder);
+        $this->assertEquals([0, 9], $builder->getParams());
+
+        $database->t_article->addScope('dddscope');
+        $builder->setDefaultScope([]);
 
         // JOIN
         $builder->reset()->column([

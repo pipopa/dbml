@@ -74,6 +74,8 @@ use function ryunosuke\dbml\throws;
  *
  * @method string                 getDefaultLazyMode()
  * @method $this                  setDefaultLazyMode($string) {[] や Gateway 指定時のデフォルト sub lazy mode}
+ * @method array                  getDefaultScope()
+ * @method $this                  setDefaultScope($array) {TableGateway の暗黙的スコープ名}
  * @method bool                   getAutoOrder()
  * @method $this                  setAutoOrder($bool) {自動で主キー順にするか（{@link detectAutoOrder()} を参照）}
  * @method string                 getPrimarySeparator()
@@ -302,6 +304,8 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
         return [
             // [] や Gateway 指定時のデフォルト sub lazy mode
             'defaultLazyMode'      => self::LAZY_MODE_EAGER,
+            // TableGateway の暗黙的スコープ名
+            'defaultScope'         => [], // for compatible. In the future the default will be ['']
             // 自動 order by 有効/無効フラグ
             'autoOrder'            => true,
             // 複合主キーを単一主キーとみなすための結合文字列
@@ -1801,10 +1805,12 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
                 $this->limit($descriptor->limit, $descriptor->offset);
             }
 
-            if ($descriptor->scope) {
+            $defaultScope = $this->getDefaultScope();
+
+            if ($defaultScope || $descriptor->scope) {
                 $gateway = $this->database->{$descriptor->table}->clone();
                 $gateway->as($descriptor->alias);
-                $gateway->scope($descriptor->scope);
+                $gateway->scope($defaultScope + $descriptor->scope);
                 $sparam = $gateway->getScopeParams([]);
                 $scolumn = array_unset($sparam, 'column');
                 $this->_buildColumn(reset($scolumn), $descriptor->table, $descriptor->alias);
@@ -1816,12 +1822,12 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
                 $jcondition = $join->condition;
                 $key = $join->key;
 
-                if ($join->scope) {
+                if ($defaultScope || $join->scope) {
                     $key = $join->joinsign . $join->table . ' ' . $join->alias;
                     $jointable = $this->database->{$join->table}->clone();
                     $jointable->as($join->alias);
                     $jointable->column($join->descriptor);
-                    $jointable->scope($join->scope);
+                    $jointable->scope($defaultScope + $join->scope);
                 }
                 if ($jointable instanceof TableGateway) {
                     $this->hint($jointable->hint(), $jointable->modifier());
