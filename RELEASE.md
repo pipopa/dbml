@@ -21,6 +21,12 @@
 - Entity 消したい。使わない…
 - phpstorm と相性が悪いのでマジックメソッドを撲滅したい
 
+## 2.0.2
+
+- [feature][QueryBuilder] 暗黙スコープを指定可能にした
+- [feature][TableGateway] affect 系にスコープを当てないオプションを用意
+- [fixbug][Database] echoAnnotation の結果が FQSEN じゃない不具合を修正
+
 ## 2.0.1
 
 - [feature][QueryBuilder] on メソッドを追加してサブクエリとの JOIN 機能を強化
