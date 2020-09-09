@@ -61,7 +61,7 @@
 							<span class="label label-info"></span>
 							<span class="label label-info">iterateable</span>
 							<span class="label label-deprecated"></span>
-                            			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Gateway/TableGateway.php#L25-L2244" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                            			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Gateway/TableGateway.php#L25-L2272" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
             						</div>
 						<h4 id="ryunosuke\dbml\Gateway\TableGateway" tabindex="-1" class="structure-title ">
 							<a href="ryunosuke-dbml-Gateway-TableGateway$typespace.html#ryunosuke\dbml\Gateway\TableGateway">TableGateway</a>
@@ -178,7 +178,8 @@ $gw-&gt;scope('active')-&gt;update(['column' =&gt; 'data']);
 <p>insert/update/delete にスコープを当てるときはデフォルトスコープに注意。<br />
 ありがちなのは上記の例で言うと <code>delete_flg = 0</code> をデフォルトスコープにしているときで、このとき <code>$gw-&gt;update(['delete_flg' =&gt; 1], ['primary_id' =&gt; 99])</code> として無効化しようとしても無効化されない。<br />
 デフォルトスコープの <code>delete_flg = 0</code> が当たってヒットしなくなるからである。<br />
-基本的に insert/update/delete にスコープを当てるときは <code>noscope</code> や <code>unscope</code> でデフォルトスコープを外したほうが無難。</p>
+基本的に insert/update/delete にスコープを当てるときは <code>noscope</code> や <code>unscope</code> でデフォルトスコープを外したほうが無難。<br />
+あるいは ignoreAffectScope でデフォルトスコープを外しておく。</p>
 <p>スコープが当たっているクエリビルダは <code>select</code> メソッドで取得できる。<br />
 ただ1点注意として、スコープを当てても<strong>オリジナルのインスタンスは変更されない。変更が適用された別のインスタンスを返す。</strong><br />
 下記のコードが分かりやすい。</p>
