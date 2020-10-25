@@ -475,6 +475,11 @@ class TableDescriptor
                 $cols = [];
             }
         }
+        // この段階で Gateway をロードしておく
+        if (is_string($this->table)) {
+            $gateway = $database->{$this->table};
+            assert(is_null($gateway) || is_object($gateway));
+        }
 
         $this->key = $this->joinsign . $this->table . $primary . $scope . $fkeyname . $condition1 . $condition2 . $group . concat(' ', $this->alias);
 
