@@ -10,6 +10,7 @@ use function ryunosuke\dbml\array_put;
 use function ryunosuke\dbml\array_rekey;
 use function ryunosuke\dbml\arrayize;
 use function ryunosuke\dbml\concat;
+use function ryunosuke\dbml\paml_import;
 use function ryunosuke\dbml\preg_splice;
 use function ryunosuke\dbml\quoteexplode;
 use function ryunosuke\dbml\split_noempty;
@@ -483,7 +484,7 @@ class TableDescriptor
                 $args = str_between($item, '(', ')');
                 if ($args !== false) {
                     $item = str_replace("($args)", '', $item);
-                    $sargs = json_decode("[$args]");
+                    $sargs = paml_import($args);
                 }
                 $carry[$item] = $sargs;
             }, null);
