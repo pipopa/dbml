@@ -1582,9 +1582,10 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
      *
      * @param string $name スコープ名
      * @param string|array $sourceScopes 既存スコープ名
+     * @param array|\Closure ...$newscopes 追加で設定するスコープ（scoping と同じ）
      * @return $this 自分自身
      */
-    public function mixScope($name, $sourceScopes)
+    public function mixScope($name, $sourceScopes, ...$newscopes)
     {
         if (is_string($sourceScopes)) {
             $sourceScopes = split_noempty(' ', $sourceScopes);
@@ -1601,6 +1602,12 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
                 throw new \InvalidArgumentException("'$scope' scope is undefined.");
             }
             $scopes[$scope] = arrayize($args);
+        }
+
+        if ($newscopes) {
+            $hash = spl_object_id($this) . '_' . count($this->scopes);
+            $this->addScope($hash, ...$newscopes);
+            $scopes[$hash] = [];
         }
 
         // 指定されたスコープをすべて当てるような動的スコープとして定義する

@@ -365,6 +365,13 @@ AND ((flag=1))", "$gw");
             'b',
             'd0' => [2],
         ]);
+        $gateway->mixScope('x3', 'a b d', ['aliasId' => 'id'], ['id' => -1]);
+        $gateway->mixScope('x4', 'a b d', function ($id) {
+            return [
+                'column' => ['aliasId' => 'id'],
+                'where'  => ['id' => $id],
+            ];
+        });
         $gateway->mixScope('mixmix', [
             'x2',
             'c',
@@ -409,6 +416,26 @@ AND ((flag=1))", "$gw");
             'groupBy' => [],
             'having'  => [],
         ], $gateway->getScopeParts('x2', 999));
+
+        // 合成と同時に新しいスコープを当てたもの（合成のネストできるかのテストで値に特に意味はない）
+        $this->assertEquals([
+            'column'  => ['NOW()', 'name', 'aliasId' => 'id'],
+            'where'   => ['name="a"', 'id' => [1, -1]],
+            'orderBy' => [],
+            'limit'   => [3 => 4],
+            'groupBy' => [],
+            'having'  => [],
+        ], $gateway->getScopeParts('x3', 1));
+
+        // 上記のクロージャ版
+        $this->assertEquals([
+            'column'  => ['NOW()', 'name', 'aliasId' => 'id'],
+            'where'   => ['name="a"', 'id' => [1, -2]],
+            'orderBy' => [],
+            'limit'   => [3 => 4],
+            'groupBy' => [],
+            'having'  => [],
+        ], $gateway->getScopeParts('x4', 1, -2));
 
         // 合成スコープを合成した合成スコープ（合成のネストできるかのテストで値に特に意味はない）
         $this->assertEquals([
