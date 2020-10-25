@@ -1783,7 +1783,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
      *
      * @inheritdoc column()
      */
-    public function addColumn($tableDescriptor, $parent = null)
+    public function addColumn($tableDescriptor, $parent = null, $defaultScoped = false)
     {
         foreach (TableDescriptor::forge($this->database, $tableDescriptor, $this->getSubmethod() === 'query' ? [] : ['*']) as $descriptor) {
             $this->_buildColumn($descriptor->column, $descriptor->table, $descriptor->alias);
@@ -1805,15 +1805,15 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
                 $this->limit($descriptor->limit, $descriptor->offset);
             }
 
-            $defaultScope = $this->getDefaultScope();
+            $defaultScope = $defaultScoped ? [] : $this->getDefaultScope();
 
             if ($defaultScope || $descriptor->scope) {
                 $gateway = $this->database->{$descriptor->table}->clone();
                 $gateway->as($descriptor->alias);
-                $gateway->scope($defaultScope + $descriptor->scope);
+                $gateway->scope(array_merge($defaultScope, $descriptor->scope));
                 $sparam = $gateway->getScopeParams([]);
                 $scolumn = array_unset($sparam, 'column');
-                $this->_buildColumn(reset($scolumn), $descriptor->table, $descriptor->alias);
+                $this->addColumn($scolumn, $parent, !!$defaultScope);
                 $this->build($sparam, true);
             }
 
@@ -1827,7 +1827,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
                     $jointable = $this->database->{$join->table}->clone();
                     $jointable->as($join->alias);
                     $jointable->column($join->descriptor);
-                    $jointable->scope($defaultScope + $join->scope);
+                    $jointable->scope(array_merge($defaultScope, $join->scope));
                 }
                 if ($jointable instanceof TableGateway) {
                     $this->hint($jointable->hint(), $jointable->modifier());
