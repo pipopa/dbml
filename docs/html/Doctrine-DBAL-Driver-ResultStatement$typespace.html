@@ -54,7 +54,7 @@
 		<span class="label label-info"></span>
 		<span class="label label-info"></span>
 		<span class="label label-deprecated"></span>
-        			<a href="https://github.com/doctrine/dbal/blob/2.10.2/lib/Doctrine/DBAL/Driver/ResultStatement.php#L8-L98" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+        			<a href="https://github.com/doctrine/dbal/blob/2.10.4/lib/Doctrine/DBAL/Driver/ResultStatement.php#L8-L100" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                     	</div>
 
 	<h2>interface <span class="category-name">Doctrine\DBAL\Driver\ResultStatement</span></h2>
@@ -144,7 +144,7 @@
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/doctrine/dbal/blob/2.10.2/lib/Doctrine/DBAL/Driver/ResultStatement.php#L13-L18" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/doctrine/dbal/blob/2.10.4/lib/Doctrine/DBAL/Driver/ResultStatement.php#L13-L18" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="Doctrine\DBAL\Driver\ResultStatement::closeCursor()" tabindex="-1" class="structure-title ">
                         closeCursor                        	<small>() : bool</small>
@@ -185,7 +185,7 @@
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/doctrine/dbal/blob/2.10.2/lib/Doctrine/DBAL/Driver/ResultStatement.php#L20-L27" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/doctrine/dbal/blob/2.10.4/lib/Doctrine/DBAL/Driver/ResultStatement.php#L20-L27" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="Doctrine\DBAL\Driver\ResultStatement::columnCount()" tabindex="-1" class="structure-title ">
                         columnCount                        	<small>() : int</small>
@@ -229,7 +229,7 @@
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/doctrine/dbal/blob/2.10.2/lib/Doctrine/DBAL/Driver/ResultStatement.php#L29-L38" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/doctrine/dbal/blob/2.10.4/lib/Doctrine/DBAL/Driver/ResultStatement.php#L29-L38" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="Doctrine\DBAL\Driver\ResultStatement::setFetchMode()" tabindex="-1" class="structure-title ">
                         setFetchMode                        	<small>($fetchMode, $arg2 = null, $arg3 = null) : bool</small>
@@ -285,7 +285,7 @@
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/doctrine/dbal/blob/2.10.2/lib/Doctrine/DBAL/Driver/ResultStatement.php#L40-L65" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/doctrine/dbal/blob/2.10.4/lib/Doctrine/DBAL/Driver/ResultStatement.php#L40-L65" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="Doctrine\DBAL\Driver\ResultStatement::fetch()" tabindex="-1" class="structure-title ">
                         fetch                        	<small>($fetchMode = null, $cursorOrientation = PDO::FETCH_ORI_NEXT, $cursorOffset = 0) : mixed</small>
@@ -300,8 +300,8 @@
 				<td class="type">int<span class="type-separator"></span><wbr>null</td>
 				<td class="rest">$fetchMode = null</td>
 				<td class="desc"><p>Controls how the next row will be returned to the caller.</p>
-<pre><code>                               The value must be one of the {@link \Doctrine\DBAL\FetchMode} constants,
-                               defaulting to {@link \Doctrine\DBAL\FetchMode::MIXED}.
+<pre><code>                               The value must be one of the {@link FetchMode} constants,
+                               defaulting to {@link FetchMode::MIXED}.
 </code></pre>
 </td>
 			</tr>
@@ -364,7 +364,7 @@
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/doctrine/dbal/blob/2.10.2/lib/Doctrine/DBAL/Driver/ResultStatement.php#L67-L87" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/doctrine/dbal/blob/2.10.4/lib/Doctrine/DBAL/Driver/ResultStatement.php#L67-L89" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="Doctrine\DBAL\Driver\ResultStatement::fetchAll()" tabindex="-1" class="structure-title ">
                         fetchAll                        	<small>($fetchMode = null, $fetchArgument = null, $ctorArgs = null) : mixed[]</small>
@@ -379,21 +379,23 @@
 				<td class="type">int<span class="type-separator"></span><wbr>null</td>
 				<td class="rest">$fetchMode = null</td>
 				<td class="desc"><p>Controls how the next row will be returned to the caller.</p>
-<pre><code>                               The value must be one of the {@link \Doctrine\DBAL\FetchMode} constants,
-                               defaulting to {@link \Doctrine\DBAL\FetchMode::MIXED}.
+<pre><code>                               The value must be one of the {@link FetchMode} constants,
+                               defaulting to {@link FetchMode::MIXED}.
 </code></pre>
 </td>
 			</tr>
         			<tr>
 				<td class="type">int<span class="type-separator"></span><wbr>null</td>
 				<td class="rest">$fetchArgument = null</td>
-				<td class="desc"><p>This argument has a different meaning depending on the value of the $fetchMode parameter:</p>
-<pre><code>                               * {@link \Doctrine\DBAL\FetchMode::COLUMN}:
+				<td class="desc"><p>This argument has a different meaning depending on the value</p>
+<pre><code>                               of the $fetchMode parameter:
+                               * {@link FetchMode::COLUMN}:
                                  Returns the indicated 0-indexed column.
-                               * {@link \Doctrine\DBAL\FetchMode::CUSTOM_OBJECT}:
+                               * {@link FetchMode::CUSTOM_OBJECT}:
                                  Returns instances of the specified class, mapping the columns of each row
                                  to named properties in the class.
-                               * \PDO::FETCH_FUNC: Returns the results of calling the specified function, using each row's
+                               * {@link PDO::FETCH_FUNC}: Returns the results of calling
+                                 the specified function, using each row's
                                  columns as parameters in the call.
 </code></pre>
 </td>
@@ -402,8 +404,8 @@
 				<td class="type">mixed[]<span class="type-separator"></span><wbr>null</td>
 				<td class="rest">$ctorArgs = null</td>
 				<td class="desc"><p>Controls how the next row will be returned to the caller.</p>
-<pre><code>                               The value must be one of the {@link \Doctrine\DBAL\FetchMode} constants,
-                               defaulting to {@link \Doctrine\DBAL\FetchMode::MIXED}.
+<pre><code>                               The value must be one of the {@link FetchMode} constants,
+                               defaulting to {@link FetchMode::MIXED}.
 </code></pre>
 </td>
 			</tr>
@@ -436,7 +438,7 @@
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/doctrine/dbal/blob/2.10.2/lib/Doctrine/DBAL/Driver/ResultStatement.php#L89-L97" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/doctrine/dbal/blob/2.10.4/lib/Doctrine/DBAL/Driver/ResultStatement.php#L91-L99" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="Doctrine\DBAL\Driver\ResultStatement::fetchColumn()" tabindex="-1" class="structure-title ">
                         fetchColumn                        	<small>($columnIndex = 0) : mixed<span class="type-separator"></span><wbr>false</small>

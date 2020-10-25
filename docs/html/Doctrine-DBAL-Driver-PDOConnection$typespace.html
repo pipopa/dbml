@@ -54,7 +54,7 @@
 		<span class="label label-info"></span>
 		<span class="label label-info"></span>
 		<span class="label label-deprecated"></span>
-        			<a href="https://github.com/doctrine/dbal/blob/2.10.2/lib/Doctrine/DBAL/Driver/PDOConnection.php#L10-L118" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+        			<a href="https://github.com/doctrine/dbal/blob/2.10.4/lib/Doctrine/DBAL/Driver/PDOConnection.php#L10-L118" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                     	</div>
 
 	<h2>class <span class="category-name">Doctrine\DBAL\Driver\PDOConnection</span></h2>
@@ -2494,7 +2494,7 @@ Used by all PDO-based drivers.</p>
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/doctrine/dbal/blob/2.10.2/lib/Doctrine/DBAL/Driver/PDOConnection.php#L16-L33" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/doctrine/dbal/blob/2.10.4/lib/Doctrine/DBAL/Driver/PDOConnection.php#L16-L33" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="Doctrine\DBAL\Driver\PDOConnection::__construct()" tabindex="-1" class="structure-title ">
                         __construct                        	<small>($dsn, $user = null, $password = null, $options = null) : void</small>
@@ -2572,10 +2572,10 @@ Used by all PDO-based drivers.</p>
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/doctrine/dbal/blob/2.10.2/lib/Doctrine/DBAL/Driver/PDOConnection.php#L35-L45" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/doctrine/dbal/blob/2.10.4/lib/Doctrine/DBAL/Driver/PDOConnection.php#L35-L48" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="Doctrine\DBAL\Driver\PDOConnection::exec()" tabindex="-1" class="structure-title ">
-                        exec                        	<small>($statement) : int</small>
+                        exec                        	<small>($sql) : int</small>
 						</h4>
 					<div class="inner-item">
 						<div class="description"><p><tag_inheritdoc data-type='' data-description=''>Executes an SQL statement and return the number of affected rows.</tag_inheritdoc></p>
@@ -2585,7 +2585,7 @@ Used by all PDO-based drivers.</p>
 		<tbody>
         			<tr>
 				<td class="type">string</td>
-				<td class="rest">$statement</td>
+				<td class="rest">$sql</td>
 				<td class="desc"></td>
 			</tr>
         		</tbody>
@@ -2627,7 +2627,7 @@ Used by all PDO-based drivers.</p>
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/doctrine/dbal/blob/2.10.2/lib/Doctrine/DBAL/Driver/PDOConnection.php#L47-L53" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/doctrine/dbal/blob/2.10.4/lib/Doctrine/DBAL/Driver/PDOConnection.php#L50-L56" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="Doctrine\DBAL\Driver\PDOConnection::getServerVersion()" tabindex="-1" class="structure-title ">
                         getServerVersion                        	<small>() : string</small>
@@ -2677,10 +2677,10 @@ Used by all PDO-based drivers.</p>
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/doctrine/dbal/blob/2.10.2/lib/Doctrine/DBAL/Driver/PDOConnection.php#L55-L68" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/doctrine/dbal/blob/2.10.4/lib/Doctrine/DBAL/Driver/PDOConnection.php#L58-L74" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="Doctrine\DBAL\Driver\PDOConnection::prepare()" tabindex="-1" class="structure-title ">
-                        prepare                        	<small>($prepareString, $driverOptions = []) : <a href="Doctrine-DBAL-Driver-Statement$typespace.html#Doctrine\DBAL\Driver\Statement" class="fqsen "><small>Doctrine\DBAL\Driver\</small><wbr>Statement</a></small>
+                        prepare                        	<small>($sql, $driverOptions = []) : <a href="http://php.net/manual/ja/class.pdostatement.php" class="fqsen" target="_blank">\PDOStatement</a></small>
 						</h4>
 					<div class="inner-item">
 						<div class="description"></div>
@@ -2689,7 +2689,7 @@ Used by all PDO-based drivers.</p>
 		<tbody>
         			<tr>
 				<td class="type">string</td>
-				<td class="rest">$prepareString</td>
+				<td class="rest">$sql</td>
 				<td class="desc"></td>
 			</tr>
         			<tr>
@@ -2703,7 +2703,7 @@ Used by all PDO-based drivers.</p>
 		<caption>Return</caption>
 		<tbody>
 		<tr>
-			<td class="type"><a href="Doctrine-DBAL-Driver-Statement$typespace.html#Doctrine\DBAL\Driver\Statement" class="fqsen "><small>Doctrine\DBAL\Driver\</small><wbr>Statement</a></td>
+			<td class="type"><a href="http://php.net/manual/ja/class.pdostatement.php" class="fqsen" target="_blank">\PDOStatement</a></td>
 			<td class="desc"></td>
 			<td class="rest"></td>
 		</tr>
@@ -2736,10 +2736,10 @@ Used by all PDO-based drivers.</p>
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/doctrine/dbal/blob/2.10.2/lib/Doctrine/DBAL/Driver/PDOConnection.php#L70-L85" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/doctrine/dbal/blob/2.10.4/lib/Doctrine/DBAL/Driver/PDOConnection.php#L76-L93" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="Doctrine\DBAL\Driver\PDOConnection::query()" tabindex="-1" class="structure-title ">
-                        query                        	<small>() : <a href="Doctrine-DBAL-Driver-Statement$typespace.html#Doctrine\DBAL\Driver\Statement" class="fqsen "><small>Doctrine\DBAL\Driver\</small><wbr>Statement</a></small>
+                        query                        	<small>() : <a href="http://php.net/manual/ja/class.pdostatement.php" class="fqsen" target="_blank">\PDOStatement</a></small>
 						</h4>
 					<div class="inner-item">
 						<div class="description"><p><tag_inheritdoc data-type='' data-description=''>Executes an SQL statement, returning a result set as a Statement object.</tag_inheritdoc></p>
@@ -2753,7 +2753,7 @@ Used by all PDO-based drivers.</p>
 		<caption>Return</caption>
 		<tbody>
 		<tr>
-			<td class="type"><a href="Doctrine-DBAL-Driver-Statement$typespace.html#Doctrine\DBAL\Driver\Statement" class="fqsen "><small>Doctrine\DBAL\Driver\</small><wbr>Statement</a></td>
+			<td class="type"><a href="http://php.net/manual/ja/class.pdostatement.php" class="fqsen" target="_blank">\PDOStatement</a></td>
 			<td class="desc"></td>
 			<td class="rest"></td>
 		</tr>
@@ -2786,67 +2786,7 @@ Used by all PDO-based drivers.</p>
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/doctrine/dbal/blob/2.10.2/lib/Doctrine/DBAL/Driver/PDOConnection.php#L87-L93" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
-                                    					</div>
-					<h4 id="Doctrine\DBAL\Driver\PDOConnection::quote()" tabindex="-1" class="structure-title ">
-                        quote                        	<small>($input, $type = Doctrine\DBAL\ParameterType::STRING) : mixed</small>
-						</h4>
-					<div class="inner-item">
-						<div class="description"><p><tag_inheritdoc data-type='' data-description=''>Quotes a string for use in a query.</tag_inheritdoc></p>
-</div>
-                        	<table class="table">
-		<caption>Parameters</caption>
-		<tbody>
-        			<tr>
-				<td class="type">mixed</td>
-				<td class="rest">$input</td>
-				<td class="desc"></td>
-			</tr>
-        			<tr>
-				<td class="type">int</td>
-				<td class="rest">$type = Doctrine\DBAL\ParameterType::STRING</td>
-				<td class="desc"></td>
-			</tr>
-        		</tbody>
-	</table>
-                            	<table class="table">
-		<caption>Return</caption>
-		<tbody>
-		<tr>
-			<td class="type">mixed</td>
-			<td class="desc"></td>
-			<td class="rest"></td>
-		</tr>
-		</tbody>
-	</table>
-                                                    	<table class="table">
-		<caption>Prototype</caption>
-		<tbody>
-        			<tr>
-				<td class="type"><a href="Doctrine-DBAL-Driver-Connection$typespace.html#Doctrine\DBAL\Driver\Connection::quote()" class="fqsen "><small>Doctrine\DBAL\Driver\</small><wbr>Connection::quote()</a></td>
-				<td class="desc">Quotes a string for use in a query.</td>
-				<td class="rest">implement</td>
-			</tr>
-        		</tbody>
-	</table>
-                            					</div>
-					<div class="attribute">
-						<span class="label label-default"></span>
-						<span class="label label-default"></span>
-					</div>
-					<div class="clearfix"></div>
-				</li>
-            				<li class="structure-item">
-					<div class="attribute">
-						<span class="label label-danger"></span>
-						<span class="label label-default"></span>
-						<span class="label label-magic"></span>
-						<span class="label label-danger"></span>
-						<span class="label label-default"></span>
-						<span class="label label-default"></span>
-						<span class="label label-deprecated"></span>
-						<span class="label label-public">public</span>
-                        			<a href="https://github.com/doctrine/dbal/blob/2.10.2/lib/Doctrine/DBAL/Driver/PDOConnection.php#L95-L109" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/doctrine/dbal/blob/2.10.4/lib/Doctrine/DBAL/Driver/PDOConnection.php#L95-L109" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="Doctrine\DBAL\Driver\PDOConnection::lastInsertId()" tabindex="-1" class="structure-title ">
                         lastInsertId                        	<small>($name = null) : string</small>
@@ -2901,7 +2841,7 @@ Used by all PDO-based drivers.</p>
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/doctrine/dbal/blob/2.10.2/lib/Doctrine/DBAL/Driver/PDOConnection.php#L111-L117" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/doctrine/dbal/blob/2.10.4/lib/Doctrine/DBAL/Driver/PDOConnection.php#L111-L117" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="Doctrine\DBAL\Driver\PDOConnection::requiresQueryForServerVersion()" tabindex="-1" class="structure-title ">
                         requiresQueryForServerVersion                        	<small>() : bool</small>
@@ -3346,6 +3286,66 @@ Used by all PDO-based drivers.</p>
 		<tbody>
         			<tr>
 				<td class="type"><a href="http://php.net/manual/ja/pdo.getattribute.php" class="fqsen" target="_blank">\PDO::getAttribute()</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="#L0-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Driver\PDOConnection::quote()" tabindex="-1" class="structure-title ">
+                        quote                        	<small>($string, $paramtype) : mixed</small>
+						</h4>
+					<div class="inner-item">
+						<div class="description"><p>Quotes a string for use in a query.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        			<tr>
+				<td class="type"></td>
+				<td class="rest">$string</td>
+				<td class="desc"></td>
+			</tr>
+        			<tr>
+				<td class="type"></td>
+				<td class="rest">$paramtype</td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">mixed</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                    	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/pdo.quote.php" class="fqsen" target="_blank">\PDO::quote()</a></td>
 				<td class="desc"></td>
 				<td class="rest">inherit</td>
 			</tr>

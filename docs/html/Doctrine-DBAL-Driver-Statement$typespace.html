@@ -54,7 +54,7 @@
 		<span class="label label-info"></span>
 		<span class="label label-info"></span>
 		<span class="label label-deprecated"></span>
-        			<a href="https://github.com/doctrine/dbal/blob/2.10.2/lib/Doctrine/DBAL/Driver/Statement.php#L7-L105" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+        			<a href="https://github.com/doctrine/dbal/blob/2.10.4/lib/Doctrine/DBAL/Driver/Statement.php#L7-L105" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                     	</div>
 
 	<h2>interface <span class="category-name">Doctrine\DBAL\Driver\Statement</span></h2>
@@ -150,7 +150,7 @@ Drivers must implement this interface.</p>
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/doctrine/dbal/blob/2.10.2/lib/Doctrine/DBAL/Driver/Statement.php#L15-L31" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/doctrine/dbal/blob/2.10.4/lib/Doctrine/DBAL/Driver/Statement.php#L15-L31" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="Doctrine\DBAL\Driver\Statement::bindValue()" tabindex="-1" class="structure-title ">
                         bindValue                        	<small>($param, $value, $type = Doctrine\DBAL\ParameterType::STRING) : bool</small>
@@ -165,11 +165,11 @@ fetchAll(), fetchArray(), fetchColumn(), fetchAssoc() methods to have the named 
 		<caption>Parameters</caption>
 		<tbody>
         			<tr>
-				<td class="type">mixed</td>
+				<td class="type">int<span class="type-separator"></span><wbr>string</td>
 				<td class="rest">$param</td>
 				<td class="desc"><p>Parameter identifier. For a prepared statement using named placeholders,</p>
-<pre><code>                this will be a parameter name of the form :name. For a prepared statement
-                using question mark placeholders, this will be the 1-indexed position of the parameter.
+<pre><code>                     this will be a parameter name of the form :name. For a prepared statement
+                     using question mark placeholders, this will be the 1-indexed position of the parameter.
 </code></pre>
 </td>
 			</tr>
@@ -183,7 +183,7 @@ fetchAll(), fetchArray(), fetchColumn(), fetchAssoc() methods to have the named 
 				<td class="type">int</td>
 				<td class="rest">$type = Doctrine\DBAL\ParameterType::STRING</td>
 				<td class="desc"><p>Explicit data type for the parameter using the <tag_link data-kind='fqsen' data-type-category='class' data-type-fqsen='Doctrine\DBAL\ParameterType' data-type-array='0' data-description='Doctrine\DBAL\ParameterType'>Doctrine\DBAL\ParameterType</tag_link></p>
-<pre><code>                constants.
+<pre><code>                     constants.
 </code></pre>
 </td>
 			</tr>
@@ -217,10 +217,10 @@ fetchAll(), fetchArray(), fetchColumn(), fetchAssoc() methods to have the named 
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/doctrine/dbal/blob/2.10.2/lib/Doctrine/DBAL/Driver/Statement.php#L33-L59" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/doctrine/dbal/blob/2.10.4/lib/Doctrine/DBAL/Driver/Statement.php#L33-L59" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="Doctrine\DBAL\Driver\Statement::bindParam()" tabindex="-1" class="structure-title ">
-                        bindParam                        	<small>($column, &amp;$variable, $type = Doctrine\DBAL\ParameterType::STRING, $length = null) : bool</small>
+                        bindParam                        	<small>($param, &amp;$variable, $type = Doctrine\DBAL\ParameterType::STRING, $length = null) : bool</small>
 						</h4>
 					<div class="inner-item">
 						<div class="description"><p>Binds a PHP variable to a corresponding named (not supported by mysqli driver, see comment below) or question<br />
@@ -238,11 +238,11 @@ parameters that both send in data and are updated to receive it.</p>
 		<caption>Parameters</caption>
 		<tbody>
         			<tr>
-				<td class="type">mixed</td>
-				<td class="rest">$column</td>
+				<td class="type">int<span class="type-separator"></span><wbr>string</td>
+				<td class="rest">$param</td>
 				<td class="desc"><p>Parameter identifier. For a prepared statement using named placeholders,</p>
-<pre><code>                      this will be a parameter name of the form :name. For a prepared statement using
-                      question mark placeholders, this will be the 1-indexed position of the parameter.
+<pre><code>                        this will be a parameter name of the form :name. For a prepared statement using
+                        question mark placeholders, this will be the 1-indexed position of the parameter.
 </code></pre>
 </td>
 			</tr>
@@ -256,8 +256,8 @@ parameters that both send in data and are updated to receive it.</p>
 				<td class="type">int</td>
 				<td class="rest">$type = Doctrine\DBAL\ParameterType::STRING</td>
 				<td class="desc"><p>Explicit data type for the parameter using the <tag_link data-kind='fqsen' data-type-category='class' data-type-fqsen='Doctrine\DBAL\ParameterType' data-type-array='0' data-description='Doctrine\DBAL\ParameterType'>Doctrine\DBAL\ParameterType</tag_link></p>
-<pre><code>                      constants. To return an INOUT parameter from a stored procedure, use the bitwise
-                      OR operator to set the PDO::PARAM_INPUT_OUTPUT bits for the data_type parameter.
+<pre><code>                        constants. To return an INOUT parameter from a stored procedure, use the bitwise
+                        OR operator to set the PDO::PARAM_INPUT_OUTPUT bits for the data_type parameter.
 </code></pre>
 </td>
 			</tr>
@@ -265,7 +265,7 @@ parameters that both send in data and are updated to receive it.</p>
 				<td class="type">int<span class="type-separator"></span><wbr>null</td>
 				<td class="rest">$length = null</td>
 				<td class="desc"><p>You must specify maxlength when using an OUT bind</p>
-<pre><code>                      so that PHP allocates enough memory to hold the returned value.
+<pre><code>                        so that PHP allocates enough memory to hold the returned value.
 </code></pre>
 </td>
 			</tr>
@@ -299,7 +299,7 @@ parameters that both send in data and are updated to receive it.</p>
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/doctrine/dbal/blob/2.10.2/lib/Doctrine/DBAL/Driver/Statement.php#L61-L68" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/doctrine/dbal/blob/2.10.4/lib/Doctrine/DBAL/Driver/Statement.php#L61-L68" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="Doctrine\DBAL\Driver\Statement::errorCode()" tabindex="-1" class="structure-title ">
                         errorCode                        	<small>() : string<span class="type-separator"></span><wbr>int<span class="type-separator"></span><wbr>bool</small>
@@ -350,7 +350,7 @@ parameters that both send in data and are updated to receive it.</p>
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/doctrine/dbal/blob/2.10.2/lib/Doctrine/DBAL/Driver/Statement.php#L70-L75" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/doctrine/dbal/blob/2.10.4/lib/Doctrine/DBAL/Driver/Statement.php#L70-L75" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="Doctrine\DBAL\Driver\Statement::errorInfo()" tabindex="-1" class="structure-title ">
                         errorInfo                        	<small>() : mixed[]</small>
@@ -391,7 +391,7 @@ parameters that both send in data and are updated to receive it.</p>
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/doctrine/dbal/blob/2.10.2/lib/Doctrine/DBAL/Driver/Statement.php#L77-L91" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/doctrine/dbal/blob/2.10.4/lib/Doctrine/DBAL/Driver/Statement.php#L77-L91" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="Doctrine\DBAL\Driver\Statement::execute()" tabindex="-1" class="structure-title ">
                         execute                        	<small>($params = null) : bool</small>
@@ -445,7 +445,7 @@ parameter values.</p>
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/doctrine/dbal/blob/2.10.2/lib/Doctrine/DBAL/Driver/Statement.php#L93-L104" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/doctrine/dbal/blob/2.10.4/lib/Doctrine/DBAL/Driver/Statement.php#L93-L104" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="Doctrine\DBAL\Driver\Statement::rowCount()" tabindex="-1" class="structure-title ">
                         rowCount                        	<small>() : int</small>
@@ -491,7 +491,7 @@ relied on for portable applications.</p>
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/doctrine/dbal/blob/2.10.2/lib/Doctrine/DBAL/Driver/ResultStatement.php#L13-L18" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/doctrine/dbal/blob/2.10.4/lib/Doctrine/DBAL/Driver/ResultStatement.php#L13-L18" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="Doctrine\DBAL\Driver\Statement::closeCursor()" tabindex="-1" class="structure-title ">
                         closeCursor                        	<small>() : bool</small>
@@ -542,7 +542,7 @@ relied on for portable applications.</p>
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/doctrine/dbal/blob/2.10.2/lib/Doctrine/DBAL/Driver/ResultStatement.php#L20-L27" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/doctrine/dbal/blob/2.10.4/lib/Doctrine/DBAL/Driver/ResultStatement.php#L20-L27" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="Doctrine\DBAL\Driver\Statement::columnCount()" tabindex="-1" class="structure-title ">
                         columnCount                        	<small>() : int</small>
@@ -596,7 +596,7 @@ relied on for portable applications.</p>
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/doctrine/dbal/blob/2.10.2/lib/Doctrine/DBAL/Driver/ResultStatement.php#L29-L38" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/doctrine/dbal/blob/2.10.4/lib/Doctrine/DBAL/Driver/ResultStatement.php#L29-L38" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="Doctrine\DBAL\Driver\Statement::setFetchMode()" tabindex="-1" class="structure-title ">
                         setFetchMode                        	<small>($fetchMode, $arg2 = null, $arg3 = null) : bool</small>
@@ -662,7 +662,7 @@ relied on for portable applications.</p>
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/doctrine/dbal/blob/2.10.2/lib/Doctrine/DBAL/Driver/ResultStatement.php#L40-L65" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/doctrine/dbal/blob/2.10.4/lib/Doctrine/DBAL/Driver/ResultStatement.php#L40-L65" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="Doctrine\DBAL\Driver\Statement::fetch()" tabindex="-1" class="structure-title ">
                         fetch                        	<small>($fetchMode = null, $cursorOrientation = PDO::FETCH_ORI_NEXT, $cursorOffset = 0) : mixed</small>
@@ -677,8 +677,8 @@ relied on for portable applications.</p>
 				<td class="type">int<span class="type-separator"></span><wbr>null</td>
 				<td class="rest">$fetchMode = null</td>
 				<td class="desc"><p>Controls how the next row will be returned to the caller.</p>
-<pre><code>                               The value must be one of the {@link \Doctrine\DBAL\FetchMode} constants,
-                               defaulting to {@link \Doctrine\DBAL\FetchMode::MIXED}.
+<pre><code>                               The value must be one of the {@link FetchMode} constants,
+                               defaulting to {@link FetchMode::MIXED}.
 </code></pre>
 </td>
 			</tr>
@@ -751,7 +751,7 @@ relied on for portable applications.</p>
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/doctrine/dbal/blob/2.10.2/lib/Doctrine/DBAL/Driver/ResultStatement.php#L67-L87" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/doctrine/dbal/blob/2.10.4/lib/Doctrine/DBAL/Driver/ResultStatement.php#L67-L89" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="Doctrine\DBAL\Driver\Statement::fetchAll()" tabindex="-1" class="structure-title ">
                         fetchAll                        	<small>($fetchMode = null, $fetchArgument = null, $ctorArgs = null) : mixed[]</small>
@@ -766,21 +766,23 @@ relied on for portable applications.</p>
 				<td class="type">int<span class="type-separator"></span><wbr>null</td>
 				<td class="rest">$fetchMode = null</td>
 				<td class="desc"><p>Controls how the next row will be returned to the caller.</p>
-<pre><code>                               The value must be one of the {@link \Doctrine\DBAL\FetchMode} constants,
-                               defaulting to {@link \Doctrine\DBAL\FetchMode::MIXED}.
+<pre><code>                               The value must be one of the {@link FetchMode} constants,
+                               defaulting to {@link FetchMode::MIXED}.
 </code></pre>
 </td>
 			</tr>
         			<tr>
 				<td class="type">int<span class="type-separator"></span><wbr>null</td>
 				<td class="rest">$fetchArgument = null</td>
-				<td class="desc"><p>This argument has a different meaning depending on the value of the $fetchMode parameter:</p>
-<pre><code>                               * {@link \Doctrine\DBAL\FetchMode::COLUMN}:
+				<td class="desc"><p>This argument has a different meaning depending on the value</p>
+<pre><code>                               of the $fetchMode parameter:
+                               * {@link FetchMode::COLUMN}:
                                  Returns the indicated 0-indexed column.
-                               * {@link \Doctrine\DBAL\FetchMode::CUSTOM_OBJECT}:
+                               * {@link FetchMode::CUSTOM_OBJECT}:
                                  Returns instances of the specified class, mapping the columns of each row
                                  to named properties in the class.
-                               * \PDO::FETCH_FUNC: Returns the results of calling the specified function, using each row's
+                               * {@link PDO::FETCH_FUNC}: Returns the results of calling
+                                 the specified function, using each row's
                                  columns as parameters in the call.
 </code></pre>
 </td>
@@ -789,8 +791,8 @@ relied on for portable applications.</p>
 				<td class="type">mixed[]<span class="type-separator"></span><wbr>null</td>
 				<td class="rest">$ctorArgs = null</td>
 				<td class="desc"><p>Controls how the next row will be returned to the caller.</p>
-<pre><code>                               The value must be one of the {@link \Doctrine\DBAL\FetchMode} constants,
-                               defaulting to {@link \Doctrine\DBAL\FetchMode::MIXED}.
+<pre><code>                               The value must be one of the {@link FetchMode} constants,
+                               defaulting to {@link FetchMode::MIXED}.
 </code></pre>
 </td>
 			</tr>
@@ -833,7 +835,7 @@ relied on for portable applications.</p>
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/doctrine/dbal/blob/2.10.2/lib/Doctrine/DBAL/Driver/ResultStatement.php#L89-L97" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/doctrine/dbal/blob/2.10.4/lib/Doctrine/DBAL/Driver/ResultStatement.php#L91-L99" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="Doctrine\DBAL\Driver\Statement::fetchColumn()" tabindex="-1" class="structure-title ">
                         fetchColumn                        	<small>($columnIndex = 0) : mixed<span class="type-separator"></span><wbr>false</small>
