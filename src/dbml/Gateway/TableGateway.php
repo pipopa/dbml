@@ -1611,8 +1611,9 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
         }
 
         // 指定されたスコープをすべて当てるような動的スコープとして定義する
-        $this->scopes[$name] = function (...$params) use ($scopes) {
-            $result = self::$defargs;
+        $defargs = self::$defargs;
+        $this->scopes[$name] = function (...$params) use ($scopes, $defargs) {
+            $result = $defargs;
             foreach ($scopes as $scope => $args) {
                 if ($this->scopes[$scope] instanceof \Closure) {
                     $alength = parameter_length($this->scopes[$scope]);
