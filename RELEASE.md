@@ -21,6 +21,15 @@
 - Entity 消したい。使わない…
 - phpstorm と相性が悪いのでマジックメソッドを撲滅したい
 
+## 2.0.3
+
+- [change][TableDescriptor] テーブル記法の埋め込みを json ではなく paml に変更
+- [fixbug][TableDescriptor] 特定条件で仮想カラム・スコープが見つからない不具合を修正
+- [fixbug][QueryBuilder] スコープが JOIN 記述を含んでいても無視される不具合を修正
+- [fixbug][TableGateway] 継承したクラスで private エラーになる不具合を修正
+- [feature][TableGateway] mixScope で追加スコープを与えられるように修正
+- [feature][Database] 曖昧な外部キーや存在しない外部キー指定時にしっかりと例外が飛ぶように改善
+
 ## 2.0.2
 
 - [feature][QueryBuilder] 暗黙スコープを指定可能にした
