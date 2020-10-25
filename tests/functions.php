@@ -5893,7 +5893,7 @@ if (!isset($excluded_functions["date_convert"]) && (!function_exists("ryunosuke\
         if ($datetimedata === null) {
             $timestamp = microtime(true);
         }
-        elseif ($datetimedata instanceof \DateTime) {
+        elseif ($datetimedata instanceof \DateTimeInterface) {
             // @fixme DateTime オブジェクトって timestamp を float で得られないの？
             $timestamp = (float) $datetimedata->format('U.u');
         }
@@ -5929,9 +5929,10 @@ if (!isset($excluded_functions["date_convert"]) && (!function_exists("ryunosuke\
         $format = $replace($format, 'x', ['日', '月', '火', '水', '木', '金', '土'][idate('w', $timestamp)]);
 
         if (is_float($timestamp)) {
-            [$second, $micro] = explode('.', $timestamp) + [1 => '000000'];
-            $datetime = \DateTime::createFromFormat('Y/m/d H:i:s.u', date('Y/m/d H:i:s.', $second) . $micro);
-            return $datetime->format($format);
+            // datetime パラメータが UNIX タイムスタンプ (例: 946684800) だったり、タイムゾーンを含んでいたり (例: 2010-01-28T15:00:00+02:00) する場合は、 timezone パラメータや現在のタイムゾーンは無視します
+            static $dtz = null;
+            $dtz = $dtz ?? new \DateTimeZone(date_default_timezone_get());
+            return \DateTime::createFromFormat('U.u', $timestamp)->setTimezone($dtz)->format($format);
         }
         return date($format, $timestamp);
     }
@@ -6878,6 +6879,44 @@ if (function_exists("ryunosuke\\dbml\\path_resolve") && !defined("ryunosuke\\dbm
     define("ryunosuke\\dbml\\path_resolve", "ryunosuke\\dbml\\path_resolve");
 }
 
+if (!isset($excluded_functions["path_relative"]) && (!function_exists("ryunosuke\\dbml\\path_relative") || (!false && (new \ReflectionFunction("ryunosuke\\dbml\\path_relative"))->isInternal()))) {
+    /**
+     * パスを相対パスに変換して正規化する
+     *
+     * $from から $to への相対パスを返す。
+     *
+     * Example:
+     * ```php
+     * $DS = DIRECTORY_SEPARATOR;
+     * that(path_relative('/a/b/c/X', '/a/b/c/d/X'))->isSame("..{$DS}d{$DS}X");
+     * that(path_relative('/a/b/c/d/X', '/a/b/c/X'))->isSame("..{$DS}..{$DS}X");
+     * that(path_relative('/a/b/c/X', '/a/b/c/X'))->isSame("");
+     * ```
+     *
+     * @param string $from 元パス
+     * @param string $to 対象パス
+     * @return string 相対パス
+     */
+    function path_relative($from, $to)
+    {
+        $DS = DIRECTORY_SEPARATOR;
+
+        $fa = array_filter(explode($DS, path_resolve($from)), 'strlen');
+        $ta = array_filter(explode($DS, path_resolve($to)), 'strlen');
+
+        $compare = function ($a, $b) use ($DS) {
+            return $DS === '\\' ? strcasecmp($a, $b) : strcmp($a, $b);
+        };
+        $ca = array_udiff_assoc($fa, $ta, $compare);
+        $da = array_udiff_assoc($ta, $fa, $compare);
+
+        return str_repeat("..$DS", count($ca)) . implode($DS, $da);
+    }
+}
+if (function_exists("ryunosuke\\dbml\\path_relative") && !defined("ryunosuke\\dbml\\path_relative")) {
+    define("ryunosuke\\dbml\\path_relative", "ryunosuke\\dbml\\path_relative");
+}
+
 if (!isset($excluded_functions["path_normalize"]) && (!function_exists("ryunosuke\\dbml\\path_normalize") || (!false && (new \ReflectionFunction("ryunosuke\\dbml\\path_normalize"))->isInternal()))) {
     /**
      * パスを正規化する
@@ -7623,6 +7662,7 @@ if (!isset($excluded_functions["ope_func"]) && (!function_exists("ryunosuke\\dbm
      * 演算子のクロージャを返す
      *
      * 関数ベースなので `??` のような言語組み込みの特殊な演算子は若干希望通りにならない（Notice が出る）。
+     * 2つ目以降の引数でオペランドを指定できる。
      *
      * Example:
      * ```php
@@ -7636,12 +7676,16 @@ if (!isset($excluded_functions["ope_func"]) && (!function_exists("ryunosuke\\dbm
      * $cond = ope_func('?:'); // 条件演算子クロージャ
      * that($cond('OK', 'NG'))->isSame('OK' ?: 'NG');               // 引数2つで呼ぶと2項演算子
      * that($cond(false, 'OK', 'NG'))->isSame(false ? 'OK' : 'NG'); // 引数3つで呼ぶと3項演算子
+     *
+     * $gt5 = ope_func('<=', 5); // 5以下を判定するクロージャ
+     * that(array_filter([1, 2, 3, 4, 5, 6, 7, 8, 9], $gt5))->isSame([1, 2, 3, 4, 5]);
      * ```
      *
      * @param string $operator 演算子
+     * @param mixed $operands 右オペランド
      * @return \Closure 演算子のクロージャ
      */
-    function ope_func($operator)
+    function ope_func($operator, ...$operands)
     {
         static $operators = null;
         $operators = $operators ?: [
@@ -7682,7 +7726,15 @@ if (!isset($excluded_functions["ope_func"]) && (!function_exists("ryunosuke\\dbm
             'instanceof' => static function ($v1, $v2) { return $v1 instanceof $v2; },
         ];
 
-        return $operators[trim($operator)] ?? throws(new \InvalidArgumentException("$operator is not defined Operator."));
+        $opefunc = $operators[trim($operator)] ?? throws(new \InvalidArgumentException("$operator is not defined Operator."));
+
+        if ($operands) {
+            return static function ($v1) use ($opefunc, $operands) {
+                return $opefunc($v1, ...$operands);
+            };
+        }
+
+        return $opefunc;
     }
 }
 if (function_exists("ryunosuke\\dbml\\ope_func") && !defined("ryunosuke\\dbml\\ope_func")) {
@@ -10147,6 +10199,11 @@ if (!isset($excluded_functions["sql_format"]) && (!function_exists("ryunosuke\\d
                         }
                     case "OR":
                     case "XOR":
+                        // WHEN の条件はカッコがない限り改行しない
+                        if ($subcontext === 'WHEN') {
+                            $result[] = $MARK_SP . $virttoken . $MARK_SP;
+                            break;
+                        }
                         $result[] = $MARK_SP . $MARK_BR . $MARK_NT . $virttoken . $MARK_SP;
                         break;
                     case "UNION":
@@ -10242,9 +10299,15 @@ if (!isset($excluded_functions["sql_format"]) && (!function_exists("ryunosuke\\d
                             $context = $uppertoken;
                         }
                         break;
+                    /** @noinspection PhpMissingBreakStatementInspection */
                     case "WHEN":
+                        $subcontext = $uppertoken;
                     case "ELSE":
                         $result[] = $MARK_BR . $MARK_NT . $virttoken . $MARK_SP;
+                        break;
+                    case "THEN":
+                        $subcontext = '';
+                        $result[] = $MARK_SP . $virttoken;
                         break;
                     case "CASE":
                         $parts = $interpret($index);
@@ -12177,87 +12240,32 @@ if (!isset($excluded_functions["htmltag"]) && (!function_exists("ryunosuke\\dbml
         };
 
         $build = static function ($selector, $content, $escape) use ($html) {
-            $tag = '';
-            $id = '';
-            $classes = [];
-            $attrs = [];
-
-            $context = null;
-            $escaping = null;
-            $chars = preg_split('##u', $selector, -1, PREG_SPLIT_NO_EMPTY);
-            for ($i = 0, $l = count($chars); $i < $l; $i++) {
-                $char = $chars[$i];
-                if ($char === '"' || $char === "'") {
-                    $escaping = $escaping === $char ? null : $char;
-                }
-
-                if (!$escaping && $char === '#') {
-                    if (strlen($id)) {
-                        throw new \InvalidArgumentException('#id is multiple.');
-                    }
-                    $context = $char;
-                    continue;
-                }
-                if (!$escaping && $char === '.') {
-                    $context = $char;
-                    $classes[] = '';
-                    continue;
-                }
-                if (!$escaping && $char === '[') {
-                    $context = $char;
-                    $attrs[] = '';
-                    continue;
-                }
-                if (!$escaping && $char === ']') {
-                    $context = null;
-                    continue;
-                }
-
-                if ($char === '\\') {
-                    $char = $chars[++$i];
-                }
-
-                if ($context === null) {
-                    $tag .= $char;
-                    continue;
-                }
-                if ($context === '#') {
-                    $id .= $char;
-                    continue;
-                }
-                if ($context === '.') {
-                    $classes[count($classes) - 1] .= $char;
-                    continue;
-                }
-                if ($context === '[') {
-                    $attrs[count($attrs) - 1] .= $char;
-                    continue;
-                }
-            }
-
+            $p = min(strpos_array($selector, ['#', '.', '[', '{']) ?: [strlen($selector)]);
+            $tag = substr($selector, 0, $p);
             if (!strlen($tag)) {
                 throw new \InvalidArgumentException('tagname is empty.');
             }
-
-            $attrkv = [];
-            if (strlen($id)) {
-                $attrkv['id'] = $id;
+            $attrs = css_selector(substr($selector, $p));
+            if (isset($attrs['class'])) {
+                $attrs['class'] = implode(' ', $attrs['class']);
             }
-            if ($classes) {
-                $attrkv['class'] = implode(' ', $classes);
-            }
-            foreach ($attrs as $attr) {
-                [$k, $v] = explode('=', $attr, 2) + [1 => null];
-                if (array_key_exists($k, $attrkv)) {
-                    throw new \InvalidArgumentException("[$k] is dumplicated.");
+            foreach ($attrs as $k => $v) {
+                if ($v === false) {
+                    unset($attrs[$k]);
+                    continue;
                 }
-                $attrkv[$k] = $v;
-            }
-            $attrs = [];
-            foreach ($attrkv as $k => $v) {
-                $attrs[] = $v === null
-                    ? $html($k)
-                    : sprintf('%s="%s"', $html($k), $html(preg_replace('#^([\"\'])|([^\\\\])([\"\'])$#u', '$2', $v)));
+                elseif ($v === true) {
+                    $v = $html($k);
+                }
+                elseif (is_array($v)) {
+                    $v = 'style="' . array_sprintf($v, function ($style, $key) {
+                            return is_int($key) ? $style : "$key:$style";
+                        }, ';') . '"';
+                }
+                else {
+                    $v = sprintf('%s="%s"', $html($k), $html(preg_replace('#^([\"\'])|([^\\\\])([\"\'])$#u', '$2', $v)));
+                }
+                $attrs[$k] = $v;
             }
 
             preg_match('#(\s*)(.+)(\s*)#u', $tag, $m);
@@ -12285,6 +12293,146 @@ if (!isset($excluded_functions["htmltag"]) && (!function_exists("ryunosuke\\dbml
 }
 if (function_exists("ryunosuke\\dbml\\htmltag") && !defined("ryunosuke\\dbml\\htmltag")) {
     define("ryunosuke\\dbml\\htmltag", "ryunosuke\\dbml\\htmltag");
+}
+
+if (!isset($excluded_functions["css_selector"]) && (!function_exists("ryunosuke\\dbml\\css_selector") || (!false && (new \ReflectionFunction("ryunosuke\\dbml\\css_selector"))->isInternal()))) {
+    /**
+     * CSS セレクタ文字をパースして配列で返す
+     *
+     * 包含などではない属性セレクタを与えると属性として認識する。
+     * 独自仕様として・・・
+     *
+     * - [!attr]: 否定属性として false を返す
+     * - {styles}: style 属性とみなす
+     *
+     * がある。
+     *
+     * Example:
+     * ```php
+     * that(css_selector('#hoge.c1.c2[name=hoge\[\]][href="http://hoge"][hidden][!readonly]{width:123px;height:456px}'))->is([
+     *     'id'       => 'hoge',
+     *     'class'    => ['c1', 'c2'],
+     *     'name'     => 'hoge[]',
+     *     'href'     => 'http://hoge',
+     *     'hidden'   => true,
+     *     'readonly' => false,
+     *     'style'    => [
+     *         'width'  => '123px',
+     *         'height' => '456px',
+     *     ],
+     * ]);
+     * ```
+     *
+     * @param string $selector CSS セレクタ
+     * @return array 属性配列
+     */
+    function css_selector($selector)
+    {
+        $id = '';
+        $classes = [];
+        $styles = [];
+        $attrs = [];
+
+        $context = null;
+        $escaping = null;
+        $chars = preg_split('##u', $selector, -1, PREG_SPLIT_NO_EMPTY);
+        for ($i = 0, $l = count($chars); $i < $l; $i++) {
+            $char = $chars[$i];
+            if ($char === '"' || $char === "'") {
+                $escaping = $escaping === $char ? null : $char;
+            }
+
+            if (!$escaping && $char === '#') {
+                if (strlen($id)) {
+                    throw new \InvalidArgumentException('#id is multiple.');
+                }
+                $context = $char;
+                continue;
+            }
+            if (!$escaping && $char === '.') {
+                $context = $char;
+                $classes[] = '';
+                continue;
+            }
+            if (!$escaping && $char === '{') {
+                $context = $char;
+                $styles[] = '';
+                continue;
+            }
+            if (!$escaping && $char === ';') {
+                $styles[] = '';
+                continue;
+            }
+            if (!$escaping && $char === '}') {
+                $context = null;
+                continue;
+            }
+            if (!$escaping && $char === '[') {
+                $context = $char;
+                $attrs[] = '';
+                continue;
+            }
+            if (!$escaping && $char === ']') {
+                $context = null;
+                continue;
+            }
+
+            if ($char === '\\') {
+                $char = $chars[++$i];
+            }
+
+            if ($context === '#') {
+                $id .= $char;
+                continue;
+            }
+            if ($context === '.') {
+                $classes[count($classes) - 1] .= $char;
+                continue;
+            }
+            if ($context === '{') {
+                $styles[count($styles) - 1] .= $char;
+                continue;
+            }
+            if ($context === '[') {
+                $attrs[count($attrs) - 1] .= $char;
+                continue;
+            }
+        }
+
+        $attrkv = [];
+        if (strlen($id)) {
+            $attrkv['id'] = $id;
+        }
+        if ($classes) {
+            $attrkv['class'] = $classes;
+        }
+        foreach ($styles as $style) {
+            $declares = array_filter(array_map('trim', explode(';', $style)), 'strlen');
+            foreach ($declares as $declare) {
+                [$k, $v] = array_map('trim', explode(':', $declare, 2)) + [1 => null];
+                if ($v === null) {
+                    throw new \InvalidArgumentException("[$k] is empty.");
+                }
+                $attrkv['style'][$k] = $v;
+            }
+        }
+        foreach ($attrs as $attr) {
+            [$k, $v] = explode('=', $attr, 2) + [1 => true];
+            if (array_key_exists($k, $attrkv)) {
+                throw new \InvalidArgumentException("[$k] is dumplicated.");
+            }
+            if ($k[0] === '!') {
+                $k = substr($k, 1);
+                $v = false;
+            }
+            $attrkv[$k] = is_string($v) ? json_decode($v) ?? $v : $v;
+        }
+
+        return $attrkv;
+    }
+}
+if (function_exists("ryunosuke\\dbml\\css_selector") && !defined("ryunosuke\\dbml\\css_selector")) {
+    define("ryunosuke\\dbml\\css_selector", "ryunosuke\\dbml\\css_selector");
 }
 
 if (!isset($excluded_functions["build_uri"]) && (!function_exists("ryunosuke\\dbml\\build_uri") || (!false && (new \ReflectionFunction("ryunosuke\\dbml\\build_uri"))->isInternal()))) {
@@ -12536,7 +12684,8 @@ if (!isset($excluded_functions["csv_export"]) && (!function_exists("ryunosuke\\d
      * CSV ヘッダ行は全連想配列のキーの共通項となる。
      * 順番には依存しないが、余計な要素があってもそのキーはヘッダには追加されないし、データ行にも含まれない。
      * ただし、オプションで headers が与えられた場合はそれを使用する。
-     * この headers オプションはヘッダ文字列変換も兼ねる（[key => header] で「key を header で吐き出し」となる）。
+     * この headers オプションに連想配列を与えるとヘッダ文字列変換になる（[key => header] で「key を header で吐き出し」となる）。
+     * 数値配列を与えると単純に順序指定での出力指定になるが、ヘッダ行が出力されなくなる。
      *
      * callback オプションが渡された場合は「あらゆる処理の最初」にコールされる。
      * つまりヘッダの読み換えや文字エンコーディングの変換が行われる前の状態でコールされる。
@@ -12566,6 +12715,14 @@ if (!isset($excluded_functions["csv_export"]) && (!function_exists("ryunosuke\\d
      * A2,C2
      * A3,C3
      * ");
+     *
+     * // ヘッダ行を出さない
+     * that(csv_export($csvarrays, [
+     *     'headers' => ['a', 'c'], // a と c だけを出力＋ヘッダ行なし
+     * ]))->is("A1,C1
+     * A2,C2
+     * A3,C3
+     * ");
      * ```
      *
      * @param array $csvarrays 連想配列の配列
@@ -12579,7 +12736,7 @@ if (!isset($excluded_functions["csv_export"]) && (!function_exists("ryunosuke\\d
             'enclosure' => '"',
             'escape'    => '\\',
             'encoding'  => mb_internal_encoding(),
-            'headers'   => [],
+            'headers'   => null,
             'callback'  => null, // map + filter 用コールバック（1行が参照で渡ってくるので書き換えられる&&false を返すと結果から除かれる）
             'output'    => null,
         ];
@@ -12597,18 +12754,22 @@ if (!isset($excluded_functions["csv_export"]) && (!function_exists("ryunosuke\\d
                 $size = 0;
                 $mb_internal_encoding = mb_internal_encoding();
                 if (!$headers) {
+                    $tmp = [];
                     foreach ($csvarrays as $array) {
-                        $headers = $headers ? array_intersect_key($headers, $array) : $array;
+                        $tmp = $tmp ? array_intersect_key($tmp, $array) : $array;
                     }
-                    $headers = array_keys($headers);
+                    $keys = array_keys($tmp);
+                    $headers = is_array($headers) ? $keys : array_combine($keys, $keys);
                 }
                 if (!is_hasharray($headers)) {
                     $headers = array_combine($headers, $headers);
                 }
-                if ($encoding !== $mb_internal_encoding) {
-                    mb_convert_variables($encoding, $mb_internal_encoding, $headers);
+                else {
+                    if ($encoding !== $mb_internal_encoding) {
+                        mb_convert_variables($encoding, $mb_internal_encoding, $headers);
+                    }
+                    $size += fputcsv($fp, $headers, $delimiter, $enclosure, $escape);
                 }
-                $size += fputcsv($fp, $headers, $delimiter, $enclosure, $escape);
                 $default = array_fill_keys(array_keys($headers), '');
 
                 foreach ($csvarrays as $n => $array) {
@@ -12941,7 +13102,7 @@ if (!isset($excluded_functions["paml_import"]) && (!function_exists("ryunosuke\\
      * - ほとんど yaml と同じだがフロースタイルのみでキーコロンの後のスペースは不要
      * - yaml のアンカーや複数ドキュメントのようなややこしい仕様はすべて未対応
      * - 配列を前提にしているので、トップレベルの `[]` `{}` は不要
-     * - 配列・連想配列の区別はなし。 `[]` でいわゆる php の配列、 `{}` で stdClass を表す
+     * - `[]` でいわゆる php の配列、 `{}` で stdClass を表す（オプション指定可能）
      * - bare string で php の定数を表す
      *
      * 簡易的な設定の注入に使える（yaml は標準で対応していないし、json や php 配列はクオートの必要やケツカンマ問題がある）。
@@ -12995,11 +13156,13 @@ if (!isset($excluded_functions["paml_import"]) && (!function_exists("ryunosuke\\
         $options += [
             'cache'          => true,
             'trailing-comma' => true,
+            'stdclass'       => true,
         ];
 
         static $caches = [];
         if ($options['cache']) {
-            return $caches[$pamlstring] = $caches[$pamlstring] ?? paml_import($pamlstring, ['cache' => false] + $options);
+            $key = $pamlstring . json_encode($options);
+            return $caches[$key] = $caches[$key] ?? paml_import($pamlstring, ['cache' => false] + $options);
         }
 
         $escapers = ['"' => '"', "'" => "'", '[' => ']', '{' => '}'];
@@ -13020,11 +13183,9 @@ if (!isset($excluded_functions["paml_import"]) && (!function_exists("ryunosuke\\
             $prefix = $value[0] ?? null;
             $suffix = $value[-1] ?? null;
 
-            if ($prefix === '[' && $suffix === ']') {
-                $value = (array) paml_import(substr($value, 1, -1), $options);
-            }
-            elseif ($prefix === '{' && $suffix === '}') {
-                $value = (object) paml_import(substr($value, 1, -1), $options);
+            if (($prefix === '[' && $suffix === ']') || ($prefix === '{' && $suffix === '}')) {
+                $value = paml_import(substr($value, 1, -1), $options);
+                $value = ($prefix === '[' || !$options['stdclass']) ? (array) $value : (object) $value;
             }
             elseif ($prefix === '"' && $suffix === '"') {
                 //$value = stripslashes(substr($value, 1, -1));
@@ -16273,8 +16434,8 @@ if (!isset($excluded_functions["process"]) && (!function_exists("ryunosuke\\dbml
      * that($stderr)->isSame('err'); // 標準エラーに書き込んでいるので "err" が格納される
      * ```
      *
-     * @param string $command 実行コマンド。escapeshellcmd される
-     * @param array|string $args コマンドライン引数。文字列はそのまま結合される。配列は escapeshellarg された上でキーと結合される
+     * @param string $command 実行コマンド。php7.4 未満では escapeshellcmd される
+     * @param array|string $args コマンドライン引数。php7.4 未満では文字列はそのまま結合され、配列は escapeshellarg された上でキーと結合される
      * @param string|resource $stdin 標準入力（string を渡すと単純に読み取れられる。resource を渡すと fread される）
      * @param string|resource $stdout 標準出力（string を渡すと参照渡しで格納される。resource を渡すと fwrite される）
      * @param string|resource $stderr 標準エラー（string を渡すと参照渡しで格納される。resource を渡すと fwrite される）
@@ -16284,16 +16445,28 @@ if (!isset($excluded_functions["process"]) && (!function_exists("ryunosuke\\dbml
      */
     function process($command, $args = [], $stdin = '', &$stdout = '', &$stderr = '', $cwd = null, array $env = null)
     {
-        $ecommand = escapeshellcmd($command);
-
-        if (is_array($args)) {
-            $args = array_sprintf($args, function ($v, $k) {
-                $ev = escapeshellarg($v);
-                return is_int($k) ? $ev : "$k $ev";
-            }, ' ');
+        if (version_compare(PHP_VERSION, '7.4.0') >= 0 && is_array($args)) {
+            // @codeCoverageIgnoreStart
+            $statement = [$command];
+            foreach ($args as $k => $v) {
+                if (!is_int($k)) {
+                    $statement[] = $k;
+                }
+                $statement[] = $v;
+            }
+            // @codeCoverageIgnoreEnd
+        }
+        else {
+            if (is_array($args)) {
+                $args = array_sprintf($args, function ($v, $k) {
+                    $ev = escapeshellarg($v);
+                    return is_int($k) ? $ev : "$k $ev";
+                }, ' ');
+            }
+            $statement = escapeshellcmd($command) . " $args";
         }
 
-        $proc = proc_open("$ecommand $args", [
+        $proc = proc_open($statement, [
             0 => is_resource($stdin) ? $stdin : ['pipe', 'r'],
             1 => ['pipe', 'w'],
             2 => ['pipe', 'w'],
@@ -16785,6 +16958,8 @@ if (!isset($excluded_functions["profiler"]) && (!function_exists("ryunosuke\\dbm
          * @method fopen($filename, $mode, $use_include_path = false, $context = null)
          */
         class {
+            const DECLARE_TICKS = "<?php declare(ticks=1) ?>";
+
             /** @var int https://github.com/php/php-src/blob/php-7.2.11/main/php_streams.h#L528-L529 */
             private const STREAM_OPEN_FOR_INCLUDE = 0x00000080;
 
@@ -16792,6 +16967,7 @@ if (!isset($excluded_functions["profiler"]) && (!function_exists("ryunosuke\\dbm
             public $context;
 
             private $require;
+            private $prepend;
             private $handle;
 
             public function __call($name, $arguments)
@@ -16845,8 +17021,9 @@ if (!isset($excluded_functions["profiler"]) && (!function_exists("ryunosuke\\dbm
 
             public function stream_open($path, $mode, $options, &$opened_path)
             {
-                $use_path = $options & STREAM_USE_PATH;
                 $this->require = $options & self::STREAM_OPEN_FOR_INCLUDE;
+                $this->prepend = false;
+                $use_path = $options & STREAM_USE_PATH;
                 if ($options & STREAM_REPORT_ERRORS) {
                     $this->handle = $this->fopen($path, $mode, $use_path); // @codeCoverageIgnore
                 }
@@ -16861,19 +17038,22 @@ if (!isset($excluded_functions["profiler"]) && (!function_exists("ryunosuke\\dbm
 
             public function stream_read($count)
             {
-                $DECLARE = "<?php declare(ticks=1) ?>";
-
-                $pos = ftell($this->handle);
-                $return = fread($this->handle, $count - strlen($DECLARE));
-                if ($return === false) {
-                    return false; // @codeCoverageIgnore
+                if (!$this->prepend && $this->require && ftell($this->handle) === 0) {
+                    $this->prepend = true;
+                    return self::DECLARE_TICKS;
                 }
+                return fread($this->handle, $count);
+            }
 
-                $prefix = '';
-                if ($pos === 0 && $this->require) {
-                    $prefix = $DECLARE;
+            public function stream_stat()
+            {
+                $stat = fstat($this->handle);
+                if ($this->require) {
+                    $decsize = strlen(self::DECLARE_TICKS);
+                    $stat[7] += $decsize;
+                    $stat['size'] += $decsize;
                 }
-                return $prefix . $return;
+                return $stat;
             }
 
             public function stream_set_option($option, $arg1, $arg2)
@@ -16887,8 +17067,10 @@ if (!isset($excluded_functions["profiler"]) && (!function_exists("ryunosuke\\dbm
                         return stream_set_blocking($this->handle, $arg1);
                     case STREAM_OPTION_READ_TIMEOUT:
                         return stream_set_timeout($this->handle, $arg1, $arg2);
+                    case STREAM_OPTION_READ_BUFFER:
+                        return stream_set_read_buffer($this->handle, $arg2) === 0; // @todo $arg1 is used?
                     case STREAM_OPTION_WRITE_BUFFER:
-                        return stream_set_write_buffer($this->handle, $arg2); // @todo $arg1 is used?
+                        return stream_set_write_buffer($this->handle, $arg2) === 0; // @todo $arg1 is used?
                 }
                 // @codeCoverageIgnoreEnd
             }
@@ -18491,26 +18673,42 @@ if (!isset($excluded_functions["var_pretty"]) && (!function_exists("ryunosuke\\d
      * ```
      *
      * @param mixed $value 出力する値
-     * @param string|null $context 出力コンテキスト（[null, "plain", "cli", "html"]）。 null を渡すと自動判別される
+     * @param array|string|null $context 出力コンテキスト（[null, "plain", "cli", "html"]）。 null を渡すと自動判別される
      * @param bool $return 出力するのではなく値を返すなら true
      * @return string $return: true なら値の出力結果
      */
     function var_pretty($value, $context = null, $return = false)
     {
-        // インデントの空白数
-        $INDENT = 2;
+        $options = [
+            'indent'    => 2,     // インデントの空白数
+            'context'   => null,  // html なコンテキストか cli なコンテキスト化
+            'return'    => false, // 値を戻すか出力するか
+            'trace'     => false, // スタックトレースの表示
+            'maxcount'  => null,  // 複合型の要素の数
+            'maxdepth'  => null,  // 階層構造の深さ
+            'maxlength' => null,  // 最終出力の文字数
+        ];
 
-        if ($context === null) {
-            $context = 'html'; // SAPI でテストカバレッジが辛いので if else ではなくデフォルト代入にしてある
+        // for compatible
+        if (!is_array($context)) {
+            $context = [
+                'context' => $context,
+                'return'  => $return,
+            ];
+        }
+        $options = array_replace($options, $context);
+
+        if ($options['context'] === null) {
+            $options['context'] = 'html'; // SAPI でテストカバレッジが辛いので if else ではなくデフォルト代入にしてある
             if (PHP_SAPI === 'cli') {
-                $context = is_ansi(STDOUT) && !$return ? 'cli' : 'plain';
+                $options['context'] = is_ansi(STDOUT) && !$options['return'] ? 'cli' : 'plain';
             }
         }
 
-        $colorAdapter = static function ($value, $style) use ($context) {
-            switch ($context) {
+        $colorAdapter = static function ($value, $style) use ($options) {
+            switch ($options['context']) {
                 default:
-                    throw new \InvalidArgumentException("'$context' is not supported.");
+                    throw new \InvalidArgumentException("'{$options['context']}' is not supported.");
                 case 'plain':
                     return $value;
                 case 'cli':
@@ -18522,77 +18720,174 @@ if (!isset($excluded_functions["var_pretty"]) && (!function_exists("ryunosuke\\d
             }
         };
 
-        $colorKey = static function ($value) use ($colorAdapter) {
-            if (is_int($value)) {
-                return $colorAdapter($value, 'bold');
-            }
-            return $colorAdapter($value, 'red');
-        };
-        $colorVal = static function ($value) use ($colorAdapter) {
-            switch (true) {
-                case is_null($value):
-                    return $colorAdapter('null', 'bold');
-                case is_object($value):
-                    return $colorAdapter(get_class($value), 'green') . "#" . spl_object_id($value);
-                case is_bool($value):
-                    return $colorAdapter(var_export($value, true), 'bold');
-                case is_int($value) || is_float($value) || is_string($value):
-                    return $colorAdapter(var_export($value, true), 'magenta');
-                case is_resource($value):
-                    return $colorAdapter(sprintf('%s of type (%s)', $value, get_resource_type($value)), 'bold');
+        $output = '';
+        $length = 0;
+        $appender = function (...$tokens) use (&$output, &$length, $colorAdapter, $options) {
+            foreach ($tokens as $token) {
+                $mode = $token[0];
+                $value = $token[1];
+                switch ($mode) {
+                    case 'plain':
+                        $string = $value;
+                        $result = $value;
+                        break;
+                    case 'index':
+                        $string = $value;
+                        switch (true) {
+                            case is_int($value):
+                                $result = $colorAdapter($value, 'bold');
+                                break;
+                            case is_string($value):
+                                $result = $colorAdapter($value, 'red');
+                                break;
+                            default:
+                                throw new \DomainException(); // @codeCoverageIgnore
+                        }
+                        break;
+                    case 'value':
+                        switch (true) {
+                            case is_null($value):
+                                $string = 'null';
+                                $result = $colorAdapter($string, 'bold');
+                                break;
+                            case is_object($value):
+                                $string = get_class($value) . "#" . spl_object_id($value);
+                                $result = $colorAdapter($string, 'green');
+                                break;
+                            case is_bool($value):
+                                $string = var_export($value, true);
+                                $result = $colorAdapter($string, 'bold');
+                                break;
+                            case is_scalar($value):
+                                $string = var_export($value, true);
+                                $result = $colorAdapter($string, 'magenta');
+                                break;
+                            case is_resource($value):
+                                $string = sprintf('%s of type (%s)', $value, get_resource_type($value));
+                                $result = $colorAdapter($string, 'bold');
+                                break;
+                            default:
+                                throw new \DomainException(); // @codeCoverageIgnore
+                        }
+                        break;
+                    default:
+                        throw new \DomainException(); // @codeCoverageIgnore
+                }
+                if ($options['maxlength'] && $options['maxlength'] < $length += strlen($string)) {
+                    throw new \LengthException();
+                }
+                $output .= $result;
             }
         };
 
         // 再帰用クロージャ
-        $export = function ($value, $nest = 0, $parents = []) use (&$export, $INDENT, $colorKey, $colorVal) {
+        $export = function ($value, $nest = 0, $parents = []) use (&$export, $appender, $options) {
             // 再帰を検出したら *RECURSION* とする（処理に関しては is_recursive のコメント参照）
             foreach ($parents as $parent) {
                 if ($parent === $value) {
-                    return $export('*RECURSION*');
+                    return $appender(['plain', '*RECURSION*']);
                 }
             }
+
             if (is_array($value)) {
-                // スカラー値のみで構成されているならシンプルな再帰
-                if (!is_hasharray($value) && array_all($value, is_primitive)) {
-                    return '[' . implode(', ', array_map($export, $value)) . ']';
-                }
-
-                $spacer1 = str_repeat(' ', ($nest + 1) * $INDENT);
-                $spacer2 = str_repeat(' ', $nest * $INDENT);
-
-                $kvl = '';
                 $parents[] = $value;
-                foreach ($value as $k => $v) {
-                    $keystr = $colorKey($k) . ': ';
-                    $kvl .= $spacer1 . $keystr . $export($v, $nest + 1, $parents) . ",\n";
+
+                if ($options['maxdepth'] && $nest + 1 > $options['maxdepth']) {
+                    $appender(['plain', '(too deep)']);
+                    return;
                 }
-                return "{\n{$kvl}{$spacer2}}";
+
+                $count = count($value);
+                $omitted = false;
+                if ($options['maxcount'] && ($omitted = $count - $options['maxcount']) > 0) {
+                    $value = array_slice($value, 0, $options['maxcount'], true);
+                }
+
+                if ($count === 0){
+                    $appender(['plain', '['], ['plain', ']']);
+                }
+                // スカラー値のみで構成されているならシンプルな再帰
+                elseif (!is_hasharray($value) && array_all($value, is_primitive)) {
+                    $last = array_pop($value);
+                    $appender(['plain', '[']);
+                    foreach ($value as $v) {
+                        $appender(['value', $v], ['plain', ', ']);
+                    }
+                    $appender(['value', $last]);
+                    if ($omitted > 0) {
+                        $appender(['plain', " (more $omitted elements)"]);
+                    }
+                    $appender(['plain', ']']);
+                }
+                // 連想配列だったり階層を持っていたりするなら改行＋桁合わせ
+                else {
+                    $spacer1 = str_repeat(' ', ($nest + 1) * $options['indent']);
+                    $spacer2 = str_repeat(' ', $nest * $options['indent']);
+
+                    $appender(['plain', "{\n"]);
+                    foreach ($value as $k => $v) {
+                        $appender(['plain', $spacer1], ['index', $k], ['plain', ': ']);
+                        $export($v, $nest + 1, $parents);
+                        $appender(['plain', ",\n"]);
+                    }
+                    if ($omitted > 0) {
+                        $appender(['plain', $spacer1]);
+                        $appender(['plain', "(more $omitted elements)\n"]);
+                    }
+                    $appender(['plain', "{$spacer2}}"]);
+                }
             }
             elseif ($value instanceof \Closure) {
                 /** @var \ReflectionFunctionAbstract $ref */
                 $ref = reflect_callable($value);
                 $that = $ref->getClosureThis();
-                $thatT = $that ? $colorVal($that) : 'static';
                 $properties = $ref->getStaticVariables();
-                $propT = $properties ? $export($properties, $nest, $parents) : '{}';
-                return $colorVal($value) . "($thatT) use $propT";
+
+                $appender(['value', $value], ['plain', "("], $that ? ['value', $that] : ['plain', 'static'], ['plain', ') use ']);
+                if ($properties) {
+                    $export($properties, $nest, $parents);
+                }
+                else {
+                    $appender(['plain', '{}']);
+                }
             }
             elseif (is_object($value)) {
                 $parents[] = $value;
                 $properties = get_object_properties($value);
-                return $colorVal($value) . ' ' . ($properties ? $export($properties, $nest, $parents) : '{}');
+
+                $appender(['value', $value], ['plain', " "]);
+                if ($properties) {
+                    $export($properties, $nest, $parents);
+                }
+                else {
+                    $appender(['plain', '{}']);
+                }
             }
             else {
-                return $colorVal($value);
+                $appender(['value', $value]);
             }
         };
 
+        try {
+            $export($value);
+        }
+        catch (\LengthException $ex) {
+            $output .= '(...omitted)';
+        }
+
         // 結果を返したり出力したり
-        $result = ($return ? '' : implode("\n", array_reverse(stacktrace(null, ['format' => "%s:%s", 'args' => false, 'delimiter' => null]))) . "\n") . $export($value);
-        if ($context === 'html') {
+        $traces = [];
+        if ($options['trace']) {
+            $traces = stacktrace(null, ['format' => "%s:%s", 'args' => false, 'delimiter' => null]);
+            $traces = array_reverse(array_slice($traces, 0, $options['trace'] === true ? null : $options['trace']));
+            $traces[] = '';
+        }
+        $result = implode("\n", $traces) . $output;
+
+        if ($options['context'] === 'html') {
             $result = "<pre>$result</pre>";
         }
-        if ($return) {
+        if ($options['return']) {
             return $result;
         }
         echo $result, "\n";

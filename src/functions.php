@@ -3572,6 +3572,11 @@ if (!isset($excluded_functions["sql_format"]) && (!function_exists("ryunosuke\\d
                         }
                     case "OR":
                     case "XOR":
+                        // WHEN の条件はカッコがない限り改行しない
+                        if ($subcontext === 'WHEN') {
+                            $result[] = $MARK_SP . $virttoken . $MARK_SP;
+                            break;
+                        }
                         $result[] = $MARK_SP . $MARK_BR . $MARK_NT . $virttoken . $MARK_SP;
                         break;
                     case "UNION":
@@ -3667,9 +3672,15 @@ if (!isset($excluded_functions["sql_format"]) && (!function_exists("ryunosuke\\d
                             $context = $uppertoken;
                         }
                         break;
+                    /** @noinspection PhpMissingBreakStatementInspection */
                     case "WHEN":
+                        $subcontext = $uppertoken;
                     case "ELSE":
                         $result[] = $MARK_BR . $MARK_NT . $virttoken . $MARK_SP;
+                        break;
+                    case "THEN":
+                        $subcontext = '';
+                        $result[] = $MARK_SP . $virttoken;
                         break;
                     case "CASE":
                         $parts = $interpret($index);
@@ -4453,7 +4464,7 @@ if (!isset($excluded_functions["paml_import"]) && (!function_exists("ryunosuke\\
      * - ほとんど yaml と同じだがフロースタイルのみでキーコロンの後のスペースは不要
      * - yaml のアンカーや複数ドキュメントのようなややこしい仕様はすべて未対応
      * - 配列を前提にしているので、トップレベルの `[]` `{}` は不要
-     * - 配列・連想配列の区別はなし。 `[]` でいわゆる php の配列、 `{}` で stdClass を表す
+     * - `[]` でいわゆる php の配列、 `{}` で stdClass を表す（オプション指定可能）
      * - bare string で php の定数を表す
      *
      * 簡易的な設定の注入に使える（yaml は標準で対応していないし、json や php 配列はクオートの必要やケツカンマ問題がある）。
@@ -4507,11 +4518,13 @@ if (!isset($excluded_functions["paml_import"]) && (!function_exists("ryunosuke\\
         $options += [
             'cache'          => true,
             'trailing-comma' => true,
+            'stdclass'       => true,
         ];
 
         static $caches = [];
         if ($options['cache']) {
-            return $caches[$pamlstring] = $caches[$pamlstring] ?? paml_import($pamlstring, ['cache' => false] + $options);
+            $key = $pamlstring . json_encode($options);
+            return $caches[$key] = $caches[$key] ?? paml_import($pamlstring, ['cache' => false] + $options);
         }
 
         $escapers = ['"' => '"', "'" => "'", '[' => ']', '{' => '}'];
@@ -4532,11 +4545,9 @@ if (!isset($excluded_functions["paml_import"]) && (!function_exists("ryunosuke\\
             $prefix = $value[0] ?? null;
             $suffix = $value[-1] ?? null;
 
-            if ($prefix === '[' && $suffix === ']') {
-                $value = (array) paml_import(substr($value, 1, -1), $options);
-            }
-            elseif ($prefix === '{' && $suffix === '}') {
-                $value = (object) paml_import(substr($value, 1, -1), $options);
+            if (($prefix === '[' && $suffix === ']') || ($prefix === '{' && $suffix === '}')) {
+                $value = paml_import(substr($value, 1, -1), $options);
+                $value = ($prefix === '[' || !$options['stdclass']) ? (array) $value : (object) $value;
             }
             elseif ($prefix === '"' && $suffix === '"') {
                 //$value = stripslashes(substr($value, 1, -1));
