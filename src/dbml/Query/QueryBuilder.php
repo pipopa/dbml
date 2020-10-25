@@ -763,7 +763,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
 
                 // subexists はこの段階で where が確定する
                 if (($submethod = $column->getSubmethod()) !== null) {
-                    $column->setSubwhere($table, $alias);
+                    $column->setSubwhere($table, $alias, null);
                     if (is_bool($submethod)) {
                         $column = $this->database->getCompatiblePlatform()->convertSelectExistsQuery($column);
                     }

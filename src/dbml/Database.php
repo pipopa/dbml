@@ -1534,7 +1534,7 @@ class Database
 
         return array_map(function ($cond) use ($tableName, $tableAlias) {
             if ($cond instanceof QueryBuilder && $cond->getSubmethod() !== null) {
-                $cond->setSubwhere($tableName, $tableAlias);
+                $cond->setSubwhere($tableName, $tableAlias, null);
             }
             return $cond;
         }, arrayize($identifier));
