@@ -1784,8 +1784,13 @@ SQL
         $this->assertQuery('SELECT test.* FROM test ORDER BY id1 ASC, id2 DESC, id3 ASC', $builder->orderBy(['id1' => 'ASC', 'id2' => 'DESC', 'id3']));
         $this->assertQuery('SELECT test.* FROM test ORDER BY id1 ASC, id2 DESC, id3 ASC', $builder->orderBy(['id1' => true, 'id2' => false, 'id3']));
         $this->assertQuery('SELECT test.* FROM test ORDER BY id1 DESC, id2 ASC, id3 ASC', $builder->orderBy(['-id1', '+id2', 'id3']));
-        $this->assertQuery('SELECT test.* FROM test ORDER BY NULL IS NULL ASC', $builder->orderBy(new Expression('NULL IS NULL')));
+        $this->assertQuery('SELECT test.* FROM test ORDER BY NULL IS NULL', $builder->orderBy(new Expression('NULL IS NULL')));
         $this->assertQuery('SELECT test.* FROM test ORDER BY ? IS NULL DESC', $builder->orderBy(new Expression('? IS NULL', [1]), false));
+        $this->assertQuery('SELECT test.* FROM test ORDER BY ? IS NULL ASC, ? IS NULL DESC, EXISTS (SELECT * FROM test WHERE id = ?) DESC', $builder->orderBy([
+            new Expression('? IS NULL ASC', [1]),
+            new Expression('? IS NULL DESC', [2]),
+            [$builder->getDatabase()->selectExists('test', ['id' => 3]), false],
+        ]));
     }
 
     /**
@@ -1933,7 +1938,7 @@ SQL
 
         // しかし Expression 化すれば許容されるはず
         $builder->resetQueryPart('orderBy')->orderBySecure(new Expression('NOW()'));
-        $this->assertContains('ORDER BY NOW() ASC', "$builder");
+        $this->assertContains('ORDER BY NOW()', "$builder");
 
         // 配列は全て実行されるが不正なものは除外されるはず
         $builder->resetQueryPart('orderBy')->orderBySecure(['t_article.article_id', 'invalid', 'test2.id' => 'ASC'], false);

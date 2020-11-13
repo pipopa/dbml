@@ -540,7 +540,12 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
         foreach ($builder->joinOrders as $jorder) {
             $builder->addOrderBy($jorder);
         }
-        $builder->sqlParts['orderBy'] = array_unique(array_map(function ($v) { return "{$v[0]} " . ($v[1] ? 'ASC' : 'DESC'); }, $builder->sqlParts['orderBy']));
+        $builder->sqlParts['orderBy'] = array_unique(array_map(function ($v) {
+            if (($v[1] ?? null) === null) {
+                return $v[0];
+            }
+            return "{$v[0]} " . ($v[1] ? 'ASC' : 'DESC');
+        }, $builder->sqlParts['orderBy']));
 
         // 色々手を加えたやつでクエリ文字列化
         $sql = 'SELECT'
@@ -2420,14 +2425,19 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
             }
         }
         else {
-            if (is_string($sort) && $order === null) {
-                $order = $sort[0] !== '-';
-                $sort = ltrim($sort, '-+');
+            if ($sort instanceof Queryable && $order === null) {
+                $this->sqlParts['orderBy'][] = [$sort, null];
             }
-            if (is_bool($order)) {
-                $order = $order ? 'ASC' : 'DESC';
+            else {
+                if (is_string($sort) && $order === null) {
+                    $order = $sort[0] !== '-';
+                    $sort = ltrim($sort, '-+');
+                }
+                if (is_bool($order)) {
+                    $order = $order ? 'ASC' : 'DESC';
+                }
+                $this->sqlParts['orderBy'][] = [$sort, strtoupper($order) !== 'DESC'];
             }
-            $this->sqlParts['orderBy'][] = [$sort, strtoupper($order) !== 'DESC'];
         }
 
         return $this->_dirty();
