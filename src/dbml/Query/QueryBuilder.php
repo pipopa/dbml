@@ -1536,6 +1536,24 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
     }
 
     /**
+     * スコープを当てる
+     *
+     * @param string $tablename テーブル名
+     * @param string|array $scope 当てるスコープ
+     * @param array $args スコープの引数
+     * @return $this 自分自身
+     */
+    public function scope($tablename, $scope, ...$args)
+    {
+        $gateway = $this->database->$tablename->clone();
+        $gateway->scope($scope, $args);
+        $sparam = $gateway->getScopeParams([]);
+        $scolumn = array_unset($sparam, 'column');
+        $this->addColumn($scolumn);
+        return $this->build($sparam, true);
+    }
+
+    /**
      * lazyMode を設定する
      *
      * このメソッドを呼ぶと fetch 系メソッドは実行されなくなる。

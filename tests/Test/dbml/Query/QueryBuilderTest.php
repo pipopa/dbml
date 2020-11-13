@@ -157,6 +157,21 @@ class QueryBuilderTest extends \ryunosuke\Test\AbstractUnitTestCase
      * @dataProvider provideQueryBuilder
      * @param QueryBuilder $builder
      */
+    function test_scope($builder)
+    {
+        $builder->scope('Article', 'scope1 scope2', 1);
+        $this->assertQuery("SELECT NOW() FROM t_article Article WHERE Article.article_id IN (?)", $builder);
+        $this->assertEquals([1], $builder->getParams());
+
+        $builder->scope('t_comment', 'scope1 scope2', 2, 3);
+        $this->assertQuery("SELECT NOW(), NOW() FROM t_article Article, t_comment WHERE (Article.article_id IN (?)) AND (t_comment.comment_id IN (?,?))", $builder);
+        $this->assertEquals([1, 2, 3], $builder->getParams());
+    }
+
+    /**
+     * @dataProvider provideQueryBuilder
+     * @param QueryBuilder $builder
+     */
     function test_selects($builder)
     {
         $builder->column('foreign_p + foreign_c1');
