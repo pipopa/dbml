@@ -1912,6 +1912,48 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
     }
 
     /**
+     * カラム・エイリアスの完全一致で select 句から取り除く
+     *
+     * クロージャを与えるとコールバックされ、 true 相当を返した時に取り除かれる。
+     * 文字列を与えるとエイリアス or 完全カラムに一致した時に取り除かれる。
+     * 数値を与えるとその番目が取り除かれる（都度連番はリセットされるので注意）。
+     *
+     * @param array $aliases 取り除く select 列
+     * @return $this 自分自身
+     */
+    public function unselect(...$aliases)
+    {
+        foreach ($this->sqlParts['select'] as $n => $select) {
+            foreach ($aliases as $alias) {
+                if ($alias instanceof \Closure) {
+                    $unset = $alias($select);
+                }
+                elseif (ctype_digit("$alias")) {
+                    $unset = $n === intval($alias);
+                }
+                elseif ($select instanceof Alias) {
+                    $unset = $alias === $select->getAlias() || Database::AUTO_PRIMARY_KEY . $alias === $select->getAlias();
+                }
+                else {
+                    $unset = $alias === $select;
+                }
+
+                if ($unset) {
+                    unset($this->sqlParts['select'][$n]);
+                    if ($select instanceof Alias) {
+                        unset($this->callbacks[$select->getAlias()]);
+                        unset($this->subbuilders[$select->getAlias()]);
+                    }
+                    break;
+                }
+            }
+        }
+
+        $this->sqlParts['select'] = array_values($this->sqlParts['select']);
+        return $this->_dirty();
+    }
+
+    /**
      * FROM 句（JOIN 込）を構成する
      *
      * 結合タイプや結合条件をまとめて指定して FROM, JOIN を構成できるが、複雑極まりないので使用は非推奨（FROM 句の設定は {@link column()} を使用すれば基本的に不要）。

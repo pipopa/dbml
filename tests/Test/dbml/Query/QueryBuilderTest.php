@@ -1181,6 +1181,55 @@ AND
      * @dataProvider provideQueryBuilder
      * @param QueryBuilder $builder
      */
+    function test_unselect($builder)
+    {
+        $builder->column([
+            't_article' => [
+                'dummy1'             => 123,
+                'dummy2'             => 456,
+                'article_id',
+                'id'                 => 'article_id',
+                'title'              => 'UPPER(title)',
+                'callback'           => function ($row) {
+                    $this->fail('never call');
+                },
+                't_comment comments' => [
+                    '*'
+                ],
+                'comment_count'
+            ],
+        ])->where(['article_id' => 1]);
+
+        $builder->unselect(0);
+
+        $builder->unselect(0, 'article_id', 'title', 'callback', 'comments', 'comment_count');
+        $this->assertStringNotContainsString('dummy1', (string) $builder);   // by 0
+        $this->assertStringNotContainsString('dummy2', (string) $builder);   // by 0 (reseq)
+        $this->assertStringContainsString('article_id', (string) $builder);  // no match
+        $this->assertStringContainsString('AS id', (string) $builder);       // no specified
+        $this->assertStringNotContainsString('title', (string) $builder);    // match
+        $this->assertStringNotContainsString('callback', (string) $builder); // match (callbacks)
+        $this->assertStringNotContainsString('comments', (string) $builder); // match (subbuilder)
+        $this->assertStringNotContainsString('comment_count', (string) $builder); // match (virtual column)
+        $this->assertEquals([
+            'article_id' => 1,
+            'id'         => 1,
+        ], $builder->tuple());
+
+        $builder->unselect(function ($select) {
+            return $select instanceof Alias && $select->getAlias() === 'id';
+        });
+        $this->assertStringContainsString('article_id', (string) $builder);
+        $this->assertStringNotContainsString('AS id', (string) $builder);
+        $this->assertEquals([
+            'article_id' => 1,
+        ], $builder->tuple());
+    }
+
+    /**
+     * @dataProvider provideQueryBuilder
+     * @param QueryBuilder $builder
+     */
     function test_wheres($builder)
     {
         $builder->column('test');
