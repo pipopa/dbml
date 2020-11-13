@@ -491,6 +491,33 @@ AND ((flag=1))", "$gw");
      * @dataProvider provideGateway
      * @param TableGateway $gateway
      */
+    function test_bindScope($gateway)
+    {
+        // 引数付きスコープ
+        $gateway->addScope('abc', function ($a, $b, $c) {
+            return [
+                'column' => [$a, $b, $c],
+            ];
+        });
+
+        $gateway->bindScope('abc', [2 => 'C']);
+        $this->assertEquals(['a', 'b', 'C'], $gateway->getScopeParts('abc', 'a', 'b')['column']);
+        $gateway->bindScope('abc', [1 => 'B']);
+        $this->assertEquals(['a', 'B', 'C'], $gateway->getScopeParts('abc', 'a')['column']);
+        $gateway->bindScope('abc', [0 => 'A', 2 => 'X']);
+        $this->assertEquals(['a', 'b', 'X'], $gateway->getScopeParts('abc', 'a', 'b')['column']);
+        $this->assertEquals(['A', 'B', 'X'], $gateway->getScopeParts('abc')['column']);
+        $this->assertEquals(['a', 'b', 'c'], $gateway->getScopeParts('abc', 'a', 'b', 'c')['column']);
+
+        $gateway->addScope('xyz', 'now()');
+        $this->assertException('scope must be closure', L($gateway)->bindScope('xyz', []));
+        $this->assertException('scope is undefined', L($gateway)->bindScope('new', []));
+    }
+
+    /**
+     * @dataProvider provideGateway
+     * @param TableGateway $gateway
+     */
     function test_scopes($gateway)
     {
         $gateway->addScope('scope1', function ($val) {

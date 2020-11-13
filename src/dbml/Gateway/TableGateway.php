@@ -16,6 +16,7 @@ use function ryunosuke\dbml\array_get;
 use function ryunosuke\dbml\arrayize;
 use function ryunosuke\dbml\concat;
 use function ryunosuke\dbml\parameter_length;
+use function ryunosuke\dbml\reflect_callable;
 use function ryunosuke\dbml\split_noempty;
 use function ryunosuke\dbml\throws;
 use function ryunosuke\dbml\try_finally;
@@ -1632,6 +1633,61 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
             }
             return $result;
         };
+        return $this;
+    }
+
+    /**
+     * 引数付きスコープを特定の値で bind してデフォルト化する
+     *
+     * $args のインデックスは活きる（ゼロベース）。
+     * つまり、 `[1 => 'hoge', 3 => 'fuga']` という配列で bind すると第1引数と第3引数を与えたことになる。
+     *
+     * 複数呼ぶと蓄積される（例を参照）。
+     * また、いかなる状況でも bind した値より当てる時に指定した値が優先される。
+     *
+     * ```php
+     * // 3つの引数を取るスコープがあるとして・・・
+     * $gw->addScope('abc', function ($a, $b, $c) {});
+     *
+     * // こうすると第3引数が不要になるので・・・
+     * $gw->bindScope('abc', [2 => 'c']);
+     * // このように呼べるようになる（第3引数には 'c' が渡ってくる）
+     * $gw->scope('abc', 'a', 'b');
+     *
+     * // 効果は蓄積されるので・・・
+     * $gw->bindScope('abc', [1 => 'b']);
+     * // このように呼べる（第2引数には 'b', 第3引数には 'c' が渡ってくる）
+     * $gw->scope('abc', 'a');
+     *
+     * // このように当てる時に指定した値が優先される（第2引数には 'y', 第3引数には 'z' が渡ってくる）
+     * $gw->scope('abc', 'a', 'y', 'z');
+     * ```
+     *
+     * @param string $name スコープ名
+     * @param array $binding bind する引数配列
+     * @return $this 自分自身
+     */
+    public function bindScope($name, array $binding)
+    {
+        if (!isset($this->scopes[$name])) {
+            throw new \InvalidArgumentException("'$name' scope is undefined.");
+        }
+        if (!$this->scopes[$name] instanceof \Closure) {
+            throw new \InvalidArgumentException("'$name' scope must be closure.");
+        }
+
+        // invoke 付き class に置き換えるか、別フィールドで引数を保持した方がシンプルでは？
+        $scope = $this->scopes[$name];
+        $ref = reflect_callable($scope);
+        $uses = $ref->getStaticVariables();
+        if ($ref->getFileName() === __FILE__ && isset($uses['binding'])) {
+            $binding += $uses['binding'];
+        }
+        $this->scopes[$name] = function (...$args) use ($scope, $binding) {
+            ksort($binding);
+            return $scope(...($args + $binding));
+        };
+
         return $this;
     }
 
