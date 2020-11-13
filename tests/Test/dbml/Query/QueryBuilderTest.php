@@ -2622,6 +2622,43 @@ SELECT test.* FROM test", $builder);
     /**
      * @dataProvider provideQueryBuilder
      * @param QueryBuilder $builder
+     * @param Database $database
+     */
+    function test_subquery_noparent($builder, $database)
+    {
+        $database->insert('foreign_s', [
+            'id'   => 1,
+            'name' => 'p',
+        ]);
+        $database->insert('foreign_sc', [
+            'id'    => 1,
+            's_id1' => 1,
+            's_id2' => null,
+            'name'  => 'c',
+        ]);
+        $builder->column([
+            'foreign_sc' => [
+                'parent1' => $database->subselectTuple('foreign_s:fk_sc1'),
+                'parent2' => $database->subselectTuple('foreign_s:fk_sc2'),
+            ],
+        ]);
+
+        $this->assertEquals([
+            'id'      => 1,
+            's_id1'   => 1,
+            's_id2'   => null,
+            'name'    => 'c',
+            'parent1' => [
+                'id'   => 1,
+                'name' => 'p',
+            ],
+            'parent2' => false,
+        ], $builder->where(['' => 1])->tuple());
+    }
+
+    /**
+     * @dataProvider provideQueryBuilder
+     * @param QueryBuilder $builder
      */
     function test_subquery_limit($builder)
     {

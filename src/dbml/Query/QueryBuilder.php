@@ -1113,7 +1113,9 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
                     throw new \OutOfBoundsException("reference undefined parent column [" . implode(', ', $pcolumns) . "].");
                 }
             }
-            $conds[$n] = array_combine($childkeys, explode($psep, $parent_row[$this->lazyParent]));
+            if ($parent_row[$this->lazyParent] !== null) {
+                $conds[$n] = array_combine($childkeys, explode($psep, $parent_row[$this->lazyParent]));
+            }
         }
 
         $this->detectAutoOrder(true);
