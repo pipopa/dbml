@@ -1812,6 +1812,33 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
     }
 
     /**
+     * スコープが定義されているかを返す
+     *
+     * 配列を与えると定義されているスコープだけの配列を返す。
+     * 文字列を与えると定義されている時にそのまま返す（未定義は null を返す）。
+     *
+     * @param string|array $name スコープ名
+     * @return array|string|null 自分自身
+     */
+    public function definedScope($name)
+    {
+        if (is_array($name)) {
+            $result = [];
+            foreach ($name as $n) {
+                if (isset($this->scopes[$n])) {
+                    $result[] = $n;
+                }
+            }
+            return $result;
+        }
+
+        if (!isset($this->scopes[$name])) {
+            return null;
+        }
+        return $name;
+    }
+
+    /**
      * スコープのクエリ引数を得る
      *
      * スコープは基本的に固定的だが、クロージャを与えたときのみ動的になる。

@@ -595,6 +595,22 @@ AND ((flag=1))", "$gw");
      * @dataProvider provideGateway
      * @param TableGateway $gateway
      */
+    function test_definedScope($gateway)
+    {
+        $gateway->addScope('hoge', 'hoge');
+        $gateway->addScope('fuga', 'fuga');
+        $gateway->addScope('piyo', 'piyo');
+
+        $this->assertEquals(['piyo', 'hoge'], $gateway->definedScope(['piyo', 'undef', 'hoge']));
+        $this->assertEquals([], $gateway->definedScope(['undef1', 'undef2', 'undef3']));
+        $this->assertEquals('hoge', $gateway->definedScope('hoge'));
+        $this->assertEquals(null, $gateway->definedScope('undef1'));
+    }
+
+    /**
+     * @dataProvider provideGateway
+     * @param TableGateway $gateway
+     */
     function test_getScopeParts($gateway)
     {
         $gateway->addScope('hoge', function ($hoge) {
