@@ -1616,7 +1616,10 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
             $result = $defargs;
             foreach ($scopes as $scope => $args) {
                 if ($this->scopes[$scope] instanceof \Closure) {
-                    $alength = parameter_length($this->scopes[$scope]);
+                    $alength = parameter_length($this->scopes[$scope], false, true);
+                    if (is_infinite($alength)) {
+                        $alength = count($params);
+                    }
                     $args = array_merge($args, array_splice($params, 0, $alength - count($args), []));
                 }
                 $parts = $this->getScopeParts($scope, ...$args);

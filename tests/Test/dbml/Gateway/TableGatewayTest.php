@@ -353,6 +353,12 @@ AND ((flag=1))", "$gw");
                 'limit' => [3 => 4],
             ];
         });
+        // 可変引数スコープ
+        $gateway->addScope('v', function (...$args) {
+            return [
+                'where' => ['id' => $args],
+            ];
+        });
 
         $gateway->mixScope('x', 'a b d');
         $gateway->mixScope('x1', [
@@ -372,6 +378,14 @@ AND ((flag=1))", "$gw");
                 'where'  => ['id' => $id],
             ];
         });
+        $gateway->mixScope('dv', [
+            'd',
+            'v',
+        ]);
+        $gateway->mixScope('dv1', [
+            'd' => 1,
+            'v',
+        ]);
         $gateway->mixScope('mixmix', [
             'x2',
             'c',
@@ -436,6 +450,26 @@ AND ((flag=1))", "$gw");
             'groupBy' => [],
             'having'  => [],
         ], $gateway->getScopeParts('x4', 1, -2));
+
+        // 可変引数の合成スコープ dv
+        $this->assertEquals([
+            'column'  => [],
+            'where'   => ['id' => [1, 2, 3, 4]],
+            'orderBy' => [],
+            'limit'   => [3 => 4],
+            'groupBy' => [],
+            'having'  => [],
+        ], $gateway->getScopeParts('dv', 1, 2, 3, 4));
+
+        // 可変引数の合成スコープ dv1
+        $this->assertEquals([
+            'column'  => [],
+            'where'   => ['id' => [1, 2, 3, 4]],
+            'orderBy' => [],
+            'limit'   => [3 => 4],
+            'groupBy' => [],
+            'having'  => [],
+        ], $gateway->getScopeParts('dv1', 2, 3, 4));
 
         // 合成スコープを合成した合成スコープ（合成のネストできるかのテストで値に特に意味はない）
         $this->assertEquals([
