@@ -932,13 +932,11 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
                         }
                     });
                     if ($vcolumns) {
-                        if ($is_int) {
-                            $param = [];
-                        }
-                        $cols = arrayize($param);
+                        $newparam = $is_int ? [] : $param;
+                        $cols = arrayize($newparam);
                         $params = [];
                         $vnames = implode('|', array_map(function ($v) { return preg_quote($v, '#'); }, array_keys($vcolumns)));
-                        $expr = preg_replace_callback("#(\\?)|$modifier\\.($vnames)#u", function ($m) use ($is_int, $froms, $modifier, $cond2, $param, $vcolumns, &$cols, &$params) {
+                        $expr = preg_replace_callback("#(\\?)|$modifier\\.($vnames)#u", function ($m) use ($is_int, $froms, $modifier, $cond2, $newparam, $vcolumns, &$cols, &$params) {
                             $vname = $m[2] ?? null;
                             if ($vname === null) {
                                 if ($cols) {
@@ -962,14 +960,21 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
                                 $params[] = $vcolq;
                                 $comment = "/* vcolumn: $vname */";
                                 if (!$is_int && strpos($cond2, '?') === false) {
-                                    return "$comment ? " . (is_array($param) ? "IN(?)" : "= ?");
+                                    return "$comment ? " . (is_array($newparam) ? "IN(?)" : "= ?");
                                 }
                                 return "$comment ?";
                             }
-                        }, $cond2);
+                        }, $cond2, -1, $count);
+
+                        if (!$count || $cond2 === $expr) {
+                            return;
+                        }
 
                         if ($params) {
-                            $param = array_merge($params, $cols);
+                            $params = array_merge($params, $cols);
+                            if ($params !== arrayize($param)) {
+                                $param = $params;
+                            }
                         }
                         elseif ($is_int) {
                             $param = $expr;
