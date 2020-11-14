@@ -1603,15 +1603,23 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
                 ],
             ],
             '!id9:!IN' => null,
+            '!ids:[~]' => [null, null],
+            '!str'     => Operator::likeIn(''), // 意図的
+            '!query'   => $database->select('test'),
+            '!exists'  => $database->select('test', [
+                '!piyo:[~]' => [null, null],
+            ]),
         ], $params, 'OR', $filtered);
         // '!' 付きで空値はシカトされている
         $this->assertEquals([
             'rid11 = ?',
             'rid12 = ?',
             '(rid21 = ?) OR (rid22 = ?) OR ((rid31 = ?) AND (rid32 = ?))',
+            'str LIKE ?',
+            'query IN (SELECT test.* FROM test)',
         ], $where);
         // '!' 付きで空値はバインドされない
-        $this->assertEquals([11, 12, 21, 22, 31, 32], $params);
+        $this->assertEquals([11, 12, 21, 22, 31, 32, '%%'], $params);
         // フィルタ結果が格納される
         $this->assertEquals(false, $filtered);
     }

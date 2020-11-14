@@ -2902,7 +2902,8 @@ class Database
             }
             else {
                 $cond = trim($cond);
-                if (isset($cond[0]) && $cond[0] === '!') {
+                $emptyfilter = isset($cond[0]) && $cond[0] === '!';
+                if ($emptyfilter) {
                     if (Adhoc::is_empty($value)) {
                         if ($filterd === null) {
                             $filterd = true;
@@ -2910,7 +2911,6 @@ class Database
                         $filterd = $filterd && true;
                         continue;
                     }
-                    $filterd = false;
                     $cond = substr($cond, 1);
                 }
 
@@ -2928,6 +2928,7 @@ class Database
                     array_put($criteria, 'NOT (' . implode(" $orand ", Adhoc::wrapParentheses($nots)) . ')', null, function ($v) { return !Adhoc::is_empty($v); });
                     continue;
                 }
+
                 // Operator は列を後定義したものを
                 if ($value instanceof Operator) {
                     if (strpos($cond, ':') !== false) {
@@ -2936,6 +2937,9 @@ class Database
                     $value->lazy($cond, $this->getCompatiblePlatform());
                     if ($value->getQuery()) {
                         $criteria[] = $value->merge($params);
+                        if ($emptyfilter) {
+                            $filterd = false;
+                        }
                     }
                     continue;
                 }
@@ -2945,8 +2949,12 @@ class Database
                         $cond .= $value instanceof QueryBuilder ? ' IN ?' : ' = ?'; // IN のカッコはビルダが付けてくれる
                     }
                     $criteria[] = str_replace('?', $value->merge($params), $cond);
+                    if ($emptyfilter) {
+                        $filterd = false;
+                    }
                     continue;
                 }
+
                 // 同上。配列の中に Queryable が紛れている場合
                 if (Adhoc::containQueryable($value)) {
                     $subquerys = [];
@@ -2979,6 +2987,15 @@ class Database
                 $operator = new Operator($this->getCompatiblePlatform(), $ope, $cond, $value);
                 if ($operator->getQuery()) {
                     $criteria[] = $operator->merge($params);
+                    if ($emptyfilter) {
+                        $filterd = false;
+                    }
+                }
+                elseif ($emptyfilter) {
+                    if ($filterd === null) {
+                        $filterd = true;
+                    }
+                    $filterd = $filterd && true;
                 }
             }
         }
