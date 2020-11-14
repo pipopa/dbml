@@ -2247,6 +2247,45 @@ class Database
                     if (is_array($def['expression'])) {
                         $def['expression'] = $this->operator($def['expression']);
                     }
+                    if (!isset($def['type']) && $def['expression'] instanceof TableGateway) {
+                        $def['type'] = 'array';
+                    }
+                    if (!isset($def['type']) && $def['expression'] instanceof QueryBuilder) {
+                        $submethod = $def['expression']->getSubmethod();
+                        if (is_null($submethod)) {
+                            $def['type'] = 'integer';
+                        }
+                        elseif (is_bool($submethod)) {
+                            $def['type'] = 'boolean';
+                        }
+                        else {
+                            $def['type'] = 'array';
+                        }
+                    }
+                    if (!isset($def['type']) && $def['expression'] instanceof Queryable) {
+                        $def['type'] = 'string';
+                    }
+                    if (!isset($def['type']) && $def['expression'] instanceof \Closure) {
+                        $ref = new \ReflectionFunction($def['expression']);
+                        if ($ref->hasReturnType()) {
+                            /** @var \ReflectionNamedType $rtype */
+                            $rtype = $ref->getReturnType();
+                            $typename = strtolower($rtype->getName());
+                            switch ($typename) {
+                                case 'void':
+                                    break;
+                                case 'bool':
+                                    $def['type'] = 'boolean';
+                                    break;
+                                case 'int':
+                                    $def['type'] = 'integer';
+                                    break;
+                                default:
+                                    $def['type'] = Type::hasType($typename) ? $typename : 'object';
+                                    break;
+                            }
+                        }
+                    }
                 }
                 $schema->setTableColumn($tname, $cname, $def);
             }

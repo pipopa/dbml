@@ -57,7 +57,7 @@ namespace PHPSTORM_META {
             'title3'        => 'int',
             'title4'        => 'int',
             'title5'        => 'int',
-            'comment_count' => 'int',
+            'comment_count' => 'array',
         ])
     );
     override(new \ryunosuke\Test\Entity\Comment,

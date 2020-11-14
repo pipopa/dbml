@@ -188,7 +188,7 @@ trait CommentTableGateway{}
  * @property int $title3
  * @property int $title4
  * @property int $title5
- * @property int $comment_count
+ * @property array|string $comment_count
  */
 trait ArticleEntity{}
 

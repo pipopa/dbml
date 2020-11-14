@@ -672,17 +672,30 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
     function test_overrideColumns($database)
     {
         $database->overrideColumns([
-            'test1' => [
+            'test1'     => [
                 'lower_name' => [
                     'type'       => 'string',
                     'expression' => 'LOWER(%s.name1)',
                 ],
             ],
-            'test2' => [
+            'test2'     => [
                 'lower_name' => 'LOWER(%s.name2)',
                 'is_a'       => [
                     'expression' => ['name2' => 'A'],
                 ],
+            ],
+            'foreign_p' => [
+                'gw'   => $database->foreign_c1,
+                'qb1'  => $database->selectSum('foreign_c1'),
+                'qb2'  => $database->subexists('foreign_c1'),
+                'qb3'  => $database->subquery('foreign_c1'),
+                'expr' => $database->raw('now'),
+                'r0'   => function (): void { },
+                'r1'   => function (): bool { },
+                'r2'   => function (): int { },
+                'r3'   => function (): string { },
+                'r4'   => function (): \ArrayObject { },
+                'r5'   => function (): \DateTime { },
             ],
         ]);
         $this->assertEquals('a', $database->selectValue('test1.lower_name', [], ['id'], 1));
@@ -691,6 +704,19 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
             $this->assertTrue(!!$database->selectValue('test2.is_a', [], ['id'], 1));
             $this->assertFalse(!!$database->selectValue('test2.is_a', [], ['id' => false], 1));
         }
+
+        $columns = $database->getSchema()->getTableColumns('foreign_p');
+        $this->assertEquals('array', $columns['gw']->getType()->getName());
+        $this->assertEquals('integer', $columns['qb1']->getType()->getName());
+        $this->assertEquals('boolean', $columns['qb2']->getType()->getName());
+        $this->assertEquals('array', $columns['qb3']->getType()->getName());
+        $this->assertEquals('string', $columns['expr']->getType()->getName());
+        $this->assertEquals('integer', $columns['r0']->getType()->getName());
+        $this->assertEquals('boolean', $columns['r1']->getType()->getName());
+        $this->assertEquals('integer', $columns['r2']->getType()->getName());
+        $this->assertEquals('string', $columns['r3']->getType()->getName());
+        $this->assertEquals('object', $columns['r4']->getType()->getName());
+        $this->assertEquals('datetime', $columns['r5']->getType()->getName());
 
         $database->getSchema()->refresh();
     }
