@@ -21,6 +21,20 @@
 - Entity 消したい。使わない…
 - phpstorm と相性が悪いのでマジックメソッドを撲滅したい
 
+## 2.0.4
+
+- [feature][Database] 仮想カラムの型はある程度推測できるのでそのようにした
+- [fixbug][Database] reduce で想定より多くの行が消えてしまう不具合を修正
+- [fixbug][Database] range の [空, 空] の自動フィルタの不具合を修正
+- [feature][QueryBuilder] 設定されている select 句を伏せることができる unselect メソッドを実装
+- [feature][QueryBuilder] テーブル指定でスコープを当たられる scope メソッドを実装
+- [fixbug][QueryBuilder] 仮想カラムを使っていないのに値が変わってしまう不具合を修正
+- [fixbug][QueryBuilder] Queryable に ASC/DESC 込みで orderBy すると不正な sql になる不具合を修正
+- [fixbug][QueryBuilder] 親・子行がない時に notice エラーが出る不具合を修正
+- [feature][TableGateway] スコープが定義されているか調べられる definedScope を実装
+- [feature][TableGateway] スコープのデフォルト引数を設定できる bindScope を実装
+- [fixbug][TableGateway] mixScope で可変引数があると値が渡らない不具合を修正
+
 ## 2.0.3
 
 - [change][TableDescriptor] テーブル記法の埋め込みを json ではなく paml に変更
