@@ -5789,7 +5789,8 @@ class Database
 
         // 境界値が得られるサブクエリ
         $subquery = $this->select(["$tableName $VALUETABLE" => $orderBy])
-            ->where(array_map(function ($gk) use ($GROUPTABLE, $VALUETABLE) { return "$GROUPTABLE.$gk = $VALUETABLE.$gk"; }, $groupBy))
+            ->where($identifier)
+            ->andWhere(array_map(function ($gk) use ($GROUPTABLE, $VALUETABLE) { return "$GROUPTABLE.$gk = $VALUETABLE.$gk"; }, $groupBy))
             ->orderBy($groupBy + [$orderBy => $ascdesc])
             ->limit(1, $limit - 1);
 
