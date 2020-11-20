@@ -216,4 +216,24 @@ class Paginator implements \IteratorAggregate, \Countable
 
         return $pagecount;
     }
+
+    /**
+     * 前ページが存在するかを返す
+     *
+     * @return bool 前ページが存在するか
+     */
+    public function hasPrev()
+    {
+        return $this->getPage() > 1;
+    }
+
+    /**
+     * 次ページが存在するかを返す
+     *
+     * @return bool 次ページが存在するか
+     */
+    public function hasNext()
+    {
+        return $this->getPage() < $this->getPageCount();
+    }
 }

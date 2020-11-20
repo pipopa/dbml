@@ -139,6 +139,28 @@ class PaginatorTest extends \ryunosuke\Test\AbstractUnitTestCase
     /**
      * @dataProvider providePaginator
      * @param Paginator $paginator
+     */
+    function test_hasPrevNext($paginator)
+    {
+        $this->assertFalse($paginator->hasPrev());
+        $this->assertFalse($paginator->hasNext());
+
+        $paginator->paginate(1, 40);
+        $this->assertFalse($paginator->hasPrev());
+        $this->assertTrue($paginator->hasNext());
+
+        $paginator->paginate(2, 40);
+        $this->assertTrue($paginator->hasPrev());
+        $this->assertTrue($paginator->hasNext());
+
+        $paginator->paginate(3, 40);
+        $this->assertTrue($paginator->hasPrev());
+        $this->assertFalse($paginator->hasNext());
+    }
+
+    /**
+     * @dataProvider providePaginator
+     * @param Paginator $paginator
      * @param Database $database
      */
     function test_continue($paginator, $database)
