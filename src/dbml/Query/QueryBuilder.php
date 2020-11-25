@@ -758,6 +758,9 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
                     $key = is_int($key) ? $column : $key;
                     // 仮想カラムは修飾子を付与するチャンスを与えなければ実質使い物にならない（エイリアスが動的だから）
                     $vcolumn = $acolumn->getCustomSchemaOption('expression');
+                    if ($acolumn->hasCustomSchemaOption('lazy') && $acolumn->getCustomSchemaOption('lazy')) {
+                        $vcolumn = $vcolumn($this->database);
+                    }
                     $column = is_string($vcolumn) ? sprintf($vcolumn, $accessor) : $vcolumn;
                 }
             }
@@ -974,7 +977,11 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
                 if ($this->database->getSchema()->hasTable($tablename)) {
                     $vcolumns = array_map_filter($this->database->getSchema()->getTableColumns($tablename), function (Column $col) {
                         if ($col->hasCustomSchemaOption('virtual') && $col->hasCustomSchemaOption('expression')) {
-                            return $col->getCustomSchemaOption('expression');
+                            $expression = $col->getCustomSchemaOption('expression');
+                            if ($col->hasCustomSchemaOption('lazy') && $col->getCustomSchemaOption('lazy')) {
+                                $expression = $expression($this->database);
+                            }
+                            return $expression;
                         }
                     });
                     if ($vcolumns) {

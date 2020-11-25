@@ -1562,6 +1562,7 @@ SQL
                 'raw2'        => null,
                 'count_child' => null,
                 'has_child'   => null,
+                'nam'         => null,
             ],
         ]);
     }
@@ -2305,6 +2306,60 @@ SELECT test.* FROM test", $builder);
             'test.id'   => new Expression(123),
             'test.name' => new Expression('CONCAT(name, ?)', ['hoge']),
         ], $builder->getQueryPart('colval'));
+    }
+
+    /**
+     * @dataProvider provideQueryBuilder
+     * @param QueryBuilder $builder
+     * @param Database $database
+     */
+    function test_vcolumn_lazy($builder, $database)
+    {
+        $database->overrideColumns([
+            'foreign_p' => [
+                'count_child' => function (Database $database) {
+                    return $database->foreign_c1->as('C1')->subcount('*', ['flag' => 0]);
+                },
+                'has_child'   => [
+                    'expression' => function () use ($database) {
+                        return $database->foreign_c2->as('C2')->subexists('*', ['flag' => 0]);
+                    },
+                    'lazy'       => true,
+                ],
+            ],
+        ]);
+
+        $builder->column([
+            'foreign_p P' => [
+                'alias1' => 'count_child',
+                'alias2' => 'has_child',
+            ],
+        ])->where([
+            '1',
+            'P.count_child' => 0,
+            'P.has_child'   => 1,
+        ]);
+
+        $qi = function ($str) use ($database) {
+            return $database->getPlatform()->quoteSingleIdentifier($str);
+        };
+        $this->assertStringIgnoreBreak(<<<SQL
+SELECT
+(SELECT COUNT(*) AS {$qi("*@count")} FROM foreign_c1 C1 WHERE (C1.flag = '0') AND (C1.id = P.id)) AS alias1,
+EXISTS (SELECT * FROM foreign_c2 C2 WHERE (C2.flag = '0') AND (C2.cid = P.id)) AS alias2
+FROM foreign_p P
+WHERE (1)
+AND (/* vcolumn count_child-k */ (SELECT COUNT(*) AS {$qi("*@count")} FROM foreign_c1 C1 WHERE (C1.flag = '0') AND (C1.id = P.id)) = '0')
+AND (/* vcolumn has_child-k */ (EXISTS (SELECT * FROM foreign_c2 C2 WHERE (C2.flag = '0') AND (C2.cid = P.id))) = '1')
+SQL
+            , $builder->queryInto());
+
+        $database->overrideColumns([
+            'foreign_p' => [
+                'count_child' => null,
+                'has_child'   => null,
+            ],
+        ]);
     }
 
     /**

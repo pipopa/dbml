@@ -2181,6 +2181,7 @@ class Database
      *         'misc'      => [
      *             'expression' => null,  // 仮想カラムの実定義（文字列や Expression やクエリビルダなど全て使用できる）
      *             'type'       => null,  // 仮想カラムの型
+     *             'lazy'       => false, // 遅延評価するか（後述）
      *             'implicit'   => false, // !column などの一括取得に含めるか
      *         ],
      *         // null を渡すと仮想カラムの削除になる
@@ -2204,6 +2205,32 @@ class Database
      * かと言って修飾子を付けないと曖昧なカラムエラーが出ることがある。
      * `%1$s` しておけば sprintf で「現在の修飾子」が埋め込まれるためある程度汎用的にできる。
      * ただし、その弊害として素の % を使うときは %% のようにエスケープする必要があるので注意。
+     *
+     * lazy で指定する遅延評価について、例えば TableA が TableB のサブクエリを仮想カラムに設定し、TableB も TableA のサブクエリを設定している場合、即時評価だと場合によっては循環参照になってしまう or 仮想カラムが定義されていない状態でクエリビルダが走ってしまう、という事が起きる。
+     * そんな時、 lazy: true とすることで仮想カラムの評価を実行時に遅延することができる。
+     * また、Database を単一引数とするクロージャを expression に渡すと暗黙的に lazy: true とすることができる。
+     *
+     * ```php
+     * # 仮想カラムの遅延評価
+     * $db->overrideColumns([
+     *     'tableA' => [
+     *         // このようにしないと $db->subselectArray('tableB') が即時評価され、 tableB の評価が始まってしまう（そのとき tableB に parent という仮想カラムはまだ生えていない）
+     *         // つまり children の結果セットに parent が含まれることが無くなってしまう
+     *         'children' => [
+     *             'lazy'       => true,
+     *             'expression' => function () use ($db) {
+     *                 return $db->subselectArray('tableB');
+     *             },
+     *         ],
+     *     ],
+     *     'tableB' => [
+     *         // 同上（lazy 指定ではなく Database 引数版）
+     *         'parent' => function (Database $db) {
+     *             return $db->subselectTuple('tableA');
+     *         },
+     *     ],
+     * ]);
+     * ```
      *
      * また、仮想といいつつも厳密には実際に定義されているカラムも指定可能。
      * これを利用するとカラムのメタ情報を上書きすることができる。
@@ -2241,6 +2268,7 @@ class Database
                         $def = ['expression' => $def];
                     }
                     $def += [
+                        'lazy'       => false,
                         'type'       => null,
                         'expression' => null,
                     ];
@@ -2284,6 +2312,14 @@ class Database
                                     $def['type'] = Type::hasType($typename) ? $typename : 'object';
                                     break;
                             }
+                        }
+                    }
+
+                    if ($def['expression'] instanceof \Closure) {
+                        $ref = new \ReflectionFunction($def['expression']);
+                        $params = $ref->getParameters();
+                        if (isset($params[0]) && $params[0]->hasType() && is_a($params[0]->getType()->getName(), Database::class, true)) {
+                            $def['lazy'] = true;
                         }
                     }
                 }
