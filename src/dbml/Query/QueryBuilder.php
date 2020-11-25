@@ -982,7 +982,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
                         $cols = arrayize($newparam);
                         $params = [];
                         $vnames = implode('|', array_map(function ($v) { return preg_quote($v, '#'); }, array_keys($vcolumns)));
-                        $expr = preg_replace_callback("#(\\?)|$modifier\\.($vnames)#u", function ($m) use ($is_int, $froms, $modifier, $cond2, $newparam, $vcolumns, &$cols, &$params) {
+                        $expr = preg_replace_callback("#(\\?)|$modifier\\.($vnames)(?![_a-zA-Z0-9])#u", function ($m) use ($cond, $froms, $modifier, $vcolumns, &$cols, &$params) {
                             $vname = $m[2] ?? null;
                             if ($vname === null) {
                                 if ($cols) {
@@ -1004,11 +1004,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
                                     }
                                 }
                                 $params[] = $vcolq;
-                                $comment = "/* vcolumn: $vname */";
-                                if (!$is_int && strpos($cond2, '?') === false) {
-                                    return "$comment ? " . (is_array($newparam) ? "IN(?)" : "= ?");
-                                }
-                                return "$comment ?";
+                                return "/* vcolumn $vname-" . (is_int($cond) ? $cond : 'k') . " */ ?";
                             }
                         }, $cond2, -1, $count);
 

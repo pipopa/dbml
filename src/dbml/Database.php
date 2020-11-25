@@ -3009,10 +3009,14 @@ class Database
 
                     $cond = str_subreplace($cond, '?', $subquerys);
                     $value = $subvalues;
-                    $ope = Operator::RAW;
+
+                    if (strpos($cond, ':') === false && substr_count($cond, '?') < count($value)) {
+                        $cond .= ' = ?';
+                    }
                 }
+
                 // :区切りで演算子指定モード
-                elseif (strpos($cond, ':') !== false) {
+                if (strpos($cond, ':') !== false) {
                     [$cond, $ope] = array_map('trim', explode(':', $cond, 2));
                 }
                 // ? が無いなら column OPERATOR value モード（OPERATOR は型に応じる）

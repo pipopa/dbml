@@ -1514,12 +1514,15 @@ AND
                     'expression' => $database->foreign_c2->as('C2')->subexists('*', ['flag' => 0]),
                     'implicit'   => true,
                 ],
+                'nam'         => 'NOW()',
             ],
         ]);
 
         $builder->column('foreign_p P')->where([
             'P.dummy = 1',
             'P.dummy'                                                      => 1,
+            'P.name = 1',
+            'P.name'                                                       => 1,
             'P.raw1',
             'P.raw1:%LIKE%'                                                => 'X',
             'P.raw2',
@@ -1537,19 +1540,19 @@ AND
         };
         $this->assertStringIgnoreBreak(<<<SQL
 SELECT P.* FROM foreign_p P WHERE
-(P.dummy = 1) AND (P.dummy = '1')
+(P.dummy = 1) AND (P.dummy = '1') AND (P.name = 1) AND (P.name = '1')
 AND (UPPER(P.name))
 AND (UPPER(P.name) LIKE '%X%')
-AND (/* vcolumn: raw2 */ id + 9 = '10')
-AND (/* vcolumn: count_child */ (SELECT COUNT(*) AS {$qi("*@count")} FROM foreign_c1 C1 WHERE (C1.flag = '0') AND (C1.id = P.id)) = '0')
-AND (/* vcolumn: count_child */ (SELECT COUNT(*) AS {$qi("*@count")} FROM foreign_c1 C1 WHERE (C1.flag = '0') AND (C1.id = P.id)) > '1')
-AND (/* vcolumn: count_child */ (SELECT COUNT(*) AS {$qi("*@count")} FROM foreign_c1 C1 WHERE (C1.flag = '0') AND (C1.id = P.id)) BETWEEN '7' AND '9')
-AND (/* vcolumn: has_child */ (EXISTS (SELECT * FROM foreign_c2 C2 WHERE (C2.flag = '0') AND (C2.cid = P.id))))
-AND (/* vcolumn: has_child */ (EXISTS (SELECT * FROM foreign_c2 C2 WHERE (C2.flag = '0') AND (C2.cid = P.id))) = '0')
-AND (/* vcolumn: has_child */ (EXISTS (SELECT * FROM foreign_c2 C2 WHERE (C2.flag = '0') AND (C2.cid = P.id))) IN ('0','1'))
+AND (/* vcolumn raw2-3 */ id + 9 = '10')
+AND (/* vcolumn count_child-k */ (SELECT COUNT(*) AS {$qi("*@count")} FROM foreign_c1 C1 WHERE (C1.flag = '0') AND (C1.id = P.id)) = '0')
+AND (/* vcolumn count_child-k */ (SELECT COUNT(*) AS {$qi("*@count")} FROM foreign_c1 C1 WHERE (C1.flag = '0') AND (C1.id = P.id)) > '1')
+AND (/* vcolumn count_child-k */ (SELECT COUNT(*) AS {$qi("*@count")} FROM foreign_c1 C1 WHERE (C1.flag = '0') AND (C1.id = P.id)) BETWEEN '7' AND '9')
+AND (/* vcolumn has_child-4 */ (EXISTS (SELECT * FROM foreign_c2 C2 WHERE (C2.flag = '0') AND (C2.cid = P.id))))
+AND (/* vcolumn has_child-k */ (EXISTS (SELECT * FROM foreign_c2 C2 WHERE (C2.flag = '0') AND (C2.cid = P.id))) = '0')
+AND (/* vcolumn has_child-k */ (EXISTS (SELECT * FROM foreign_c2 C2 WHERE (C2.flag = '0') AND (C2.cid = P.id))) IN ('0','1'))
 AND ('99' AND UPPER(P.name) = 'Y'
-AND /* vcolumn: count_child */ (SELECT COUNT(*) AS {$qi("*@count")} FROM foreign_c1 C1 WHERE (C1.flag = '0') AND (C1.id = P.id)) = '2'
-AND /* vcolumn: has_child */ (EXISTS (SELECT * FROM foreign_c2 C2 WHERE (C2.flag = '0') AND (C2.cid = P.id))) IN('7','8','9'))
+AND /* vcolumn count_child-k */ (SELECT COUNT(*) AS {$qi("*@count")} FROM foreign_c1 C1 WHERE (C1.flag = '0') AND (C1.id = P.id)) = '2'
+AND /* vcolumn has_child-k */ (EXISTS (SELECT * FROM foreign_c2 C2 WHERE (C2.flag = '0') AND (C2.cid = P.id))) IN('7','8','9'))
 SQL
             , $builder->queryInto());
 
