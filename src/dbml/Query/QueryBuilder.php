@@ -122,6 +122,18 @@ use function ryunosuke\dbml\throws;
  *
  *     @param string $string  集約関数の区切り文字
  * }
+ * @method string                 getNullsOrder()
+ * @method $this                  setNullsOrder($string = null) {
+ *     ORDER BY で NULL をどう扱うかを指定する
+ *
+ *     - null: 何もしない
+ *     - "min": 最小値として扱う
+ *     - "max": 最小値として扱う
+ *     - "first": 常に最初に来る
+ *     - "last": 常に最後に来る
+ *
+ *     @param string $string  null, "min", "max", ""first, "last" のいずれか
+ * }
  * @method bool                   getPropagateLockMode()
  * @method $this                  setPropagateLockMode($bool)
  * @method bool                   getInjectChildColumn()
@@ -312,6 +324,8 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
             'primarySeparator'     => "\x1F",
             // aggregate 時（columnname@sum）の区切り文字
             'aggregationDelimiter' => '@',
+            // ORDER BY で NULL をどう扱うか
+            'nullsOrder'           => null,
             // 遅延実行時に親のロックモードを受け継ぐか否か
             'propagateLockMode'    => true,
             // サブクエリをコメント化して親のクエリに埋め込むか否か
@@ -539,6 +553,38 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
         }
         foreach ($builder->joinOrders as $jorder) {
             $builder->addOrderBy($jorder);
+        }
+        $nulls = $this->getUnsafeOption('nullsOrder');
+        if ($nulls) {
+            $builder->sqlParts['orderBy'] = array_each($builder->sqlParts['orderBy'], function (&$carry, $v) use ($nulls) {
+                [$expr, $order] = $v + [1 => null];
+                if ($nulls !== null) {
+                    $expr2 = $expr;
+                    if ($expr2 instanceof Queryable) {
+                        if (count($expr2->getParams()) > 0) {
+                            throw new \InvalidArgumentException("nulls order is not support parametable query. please use select alias.");
+                        }
+                        $expr2 = $expr2->getQuery();
+                    }
+                    switch (strtolower($nulls)) {
+                        default:
+                            throw new \InvalidArgumentException("$nulls is not supported.");
+                        case 'min':
+                            $carry[] = ["$expr2 IS NOT NULL", $order];
+                            break;
+                        case 'max':
+                            $carry[] = ["$expr2 IS NULL", $order];
+                            break;
+                        case 'first':
+                            $carry[] = ["$expr2 IS NULL", false];
+                            break;
+                        case 'last':
+                            $carry[] = ["$expr2 IS NULL", true];
+                            break;
+                    }
+                }
+                $carry[] = [$expr, $order];
+            }, []);
         }
         $builder->sqlParts['orderBy'] = array_unique(array_map(function ($v) {
             if (($v[1] ?? null) === null) {

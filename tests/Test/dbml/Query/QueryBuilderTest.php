@@ -2041,6 +2041,48 @@ SQL
      * @dataProvider provideQueryBuilder
      * @param QueryBuilder $builder
      */
+    function test_orderByNulls($builder)
+    {
+        $builder->column('nullable.cint');
+
+        $builder->setNullsOrder('min');
+        $this->assertStringContainsString('ORDER BY cint IS NOT NULL ASC, cint ASC', (string) $builder->orderBy('cint', true));
+        $this->assertStringContainsString('ORDER BY cint IS NOT NULL DESC, cint DESC', (string) $builder->orderBy('cint', false));
+        $this->assertEquals([null, null, null, null, null, -4, -2, 0, 2, 4], $builder->orderBy('cint', true)->lists());
+        $this->assertEquals([4, 2, 0, -2, -4, null, null, null, null, null], $builder->orderBy('cint', false)->lists());
+
+        $builder->setNullsOrder('max');
+        $this->assertStringContainsString('ORDER BY cint IS NULL ASC, cint ASC', (string) $builder->orderBy('cint', true));
+        $this->assertStringContainsString('ORDER BY cint IS NULL DESC, cint DESC', (string) $builder->orderBy('cint', false));
+        $this->assertEquals([-4, -2, 0, 2, 4, null, null, null, null, null], $builder->orderBy('cint', true)->lists());
+        $this->assertEquals([null, null, null, null, null, 4, 2, 0, -2, -4], $builder->orderBy('cint', false)->lists());
+
+        $builder->setNullsOrder('first');
+        $this->assertStringContainsString('ORDER BY cint IS NULL DESC, cint ASC', (string) $builder->orderBy('cint', true));
+        $this->assertStringContainsString('ORDER BY cint IS NULL DESC, cint DESC', (string) $builder->orderBy('cint', false));
+        $this->assertEquals([null, null, null, null, null, -4, -2, 0, 2, 4], $builder->orderBy('cint', true)->lists());
+        $this->assertEquals([null, null, null, null, null, 4, 2, 0, -2, -4], $builder->orderBy('cint', false)->lists());
+
+        $builder->setNullsOrder('last');
+        $this->assertStringContainsString('ORDER BY cint IS NULL ASC, cint ASC', (string) $builder->orderBy('cint', true));
+        $this->assertStringContainsString('ORDER BY cint IS NULL ASC, cint DESC', (string) $builder->orderBy('cint', false));
+        $this->assertEquals([-4, -2, 0, 2, 4, null, null, null, null, null], $builder->orderBy('cint', true)->lists());
+        $this->assertEquals([4, 2, 0, -2, -4, null, null, null, null, null], $builder->orderBy('cint', false)->lists());
+
+        $this->assertStringContainsString('ORDER BY NOW() IS NULL ASC, NOW() ASC', (string) $builder->orderBy(new Expression('NOW()'), true));
+        $this->assertStringContainsString('ORDER BY NOW() IS NULL ASC, NOW() DESC', (string) $builder->orderBy(new Expression('NOW()'), false));
+
+        $builder->setNullsOrder('hoge');
+        @$builder->orderBy('hoge')->getQuery();
+        $this->assertContains('hoge is not supported', error_get_last()['message']);
+        @$builder->orderBy(new Expression('? + ?', [1, 2]))->getQuery();
+        $this->assertContains('is not support parametable query', error_get_last()['message']);
+    }
+
+    /**
+     * @dataProvider provideQueryBuilder
+     * @param QueryBuilder $builder
+     */
     function test_comment($builder)
     {
         $builder->column('test');

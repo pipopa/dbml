@@ -505,6 +505,7 @@ abstract class AbstractUnitTestCase extends TestCase
                 $db->truncate('aggregate');
                 $db->truncate('oprlog');
                 $db->truncate('noprimary');
+                $db->truncate('nullable');
                 $db->truncate('multiprimary');
                 $db->truncate('multiunique');
                 $db->truncate('misctype');
@@ -560,6 +561,15 @@ abstract class AbstractUnitTestCase extends TestCase
                                 ]);
                             }
                         }
+                    }
+                    for ($i = 1, $char = 'a'; $i <= 10; $i++) {
+                        $db->insert('nullable', [
+                            'id'       => $i,
+                            'name'     => $char++,
+                            'cint'     => ($i % 2 === 0) ? null : $i - 5,
+                            'cfloat'   => ($i % 3 === 0) ? null : $i / 2 - 5,
+                            'cdecimal' => ($i % 5 === 0) ? null : $i / 3 - 5,
+                        ]);
                     }
                     for ($i = 1, $char = 'a'; $i <= 10; $i++) {
                         $db->insert('multiprimary', [
