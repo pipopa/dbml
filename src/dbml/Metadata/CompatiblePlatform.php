@@ -363,7 +363,7 @@ class CompatiblePlatform /*extends AbstractPlatform*/
      * MERGE 構文を返す
      *
      * @param array $updateData UPDATE 時の配列
-     * @param string|array $constraint 一意制約
+     * @param string|array|null $constraint 一意制約
      * @return string|bool MERGE 構文に対応してるなら文字列、対応していないなら false
      */
     public function getMergeSQL($updateData, $constraint = null)
@@ -600,8 +600,8 @@ class CompatiblePlatform /*extends AbstractPlatform*/
      * GROUP_CONCAT 構文を返す
      *
      * @param string|array $expr 結合式
-     * @param string $separator セパレータ文字
-     * @param string|array order 句。これが活きるのは mysql のみ
+     * @param ?string $separator セパレータ文字
+     * @param string|array|null order 句。これが活きるのは mysql のみ
      * @return string GROUP_CONCAT 構文
      */
     public function getGroupConcatSyntax($expr, $separator = null, $order = null)

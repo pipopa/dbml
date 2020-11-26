@@ -48,7 +48,7 @@ class Alias
      * hoge as fuga を分割する
      *
      * @param string $string 分割したい文字列
-     * @param string $defaultAlias 分割できなかった場合のデフォルトエイリアス
+     * @param ?string $defaultAlias 分割できなかった場合のデフォルトエイリアス
      * @return array [エイリアス, 実名]
      */
     public static function split($string, $defaultAlias = null)

@@ -2008,11 +2008,11 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
      * 結合タイプや結合条件をまとめて指定して FROM, JOIN を構成できるが、複雑極まりないので使用は非推奨（FROM 句の設定は {@link column()} を使用すれば基本的に不要）。
      *
      * @param string|array|QueryBuilder $table 対象テーブル
-     * @param string $alias テーブルエイリアス
-     * @param string $type INNER, LEFT などの JOIN タイプ
-     * @param array|string $condition 結合条件。 {@link where()} と同じ形式が使える
-     * @param string $fkeyname 外部キー名
-     * @param string $fromAlias 結合させるテーブル。省略時は自動判別
+     * @param ?string $alias テーブルエイリアス
+     * @param ?string $type INNER, LEFT などの JOIN タイプ
+     * @param array|string|null $condition 結合条件。 {@link where()} と同じ形式が使える
+     * @param ?string $fkeyname 外部キー名
+     * @param ?string $fromAlias 結合させるテーブル。省略時は自動判別
      * @return $this 自分自身
      */
     public function from($table, $alias = null, $type = null, $condition = [], $fkeyname = null, $fromAlias = null)
@@ -2184,8 +2184,8 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
      * @param string $type 結合タイプ（CROSS, INNER, LEFT, RIGHT, AUTO）
      * @param string|array|QueryBuilder $table 結合するテーブル
      * @param string|array $on 結合条件。 {@link where()} と同じ形式が使える
-     * @param string $fkeyname 外部キー名称。省略時は唯一の外部キーを使用（無かったり2個以上ある場合は例外）
-     * @param string $from 結合させるテーブル。省略時は自動判別
+     * @param ?string $fkeyname 外部キー名称。省略時は唯一の外部キーを使用（無かったり2個以上ある場合は例外）
+     * @param ?string $from 結合させるテーブル。省略時は自動判別
      * @return $this 自分自身
      */
     public function join($type, $table, $on, $fkeyname = null, $from = null)
@@ -2666,7 +2666,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
      * ```
      *
      * @param int|array $count 最大件数、あるいは[オフセット => 最大件数]な配列
-     * @param int $offset オフセット。オプショナル
+     * @param ?int $offset オフセット。オプショナル
      * @return $this 自分自身
      */
     public function limit($count, $offset = null)
@@ -2720,7 +2720,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
      * ```
      *
      * @param int $page ページ数
-     * @param int $limit 1ページの単位。省略時は現在の limit が使用される
+     * @param ?int $limit 1ページの単位。省略時は現在の limit が使用される
      * @return $this 自分自身
      */
     public function page($page, $limit = null)
@@ -2987,7 +2987,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
      * ```
      *
      * @param int $chunk 分割数
-     * @param string $column 基準カラム。省略時は AUTO_INCREMENT な主キー。 '-' プレフィックスを付けると降順になる
+     * @param ?string $column 基準カラム。省略時は AUTO_INCREMENT な主キー。 '-' プレフィックスを付けると降順になる
      * @return \Generator 分割して返す Generator
      */
     public function chunk($chunk, $column = null)
@@ -3254,7 +3254,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
      *
      * @param string $keyword1 ラップする文字列1
      * @param string $keyword2 ラップする文字列2
-     * @param string $name ラップした登録名
+     * @param ?string $name ラップした登録名
      * @return $this 自分自身
      */
     public function wrap($keyword1, $keyword2 = '', $name = null)
@@ -3374,7 +3374,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
      * ```
      *
      * @param string $hint ヒント構文
-     * @param string $talias ヒント句を結びつけるテーブル or エイリアス
+     * @param ?string $talias ヒント句を結びつけるテーブル or エイリアス
      * @return $this 自分自身
      */
     public function hint($hint, $talias = null)
@@ -3403,7 +3403,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
      * // SELECT t_article.* FROM t_article LOCK IN SHARE MODE
      * ```
      *
-     * @param string $lockoption ロックオプション
+     * @param ?string $lockoption ロックオプション
      * @return $this 自分自身
      */
     public function lockInShare($lockoption = null)
@@ -3430,7 +3430,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
      * // SELECT t_article.* FROM t_article FOR UPDATE SKIP LOCKED
      * ```
      *
-     * @param string $lockoption ロックオプション
+     * @param ?string $lockoption ロックオプション
      * @return $this 自分自身
      */
     public function lockForUpdate($lockoption = null)
@@ -3536,7 +3536,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
      * $qb->getSubbuilder('children')->where(['delete_time' => 0])->orderBy(['update_time' => 'DESC'])->limit(5);
      * ```
      *
-     * @param string $name キー。省略すると単一ではなく全サブクエリビルダを配列で返す
+     * @param ?string $name キー。省略すると単一ではなく全サブクエリビルダを配列で返す
      * @return $this|$this[] サブクエリビルダ
      */
     public function getSubbuilder($name = null)
@@ -3643,7 +3643,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
      * // SELECT t_article.* FROM t_article
      * ```
      *
-     * @param string|array $queryPartName リセットする句
+     * @param string|array|null $queryPartName リセットする句
      * @return $this 自分自身
      */
     public function resetQueryPart($queryPartName = null)

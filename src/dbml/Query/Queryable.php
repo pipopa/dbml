@@ -26,7 +26,7 @@ interface Queryable
      *
      * クエリ文字列を返し、引数配列にパラメータが追加される
      *
-     * @param array $params この引数にパラメータが追加される
+     * @param ?array $params この引数にパラメータが追加される
      * @return string 文字列表現を返す
      */
     public function merge(?array &$params);

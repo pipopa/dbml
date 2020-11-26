@@ -29,7 +29,7 @@
  * | :fkeyname          | 任意 | JOIN に使用する外部キー名を指定する
  * | [condition]        | 任意 | JOIN に使用する結合条件を yaml で指定する（where 記法）
  * | {condition}        | 任意 | JOIN に使用する結合条件を yaml で指定する（カラム結合）
- * | <groupby>          | 任意 | GROUP BY を指定する
+ * | &lt;groupby&gt;    | 任意 | GROUP BY を指定する
  * | +order-by          | 任意 | ORDER BY を指定する
  * | #offset-limit      | 任意 | LIMIT, OFFSET を指定する
  * | AS Alias           | 任意 | テーブルエイリアスを指定する

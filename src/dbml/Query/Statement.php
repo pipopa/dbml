@@ -93,7 +93,7 @@ class Statement implements Queryable
      * 取得系クエリとして実行する
      *
      * @param array $params 追加パラメータ
-     * @param Connection $connection コネクション
+     * @param ?Connection $connection コネクション
      * @return \Doctrine\DBAL\Statement stmt オブジェクト
      */
     public function executeSelect(iterable $params = [], Connection $connection = null)
@@ -106,7 +106,7 @@ class Statement implements Queryable
      * 更新系クエリとして実行する
      *
      * @param array $params 追加パラメータ
-     * @param Connection $connection コネクション
+     * @param ?Connection $connection コネクション
      * @return \Doctrine\DBAL\Statement stmt オブジェクト
      */
     public function executeAffect(iterable $params = [], Connection $connection = null)

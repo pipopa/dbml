@@ -250,7 +250,7 @@ class Schema
      * テーブルのコメントからメタデータを取得する
      *
      * @param string $table_name 取得したいテーブル名
-     * @param string $column_name 取得したいカラム名。省略時は全カラム
+     * @param ?string $column_name 取得したいカラム名。省略時は全カラム
      * @return array カラムのメタデータ配列
      */
     public function getTableColumnMetadata($table_name, $column_name = null)
@@ -418,8 +418,8 @@ class Schema
      *
      * @param string $table_name1 テーブル名1
      * @param string $table_name2 テーブル名2
-     * @param string $fkeyname 制約名。未指定時は唯一の外部キー（複数ある場合は例外）
-     * @param bool $direction キー（$table_name1 -> $table_name2 なら true）の方向が格納される
+     * @param ?string $fkeyname 制約名。未指定時は唯一の外部キー（複数ある場合は例外）
+     * @param ?bool $direction キー（$table_name1 -> $table_name2 なら true）の方向が格納される
      * @return array [table1_column => table2_column]
      */
     public function getForeignColumns($table_name1, $table_name2, $fkeyname = null, &$direction = null)

@@ -44,8 +44,8 @@ class Yielder implements \Iterator
      *
      * @param ResultStatement|\Closure $statement 取得に使用される \Statement
      * @param Connection $connection 取得に使用するコネクション
-     * @param string $method フェッチメソッド名
-     * @param callable $callback 1行ごとに呼ばれるコールバック処理
+     * @param ?string $method フェッチメソッド名
+     * @param ?callable $callback 1行ごとに呼ばれるコールバック処理
      */
     public function __construct($statement, $connection, $method = null, $callback = null)
     {

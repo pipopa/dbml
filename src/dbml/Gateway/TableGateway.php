@@ -767,7 +767,7 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
      *
      * @param Database $database データベース
      * @param string $table_name テーブル名
-     * @param string $entity_name エンティティ名
+     * @param ?string $entity_name エンティティ名
      */
     public function __construct(Database $database, $table_name, $entity_name = null)
     {
@@ -1478,7 +1478,7 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
      * @param string $type 結合タイプ（AUTO, INNER, ...）
      * @param TableGateway $gateway 結合するテーブルゲートウェイ
      * @param string|array $on 結合条件。 {@link where()} と同じ形式が使える
-     * @param string $fkeyname 外部キー名称。省略時は唯一の外部キーを使用（無かったり2個以上ある場合は例外）
+     * @param ?string $fkeyname 外部キー名称。省略時は唯一の外部キーを使用（無かったり2個以上ある場合は例外）
      * @return $this 自分自身
      */
     public function join($type, TableGateway $gateway, $on = [], $fkeyname = null)

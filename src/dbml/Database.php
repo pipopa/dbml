@@ -1568,7 +1568,7 @@ class Database
      *
      * オブジェクト名が競合している場合は何が返ってくるか未定義。
      *
-     * @param string $objectname オブジェクト名
+     * @param ?string $objectname オブジェクト名
      * @return AbstractAsset スキーマオブジェクト
      */
     public function describe($objectname = null)
@@ -1645,8 +1645,8 @@ class Database
      * 存在するテーブル名や tableMapper などを利用して mixin 用のトレイトを作成する。
      * このメソッドが吐き出したトレイトを `@ mixin Hogera` などとすると補完が効くようになる。
      *
-     * @param string $namespace トレイト群の名前空間。未指定だとグローバル
-     * @param string $filename ファイルとして吐き出す先
+     * @param ?string $namespace トレイト群の名前空間。未指定だとグローバル
+     * @param ?string $filename ファイルとして吐き出す先
      * @return string アノテーションコメント
      */
     public function echoAnnotation($namespace = null, $filename = null)
@@ -1723,7 +1723,7 @@ class Database
      * 存在するテーブル名や tableMapper などを利用して phpstorm.meta を作成する。
      *
      * @param bool $innerOnly namespace PHPSTORM_META のような外側を含めるか
-     * @param string $filename ファイルとして吐き出す先
+     * @param ?string $filename ファイルとして吐き出す先
      * @return string phpstorm.meta の内容
      */
     public function echoPhpStormMeta($innerOnly = false, $filename = null)
@@ -2024,7 +2024,7 @@ class Database
      * ```
      *
      * @param array $attributes 設定する属性のペア配列
-     * @param array|string $target "master" か "slave" でそちら側のみ変更する。未指定/null で両方変更する
+     * @param array|string|null $target "master" か "slave" でそちら側のみ変更する。未指定/null で両方変更する
      * @return \Closure 元に戻すためのクロージャ
      */
     public function setPdoAttribute($attributes, $target = null)
@@ -2295,9 +2295,8 @@ class Database
                     }
                     if (!isset($def['type']) && $def['expression'] instanceof \Closure) {
                         $ref = new \ReflectionFunction($def['expression']);
-                        if ($ref->hasReturnType()) {
-                            /** @var \ReflectionNamedType $rtype */
-                            $rtype = $ref->getReturnType();
+                        $rtype = $ref->getReturnType();
+                        if ($rtype instanceof \ReflectionNamedType) {
                             $typename = strtolower($rtype->getName());
                             switch ($typename) {
                                 case 'void':
@@ -2318,7 +2317,8 @@ class Database
                     if ($def['expression'] instanceof \Closure) {
                         $ref = new \ReflectionFunction($def['expression']);
                         $params = $ref->getParameters();
-                        if (isset($params[0]) && $params[0]->hasType() && is_a($params[0]->getType()->getName(), Database::class, true)) {
+                        $rtype = isset($params[0]) ? $params[0]->getType() : null;
+                        if ($rtype instanceof \ReflectionNamedType && is_a($rtype->getName(), Database::class, true)) {
                             $def['lazy'] = true;
                         }
                     }
@@ -2471,7 +2471,7 @@ class Database
      * ```
      *
      * @param callable $main メイン処理
-     * @param callable $catch 例外発生時の処理
+     * @param ?callable $catch 例外発生時の処理
      * @param array $options トランザクションオプション
      * @param bool $throwable 例外を投げるか返すか
      * @return mixed メイン処理の返り値
@@ -2486,8 +2486,8 @@ class Database
      *
      * $options は {@link Transaction} を参照。
      *
-     * @param callable $main メイン処理
-     * @param callable $catch 例外発生時の処理
+     * @param ?callable $main メイン処理
+     * @param ?callable $catch 例外発生時の処理
      * @param array $options トランザクションオプション
      * @return Transaction トランザクションオブジェクト
      */
@@ -2523,7 +2523,7 @@ class Database
      * ```
      *
      * @param callable $main メイン処理
-     * @param array|int $options トランザクションオプション
+     * @param array|int|null $options トランザクションオプション
      * @return array トランザクションログ
      */
     public function preview($main, $options = null)
@@ -2749,7 +2749,7 @@ class Database
      * ```
      *
      * @param mixed $data ? が含まれている bind 配列
-     * @param array $params bind 値が渡される
+     * @param ?array $params bind 値が渡される
      * @return mixed ? が埋め込まれた正規化されたクエリ文字列
      */
     public function bindInto($data, ?array &$params)
@@ -2926,9 +2926,9 @@ class Database
      * ```
      *
      * @param array $identifier where 配列
-     * @param array $params bind 値が格納される
+     * @param ?array $params bind 値が格納される
      * @param string $andor 結合演算子（内部向け引数なので気にしなくて良い）
-     * @param bool $filterd 条件が全て ! などでフィルタされたら true が格納される（内部向け引数なので気にしなくて良い）
+     * @param ?bool $filterd 条件が全て ! などでフィルタされたら true が格納される（内部向け引数なので気にしなくて良い）
      * @return array where 配列
      */
     public function whereInto(array $identifier, ?array &$params, $andor = 'OR', &$filterd = null)
@@ -3477,7 +3477,7 @@ class Database
      *
      * @param \Traversable|array $row_provider foreach で回せる何か
      * @param string|array $fetch_mode Database::METHOD__XXX
-     * @param \Closure $converter 行ごとの変換クロージャ
+     * @param ?\Closure $converter 行ごとの変換クロージャ
      * @return array|bool|mixed クエリ結果
      */
     public function perform($row_provider, $fetch_mode, $converter = null)
@@ -4294,7 +4294,7 @@ class Database
      * @param string|QueryBuilder $sql SQL
      * @param iterable $params SQL パラメータ
      * @param array $config 出力パラメータ
-     * @param string|resource $file 出力先。 null を与えると標準出力に書き出される
+     * @param string|resource|null $file 出力先。 null を与えると標準出力に書き出される
      * @return int 書き込みバイト数
      */
     public function export($generator, $sql, iterable $params = [], $config = [], $file = null)
@@ -5805,7 +5805,7 @@ class Database
      * @used-by reduceOrThrow()
      *
      * @param string|array $tableName テーブル名
-     * @param int $limit 残す件数
+     * @param ?int $limit 残す件数
      * @param string|array $orderBy 並び順
      * @param string|array $groupBy グルーピング条件
      * @param array|mixed $identifier WHERE 条件
@@ -6193,7 +6193,7 @@ class Database
      * @param string $targetTable 挿入するテーブル名
      * @param array $overrideData selectしたデータを上書きするデータ
      * @param array|mixed $where 検索条件
-     * @param string $sourceTable 元となるテーブル名。省略すると $targetTable と同じになる
+     * @param ?string $sourceTable 元となるテーブル名。省略すると $targetTable と同じになる
      * @return int|Statement affected rows
      */
     public function duplicate($targetTable, array $overrideData = [], $where = [], $sourceTable = null)
@@ -6259,8 +6259,8 @@ class Database
     /**
      * 最後に挿入した ID を返す
      *
-     * @param string $tableName テーブル名。PostgreSql の場合のみ有効
-     * @param string $columnName カラム名。PostgreSql の場合のみ有効
+     * @param ?string $tableName テーブル名。PostgreSql の場合のみ有効
+     * @param ?string $columnName カラム名。PostgreSql の場合のみ有効
      * @return null|string 最後に挿入した ID
      */
     public function getLastInsertId($tableName = null, $columnName = null)

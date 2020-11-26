@@ -74,7 +74,7 @@ class Paginator implements \IteratorAggregate, \Countable
      *
      * @param int $currentpage 現在ページ数。1ベース
      * @param int $countperpage 1ページ内のアイテム数
-     * @param int $shownpage 表示するページ数。奇数が望ましい。省略時全ページ表示
+     * @param ?int $shownpage 表示するページ数。奇数が望ましい。省略時全ページ表示
      * @return $this 自分自身
      */
     public function paginate($currentpage, $countperpage, $shownpage = null)

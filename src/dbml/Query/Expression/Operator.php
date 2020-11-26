@@ -148,7 +148,7 @@ class Operator implements Queryable
     /** @var string 演算値1 */
     private $operand1;
 
-    /** @var string 演算値2 */
+    /** @var array 演算値2 */
     private $operand2;
 
     /** @var bool 演算値2が配列か */
@@ -303,7 +303,7 @@ class Operator implements Queryable
     private function _default()
     {
         $operands = implode(',', array_fill(0, count($this->operand2), '?'));
-        if (count($this->operand2) > 1){
+        if (count($this->operand2) > 1) {
             $operands = "($operands)";
         }
         $this->string = $this->operand1 . ' ' . strtoupper($this->operator) . concat(' ', $operands);
@@ -437,8 +437,8 @@ class Operator implements Queryable
     /**
      * callStatic で作成したインスタンスを後初期化する
      *
-     * @param CompatiblePlatform $platform プラットフォーム
      * @param string $operand1 演算値1
+     * @param ?CompatiblePlatform $platform プラットフォーム
      * @return $this 自分自身
      */
     public function lazy($operand1, $platform = null)
