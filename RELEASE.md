@@ -21,6 +21,13 @@
 - Entity 消したい。使わない…
 - phpstorm と相性が悪いのでマジックメソッドを撲滅したい
 
+## 2.0.5
+
+- [fixbug][Database] overrideColumns で循環参照になることがある不具合を修正
+- [fixbug][QueryBuilder] 仮想カラムが暴走する不具合を修正
+- [feature][QueryBuilder] NULL の並び順を制御できる nullsOrder オプションを追加
+- [feature][Paginator] 前後ページがあるかを返す hasPrev/hasNext を実装
+
 ## 2.0.4
 
 - [feature][Database] 仮想カラムの型はある程度推測できるのでそのようにした
