@@ -20,6 +20,14 @@
 
 - Entity 消したい。使わない…
 - phpstorm と相性が悪いのでマジックメソッドを撲滅したい
+- TableGateway の column/where などを個別メソッド化する（可変引数などに対応できていないので）
+
+## 2.0.6
+
+- [feature][QueryBuilder] with 句の対応
+- [feature][QueryBuilder] 常に末尾に並び順を追加できる defaultOrder オプションを追加
+- [feature][QueryBuilder] nullsOrder を個別に当てられるように修正
+- [fixbug][QueryBuilder] where を呼ぶだけで遅延仮想カラムの取得が走っていた不具合を修正
 
 ## 2.0.5
 
