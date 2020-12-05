@@ -303,6 +303,23 @@ class SchemaTest extends \ryunosuke\Test\AbstractUnitTestCase
     /**
      * @dataProvider provideSchema
      * @param Schema $schema
+     * @param Database $database
+     */
+    function test_getTableColumnExpression($schema, $database)
+    {
+        $schema->setTableColumn('metasample', 'dummy', [
+            'lazy'       => true,
+            'expression' => function ($arg) { return strtoupper($arg); },
+        ]);
+        $this->assertEquals(true, $schema->getTableColumns('metasample')['dummy']->getCustomSchemaOption('lazy')); // この時点では true
+        $this->assertEquals('HOGE', $schema->getTableColumnExpression('metasample', 'dummy', 'hoge'));
+        $this->assertEquals('HOGE', $schema->getTableColumnExpression('metasample', 'dummy', 'fuga')); // キャッシュされるのでコールバックされない
+        $this->assertEquals(false, $schema->getTableColumns('metasample')['dummy']->getCustomSchemaOption('lazy')); // 呼ばれたので false
+    }
+
+    /**
+     * @dataProvider provideSchema
+     * @param Schema $schema
      */
     function test_getForeignKeys($schema)
     {

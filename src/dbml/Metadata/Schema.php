@@ -299,6 +299,33 @@ class Schema
     }
 
     /**
+     * テーブルカラムの表現を返す
+     *
+     * @param string $table_name 取得したいテーブル名
+     * @param string $column_name 取得したいカラム名
+     * @param mixed $arg 遅延カラムだった場合のコールバック引数
+     * @return mixed カラム表現
+     */
+    public function getTableColumnExpression($table_name, $column_name, $arg = null)
+    {
+        $column = $this->getTableColumns($table_name)[$column_name] ?? null;
+        if ($column === null) {
+            return null;
+        }
+        if (!$column->hasCustomSchemaOption('expression')) {
+            return null;
+        }
+
+        $expression = $column->getCustomSchemaOption('expression');
+        if ($column->hasCustomSchemaOption('lazy') && $column->getCustomSchemaOption('lazy')) {
+            $expression = $expression($arg);
+            $column->setCustomSchemaOption('lazy', false);
+            $column->setCustomSchemaOption('expression', $expression);
+        }
+        return $expression;
+    }
+
+    /**
      * テーブルの主キーインデックスオブジェクトを取得する
      *
      * @param string $table_name 取得したいテーブル名

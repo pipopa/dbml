@@ -75,6 +75,20 @@ use function ryunosuke\dbml\throws;
  * @method $this                  setDefaultLazyMode($string) {[] や Gateway 指定時のデフォルト sub lazy mode}
  * @method array                  getDefaultScope()
  * @method $this                  setDefaultScope($array) {TableGateway の暗黙的スコープ名}
+ * @method mixed                  getDefaultOrder()
+ * @method $this                  setDefaultOrder($mixed) {
+ *     OrderBy のデフォルトを指定する
+ *
+ *     デフォルトとは、OrderBy が無かったり、有ったとしても必ず最後に追加される並び順を表す。
+ *
+ *     true を指定すると主キーの昇順、 false を指定すると主キーの降順が付与される。
+ *     あるいは任意の文字列や表現を渡すとそれが追加される。
+ *
+ *     つまり実質的に AutoOrder の上位互換として働く。
+ *     （RDBMS によってはインデックスが効かなかったりするので注意すること）。
+ *
+ *     @param mixed $mixed 並び順
+ * }
  * @method bool                   getAutoOrder()
  * @method $this                  setAutoOrder($bool) {自動で主キー順にするか（{@link detectAutoOrder()} を参照）}
  * @method string                 getPrimarySeparator()
@@ -307,7 +321,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
     /** @var bool テーブル名プレフィックスを付与するか */
     private $autoTablePrefix = false;
 
-    /** @var bool 自動 order by 有効/無効フラグが効いているか否か（基本的に単純な toString では効かせない） */
+    /** @var bool デフォルト order by が有効か否か（基本的に単純な toString では効かせない） */
     private $enableAutoOrder = false;
 
     public static function getDefaultOptions()
@@ -317,6 +331,8 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
             'defaultLazyMode'      => self::LAZY_MODE_EAGER,
             // TableGateway の暗黙的スコープ名
             'defaultScope'         => [], // for compatible. In the future the default will be ['']
+            // orderBy が無かったとき、あったとしても必ず最後に付与されるデフォルトの並び順
+            'defaultOrder'         => null,
             // 自動 order by 有効/無効フラグ
             'autoOrder'            => true,
             // 複合主キーを単一主キーとみなすための結合文字列
@@ -538,14 +554,24 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
         array_maps(array_filter(array_column($builder->getFromPart(), 'table'), rbind('is_a', self::class)), ['wrap' => ['', '']]);
 
         // ORDER BY 句に手を加える
-        if ($builder->enableAutoOrder && !$builder->sqlParts['orderBy']) {
+        if ($builder->enableAutoOrder) {
             // 集約なら除外
             if (!$builder->sqlParts['groupBy']) {
                 // EXISTS 述語も除外
                 if (!isset($builder->wrappers['EXISTS']) && !isset($builder->wrappers['NOT EXISTS'])) {
                     // COUNT を含むなら除外
                     if (false === array_find($builder->sqlParts['select'], function ($s) { return strpos("$s", self::COUNT_ALIAS) !== false; })) {
-                        $builder->orderByPrimary();
+                        if (($defaultOrder = $builder->getDefaultOrder()) !== null) {
+                            if (is_bool($defaultOrder)) {
+                                $builder->orderByPrimary($defaultOrder, true);
+                            }
+                            else {
+                                $builder->addOrderBy($defaultOrder);
+                            }
+                        }
+                        if ($builder->getAutoOrder() && !$builder->sqlParts['orderBy']) {
+                            $builder->orderByPrimary();
+                        }
                     }
                 }
             }
@@ -2609,9 +2635,10 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
      * 主キーによる orderBy
      *
      * @param bool $is_asc ASC なら true
+     * @param bool $append 追加なら true
      * @return $this 自分自身
      */
-    public function orderByPrimary($is_asc = true)
+    public function orderByPrimary($is_asc = true, $append = false)
     {
         if (!$frompart = $this->sqlParts['from']) {
             throw new \UnexpectedValueException('query builder is not set "from".');
@@ -2630,7 +2657,12 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
         $columns = $primary->getColumns();
 
         $tablename = $fromtable['alias'] ?: $fromtable['table'];
-        return $this->orderBy(array_strpad($columns, '', $tablename . '.'), $is_asc);
+        if ($append) {
+            return $this->addOrderBy(array_strpad($columns, '', $tablename . '.'), $is_asc);
+        }
+        else {
+            return $this->orderBy(array_strpad($columns, '', $tablename . '.'), $is_asc);
+        }
     }
 
     /**
@@ -3461,26 +3493,14 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
     }
 
     /**
-     * 自動主キーソートの有効無効を設定する
-     *
-     * `select` メソッドの第3引数、あるいは `orderBy` メソッドにて ORDER 句が指定されなかった場合、自動で駆動表の主キーカラムが設定される。
-     *
-     * この自動 ORDER はあくまで駆動表の主キーであり、 JOIN した結果の並び順は未定義である。
-     * JOIN を含めて ORDER したい場合は明示的に `orderBy` するか、あるいは JOIN 狙いのインデックスを作るとか生クエリを書くとかそういった方面で対処しなければならない。
-     *
-     * autoOrder が無効ならそもそも無意味だが、その設定に関わらず下記のような場合は付加されない。
-     *
-     * - selectTuple, selectValue で取得した
-     * - 集約関数が存在する
-     * - `GROUP BY` 句が存在する
-     * - `EXISTS` で包まれている
+     * 自動 OrderBy の有効無効を設定する
      *
      * @param bool $use 切り替えフラグ
      * @return $this 自分自身
      */
     public function detectAutoOrder($use)
     {
-        if (!$this->getAutoOrder()) {
+        if (!$this->getAutoOrder() && $this->getDefaultOrder() === null) {
             return $this;
         }
 

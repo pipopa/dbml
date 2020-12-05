@@ -2037,6 +2037,10 @@ SQL
         $this->assertQuery('SELECT test1.id FROM test1 ORDER BY test1.id ASC', $builder->orderByPrimary());
         $this->assertQuery('SELECT test1.id FROM test1 ORDER BY test1.id DESC', $builder->orderByPrimary(false));
 
+        $builder->reset()->column('test1.id')->orderBy('hoge');
+        $this->assertQuery('SELECT test1.id FROM test1 ORDER BY hoge ASC, test1.id ASC', $builder->orderByPrimary(true, true));
+        $this->assertQuery('SELECT test1.id FROM test1 ORDER BY hoge ASC, test1.id ASC, test1.id DESC', $builder->orderByPrimary(false, true));
+
         $builder->reset();
         $this->assertException(new \UnexpectedValueException('query builder is not set'), L($builder)->orderByPrimary());
     }
@@ -3649,6 +3653,30 @@ AND ((SELECT SUM(foreign_c2.seq) AS {$qi('foreign_c2.seq@sum')} FROM foreign_c2 
         $builder->select('*')->from('test1')->lockForUpdate('hoge')->unlock();
         $this->assertQuery('SELECT * FROM test1', $builder);
         $builder->array();
+    }
+
+    /**
+     * @dataProvider provideQueryBuilder
+     * @param QueryBuilder $builder
+     */
+    function test_setDefaultOrder($builder)
+    {
+        $builder->detectAutoOrder(true);
+
+        $builder->reset()->setDefaultOrder(true);
+        $this->assertQuery("SELECT test1.id FROM test1 ORDER BY test1.id ASC", $builder->column('test1.id'));
+
+        $builder->reset()->setDefaultOrder(false);
+        $this->assertQuery("SELECT test1.id FROM test1 ORDER BY test1.id DESC", $builder->column('test1.id'));
+
+        $builder->reset()->setDefaultOrder('NOW()');
+        $this->assertQuery("SELECT test1.id FROM test1 ORDER BY NOW() ASC", $builder->column('test1.id'));
+
+        $builder->reset()->setDefaultOrder(new Expression('NOW() DESC'));
+        $this->assertQuery("SELECT test1.id FROM test1 ORDER BY NOW() DESC", $builder->column('test1.id'));
+
+        $builder->detectAutoOrder(false);
+        $this->assertQuery("SELECT test1.id FROM test1", $builder->column('test1.id'));
     }
 
     /**
