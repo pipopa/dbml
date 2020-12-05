@@ -242,6 +242,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
     /** @var array SQL の各句 */
     private $sqlParts = [
         'comment'  => [],
+        'with'     => [],
         'option'   => [],
         'select'   => [],
         'union'    => [],
@@ -617,7 +618,8 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
         }, $builder->sqlParts['orderBy']));
 
         // 色々手を加えたやつでクエリ文字列化
-        $sql = 'SELECT'
+        $sql = concat('WITH ', array_sprintf($builder->sqlParts['with'], '%2$s AS (%1$s)', ','), ' ')
+            . 'SELECT'
             . concat(' ', implode(' ', $builder->sqlParts['option']))
             . concat(' ', implode(', ', $builder->sqlParts['select']) ?: '*')
             . concat(' FROM ', implode(', ', $builder->_getFromClauses()))
@@ -1638,6 +1640,29 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
 
         $this->lazyMode = func_num_args() ? $lazyMode : $this->getDefaultLazyMode();
         return $this;
+    }
+
+    /**
+     * WITH 句を設定する
+     *
+     * $name は何も加工されずにそのままクエリに埋め込まれる。
+     * 今のところ RECURSIVE などもここに含める用途となる。
+     *
+     * $query に null を指定すると削除として働く。
+     *
+     * @param string $name CTE の名前
+     * @param string|Queryable|null $query CTE のサブクエリ
+     * @return $this 自分自身
+     */
+    public function with($name, $query)
+    {
+        if ($query === null) {
+            unset($this->sqlParts['with'][$name]);
+        }
+        else {
+            $this->sqlParts['with'][$name] = $query;
+        }
+        return $this->_dirty();
     }
 
     /**
