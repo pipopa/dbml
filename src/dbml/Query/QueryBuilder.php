@@ -26,7 +26,6 @@ use function ryunosuke\dbml\array_flatten;
 use function ryunosuke\dbml\array_implode;
 use function ryunosuke\dbml\array_kmap;
 use function ryunosuke\dbml\array_lookup;
-use function ryunosuke\dbml\array_map_filter;
 use function ryunosuke\dbml\array_maps;
 use function ryunosuke\dbml\array_order;
 use function ryunosuke\dbml\array_put;
@@ -752,13 +751,10 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
         foreach ($columns as $key => $column) {
             // 仮想カラム
             if ($schema->hasTable($table) && is_string($column)) {
-                if (($acolumn = $schema->getTableColumns($table)[$column] ?? null) && $acolumn->hasCustomSchemaOption('expression')) {
+                $vcolumn = $schema->getTableColumnExpression($table, $column, $this->database);
+                if ($vcolumn) {
                     $key = is_int($key) ? $column : $key;
                     // 仮想カラムは修飾子を付与するチャンスを与えなければ実質使い物にならない（エイリアスが動的だから）
-                    $vcolumn = $acolumn->getCustomSchemaOption('expression');
-                    if ($acolumn->hasCustomSchemaOption('lazy') && $acolumn->getCustomSchemaOption('lazy')) {
-                        $vcolumn = $vcolumn($this->database);
-                    }
                     $column = is_string($vcolumn) ? sprintf($vcolumn, $accessor) : $vcolumn;
                 }
             }
@@ -973,21 +969,15 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
                 $modifier = $matches[1];
                 $tablename = $froms[$modifier]['table'] ?? $modifier;
                 if ($this->database->getSchema()->hasTable($tablename)) {
-                    $vcolumns = array_map_filter($this->database->getSchema()->getTableColumns($tablename), function (Column $col) {
-                        if ($col->hasCustomSchemaOption('virtual') && $col->hasCustomSchemaOption('expression')) {
-                            $expression = $col->getCustomSchemaOption('expression');
-                            if ($col->hasCustomSchemaOption('lazy') && $col->getCustomSchemaOption('lazy')) {
-                                $expression = $expression($this->database);
-                            }
-                            return $expression;
-                        }
+                    $vcolumns = array_filter($this->database->getSchema()->getTableColumns($tablename), function (Column $col) {
+                        return $col->hasCustomSchemaOption('expression');
                     });
                     if ($vcolumns) {
                         $newparam = $is_int ? [] : $param;
                         $cols = arrayize($newparam);
                         $params = [];
                         $vnames = implode('|', array_map(function ($v) { return preg_quote($v, '#'); }, array_keys($vcolumns)));
-                        $expr = preg_replace_callback("#(\\?)|$modifier\\.($vnames)(?![_a-zA-Z0-9])#u", function ($m) use ($cond, $froms, $modifier, $vcolumns, &$cols, &$params) {
+                        $expr = preg_replace_callback("#(\\?)|$modifier\\.($vnames)(?![_a-zA-Z0-9])#u", function ($m) use ($cond, $froms, $modifier, $tablename, &$cols, &$params) {
                             $vname = $m[2] ?? null;
                             if ($vname === null) {
                                 if ($cols) {
@@ -995,7 +985,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
                                 }
                                 return '?';
                             }
-                            $vcol = $vcolumns[$vname] ?? null;
+                            $vcol = $this->database->getSchema()->getTableColumnExpression($tablename, $vname, $this->database);
                             if (is_string($vcol)) {
                                 return sprintf($vcol, $modifier);
                             }

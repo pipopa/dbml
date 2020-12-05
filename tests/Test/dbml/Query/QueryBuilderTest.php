@@ -2349,10 +2349,13 @@ SELECT test.* FROM test", $builder);
         $qi = function ($str) use ($database) {
             return $database->getPlatform()->quoteSingleIdentifier($str);
         };
+        $exists = $database->getPlatform() instanceof SQLServerPlatform
+            ? "CASE WHEN (EXISTS (SELECT * FROM foreign_c2 C2 WHERE (C2.flag = '0') AND (C2.cid = P.id))) THEN 1 ELSE 0 END"
+            : "EXISTS (SELECT * FROM foreign_c2 C2 WHERE (C2.flag = '0') AND (C2.cid = P.id))";
         $this->assertStringIgnoreBreak(<<<SQL
 SELECT
 (SELECT COUNT(*) AS {$qi("*@count")} FROM foreign_c1 C1 WHERE (C1.flag = '0') AND (C1.id = P.id)) AS alias1,
-EXISTS (SELECT * FROM foreign_c2 C2 WHERE (C2.flag = '0') AND (C2.cid = P.id)) AS alias2
+$exists AS alias2
 FROM foreign_p P
 WHERE (1)
 AND (/* vcolumn count_child-k */ (SELECT COUNT(*) AS {$qi("*@count")} FROM foreign_c1 C1 WHERE (C1.flag = '0') AND (C1.id = P.id)) = '0')
