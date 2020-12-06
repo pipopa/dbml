@@ -1934,16 +1934,16 @@ SQL
                 'C.comment_id' => 'DESC',
             ],
         ]);
-        $this->assertEquals([['A.article_id', false]], $builder->getQueryPart('orderBy'));
-        $this->assertEquals([['C.comment_id', false]], $builder->getSubbuilder('C')->getQueryPart('orderBy'));
+        $this->assertEquals([['A.article_id', false, null]], $builder->getQueryPart('orderBy'));
+        $this->assertEquals([['C.comment_id', false, null]], $builder->getSubbuilder('C')->getQueryPart('orderBy'));
 
         // スラッシュネスト
         $builder->reset()->column('t_article A/t_comment C')->orderBy([
             'A.article_id' => 'DESC',
             'C/comment_id' => 'DESC',
         ]);
-        $this->assertEquals([['A.article_id', false]], $builder->getQueryPart('orderBy'));
-        $this->assertEquals([['comment_id', false]], $builder->getSubbuilder('C')->getQueryPart('orderBy'));
+        $this->assertEquals([['A.article_id', false, null]], $builder->getQueryPart('orderBy'));
+        $this->assertEquals([['comment_id', false, null]], $builder->getSubbuilder('C')->getQueryPart('orderBy'));
     }
 
     /**
@@ -2050,31 +2050,37 @@ SQL
         $builder->column('nullable.cint');
 
         $builder->setNullsOrder('min');
-        $this->assertStringContainsString('ORDER BY cint IS NOT NULL ASC, cint ASC', (string) $builder->orderBy('cint', true));
-        $this->assertStringContainsString('ORDER BY cint IS NOT NULL DESC, cint DESC', (string) $builder->orderBy('cint', false));
+        $this->assertStringContainsString('ORDER BY CASE WHEN cint IS NULL THEN 0 ELSE 1 END ASC, cint ASC', (string) $builder->orderBy('cint', true));
+        $this->assertStringContainsString('ORDER BY CASE WHEN cint IS NULL THEN 0 ELSE 1 END DESC, cint DESC', (string) $builder->orderBy('cint', false));
         $this->assertEquals([null, null, null, null, null, -4, -2, 0, 2, 4], $builder->orderBy('cint', true)->lists());
         $this->assertEquals([4, 2, 0, -2, -4, null, null, null, null, null], $builder->orderBy('cint', false)->lists());
 
         $builder->setNullsOrder('max');
-        $this->assertStringContainsString('ORDER BY cint IS NULL ASC, cint ASC', (string) $builder->orderBy('cint', true));
-        $this->assertStringContainsString('ORDER BY cint IS NULL DESC, cint DESC', (string) $builder->orderBy('cint', false));
+        $this->assertStringContainsString('ORDER BY CASE WHEN cint IS NULL THEN 1 ELSE 0 END ASC, cint ASC', (string) $builder->orderBy('cint', true));
+        $this->assertStringContainsString('ORDER BY CASE WHEN cint IS NULL THEN 1 ELSE 0 END DESC, cint DESC', (string) $builder->orderBy('cint', false));
         $this->assertEquals([-4, -2, 0, 2, 4, null, null, null, null, null], $builder->orderBy('cint', true)->lists());
         $this->assertEquals([null, null, null, null, null, 4, 2, 0, -2, -4], $builder->orderBy('cint', false)->lists());
 
         $builder->setNullsOrder('first');
-        $this->assertStringContainsString('ORDER BY cint IS NULL DESC, cint ASC', (string) $builder->orderBy('cint', true));
-        $this->assertStringContainsString('ORDER BY cint IS NULL DESC, cint DESC', (string) $builder->orderBy('cint', false));
+        $this->assertStringContainsString('ORDER BY CASE WHEN cint IS NULL THEN 1 ELSE 0 END DESC, cint ASC', (string) $builder->orderBy('cint', true));
+        $this->assertStringContainsString('ORDER BY CASE WHEN cint IS NULL THEN 1 ELSE 0 END DESC, cint DESC', (string) $builder->orderBy('cint', false));
         $this->assertEquals([null, null, null, null, null, -4, -2, 0, 2, 4], $builder->orderBy('cint', true)->lists());
         $this->assertEquals([null, null, null, null, null, 4, 2, 0, -2, -4], $builder->orderBy('cint', false)->lists());
 
         $builder->setNullsOrder('last');
-        $this->assertStringContainsString('ORDER BY cint IS NULL ASC, cint ASC', (string) $builder->orderBy('cint', true));
-        $this->assertStringContainsString('ORDER BY cint IS NULL ASC, cint DESC', (string) $builder->orderBy('cint', false));
+        $this->assertStringContainsString('ORDER BY CASE WHEN cint IS NULL THEN 1 ELSE 0 END ASC, cint ASC', (string) $builder->orderBy('cint', true));
+        $this->assertStringContainsString('ORDER BY CASE WHEN cint IS NULL THEN 1 ELSE 0 END ASC, cint DESC', (string) $builder->orderBy('cint', false));
         $this->assertEquals([-4, -2, 0, 2, 4, null, null, null, null, null], $builder->orderBy('cint', true)->lists());
         $this->assertEquals([4, 2, 0, -2, -4, null, null, null, null, null], $builder->orderBy('cint', false)->lists());
 
-        $this->assertStringContainsString('ORDER BY NOW() IS NULL ASC, NOW() ASC', (string) $builder->orderBy(new Expression('NOW()'), true));
-        $this->assertStringContainsString('ORDER BY NOW() IS NULL ASC, NOW() DESC', (string) $builder->orderBy(new Expression('NOW()'), false));
+        $this->assertStringContainsString('ORDER BY CASE WHEN NOW() IS NULL THEN 1 ELSE 0 END ASC, NOW() ASC', (string) $builder->orderBy(new Expression('NOW()'), true));
+        $this->assertStringContainsString('ORDER BY CASE WHEN NOW() IS NULL THEN 1 ELSE 0 END ASC, NOW() DESC', (string) $builder->orderBy(new Expression('NOW()'), false));
+
+        $builder->setNullsOrder(null);
+        $this->assertStringContainsString('CASE WHEN cint IS NULL THEN 0 ELSE 1 END ASC, cint ASC', (string) $builder->orderBy('cint', true, 'min'));
+        $this->assertStringContainsString('CASE WHEN cint IS NULL THEN 1 ELSE 0 END DESC, cint DESC', (string) $builder->orderBy(['cint' => [false, 'first']]));
+        $this->assertEquals([null, null, null, null, null, -4, -2, 0, 2, 4, ], $builder->orderBy('cint', true, 'min')->lists());
+        $this->assertEquals([null, null, null, null, null, 4, 2, 0, -2, -4], $builder->orderBy('cint', false, 'first')->lists());
 
         $builder->setNullsOrder('hoge');
         @$builder->orderBy('hoge')->getQuery();

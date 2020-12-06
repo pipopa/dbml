@@ -667,13 +667,13 @@ AND ((flag=1))", "$gw");
             ->column(['c' => new Expression('NOW(?)', 9)])
             ->where(['c3' => 3])
             ->column('NOW(1)')
-            ->orderBy('id')
+            ->orderBy(['id' => [true, 'min']])
             ->column(['now' => 'NOW(2)'])
             ->where([['c1' => 1, 'c2' => 2]])
             ->limit(2)
             ->select([]);
 
-        $this->assertEquals('SELECT NOW(?) AS c, NOW(1), NOW(2) AS now FROM test T WHERE (1=1) AND (T.c3 = ?) AND ((T.c1 = ?) OR (T.c2 = ?)) ORDER BY T.name DESC, id ASC LIMIT 2', (string) $select);
+        $this->assertEquals('SELECT NOW(?) AS c, NOW(1), NOW(2) AS now FROM test T WHERE (1=1) AND (T.c3 = ?) AND ((T.c1 = ?) OR (T.c2 = ?)) ORDER BY T.name DESC, CASE WHEN T.id IS NULL THEN 0 ELSE 1 END ASC, T.id ASC LIMIT 2', (string) $select);
         $this->assertEquals([9, 3, 1, 2], $select->getParams());
     }
 

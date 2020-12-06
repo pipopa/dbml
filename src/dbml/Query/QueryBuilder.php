@@ -554,38 +554,36 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
         foreach ($builder->joinOrders as $jorder) {
             $builder->addOrderBy($jorder);
         }
-        $nulls = $this->getUnsafeOption('nullsOrder');
-        if ($nulls) {
-            $builder->sqlParts['orderBy'] = array_each($builder->sqlParts['orderBy'], function (&$carry, $v) use ($nulls) {
-                [$expr, $order] = $v + [1 => null];
-                if ($nulls !== null) {
-                    $expr2 = $expr;
-                    if ($expr2 instanceof Queryable) {
-                        if (count($expr2->getParams()) > 0) {
-                            throw new \InvalidArgumentException("nulls order is not support parametable query. please use select alias.");
-                        }
-                        $expr2 = $expr2->getQuery();
+        $builder->sqlParts['orderBy'] = array_each($builder->sqlParts['orderBy'], function (&$carry, $v) {
+            [$expr, $order, $nulls] = $v + [1 => null, 2 => null];
+            $nulls = $nulls ?? $this->getUnsafeOption('nullsOrder');
+            if ($nulls !== null) {
+                $expr2 = $expr;
+                if ($expr2 instanceof Queryable) {
+                    if (count($expr2->getParams()) > 0) {
+                        throw new \InvalidArgumentException("nulls order is not support parametable query. please use select alias.");
                     }
-                    switch (strtolower($nulls)) {
-                        default:
-                            throw new \InvalidArgumentException("$nulls is not supported.");
-                        case 'min':
-                            $carry[] = ["$expr2 IS NOT NULL", $order];
-                            break;
-                        case 'max':
-                            $carry[] = ["$expr2 IS NULL", $order];
-                            break;
-                        case 'first':
-                            $carry[] = ["$expr2 IS NULL", false];
-                            break;
-                        case 'last':
-                            $carry[] = ["$expr2 IS NULL", true];
-                            break;
-                    }
+                    $expr2 = $expr2->getQuery();
                 }
-                $carry[] = [$expr, $order];
-            }, []);
-        }
+                switch (strtolower($nulls)) {
+                    default:
+                        throw new \InvalidArgumentException("$nulls is not supported.");
+                    case 'min':
+                        $carry[] = ["CASE WHEN $expr2 IS NULL THEN 0 ELSE 1 END", $order];
+                        break;
+                    case 'max':
+                        $carry[] = ["CASE WHEN $expr2 IS NULL THEN 1 ELSE 0 END", $order];
+                        break;
+                    case 'first':
+                        $carry[] = ["CASE WHEN $expr2 IS NULL THEN 1 ELSE 0 END", false];
+                        break;
+                    case 'last':
+                        $carry[] = ["CASE WHEN $expr2 IS NULL THEN 1 ELSE 0 END", true];
+                        break;
+                }
+            }
+            $carry[] = [$expr, $order];
+        }, []);
         $builder->sqlParts['orderBy'] = array_unique(array_map(function ($v) {
             if (($v[1] ?? null) === null) {
                 return $v[0];
@@ -2438,6 +2436,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
      * ORDER BY 句を設定する。
      * 渡し方が引数だったり配列だったりするのでややこしく見えるが、原則として {カラム名, 順序} のタプルを渡す。
      * 「カラム名」に特記事項はない。「順序」は 未指定, 'ASC', true などが昇順を表し、 'DESC', false などが降順を表す。
+     * 第3引数で null の場合の挙動を指定できる。
      *
      * ```php
      * # シンプルなカラム ORD
@@ -2494,9 +2493,10 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
      *
      * @param mixed $sort キー
      * @param mixed $order ASC/DESC
+     * @param ?string $nullsOrder null/min/max/first/last
      * @return $this 自分自身
      */
-    public function orderBy($sort, $order = null)
+    public function orderBy($sort, $order = null, $nullsOrder = null)
     {
         return $this->resetQueryPart('orderBy')->addOrderBy(...func_get_args());
     }
@@ -2506,7 +2506,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
      *
      * @inheritdoc orderBy()
      */
-    public function addOrderBy($sort, $order = null)
+    public function addOrderBy($sort, $order = null, $nullsOrder = null)
     {
         // クロージャは行自体の比較関数
         if ($sort instanceof \Closure) {
@@ -2540,17 +2540,21 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
         }
         else {
             if ($sort instanceof Queryable && $order === null) {
-                $this->sqlParts['orderBy'][] = [$sort, null];
+                $this->sqlParts['orderBy'][] = [$sort, null, $nullsOrder];
             }
             else {
                 if (is_string($sort) && $order === null) {
                     $order = $sort[0] !== '-';
                     $sort = ltrim($sort, '-+');
                 }
+                if (is_array($order)) {
+                    $nullsOrder = $order[1] ?? null;
+                    $order = $order[0] ?? null;
+                }
                 if (is_bool($order)) {
                     $order = $order ? 'ASC' : 'DESC';
                 }
-                $this->sqlParts['orderBy'][] = [$sort, strtoupper($order) !== 'DESC'];
+                $this->sqlParts['orderBy'][] = [$sort, strtoupper($order) !== 'DESC', $nullsOrder];
             }
         }
 
