@@ -1563,43 +1563,6 @@ if (function_exists("ryunosuke\\dbml\\array_map_key") && !defined("ryunosuke\\db
     define("ryunosuke\\dbml\\array_map_key", "ryunosuke\\dbml\\array_map_key");
 }
 
-if (!isset($excluded_functions["array_map_filter"]) && (!function_exists("ryunosuke\\dbml\\array_map_filter") || (!false && (new \ReflectionFunction("ryunosuke\\dbml\\array_map_filter"))->isInternal()))) {
-    /**
-     * array_map + array_filter する
-     *
-     * コールバックを適用して、結果が true 相当の要素のみ取り出す。
-     * $strict に true を与えると「null でない」要素のみ返される。
-     *
-     * $callback が要求するならキーも渡ってくる。
-     *
-     * Example:
-     * ```php
-     * that(array_map_filter([' a ', ' b ', ''], 'trim'))->isSame(['a', 'b']);
-     * that(array_map_filter([' a ', ' b ', ''], 'trim', true))->isSame(['a', 'b', '']);
-     * ```
-     *
-     * @param iterable $array 対象配列
-     * @param callable $callback 評価クロージャ
-     * @param bool $strict 厳密比較フラグ。 true だと null のみが偽とみなされる
-     * @return array $callback が真を返した新しい配列
-     */
-    function array_map_filter($array, $callback, $strict = false)
-    {
-        $callback = func_user_func_array($callback);
-        $result = [];
-        foreach ($array as $k => $v) {
-            $vv = $callback($v, $k);
-            if (($strict && $vv !== null) || (!$strict && $vv)) {
-                $result[$k] = $vv;
-            }
-        }
-        return $result;
-    }
-}
-if (function_exists("ryunosuke\\dbml\\array_map_filter") && !defined("ryunosuke\\dbml\\array_map_filter")) {
-    define("ryunosuke\\dbml\\array_map_filter", "ryunosuke\\dbml\\array_map_filter");
-}
-
 if (!isset($excluded_functions["array_maps"]) && (!function_exists("ryunosuke\\dbml\\array_maps") || (!false && (new \ReflectionFunction("ryunosuke\\dbml\\array_maps"))->isInternal()))) {
     /**
      * 複数コールバックを指定できる array_map
