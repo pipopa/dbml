@@ -213,4 +213,39 @@ select 4, 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
             "select 22",
         ], file($logfile, FILE_IGNORE_NEW_LINES));
     }
+
+    function test_metadata_default()
+    {
+        $logs = [];
+        $database = self::getDummyDatabase();
+        $database->setLogger(new Logger([
+            'destination' => function ($log) use (&$logs) { $logs[] = $log; },
+        ]));
+        $database->fetchArray('select ?', [1]);
+
+        $this->assertContains("-- time: 20", $logs[0]);
+        $this->assertContains("-- elapsed: 0.", $logs[0]);
+        $this->assertContains("-- traces[]", $logs[0]);
+        $this->assertContains(__FILE__, $logs[0]);
+    }
+
+    function test_metadata_custom()
+    {
+        $logs = [];
+        $database = self::getDummyDatabase();
+        $database->setLogger(new Logger([
+            'destination' => function ($log) use (&$logs) { $logs[] = $log; },
+            'metadata'    => [
+                'hoge' => function () { return 123; },
+                'fuga' => function () { return [1, 2, 3]; },
+            ],
+        ]));
+        $database->fetchArray('select ?', [1]);
+
+        $this->assertEquals("-- hoge: 123
+-- fuga[]: 1
+-- fuga[]: 2
+-- fuga[]: 3
+select 1", $logs[0]);
+    }
 }

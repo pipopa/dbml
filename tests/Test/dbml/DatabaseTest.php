@@ -98,7 +98,10 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
         rm_rf($tmpdir);
         mkdir_p($tmpdir);
         $db = new Database(['url' => 'sqlite:///:memory:'], [
-            'logger'        => new Logger(['destination' => "$tmpdir/log.txt"]),
+            'logger'        => new Logger([
+                'destination' => "$tmpdir/log.txt",
+                'metadata'    => [],
+            ]),
             'initCommand'   => 'PRAGMA cache_size = 1000',
             'cacheProvider' => new FilesystemCache("$tmpdir/cache"),
         ]);
@@ -592,7 +595,10 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
 
         // master/slave 同時設定
         $logs = [];
-        $database->setLogger(new Logger(function ($log) use (&$logs) { $logs[] = $log; }));
+        $database->setLogger(new Logger([
+            'destination' => function ($log) use (&$logs) { $logs[] = $log; },
+            'metadata'    => [],
+        ]));
 
         $database->begin();
         $database->insert('test', ['id' => 1]);
@@ -610,8 +616,14 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
         $masterlogs = [];
         $slavelogs = [];
         $database->setLogger([
-            new Logger(function ($log) use (&$masterlogs) { $masterlogs[] = $log; }),
-            new Logger(function ($log) use (&$slavelogs) { $slavelogs[] = $log; }),
+            new Logger([
+                'destination' => function ($log) use (&$masterlogs) { $masterlogs[] = $log; },
+                'metadata'    => [],
+            ]),
+            new Logger([
+                'destination' => function ($log) use (&$slavelogs) { $slavelogs[] = $log; },
+                'metadata'    => [],
+            ]),
         ]);
 
         $database->begin();

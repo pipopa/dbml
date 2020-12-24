@@ -549,7 +549,10 @@ class Transaction
     {
         $logs = [];
         $cx = $this->context([
-            'logger' => new Logger(function ($log) use (&$logs) { $logs[] = $log; })
+            'logger' => new Logger([
+                'destination' => function ($log) use (&$logs) { $logs[] = $log; },
+                'metadata'    => [],
+            ])
         ]);
 
         $finally = $cx->_ready(true);

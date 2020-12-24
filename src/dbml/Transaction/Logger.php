@@ -4,6 +4,8 @@ namespace ryunosuke\dbml\Transaction;
 
 use Doctrine\DBAL\Logging\SQLLogger;
 use ryunosuke\dbml\Mixin\OptionTrait;
+use function ryunosuke\dbml\array_each;
+use function ryunosuke\dbml\date_convert;
 use function ryunosuke\dbml\is_stringable;
 use function ryunosuke\dbml\sql_bind;
 use function ryunosuke\dbml\sql_format;
@@ -93,6 +95,9 @@ class Logger implements SQLLogger
     /** @var array 一時配列ログバッファ */
     private $arrayBuffer;
 
+    /** @var array ログ用の実行中クエリ */
+    private $lastquery;
+
     public static function getDefaultOptions()
     {
         return [
@@ -104,6 +109,22 @@ class Logger implements SQLLogger
             'buffer'      => [1024 * 1024 * 8],
             // flock するか否か
             'lockmode'    => true,
+            // メタデータをコメント化して出力する際の処理（下記はあくまで組み込み。任意のキーを生やせばそれがログられる）
+            'metadata'    => [
+                'time'    => function ($metadata) {
+                    return date_convert('Y/m/d H:i:s.v', $metadata['microtime']);
+                },
+                'elapsed' => function ($metadata) {
+                    return number_format(microtime(true) - $metadata['microtime'], 3);
+                },
+                'traces'  => function ($metadata) {
+                    return array_each(debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS), function (&$carry, $item) {
+                        if (isset($item['file'], $item['line']) && strpos($item['file'], 'vendor') === false) {
+                            $carry[] = $item['file'] . '#' . $item['line'];
+                        }
+                    }, []);
+                },
+            ],
         ];
     }
 
@@ -252,27 +273,41 @@ class Logger implements SQLLogger
         }
     }
 
-    private function _stringify($sql, $params, $types)
+    private function _stringify($sql, $params, $types, $metadata)
     {
         $sql = trim($sql, '"'); // DBAL\Connection がクォートするので外す
         $sql = $this->getUnsafeOption('callback')($sql, $params, $types);
+        if ($metadata) {
+            $datalines = [];
+            foreach ($metadata as $key => $data) {
+                if (is_iterable($data)) {
+                    foreach ($data as $k => $d) {
+                        $datalines[] = sprintf("-- %s[%s]: %s\n", $key, is_int($k) ? '' : $k, $d);
+                    }
+                }
+                else {
+                    $datalines[] = sprintf("-- %s: %s\n", $key, $data);
+                }
+            }
+            $sql = implode("", $datalines) . $sql;
+        }
         return $sql;
     }
 
-    public function log($sql, array $params = [], array $types = [])
+    public function log($sql, array $params = [], array $types = [], array $metadata = [])
     {
         // arrayBuffer を優先するため下記の順番を変えてはならない
         if (is_array($this->arrayBuffer)) {
-            $this->arrayBuffer[] = [$sql, $params, $types];
+            $this->arrayBuffer[] = [$sql, $params, $types, $metadata];
         }
         elseif (is_resource($this->resourceBuffer)) {
-            fwrite($this->resourceBuffer, $this->_stringify($sql, $params, $types) . "\n");
+            fwrite($this->resourceBuffer, $this->_stringify($sql, $params, $types, $metadata) . "\n");
         }
         elseif (is_resource($this->handle)) {
-            fwrite($this->handle, $this->_stringify($sql, $params, $types) . "\n");
+            fwrite($this->handle, $this->_stringify($sql, $params, $types, $metadata) . "\n");
         }
         else {
-            ($this->handle)($this->_stringify($sql, $params, $types));
+            ($this->handle)($this->_stringify($sql, $params, $types, $metadata));
         }
 
         if ($this->bufferLimit) {
@@ -287,7 +322,22 @@ class Logger implements SQLLogger
         }
     }
 
-    public function startQuery($sql, array $params = null, array $types = null) { $this->log($sql, $params ?? [], $types ?? []); }
+    public function startQuery($sql, array $params = null, array $types = null)
+    {
+        $this->lastquery = [
+            $sql,
+            $params ?? [],
+            $types ?? [],
+            [
+                'microtime' => microtime(true),
+            ]
+        ];
+    }
 
-    public function stopQuery() { }
+    public function stopQuery()
+    {
+        [$sql, $params, $types, $initdata] = $this->lastquery;
+        $metadata = array_map(function ($v) use ($initdata) { return $v($initdata); }, $this->getUnsafeOption('metadata'));
+        $this->log($sql, $params, $types, $metadata);
+    }
 }
