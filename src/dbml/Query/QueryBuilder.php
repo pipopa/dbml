@@ -135,6 +135,41 @@ use function ryunosuke\dbml\throws;
  *
  *     @param string $string  集約関数の区切り文字
  * }
+ * @method string                 getArrayFetch()
+ * @method $this                  setArrayFetch($string) {
+ *     サブテーブルで配列を指定したときの取得方法を指定する
+ *
+ *     ```php
+ *     # このようなサブテーブルの配列指定で・・・
+ *     $db->selectArray([
+ *         't_article' => [
+ *             't_comment' => ['*'],
+ *         ],
+ *     ]);
+ *
+ *     # DATABASE::METHOD_ARRAY を指定した場合
+ *     [
+ *         // サブテーブル取得は連番配列になる（0ベース配列）
+ *         't_comment' => [
+ *             [コメントレコード],
+ *             [コメントレコード],
+ *             [コメントレコード],
+ *         ],
+ *     ]
+ *
+ *     # DATABASE::METHOD_ASSOC を指定した場合
+ *     [
+ *         // サブテーブル取得は連想配列になる（サブテーブルの主キー）
+ *         't_comment' => [
+ *             '1' => [コメントレコード],
+ *             '2' => [コメントレコード],
+ *             '3' => [コメントレコード],
+ *         ],
+ *     ]
+ *     ```
+ *
+ *     @param string $string Database::METHOD_XXX
+ * }
  * @method string                 getNullsOrder()
  * @method $this                  setNullsOrder($string = null) {
  *     ORDER BY で NULL をどう扱うかを指定する
@@ -340,6 +375,8 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
             'primarySeparator'     => "\x1F",
             // aggregate 時（columnname@sum）の区切り文字
             'aggregationDelimiter' => '@',
+            // 配列を指定した場合のフェッチモード（通常は array か assoc）
+            'arrayFetch'           => Database::METHOD_ASSOC,
             // ORDER BY で NULL をどう扱うか
             'nullsOrder'           => null,
             // 遅延実行時に親のロックモードを受け継ぐか否か
@@ -765,7 +802,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
                     $subbuiler->tuple();
                 }
                 else {
-                    $subbuiler->assoc();
+                    $subbuiler->{$this->getUnsafeOption('arrayFetch')}();
                     array_unshift($subbuiler->sqlParts['select'], $concatPrimary(Database::AUTO_CHILD_KEY, $jcols));
                 }
             }

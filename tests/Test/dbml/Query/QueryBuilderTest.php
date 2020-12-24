@@ -522,6 +522,41 @@ GREATEST(1,2,3) FROM test1', $builder);
      * @dataProvider provideQueryBuilder
      * @param QueryBuilder $builder
      */
+    function test_column_arrayFetch($builder)
+    {
+        $actual = $builder->reset()->setArrayFetch(Database::METHOD_ARRAY)->column([
+            't_article' => [
+                't_comment as comments-comment_id' => [],
+            ],
+        ])->where(['' => 1])->tuple();
+        $this->assertEquals([0, 1, 2], array_keys($actual['comments']));
+
+        $actual = $builder->reset()->setArrayFetch(Database::METHOD_ASSOC)->column([
+            't_article' => [
+                't_comment as comments-comment_id' => [],
+            ],
+        ])->where(['' => 1])->tuple();
+        $this->assertEquals([3, 2, 1], array_keys($actual['comments']));
+
+        $actual = $builder->reset()->setArrayFetch(Database::METHOD_LISTS)->column([
+            't_article' => [
+                't_comment as comments-comment_id' => [],
+            ],
+        ])->where(['' => 1])->tuple();
+        $this->assertEquals([3, 2, 1], $actual['comments']);
+
+        $actual = $builder->reset()->setArrayFetch(Database::METHOD_PAIRS)->column([
+            't_article' => [
+                't_comment as comments-comment_id' => [],
+            ],
+        ])->where(['' => 1])->tuple();
+        $this->assertEquals([3 => 1, 2 => 1, 1 => 1], $actual['comments']);
+    }
+
+    /**
+     * @dataProvider provideQueryBuilder
+     * @param QueryBuilder $builder
+     */
     function test_column_asterisk($builder)
     {
         self::createTables($builder->getDatabase()->getConnection(), [
