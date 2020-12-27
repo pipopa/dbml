@@ -3115,6 +3115,57 @@ SQL
      * @dataProvider provideQueryBuilder
      * @param QueryBuilder $builder
      */
+    function test_before_after($builder)
+    {
+        $builder->column([
+            'test.*' => [
+                'func' => function ($row) { return strtoupper($row['name']); },
+            ]
+        ]);
+        $self = $this;
+        $builder->before(function ($rows) use ($self) {
+            $self->assertInstanceOf(QueryBuilder::class, $this);
+            $self->assertCount(2, $rows);
+            $self->assertNull($rows[0]['func']);
+            return $rows;
+        });
+        $builder->after(function ($rows) use ($self) {
+            $self->assertInstanceOf(QueryBuilder::class, $this);
+            $self->assertCount(2, $rows);
+            $self->assertEquals('A', $rows[0]['func']);
+            unset($rows[1]);
+            return $rows;
+        });
+
+        $this->assertEquals([
+            [
+                'id'   => 1,
+                'name' => 'a',
+                'data' => '',
+                'func' => 'A',
+            ],
+        ], $builder->limit(2)->array());
+
+        $this->assertEquals([
+            [
+                'id'   => 1,
+                'name' => 'a',
+                'data' => '',
+                'func' => 'A',
+            ],
+            [
+                'id'   => 2,
+                'name' => 'b',
+                'data' => '',
+                'func' => 'B',
+            ],
+        ], $builder->after(null)->limit(2)->array());
+    }
+
+    /**
+     * @dataProvider provideQueryBuilder
+     * @param QueryBuilder $builder
+     */
     function test_addSelectOption($builder)
     {
         $builder->addSelectOption(null);

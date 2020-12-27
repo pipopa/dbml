@@ -306,6 +306,12 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
     /** @var mixed|null php レイヤのソート順 */
     private $phpOrders;
 
+    /** @var array[] before/after フィルタ */
+    private $applyments = [
+        'before' => null,
+        'after'  => null,
+    ];
+
     /** @var array join されたときの ON 条件 */
     private $onConditions = [];
 
@@ -3234,6 +3240,38 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
     }
 
     /**
+     * fectch 後の処理を登録
+     *
+     * 呼び出されるタイミングには下記の2種類がある。
+     *
+     * - before: ほぼ「SELECT クエリの直後」であり、サブビルダやクロージャの解決前
+     * - after: ほぼ「return 直前」であり、サブビルダやクロージャの解決後
+     *
+     * 引数は大本の行配列で、 $this は QueryBuilder で bind される。
+     *
+     * @param \Closure|null $callback コールバック
+     * @return $this
+     */
+    public function before(\Closure $callback = null)
+    {
+        $this->applyments['before'] = $callback;
+        return $this;
+    }
+
+    /**
+     * fectch 後の処理を登録
+     *
+     * タイミング以外の仕様は {@link before()} と同じ。
+     *
+     * @inheritdoc before()
+     */
+    public function after(\Closure $callback = null)
+    {
+        $this->applyments['after'] = $callback;
+        return $this;
+    }
+
+    /**
      * 行フェッチ後に QueryBuilder 特有の処理を行う
      *
      * ほぼ内部処理で明示的に呼ぶことはない。
@@ -3244,6 +3282,10 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
      */
     public function postselect($parents, $continuity = false)
     {
+        assert(!$continuity || ($continuity && $this->phpOrders === null), 'yield not support php order');
+        assert(!$continuity || ($continuity && $this->applyments['before'] === null), 'yield not support before apply');
+        assert(!$continuity || ($continuity && $this->applyments['after'] === null), 'yield not support after apply');
+
         // mysql の FOUND_ROWS のためにあらかじめ呼んでおく必要がある(途中にクエリが挟まると取得できなくなる)
         if ($this->rowcount === true) {
             $foundRowsQuery = $this->database->getCompatiblePlatform()->getFoundRowsQuery();
@@ -3251,9 +3293,13 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
             $this->rowcount = intval($this->database->fetchValue($foundRowsQuery ?: $this->countize()));
         }
 
+        BEFORE:
+
+        $parents = $this->applyments['before'] ? $this->applyments['before']->call($this, $parents) : $parents;
+
         // 親フェッチ行がないなら不要
         if (empty($parents)) {
-            return $parents;
+            goto AFTER;
         }
 
         // subselect
@@ -3307,7 +3353,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
         }
 
         // orderphp
-        if (!$continuity && $this->phpOrders !== null) {
+        if ($this->phpOrders !== null) {
             if ($this->phpOrders instanceof \Closure) {
                 uasort($parents, $this->phpOrders);
             }
@@ -3315,6 +3361,10 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
                 $parents = array_order($parents, $this->phpOrders, true);
             }
         }
+
+        AFTER:
+
+        $parents = $this->applyments['after'] ? $this->applyments['after']->call($this, $parents) : $parents;
 
         return $parents;
     }
@@ -3777,6 +3827,10 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
         $this->lockMode = null;
         $this->lockOption = null;
         $this->rowcount = false;
+        $this->applyments = [
+            'before' => null,
+            'after'  => null,
+        ];
 
         $this->lazyMode = null;
         $this->lazyMethod = null;
