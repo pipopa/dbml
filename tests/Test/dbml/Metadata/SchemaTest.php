@@ -131,6 +131,45 @@ class SchemaTest extends \ryunosuke\Test\AbstractUnitTestCase
      * @dataProvider provideSchema
      * @param Schema $schema
      */
+    function test_getTables($schema)
+    {
+        $this->assertEquals($schema->getTableNames(), array_keys($schema->getTables()));
+
+        $this->assertEquals([
+            'foreign_c1',
+            'foreign_c2',
+            'foreign_p',
+        ], array_keys($schema->getTables('foreign_*')));
+        $this->assertEquals([
+            'foreign_c1',
+            'foreign_c2',
+            't',
+            'test',
+        ], array_keys($schema->getTables(['foreign_c?', 't*'])));
+
+        $this->assertEquals([
+            'foreign_p',
+            'metasample',
+            't',
+            'test',
+            'viewsample',
+        ], array_keys($schema->getTables('!foreign_c?')));
+        $this->assertEquals([
+            'foreign_p',
+            'metasample',
+            'viewsample',
+        ], array_keys($schema->getTables(['!foreign_c?', '!t*'])));
+
+        $this->assertEquals([
+            'foreign_c1',
+            'foreign_c2',
+        ], array_keys($schema->getTables(['foreign_*', '!foreign_p'])));
+    }
+
+    /**
+     * @dataProvider provideSchema
+     * @param Schema $schema
+     */
     function test_getTableColumns($schema)
     {
         $schema->addTable($this->getDummyTable('metatest'));

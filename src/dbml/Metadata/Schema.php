@@ -17,6 +17,7 @@ use function ryunosuke\dbml\array_pickup;
 use function ryunosuke\dbml\array_rekey;
 use function ryunosuke\dbml\array_unset;
 use function ryunosuke\dbml\arrayize;
+use function ryunosuke\dbml\fnmatch_or;
 
 /**
  * スキーマ情報の収集と保持とキャッシュを行うクラス
@@ -230,6 +231,37 @@ class Schema
             });
         }
         return $this->tables[$table_name];
+    }
+
+    /**
+     * パターン一致したテーブルオブジェクトを取得する
+     *
+     * @param string|array $table_pattern 取得したいテーブルパターン
+     * @return Table[] テーブルオブジェクト配列
+     */
+    public function getTables($table_pattern = [])
+    {
+        $table_names = $this->getTableNames();
+        $table_pattern = (array) ($table_pattern ?: $table_names);
+
+        $positive = $negative = [];
+        foreach ($table_pattern as $pattern) {
+            $pattern = trim($pattern);
+            if (($pattern[0] ?? '') !== '!') {
+                $positive[] = $pattern;
+            }
+            else {
+                $negative[] = substr($pattern, 1);
+            }
+        }
+
+        $result = [];
+        foreach ($table_names as $table_name) {
+            if ((!$positive || fnmatch_or($positive, $table_name)) && (!$negative || !fnmatch_or($negative, $table_name))) {
+                $result[$table_name] = $this->getTable($table_name);
+            }
+        }
+        return $result;
     }
 
     /**

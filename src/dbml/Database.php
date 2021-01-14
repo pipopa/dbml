@@ -3278,6 +3278,50 @@ class Database
     }
 
     /**
+     * 暖気運転を行う
+     *
+     * 指定テーブルのすべてのインデックスに対して COUNT クエリを発行する。
+     * RDBMS にも依るが、これによって・・・
+     *
+     * - レコードがバッファプールに乗る（クラスタードインデックスの場合）
+     * - インデックスがバッファプールに乗る
+     *
+     * 概して mysql (InnoDB) 用だが、他の RDBMS でも呼んで無駄にはならないはず。
+     *
+     * @param array|string $table_names テーブル名配列（glob 的記法が使える。省略時は全テーブル）
+     * @return array 暖気クエリの結果（現在は [table => [index => COUNT]] だが、COUNt 部分は変更されることがある）
+     */
+    public function warmup($table_names = [])
+    {
+        $DELIMITER = '@-@-@';
+        $cplatform = $this->getCompatiblePlatform();
+
+        $tables = $this->getSchema()->getTables($table_names);
+        $columns = [];
+        foreach ($tables as $table_name => $table) {
+            $indexes = $table->getIndexes();
+            foreach ($indexes as $index) {
+                // DBAL が生成した暗黙のインデックスは除外する
+                // https://github.com/doctrine/dbal/blob/v2.10.1/lib/Doctrine/DBAL/Schema/Index.php#L203 はバグだと思うんだけどなぁ
+                if ($index->hasOption('lengths')) {
+                    $alias = $table_name . $DELIMITER . $index->getName();
+                    $select = $this->select([$table_name => $cplatform->getCountExpression('*')]);
+                    $select->setAutoOrder(false);
+                    $select->hint($cplatform->getIndexHintSQL($index->getName()));
+                    $columns[$alias] = $select;
+                }
+            }
+        }
+
+        $result = [];
+        foreach ($this->createQueryBuilder()->setAutoOrder(false)->addSelect($columns)->tuple() as $key => $count) {
+            [$tname, $iname] = explode($DELIMITER, $key, 2);
+            $result[$tname][$iname] = $count;
+        }
+        return $result;
+    }
+
+    /**
      * レコードの配列を返す
      *
      * ```php

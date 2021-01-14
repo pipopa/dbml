@@ -5318,6 +5318,24 @@ anywhere.enable = 1
      * @dataProvider provideDatabase
      * @param Database $database
      */
+    function test_warmup($database)
+    {
+        $actual = $database->warmup('t_article');
+        $this->assertIsArray($actual['t_article']);
+        $this->assertEquals(4, array_sum($actual['t_article']));
+
+        $actual = $database->warmup(['t_article', 't_comment']);
+        $this->assertIsArray($actual['t_comment']);
+        $this->assertEquals(6, array_sum($actual['t_comment']));
+
+        $actual = $database->warmup('t_*');
+        $this->assertEquals(['t_article', 't_comment'], array_keys($actual));
+    }
+
+    /**
+     * @dataProvider provideDatabase
+     * @param Database $database
+     */
     function test_subselect_method($database)
     {
         $select = $database->select([
