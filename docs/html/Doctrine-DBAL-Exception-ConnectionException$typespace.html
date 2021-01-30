@@ -39,7 +39,7 @@
 <h1 class="ellipsis fixed">
 	<span class="pull-left">
 	Structure
-	<small class="ellipsis-text">(Doctrine\DBAL\ConnectionException)</small>
+	<small class="ellipsis-text">(Doctrine\DBAL\Exception\ConnectionException)</small>
 	</span>
 	<span class="pull-right">
 		<small class="frame-switch">
@@ -54,17 +54,22 @@
 		<span class="label label-info"></span>
 		<span class="label label-info"></span>
 		<span class="label label-deprecated"></span>
-        			<a href="https://github.com/doctrine/dbal/blob/2.12.1/lib/Doctrine/DBAL/ConnectionException.php#L5-L41" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+        			<a href="https://github.com/doctrine/dbal/blob/2.12.1/lib/Doctrine/DBAL/Exception/ConnectionException.php#L5-L12" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                     	</div>
 
-	<h2>class <span class="category-name">Doctrine\DBAL\ConnectionException</span></h2>
+	<h2>class <span class="category-name">Doctrine\DBAL\Exception\ConnectionException</span></h2>
 
-	<div class="description"></div>
+	<div class="description"><p>Base class for all connection related errors detected in the driver.</p>
+</div>
 
 	<h3>Construction</h3>
     	<table class="table">
 		<caption>Parents</caption>
 		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Exception-DriverException$typespace.html#Doctrine\DBAL\Exception\DriverException" class="fqsen "><small>Doctrine\DBAL\Exception\</small><wbr>DriverException</a></td>
+				<td class="desc">Base class for all errors detected in the driver.</td>
+			</tr>
         			<tr>
 				<td class="type"><a href="Doctrine-DBAL-Exception$typespace.html#Doctrine\DBAL\Exception" class="fqsen "><small>Doctrine\DBAL\</small><wbr>Exception</a></td>
 				<td class="desc"></td>
@@ -109,7 +114,7 @@
                 <a href="Doctrine-DBAL-Exception-DriverException$typespace.html#Doctrine\DBAL\Exception\DriverException" class="fqsen "><small>Doctrine\DBAL\Exception\</small><wbr>DriverException</a>                
 	<ul class="has-indent">
         			<li class="indent">
-                <a href="Doctrine-DBAL-Exception-ConnectionException$typespace.html#Doctrine\DBAL\Exception\ConnectionException" class="fqsen "><small>Doctrine\DBAL\Exception\</small><wbr>ConnectionException</a>                
+                <a href="Doctrine-DBAL-Exception-ConnectionException$typespace.html#Doctrine\DBAL\Exception\ConnectionException" class="fqsen bold"><small>Doctrine\DBAL\Exception\</small><wbr>ConnectionException</a>                
 	<ul class="has-indent">
         			<li class="indent">
                 <a href="Doctrine-DBAL-Exception-ConnectionLost$typespace.html#Doctrine\DBAL\Exception\ConnectionLost" class="fqsen "><small>Doctrine\DBAL\Exception\</small><wbr>ConnectionLost</a>                			</li>
@@ -122,7 +127,7 @@
         			<li class="indent">
                 <a href="Doctrine-DBAL-Exception-NoKeyValue$typespace.html#Doctrine\DBAL\Exception\NoKeyValue" class="fqsen "><small>Doctrine\DBAL\Exception\</small><wbr>NoKeyValue</a>                			</li>
         			<li class="indent">
-                <a href="Doctrine-DBAL-ConnectionException$typespace.html#Doctrine\DBAL\ConnectionException" class="fqsen bold"><small>Doctrine\DBAL\</small><wbr>ConnectionException</a>                			</li>
+                <a href="Doctrine-DBAL-ConnectionException$typespace.html#Doctrine\DBAL\ConnectionException" class="fqsen "><small>Doctrine\DBAL\</small><wbr>ConnectionException</a>                			</li>
         			<li class="indent">
                 <a href="Doctrine-DBAL-Query-QueryException$typespace.html#Doctrine\DBAL\Query\QueryException" class="fqsen "><small>Doctrine\DBAL\Query\</small><wbr>QueryException</a>                			</li>
         	</ul>
@@ -145,7 +150,7 @@
 						<span class="label label-protected">protected</span>
                         			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
-					<h4 id="Doctrine\DBAL\ConnectionException::$message" tabindex="-1" class="structure-title">
+					<h4 id="Doctrine\DBAL\Exception\ConnectionException::$message" tabindex="-1" class="structure-title">
 						<small>string</small>
 						$message						<var> = &quot;&quot;</var>
 					</h4>
@@ -170,7 +175,7 @@
 						<span class="label label-protected">protected</span>
                         			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
-					<h4 id="Doctrine\DBAL\ConnectionException::$code" tabindex="-1" class="structure-title">
+					<h4 id="Doctrine\DBAL\Exception\ConnectionException::$code" tabindex="-1" class="structure-title">
 						<small>integer</small>
 						$code						<var></var>
 					</h4>
@@ -195,7 +200,7 @@
 						<span class="label label-protected">protected</span>
                         			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
-					<h4 id="Doctrine\DBAL\ConnectionException::$file" tabindex="-1" class="structure-title">
+					<h4 id="Doctrine\DBAL\Exception\ConnectionException::$file" tabindex="-1" class="structure-title">
 						<small>NULL</small>
 						$file						<var> = null</var>
 					</h4>
@@ -220,7 +225,7 @@
 						<span class="label label-protected">protected</span>
                         			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
-					<h4 id="Doctrine\DBAL\ConnectionException::$line" tabindex="-1" class="structure-title">
+					<h4 id="Doctrine\DBAL\Exception\ConnectionException::$line" tabindex="-1" class="structure-title">
 						<small>NULL</small>
 						$line						<var> = null</var>
 					</h4>
@@ -245,36 +250,58 @@
             				<li class="structure-item">
 					<div class="attribute">
 						<span class="label label-danger"></span>
-						<span class="label label-default">static</span>
+						<span class="label label-default"></span>
 						<span class="label label-magic"></span>
 						<span class="label label-danger"></span>
 						<span class="label label-default"></span>
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/doctrine/dbal/blob/2.12.1/lib/Doctrine/DBAL/ConnectionException.php#L10-L16" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/doctrine/dbal/blob/2.12.1/lib/Doctrine/DBAL/Exception/DriverException.php#L22-L31" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
-					<h4 id="Doctrine\DBAL\ConnectionException::commitFailedRollbackOnly()" tabindex="-1" class="structure-title ">
-                        commitFailedRollbackOnly                        	<small>() : <a href="Doctrine-DBAL-ConnectionException$typespace.html#Doctrine\DBAL\ConnectionException" class="fqsen "><small>Doctrine\DBAL\</small><wbr>ConnectionException</a></small>
+					<h4 id="Doctrine\DBAL\Exception\ConnectionException::__construct()" tabindex="-1" class="structure-title ">
+                        __construct                        	<small>($message, $driverException) : void</small>
 						</h4>
 					<div class="inner-item">
 						<div class="description"></div>
                         	<table class="table">
 		<caption>Parameters</caption>
 		<tbody>
+        			<tr>
+				<td class="type">string</td>
+				<td class="rest">$message</td>
+				<td class="desc"><p>The exception message.</p>
+</td>
+			</tr>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Driver-DriverException$typespace.html#Doctrine\DBAL\Driver\DriverException" class="fqsen "><small>Doctrine\DBAL\Driver\</small><wbr>DriverException</a></td>
+				<td class="rest">$driverException</td>
+				<td class="desc"><p>The DBAL driver exception to chain.</p>
+</td>
+			</tr>
         		</tbody>
 	</table>
                             	<table class="table">
 		<caption>Return</caption>
 		<tbody>
 		<tr>
-			<td class="type"><a href="Doctrine-DBAL-ConnectionException$typespace.html#Doctrine\DBAL\ConnectionException" class="fqsen "><small>Doctrine\DBAL\</small><wbr>ConnectionException</a></td>
+			<td class="type">void</td>
 			<td class="desc"></td>
 			<td class="rest"></td>
 		</tr>
 		</tbody>
 	</table>
-                                                                            					</div>
+                                                    	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Exception-DriverException$typespace.html#Doctrine\DBAL\Exception\DriverException::__construct()" class="fqsen "><small>Doctrine\DBAL\Exception\</small><wbr>DriverException::__construct()</a></td>
+				<td class="desc"></td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
 					<div class="attribute">
 						<span class="label label-default"></span>
 						<span class="label label-default"></span>
@@ -284,20 +311,22 @@
             				<li class="structure-item">
 					<div class="attribute">
 						<span class="label label-danger"></span>
-						<span class="label label-default">static</span>
+						<span class="label label-default"></span>
 						<span class="label label-magic"></span>
 						<span class="label label-danger"></span>
 						<span class="label label-default"></span>
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/doctrine/dbal/blob/2.12.1/lib/Doctrine/DBAL/ConnectionException.php#L18-L24" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/doctrine/dbal/blob/2.12.1/lib/Doctrine/DBAL/Exception/DriverException.php#L33-L43" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
-					<h4 id="Doctrine\DBAL\ConnectionException::noActiveTransaction()" tabindex="-1" class="structure-title ">
-                        noActiveTransaction                        	<small>() : <a href="Doctrine-DBAL-ConnectionException$typespace.html#Doctrine\DBAL\ConnectionException" class="fqsen "><small>Doctrine\DBAL\</small><wbr>ConnectionException</a></small>
+					<h4 id="Doctrine\DBAL\Exception\ConnectionException::getErrorCode()" tabindex="-1" class="structure-title ">
+                        getErrorCode                        	<small>() : int<span class="type-separator"></span><wbr>string<span class="type-separator"></span><wbr>null</small>
 						</h4>
 					<div class="inner-item">
-						<div class="description"></div>
+						<div class="description"><p>Returns the driver specific error code if given.</p>
+<p>Returns null if no error code was given by the driver.</p>
+</div>
                         	<table class="table">
 		<caption>Parameters</caption>
 		<tbody>
@@ -307,13 +336,23 @@
 		<caption>Return</caption>
 		<tbody>
 		<tr>
-			<td class="type"><a href="Doctrine-DBAL-ConnectionException$typespace.html#Doctrine\DBAL\ConnectionException" class="fqsen "><small>Doctrine\DBAL\</small><wbr>ConnectionException</a></td>
+			<td class="type">int<span class="type-separator"></span><wbr>string<span class="type-separator"></span><wbr>null</td>
 			<td class="desc"></td>
 			<td class="rest"></td>
 		</tr>
 		</tbody>
 	</table>
-                                                                            					</div>
+                                                    	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Exception-DriverException$typespace.html#Doctrine\DBAL\Exception\DriverException::getErrorCode()" class="fqsen "><small>Doctrine\DBAL\Exception\</small><wbr>DriverException::getErrorCode()</a></td>
+				<td class="desc">Returns the driver specific error code if given.</td>
+				<td class="rest">inherit</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
 					<div class="attribute">
 						<span class="label label-default"></span>
 						<span class="label label-default"></span>
@@ -323,20 +362,22 @@
             				<li class="structure-item">
 					<div class="attribute">
 						<span class="label label-danger"></span>
-						<span class="label label-default">static</span>
+						<span class="label label-default"></span>
 						<span class="label label-magic"></span>
 						<span class="label label-danger"></span>
 						<span class="label label-default"></span>
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/doctrine/dbal/blob/2.12.1/lib/Doctrine/DBAL/ConnectionException.php#L26-L32" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/doctrine/dbal/blob/2.12.1/lib/Doctrine/DBAL/Exception/DriverException.php#L45-L55" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
-					<h4 id="Doctrine\DBAL\ConnectionException::savepointsNotSupported()" tabindex="-1" class="structure-title ">
-                        savepointsNotSupported                        	<small>() : <a href="Doctrine-DBAL-ConnectionException$typespace.html#Doctrine\DBAL\ConnectionException" class="fqsen "><small>Doctrine\DBAL\</small><wbr>ConnectionException</a></small>
+					<h4 id="Doctrine\DBAL\Exception\ConnectionException::getSQLState()" tabindex="-1" class="structure-title ">
+                        getSQLState                        	<small>() : string<span class="type-separator"></span><wbr>null</small>
 						</h4>
 					<div class="inner-item">
-						<div class="description"></div>
+						<div class="description"><p>Returns the SQLSTATE the driver was in at the time the error occurred, if given.</p>
+<p>Returns null if no SQLSTATE was given by the driver.</p>
+</div>
                         	<table class="table">
 		<caption>Parameters</caption>
 		<tbody>
@@ -346,52 +387,23 @@
 		<caption>Return</caption>
 		<tbody>
 		<tr>
-			<td class="type"><a href="Doctrine-DBAL-ConnectionException$typespace.html#Doctrine\DBAL\ConnectionException" class="fqsen "><small>Doctrine\DBAL\</small><wbr>ConnectionException</a></td>
+			<td class="type">string<span class="type-separator"></span><wbr>null</td>
 			<td class="desc"></td>
 			<td class="rest"></td>
 		</tr>
 		</tbody>
 	</table>
-                                                                            					</div>
-					<div class="attribute">
-						<span class="label label-default"></span>
-						<span class="label label-default"></span>
-					</div>
-					<div class="clearfix"></div>
-				</li>
-            				<li class="structure-item">
-					<div class="attribute">
-						<span class="label label-danger"></span>
-						<span class="label label-default">static</span>
-						<span class="label label-magic"></span>
-						<span class="label label-danger"></span>
-						<span class="label label-default"></span>
-						<span class="label label-default"></span>
-						<span class="label label-deprecated"></span>
-						<span class="label label-public">public</span>
-                        			<a href="https://github.com/doctrine/dbal/blob/2.12.1/lib/Doctrine/DBAL/ConnectionException.php#L34-L40" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
-                                    					</div>
-					<h4 id="Doctrine\DBAL\ConnectionException::mayNotAlterNestedTransactionWithSavepointsInTransaction()" tabindex="-1" class="structure-title ">
-                        mayNotAlterNestedTransactionWithSavepointsInTransaction                        	<small>() : <a href="Doctrine-DBAL-ConnectionException$typespace.html#Doctrine\DBAL\ConnectionException" class="fqsen "><small>Doctrine\DBAL\</small><wbr>ConnectionException</a></small>
-						</h4>
-					<div class="inner-item">
-						<div class="description"></div>
-                        	<table class="table">
-		<caption>Parameters</caption>
+                                                    	<table class="table">
+		<caption>Prototype</caption>
 		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Exception-DriverException$typespace.html#Doctrine\DBAL\Exception\DriverException::getSQLState()" class="fqsen "><small>Doctrine\DBAL\Exception\</small><wbr>DriverException::getSQLState()</a></td>
+				<td class="desc">Returns the SQLSTATE the driver was in at the time the error occurred, if given.</td>
+				<td class="rest">inherit</td>
+			</tr>
         		</tbody>
 	</table>
-                            	<table class="table">
-		<caption>Return</caption>
-		<tbody>
-		<tr>
-			<td class="type"><a href="Doctrine-DBAL-ConnectionException$typespace.html#Doctrine\DBAL\ConnectionException" class="fqsen "><small>Doctrine\DBAL\</small><wbr>ConnectionException</a></td>
-			<td class="desc"></td>
-			<td class="rest"></td>
-		</tr>
-		</tbody>
-	</table>
-                                                                            					</div>
+                            					</div>
 					<div class="attribute">
 						<span class="label label-default"></span>
 						<span class="label label-default"></span>
@@ -410,7 +422,7 @@
 						<span class="label label-public">public</span>
                         			<a href="https://github.com/doctrine/dbal/blob/2.12.1/lib/Doctrine/DBAL/DBALException.php#L32-L40" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
-					<h4 id="Doctrine\DBAL\ConnectionException::notSupported()" tabindex="-1" class="structure-title ">
+					<h4 id="Doctrine\DBAL\Exception\ConnectionException::notSupported()" tabindex="-1" class="structure-title ">
                         notSupported                        	<small>($method) : <a href="Doctrine-DBAL-Exception$typespace.html#Doctrine\DBAL\Exception" class="fqsen "><small>Doctrine\DBAL\</small><wbr>Exception</a></small>
 						</h4>
 					<div class="inner-item">
@@ -464,7 +476,7 @@
 						<span class="label label-public">public</span>
                         			<a href="https://github.com/doctrine/dbal/blob/2.12.1/lib/Doctrine/DBAL/DBALException.php#L42-L50" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
-					<h4 id="Doctrine\DBAL\ConnectionException::invalidPlatformSpecified()" tabindex="-1" class="structure-title strike">
+					<h4 id="Doctrine\DBAL\Exception\ConnectionException::invalidPlatformSpecified()" tabindex="-1" class="structure-title strike">
                         invalidPlatformSpecified                        	<small>() : <a href="Doctrine-DBAL-DBALException$typespace.html#Doctrine\DBAL\DBALException" class="fqsen "><small>Doctrine\DBAL\</small><wbr>DBALException</a></small>
 						</h4>
 					<div class="inner-item">
@@ -513,7 +525,7 @@
 						<span class="label label-public">public</span>
                         			<a href="https://github.com/doctrine/dbal/blob/2.12.1/lib/Doctrine/DBAL/DBALException.php#L52-L74" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
-					<h4 id="Doctrine\DBAL\ConnectionException::invalidPlatformType()" tabindex="-1" class="structure-title ">
+					<h4 id="Doctrine\DBAL\Exception\ConnectionException::invalidPlatformType()" tabindex="-1" class="structure-title ">
                         invalidPlatformType                        	<small>($invalidPlatform) : <a href="Doctrine-DBAL-DBALException$typespace.html#Doctrine\DBAL\DBALException" class="fqsen "><small>Doctrine\DBAL\</small><wbr>DBALException</a></small>
 						</h4>
 					<div class="inner-item">
@@ -567,7 +579,7 @@
 						<span class="label label-public">public</span>
                         			<a href="https://github.com/doctrine/dbal/blob/2.12.1/lib/Doctrine/DBAL/DBALException.php#L76-L94" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
-					<h4 id="Doctrine\DBAL\ConnectionException::invalidPlatformVersionSpecified()" tabindex="-1" class="structure-title ">
+					<h4 id="Doctrine\DBAL\Exception\ConnectionException::invalidPlatformVersionSpecified()" tabindex="-1" class="structure-title ">
                         invalidPlatformVersionSpecified                        	<small>($version, $expectedFormat) : <a href="Doctrine-DBAL-Exception$typespace.html#Doctrine\DBAL\Exception" class="fqsen "><small>Doctrine\DBAL\</small><wbr>Exception</a></small>
 						</h4>
 					<div class="inner-item">
@@ -629,7 +641,7 @@
 						<span class="label label-public">public</span>
                         			<a href="https://github.com/doctrine/dbal/blob/2.12.1/lib/Doctrine/DBAL/DBALException.php#L96-L107" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
-					<h4 id="Doctrine\DBAL\ConnectionException::invalidPdoInstance()" tabindex="-1" class="structure-title strike">
+					<h4 id="Doctrine\DBAL\Exception\ConnectionException::invalidPdoInstance()" tabindex="-1" class="structure-title strike">
                         invalidPdoInstance                        	<small>() : <a href="Doctrine-DBAL-Exception$typespace.html#Doctrine\DBAL\Exception" class="fqsen "><small>Doctrine\DBAL\</small><wbr>Exception</a></small>
 						</h4>
 					<div class="inner-item">
@@ -678,7 +690,7 @@
 						<span class="label label-public">public</span>
                         			<a href="https://github.com/doctrine/dbal/blob/2.12.1/lib/Doctrine/DBAL/DBALException.php#L109-L128" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
-					<h4 id="Doctrine\DBAL\ConnectionException::driverRequired()" tabindex="-1" class="structure-title ">
+					<h4 id="Doctrine\DBAL\Exception\ConnectionException::driverRequired()" tabindex="-1" class="structure-title ">
                         driverRequired                        	<small>($url = null) : <a href="Doctrine-DBAL-Exception$typespace.html#Doctrine\DBAL\Exception" class="fqsen "><small>Doctrine\DBAL\</small><wbr>Exception</a></small>
 						</h4>
 					<div class="inner-item">
@@ -733,7 +745,7 @@
 						<span class="label label-public">public</span>
                         			<a href="https://github.com/doctrine/dbal/blob/2.12.1/lib/Doctrine/DBAL/DBALException.php#L130-L140" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
-					<h4 id="Doctrine\DBAL\ConnectionException::unknownDriver()" tabindex="-1" class="structure-title ">
+					<h4 id="Doctrine\DBAL\Exception\ConnectionException::unknownDriver()" tabindex="-1" class="structure-title ">
                         unknownDriver                        	<small>($unknownDriverName, $knownDrivers) : <a href="Doctrine-DBAL-Exception$typespace.html#Doctrine\DBAL\Exception" class="fqsen "><small>Doctrine\DBAL\</small><wbr>Exception</a></small>
 						</h4>
 					<div class="inner-item">
@@ -792,7 +804,7 @@
 						<span class="label label-public">public</span>
                         			<a href="https://github.com/doctrine/dbal/blob/2.12.1/lib/Doctrine/DBAL/DBALException.php#L142-L160" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
-					<h4 id="Doctrine\DBAL\ConnectionException::driverExceptionDuringQuery()" tabindex="-1" class="structure-title strike">
+					<h4 id="Doctrine\DBAL\Exception\ConnectionException::driverExceptionDuringQuery()" tabindex="-1" class="structure-title strike">
                         driverExceptionDuringQuery                        	<small>($driver, $driverEx, $sql, $params = []) : <a href="Doctrine-DBAL-Exception$typespace.html#Doctrine\DBAL\Exception" class="fqsen "><small>Doctrine\DBAL\</small><wbr>Exception</a></small>
 						</h4>
 					<div class="inner-item">
@@ -861,7 +873,7 @@
 						<span class="label label-public">public</span>
                         			<a href="https://github.com/doctrine/dbal/blob/2.12.1/lib/Doctrine/DBAL/DBALException.php#L162-L170" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
-					<h4 id="Doctrine\DBAL\ConnectionException::driverException()" tabindex="-1" class="structure-title strike">
+					<h4 id="Doctrine\DBAL\Exception\ConnectionException::driverException()" tabindex="-1" class="structure-title strike">
                         driverException                        	<small>($driver, $driverEx) : <a href="Doctrine-DBAL-Exception$typespace.html#Doctrine\DBAL\Exception" class="fqsen "><small>Doctrine\DBAL\</small><wbr>Exception</a></small>
 						</h4>
 					<div class="inner-item">
@@ -920,7 +932,7 @@
 						<span class="label label-public">public</span>
                         			<a href="https://github.com/doctrine/dbal/blob/2.12.1/lib/Doctrine/DBAL/DBALException.php#L214-L223" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
-					<h4 id="Doctrine\DBAL\ConnectionException::invalidWrapperClass()" tabindex="-1" class="structure-title ">
+					<h4 id="Doctrine\DBAL\Exception\ConnectionException::invalidWrapperClass()" tabindex="-1" class="structure-title ">
                         invalidWrapperClass                        	<small>($wrapperClass) : <a href="Doctrine-DBAL-Exception$typespace.html#Doctrine\DBAL\Exception" class="fqsen "><small>Doctrine\DBAL\</small><wbr>Exception</a></small>
 						</h4>
 					<div class="inner-item">
@@ -974,7 +986,7 @@
 						<span class="label label-public">public</span>
                         			<a href="https://github.com/doctrine/dbal/blob/2.12.1/lib/Doctrine/DBAL/DBALException.php#L225-L235" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
-					<h4 id="Doctrine\DBAL\ConnectionException::invalidDriverClass()" tabindex="-1" class="structure-title ">
+					<h4 id="Doctrine\DBAL\Exception\ConnectionException::invalidDriverClass()" tabindex="-1" class="structure-title ">
                         invalidDriverClass                        	<small>($driverClass) : <a href="Doctrine-DBAL-Exception$typespace.html#Doctrine\DBAL\Exception" class="fqsen "><small>Doctrine\DBAL\</small><wbr>Exception</a></small>
 						</h4>
 					<div class="inner-item">
@@ -1028,7 +1040,7 @@
 						<span class="label label-public">public</span>
                         			<a href="https://github.com/doctrine/dbal/blob/2.12.1/lib/Doctrine/DBAL/DBALException.php#L237-L245" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
-					<h4 id="Doctrine\DBAL\ConnectionException::invalidTableName()" tabindex="-1" class="structure-title ">
+					<h4 id="Doctrine\DBAL\Exception\ConnectionException::invalidTableName()" tabindex="-1" class="structure-title ">
                         invalidTableName                        	<small>($tableName) : <a href="Doctrine-DBAL-Exception$typespace.html#Doctrine\DBAL\Exception" class="fqsen "><small>Doctrine\DBAL\</small><wbr>Exception</a></small>
 						</h4>
 					<div class="inner-item">
@@ -1082,7 +1094,7 @@
 						<span class="label label-public">public</span>
                         			<a href="https://github.com/doctrine/dbal/blob/2.12.1/lib/Doctrine/DBAL/DBALException.php#L247-L255" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
-					<h4 id="Doctrine\DBAL\ConnectionException::noColumnsSpecifiedForTable()" tabindex="-1" class="structure-title ">
+					<h4 id="Doctrine\DBAL\Exception\ConnectionException::noColumnsSpecifiedForTable()" tabindex="-1" class="structure-title ">
                         noColumnsSpecifiedForTable                        	<small>($tableName) : <a href="Doctrine-DBAL-Exception$typespace.html#Doctrine\DBAL\Exception" class="fqsen "><small>Doctrine\DBAL\</small><wbr>Exception</a></small>
 						</h4>
 					<div class="inner-item">
@@ -1136,7 +1148,7 @@
 						<span class="label label-public">public</span>
                         			<a href="https://github.com/doctrine/dbal/blob/2.12.1/lib/Doctrine/DBAL/DBALException.php#L257-L263" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
-					<h4 id="Doctrine\DBAL\ConnectionException::limitOffsetInvalid()" tabindex="-1" class="structure-title ">
+					<h4 id="Doctrine\DBAL\Exception\ConnectionException::limitOffsetInvalid()" tabindex="-1" class="structure-title ">
                         limitOffsetInvalid                        	<small>() : <a href="Doctrine-DBAL-Exception$typespace.html#Doctrine\DBAL\Exception" class="fqsen "><small>Doctrine\DBAL\</small><wbr>Exception</a></small>
 						</h4>
 					<div class="inner-item">
@@ -1185,7 +1197,7 @@
 						<span class="label label-public">public</span>
                         			<a href="https://github.com/doctrine/dbal/blob/2.12.1/lib/Doctrine/DBAL/DBALException.php#L265-L273" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
-					<h4 id="Doctrine\DBAL\ConnectionException::typeExists()" tabindex="-1" class="structure-title ">
+					<h4 id="Doctrine\DBAL\Exception\ConnectionException::typeExists()" tabindex="-1" class="structure-title ">
                         typeExists                        	<small>($name) : <a href="Doctrine-DBAL-Exception$typespace.html#Doctrine\DBAL\Exception" class="fqsen "><small>Doctrine\DBAL\</small><wbr>Exception</a></small>
 						</h4>
 					<div class="inner-item">
@@ -1239,7 +1251,7 @@
 						<span class="label label-public">public</span>
                         			<a href="https://github.com/doctrine/dbal/blob/2.12.1/lib/Doctrine/DBAL/DBALException.php#L275-L289" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
-					<h4 id="Doctrine\DBAL\ConnectionException::unknownColumnType()" tabindex="-1" class="structure-title ">
+					<h4 id="Doctrine\DBAL\Exception\ConnectionException::unknownColumnType()" tabindex="-1" class="structure-title ">
                         unknownColumnType                        	<small>($name) : <a href="Doctrine-DBAL-Exception$typespace.html#Doctrine\DBAL\Exception" class="fqsen "><small>Doctrine\DBAL\</small><wbr>Exception</a></small>
 						</h4>
 					<div class="inner-item">
@@ -1293,7 +1305,7 @@
 						<span class="label label-public">public</span>
                         			<a href="https://github.com/doctrine/dbal/blob/2.12.1/lib/Doctrine/DBAL/DBALException.php#L291-L299" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
-					<h4 id="Doctrine\DBAL\ConnectionException::typeNotFound()" tabindex="-1" class="structure-title ">
+					<h4 id="Doctrine\DBAL\Exception\ConnectionException::typeNotFound()" tabindex="-1" class="structure-title ">
                         typeNotFound                        	<small>($name) : <a href="Doctrine-DBAL-Exception$typespace.html#Doctrine\DBAL\Exception" class="fqsen "><small>Doctrine\DBAL\</small><wbr>Exception</a></small>
 						</h4>
 					<div class="inner-item">
@@ -1347,7 +1359,7 @@
 						<span class="label label-public">public</span>
                         			<a href="https://github.com/doctrine/dbal/blob/2.12.1/lib/Doctrine/DBAL/DBALException.php#L301-L306" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
-					<h4 id="Doctrine\DBAL\ConnectionException::typeNotRegistered()" tabindex="-1" class="structure-title ">
+					<h4 id="Doctrine\DBAL\Exception\ConnectionException::typeNotRegistered()" tabindex="-1" class="structure-title ">
                         typeNotRegistered                        	<small>($type) : <a href="Doctrine-DBAL-DBALException$typespace.html#Doctrine\DBAL\DBALException" class="fqsen "><small>Doctrine\DBAL\</small><wbr>DBALException</a></small>
 						</h4>
 					<div class="inner-item">
@@ -1401,7 +1413,7 @@
 						<span class="label label-public">public</span>
                         			<a href="https://github.com/doctrine/dbal/blob/2.12.1/lib/Doctrine/DBAL/DBALException.php#L308-L313" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
-					<h4 id="Doctrine\DBAL\ConnectionException::typeAlreadyRegistered()" tabindex="-1" class="structure-title ">
+					<h4 id="Doctrine\DBAL\Exception\ConnectionException::typeAlreadyRegistered()" tabindex="-1" class="structure-title ">
                         typeAlreadyRegistered                        	<small>($type) : <a href="Doctrine-DBAL-DBALException$typespace.html#Doctrine\DBAL\DBALException" class="fqsen "><small>Doctrine\DBAL\</small><wbr>DBALException</a></small>
 						</h4>
 					<div class="inner-item">
@@ -1455,71 +1467,7 @@
 						<span class="label label-public">public</span>
                         			<a href="#L0-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
-					<h4 id="Doctrine\DBAL\ConnectionException::__construct()" tabindex="-1" class="structure-title ">
-                        __construct                        	<small>($message, $code, $previous) : void</small>
-						</h4>
-					<div class="inner-item">
-						<div class="description"></div>
-                        	<table class="table">
-		<caption>Parameters</caption>
-		<tbody>
-        			<tr>
-				<td class="type"></td>
-				<td class="rest">$message</td>
-				<td class="desc"></td>
-			</tr>
-        			<tr>
-				<td class="type"></td>
-				<td class="rest">$code</td>
-				<td class="desc"></td>
-			</tr>
-        			<tr>
-				<td class="type"></td>
-				<td class="rest">$previous</td>
-				<td class="desc"></td>
-			</tr>
-        		</tbody>
-	</table>
-                            	<table class="table">
-		<caption>Return</caption>
-		<tbody>
-		<tr>
-			<td class="type">void</td>
-			<td class="desc"></td>
-			<td class="rest"></td>
-		</tr>
-		</tbody>
-	</table>
-                                                    	<table class="table">
-		<caption>Prototype</caption>
-		<tbody>
-        			<tr>
-				<td class="type"><a href="http://php.net/manual/ja/exception.construct.php" class="fqsen" target="_blank">\Exception::__construct()</a></td>
-				<td class="desc"></td>
-				<td class="rest">inherit</td>
-			</tr>
-        		</tbody>
-	</table>
-                            					</div>
-					<div class="attribute">
-						<span class="label label-default"></span>
-						<span class="label label-default"></span>
-					</div>
-					<div class="clearfix"></div>
-				</li>
-            				<li class="structure-item">
-					<div class="attribute">
-						<span class="label label-danger"></span>
-						<span class="label label-default"></span>
-						<span class="label label-magic"></span>
-						<span class="label label-danger"></span>
-						<span class="label label-default"></span>
-						<span class="label label-default"></span>
-						<span class="label label-deprecated"></span>
-						<span class="label label-public">public</span>
-                        			<a href="#L0-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
-                                    					</div>
-					<h4 id="Doctrine\DBAL\ConnectionException::__wakeup()" tabindex="-1" class="structure-title ">
+					<h4 id="Doctrine\DBAL\Exception\ConnectionException::__wakeup()" tabindex="-1" class="structure-title ">
                         __wakeup                        	<small>() : void</small>
 						</h4>
 					<div class="inner-item">
@@ -1568,7 +1516,7 @@
 						<span class="label label-public">public</span>
                         			<a href="#L0-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
-					<h4 id="Doctrine\DBAL\ConnectionException::getMessage()" tabindex="-1" class="structure-title ">
+					<h4 id="Doctrine\DBAL\Exception\ConnectionException::getMessage()" tabindex="-1" class="structure-title ">
                         getMessage                        	<small>() : void</small>
 						</h4>
 					<div class="inner-item">
@@ -1617,7 +1565,7 @@
 						<span class="label label-public">public</span>
                         			<a href="#L0-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
-					<h4 id="Doctrine\DBAL\ConnectionException::getCode()" tabindex="-1" class="structure-title ">
+					<h4 id="Doctrine\DBAL\Exception\ConnectionException::getCode()" tabindex="-1" class="structure-title ">
                         getCode                        	<small>() : void</small>
 						</h4>
 					<div class="inner-item">
@@ -1666,7 +1614,7 @@
 						<span class="label label-public">public</span>
                         			<a href="#L0-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
-					<h4 id="Doctrine\DBAL\ConnectionException::getFile()" tabindex="-1" class="structure-title ">
+					<h4 id="Doctrine\DBAL\Exception\ConnectionException::getFile()" tabindex="-1" class="structure-title ">
                         getFile                        	<small>() : void</small>
 						</h4>
 					<div class="inner-item">
@@ -1715,7 +1663,7 @@
 						<span class="label label-public">public</span>
                         			<a href="#L0-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
-					<h4 id="Doctrine\DBAL\ConnectionException::getLine()" tabindex="-1" class="structure-title ">
+					<h4 id="Doctrine\DBAL\Exception\ConnectionException::getLine()" tabindex="-1" class="structure-title ">
                         getLine                        	<small>() : void</small>
 						</h4>
 					<div class="inner-item">
@@ -1764,7 +1712,7 @@
 						<span class="label label-public">public</span>
                         			<a href="#L0-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
-					<h4 id="Doctrine\DBAL\ConnectionException::getTrace()" tabindex="-1" class="structure-title ">
+					<h4 id="Doctrine\DBAL\Exception\ConnectionException::getTrace()" tabindex="-1" class="structure-title ">
                         getTrace                        	<small>() : void</small>
 						</h4>
 					<div class="inner-item">
@@ -1813,7 +1761,7 @@
 						<span class="label label-public">public</span>
                         			<a href="#L0-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
-					<h4 id="Doctrine\DBAL\ConnectionException::getPrevious()" tabindex="-1" class="structure-title ">
+					<h4 id="Doctrine\DBAL\Exception\ConnectionException::getPrevious()" tabindex="-1" class="structure-title ">
                         getPrevious                        	<small>() : void</small>
 						</h4>
 					<div class="inner-item">
@@ -1862,7 +1810,7 @@
 						<span class="label label-public">public</span>
                         			<a href="#L0-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
-					<h4 id="Doctrine\DBAL\ConnectionException::getTraceAsString()" tabindex="-1" class="structure-title ">
+					<h4 id="Doctrine\DBAL\Exception\ConnectionException::getTraceAsString()" tabindex="-1" class="structure-title ">
                         getTraceAsString                        	<small>() : void</small>
 						</h4>
 					<div class="inner-item">
@@ -1911,7 +1859,7 @@
 						<span class="label label-public">public</span>
                         			<a href="#L0-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
-					<h4 id="Doctrine\DBAL\ConnectionException::__toString()" tabindex="-1" class="structure-title ">
+					<h4 id="Doctrine\DBAL\Exception\ConnectionException::__toString()" tabindex="-1" class="structure-title ">
                         __toString                        	<small>() : void</small>
 						</h4>
 					<div class="inner-item">

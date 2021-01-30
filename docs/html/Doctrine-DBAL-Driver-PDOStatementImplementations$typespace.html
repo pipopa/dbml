@@ -39,7 +39,7 @@
 <h1 class="ellipsis fixed">
 	<span class="pull-left">
 	Structure
-	<small class="ellipsis-text">(Doctrine\DBAL\Driver\AbstractOracleDriver\EasyConnectString)</small>
+	<small class="ellipsis-text">(Doctrine\DBAL\Driver\PDOStatementImplementations)</small>
 	</span>
 	<span class="pull-right">
 		<small class="frame-switch">
@@ -49,23 +49,32 @@
 </h1>
 <div class="main-wrapper">
 	<div class="attribute">
-		<span class="label label-danger">final</span>
+		<span class="label label-danger"></span>
 		<span class="label label-warning"></span>
 		<span class="label label-info"></span>
 		<span class="label label-info"></span>
 		<span class="label label-deprecated"></span>
-        			<a href="https://github.com/doctrine/dbal/blob/2.10.4/lib/Doctrine/DBAL/Driver/AbstractOracleDriver/EasyConnectString.php#L11-L121" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+        			<a href="https://github.com/doctrine/dbal/blob/2.12.1/lib/Doctrine/DBAL/Driver/PDOStatementImplementations.php#L42-L72" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                     	</div>
 
-	<h2>class <span class="category-name">Doctrine\DBAL\Driver\AbstractOracleDriver\EasyConnectString</span></h2>
+	<h2>trait <span class="category-name">Doctrine\DBAL\Driver\PDOStatementImplementations</span></h2>
 
-	<div class="description"><p>Represents an Oracle Easy Connect string</p>
-</div>
+	<div class="description"></div>
 
 	<h3>Construction</h3>
                 
 	<h3>Hierarchy</h3>
-	<div class="hierarchy"></div>
+	<div class="hierarchy">
+	<ul class="">
+        			<li class="">
+                <a href="Doctrine-DBAL-Driver-PDOStatementImplementations$typespace.html#Doctrine\DBAL\Driver\PDOStatementImplementations" class="fqsen bold"><small>Doctrine\DBAL\Driver\</small><wbr>PDOStatementImplementations</a>                
+	<ul class="has-indent">
+        			<li class="indent">
+                <a href="Doctrine-DBAL-Driver-PDOStatement$typespace.html#Doctrine\DBAL\Driver\PDOStatement" class="fqsen "><small>Doctrine\DBAL\Driver\</small><wbr>PDOStatement</a>                			</li>
+        	</ul>
+    			</li>
+        	</ul>
+    </div>
 
 	<h3>Constants</h3>
     
@@ -81,25 +90,40 @@
 						<span class="label label-danger"></span>
 						<span class="label label-default"></span>
 						<span class="label label-default"></span>
-						<span class="label label-deprecated"></span>
+						<span class="label label-deprecated">deprecated </span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/doctrine/dbal/blob/2.10.4/lib/Doctrine/DBAL/Driver/AbstractOracleDriver/EasyConnectString.php#L26-L29" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/doctrine/dbal/blob/2.12.1/lib/Doctrine/DBAL/Driver/PDOStatementImplementations.php#L47-L57" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
-					<h4 id="Doctrine\DBAL\Driver\AbstractOracleDriver\EasyConnectString::__toString()" tabindex="-1" class="structure-title ">
-                        __toString                        	<small>() : string</small>
+					<h4 id="Doctrine\DBAL\Driver\PDOStatementImplementations::setFetchMode()" tabindex="-1" class="structure-title strike">
+                        setFetchMode                        	<small>($fetchMode, $arg2 = null, $arg3 = null) : bool</small>
 						</h4>
 					<div class="inner-item">
 						<div class="description"></div>
                         	<table class="table">
 		<caption>Parameters</caption>
 		<tbody>
+        			<tr>
+				<td class="type">int</td>
+				<td class="rest">$fetchMode</td>
+				<td class="desc"></td>
+			</tr>
+        			<tr>
+				<td class="type">mixed</td>
+				<td class="rest">$arg2 = null</td>
+				<td class="desc"></td>
+			</tr>
+        			<tr>
+				<td class="type">mixed</td>
+				<td class="rest">$arg3 = null</td>
+				<td class="desc"></td>
+			</tr>
         		</tbody>
 	</table>
                             	<table class="table">
 		<caption>Return</caption>
 		<tbody>
 		<tr>
-			<td class="type">string</td>
+			<td class="type">bool</td>
 			<td class="desc"></td>
 			<td class="rest"></td>
 		</tr>
@@ -115,27 +139,36 @@
             				<li class="structure-item">
 					<div class="attribute">
 						<span class="label label-danger"></span>
-						<span class="label label-default">static</span>
+						<span class="label label-default"></span>
 						<span class="label label-magic"></span>
 						<span class="label label-danger"></span>
 						<span class="label label-default"></span>
 						<span class="label label-default"></span>
-						<span class="label label-deprecated"></span>
+						<span class="label label-deprecated">deprecated </span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/doctrine/dbal/blob/2.10.4/lib/Doctrine/DBAL/Driver/AbstractOracleDriver/EasyConnectString.php#L31-L39" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/doctrine/dbal/blob/2.12.1/lib/Doctrine/DBAL/Driver/PDOStatementImplementations.php#L59-L71" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
-					<h4 id="Doctrine\DBAL\Driver\AbstractOracleDriver\EasyConnectString::fromArray()" tabindex="-1" class="structure-title ">
-                        fromArray                        	<small>($params) : <a href="Doctrine-DBAL-Driver-AbstractOracleDriver-EasyConnectString$typespace.html#Doctrine\DBAL\Driver\AbstractOracleDriver\EasyConnectString" class="fqsen "><small>Doctrine\DBAL\Driver\AbstractOracleDriver\</small><wbr>EasyConnectString</a></small>
+					<h4 id="Doctrine\DBAL\Driver\PDOStatementImplementations::fetchAll()" tabindex="-1" class="structure-title strike">
+                        fetchAll                        	<small>($fetchMode = null, $fetchArgument = null, $ctorArgs = null) : mixed[]</small>
 						</h4>
 					<div class="inner-item">
-						<div class="description"><p>Creates the object from an array representation</p>
-</div>
+						<div class="description"></div>
                         	<table class="table">
 		<caption>Parameters</caption>
 		<tbody>
         			<tr>
-				<td class="type">array<span class="type-separator"></span><wbr>mixed[]</td>
-				<td class="rest">$params</td>
+				<td class="type">int<span class="type-separator"></span><wbr>null</td>
+				<td class="rest">$fetchMode = null</td>
+				<td class="desc"></td>
+			</tr>
+        			<tr>
+				<td class="type">mixed</td>
+				<td class="rest">$fetchArgument = null</td>
+				<td class="desc"></td>
+			</tr>
+        			<tr>
+				<td class="type">mixed</td>
+				<td class="rest">$ctorArgs = null</td>
 				<td class="desc"></td>
 			</tr>
         		</tbody>
@@ -144,52 +177,7 @@
 		<caption>Return</caption>
 		<tbody>
 		<tr>
-			<td class="type"><a href="Doctrine-DBAL-Driver-AbstractOracleDriver-EasyConnectString$typespace.html#Doctrine\DBAL\Driver\AbstractOracleDriver\EasyConnectString" class="fqsen "><small>Doctrine\DBAL\Driver\AbstractOracleDriver\</small><wbr>EasyConnectString</a></td>
-			<td class="desc"></td>
-			<td class="rest"></td>
-		</tr>
-		</tbody>
-	</table>
-                                                                            					</div>
-					<div class="attribute">
-						<span class="label label-default"></span>
-						<span class="label label-default"></span>
-					</div>
-					<div class="clearfix"></div>
-				</li>
-            				<li class="structure-item">
-					<div class="attribute">
-						<span class="label label-danger"></span>
-						<span class="label label-default">static</span>
-						<span class="label label-magic"></span>
-						<span class="label label-danger"></span>
-						<span class="label label-default"></span>
-						<span class="label label-default"></span>
-						<span class="label label-deprecated"></span>
-						<span class="label label-public">public</span>
-                        			<a href="https://github.com/doctrine/dbal/blob/2.10.4/lib/Doctrine/DBAL/Driver/AbstractOracleDriver/EasyConnectString.php#L41-L88" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
-                                    					</div>
-					<h4 id="Doctrine\DBAL\Driver\AbstractOracleDriver\EasyConnectString::fromConnectionParameters()" tabindex="-1" class="structure-title ">
-                        fromConnectionParameters                        	<small>($params) : <a href="Doctrine-DBAL-Driver-AbstractOracleDriver-EasyConnectString$typespace.html#Doctrine\DBAL\Driver\AbstractOracleDriver\EasyConnectString" class="fqsen "><small>Doctrine\DBAL\Driver\AbstractOracleDriver\</small><wbr>EasyConnectString</a></small>
-						</h4>
-					<div class="inner-item">
-						<div class="description"><p>Creates the object from the given DBAL connection parameters.</p>
-</div>
-                        	<table class="table">
-		<caption>Parameters</caption>
-		<tbody>
-        			<tr>
-				<td class="type">array<span class="type-separator"></span><wbr>mixed[]</td>
-				<td class="rest">$params</td>
-				<td class="desc"></td>
-			</tr>
-        		</tbody>
-	</table>
-                            	<table class="table">
-		<caption>Return</caption>
-		<tbody>
-		<tr>
-			<td class="type"><a href="Doctrine-DBAL-Driver-AbstractOracleDriver-EasyConnectString$typespace.html#Doctrine\DBAL\Driver\AbstractOracleDriver\EasyConnectString" class="fqsen "><small>Doctrine\DBAL\Driver\AbstractOracleDriver\</small><wbr>EasyConnectString</a></td>
+			<td class="type">mixed[]</td>
 			<td class="desc"></td>
 			<td class="rest"></td>
 		</tr>

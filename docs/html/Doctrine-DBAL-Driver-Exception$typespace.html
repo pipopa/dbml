@@ -39,7 +39,7 @@
 <h1 class="ellipsis fixed">
 	<span class="pull-left">
 	Structure
-	<small class="ellipsis-text">(Doctrine\DBAL\Driver\AbstractDriverException)</small>
+	<small class="ellipsis-text">(Doctrine\DBAL\Driver\Exception)</small>
 	</span>
 	<span class="pull-right">
 		<small class="frame-switch">
@@ -54,34 +54,20 @@
 		<span class="label label-info"></span>
 		<span class="label label-info"></span>
 		<span class="label label-deprecated"></span>
-        			<a href="https://github.com/doctrine/dbal/blob/2.10.4/lib/Doctrine/DBAL/Driver/AbstractDriverException.php#L7-L56" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+        			<a href="https://github.com/doctrine/dbal/blob/2.12.1/lib/Doctrine/DBAL/Driver/Exception.php#L9-L34" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                     	</div>
 
-	<h2>class <span class="category-name">Doctrine\DBAL\Driver\AbstractDriverException</span></h2>
+	<h2>interface <span class="category-name">Doctrine\DBAL\Driver\Exception</span></h2>
 
-	<div class="description"><p>Abstract base implementation of the <tag_link data-kind='fqsen' data-type-category='interface' data-type-fqsen='Doctrine\DBAL\Driver\DriverException' data-type-array='0' data-description='Doctrine\DBAL\Driver\DriverException'>Doctrine\DBAL\Driver\DriverException</tag_link> interface.</p>
-</div>
+	<div class="description"></div>
 
 	<h3>Construction</h3>
-    	<table class="table">
-		<caption>Parents</caption>
-		<tbody>
-        			<tr>
-				<td class="type"><a href="http://php.net/manual/ja/class.exception.php" class="fqsen" target="_blank">\Exception</a></td>
-				<td class="desc"></td>
-			</tr>
-        		</tbody>
-	</table>
         	<table class="table">
 		<caption>Implements</caption>
 		<tbody>
         			<tr>
 				<td class="type"><a href="http://php.net/manual/ja/class.throwable.php" class="fqsen" target="_blank">\Throwable</a></td>
 				<td class="desc"></td>
-			</tr>
-        			<tr>
-				<td class="type"><a href="Doctrine-DBAL-Driver-DriverException$typespace.html#Doctrine\DBAL\Driver\DriverException" class="fqsen "><small>Doctrine\DBAL\Driver\</small><wbr>DriverException</a></td>
-				<td class="desc">Contract for a driver exception.</td>
 			</tr>
         		</tbody>
 	</table>
@@ -90,32 +76,62 @@
 	<div class="hierarchy">
 	<ul class="">
         			<li class="">
-                <a href="http://php.net/manual/ja/class.exception.php" class="fqsen" target="_blank">\Exception</a>                
+                <a href="http://php.net/manual/ja/class.throwable.php" class="fqsen" target="_blank">\Throwable</a>                
 	<ul class="has-indent">
         			<li class="indent">
-                <a href="Doctrine-DBAL-DBALException$typespace.html#Doctrine\DBAL\DBALException" class="fqsen "><small>Doctrine\DBAL\</small><wbr>DBALException</a>                
+                <a href="Doctrine-DBAL-Driver-Exception$typespace.html#Doctrine\DBAL\Driver\Exception" class="fqsen bold"><small>Doctrine\DBAL\Driver\</small><wbr>Exception</a>                
 	<ul class="has-indent">
+        			<li class="indent">
+                <a href="Doctrine-DBAL-Driver-DriverException$typespace.html#Doctrine\DBAL\Driver\DriverException" class="fqsen "><small>Doctrine\DBAL\Driver\</small><wbr>DriverException</a>                
+	<ul class="has-indent">
+        			<li class="indent">
+                <a href="Doctrine-DBAL-Driver-PDO-Exception$typespace.html#Doctrine\DBAL\Driver\PDO\Exception" class="fqsen "><small>Doctrine\DBAL\Driver\PDO\</small><wbr>Exception</a>                			</li>
+        			<li class="indent">
+                <a href="Doctrine-DBAL-Driver-PDOException$typespace.html#Doctrine\DBAL\Driver\PDOException" class="fqsen "><small>Doctrine\DBAL\Driver\</small><wbr>PDOException</a>                			</li>
+        	</ul>
+    			</li>
+        			<li class="indent">
+                <a href="Doctrine-DBAL-Driver-PDO-Exception$typespace.html#Doctrine\DBAL\Driver\PDO\Exception" class="fqsen "><small>Doctrine\DBAL\Driver\PDO\</small><wbr>Exception</a>                			</li>
+        			<li class="indent">
+                <a href="Doctrine-DBAL-Driver-PDOException$typespace.html#Doctrine\DBAL\Driver\PDOException" class="fqsen "><small>Doctrine\DBAL\Driver\</small><wbr>PDOException</a>                			</li>
+        	</ul>
+    			</li>
+        			<li class="indent">
+                <a href="Doctrine-DBAL-Driver-DriverException$typespace.html#Doctrine\DBAL\Driver\DriverException" class="fqsen "><small>Doctrine\DBAL\Driver\</small><wbr>DriverException</a>                			</li>
+        			<li class="indent">
+                <a href="Doctrine-DBAL-Exception$typespace.html#Doctrine\DBAL\Exception" class="fqsen "><small>Doctrine\DBAL\</small><wbr>Exception</a>                			</li>
+        			<li class="indent">
+                <a href="Doctrine-DBAL-DBALException$typespace.html#Doctrine\DBAL\DBALException" class="fqsen "><small>Doctrine\DBAL\</small><wbr>DBALException</a>                			</li>
         			<li class="indent">
                 <a href="Doctrine-DBAL-Cache-CacheException$typespace.html#Doctrine\DBAL\Cache\CacheException" class="fqsen "><small>Doctrine\DBAL\Cache\</small><wbr>CacheException</a>                			</li>
         			<li class="indent">
-                <a href="Doctrine-DBAL-Exception-DriverException$typespace.html#Doctrine\DBAL\Exception\DriverException" class="fqsen "><small>Doctrine\DBAL\Exception\</small><wbr>DriverException</a>                			</li>
-        			<li class="indent">
                 <a href="Doctrine-DBAL-Schema-SchemaException$typespace.html#Doctrine\DBAL\Schema\SchemaException" class="fqsen "><small>Doctrine\DBAL\Schema\</small><wbr>SchemaException</a>                			</li>
+        			<li class="indent">
+                <a href="Doctrine-DBAL-Exception-ConnectionLost$typespace.html#Doctrine\DBAL\Exception\ConnectionLost" class="fqsen "><small>Doctrine\DBAL\Exception\</small><wbr>ConnectionLost</a>                			</li>
+        			<li class="indent">
+                <a href="Doctrine-DBAL-Exception-ConnectionException$typespace.html#Doctrine\DBAL\Exception\ConnectionException" class="fqsen "><small>Doctrine\DBAL\Exception\</small><wbr>ConnectionException</a>                			</li>
+        			<li class="indent">
+                <a href="Doctrine-DBAL-Exception-DriverException$typespace.html#Doctrine\DBAL\Exception\DriverException" class="fqsen "><small>Doctrine\DBAL\Exception\</small><wbr>DriverException</a>                			</li>
         			<li class="indent">
                 <a href="Doctrine-DBAL-Exception-InvalidArgumentException$typespace.html#Doctrine\DBAL\Exception\InvalidArgumentException" class="fqsen "><small>Doctrine\DBAL\Exception\</small><wbr>InvalidArgumentException</a>                			</li>
         			<li class="indent">
+                <a href="Doctrine-DBAL-Exception-NoKeyValue$typespace.html#Doctrine\DBAL\Exception\NoKeyValue" class="fqsen "><small>Doctrine\DBAL\Exception\</small><wbr>NoKeyValue</a>                			</li>
+        			<li class="indent">
                 <a href="Doctrine-DBAL-ConnectionException$typespace.html#Doctrine\DBAL\ConnectionException" class="fqsen "><small>Doctrine\DBAL\</small><wbr>ConnectionException</a>                			</li>
         			<li class="indent">
+                <a href="ryunosuke-dbml-Exception-NonAffectedException$typespace.html#ryunosuke\dbml\Exception\NonAffectedException" class="fqsen "><small>ryunosuke\dbml\Exception\</small><wbr>NonAffectedException</a>                			</li>
+        			<li class="indent">
+                <a href="ryunosuke-dbml-Exception-InvalidCountException$typespace.html#ryunosuke\dbml\Exception\InvalidCountException" class="fqsen "><small>ryunosuke\dbml\Exception\</small><wbr>InvalidCountException</a>                			</li>
+        			<li class="indent">
+                <a href="ryunosuke-dbml-Exception-NonSelectedException$typespace.html#ryunosuke\dbml\Exception\NonSelectedException" class="fqsen "><small>ryunosuke\dbml\Exception\</small><wbr>NonSelectedException</a>                			</li>
+        			<li class="indent">
+                <a href="ryunosuke-dbml-Exception-TooManyException$typespace.html#ryunosuke\dbml\Exception\TooManyException" class="fqsen "><small>ryunosuke\dbml\Exception\</small><wbr>TooManyException</a>                			</li>
+        			<li class="indent">
+                <a href="Doctrine-DBAL-Driver-PDO-Exception$typespace.html#Doctrine\DBAL\Driver\PDO\Exception" class="fqsen "><small>Doctrine\DBAL\Driver\PDO\</small><wbr>Exception</a>                			</li>
+        			<li class="indent">
+                <a href="Doctrine-DBAL-Driver-PDOException$typespace.html#Doctrine\DBAL\Driver\PDOException" class="fqsen "><small>Doctrine\DBAL\Driver\</small><wbr>PDOException</a>                			</li>
+        			<li class="indent">
                 <a href="Doctrine-DBAL-Query-QueryException$typespace.html#Doctrine\DBAL\Query\QueryException" class="fqsen "><small>Doctrine\DBAL\Query\</small><wbr>QueryException</a>                			</li>
-        	</ul>
-    			</li>
-        			<li class="indent">
-                <a href="Doctrine-DBAL-Driver-AbstractDriverException$typespace.html#Doctrine\DBAL\Driver\AbstractDriverException" class="fqsen bold"><small>Doctrine\DBAL\Driver\</small><wbr>AbstractDriverException</a>                
-	<ul class="has-indent">
-        			<li class="indent">
-                <a href="Doctrine-DBAL-Driver-AbstractSQLServerDriver-PortWithoutHost$typespace.html#Doctrine\DBAL\Driver\AbstractSQLServerDriver\PortWithoutHost" class="fqsen "><small>Doctrine\DBAL\Driver\AbstractSQLServerDriver\</small><wbr>PortWithoutHost</a>                			</li>
-        	</ul>
-    			</li>
         	</ul>
     			</li>
         	</ul>
@@ -124,108 +140,6 @@
 	<h3>Constants</h3>
     
 	<h3>Properties</h3>
-    		<ul>
-            				<li class="structure-item">
-					<div class="attribute">
-						<span class="label label-default"></span>
-						<span class="label label-primary"></span>
-						<span class="label label-protected">protected</span>
-                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
-                                    					</div>
-					<h4 id="Doctrine\DBAL\Driver\AbstractDriverException::$message" tabindex="-1" class="structure-title">
-						<small>string</small>
-						$message						<var> = &quot;&quot;</var>
-					</h4>
-					<div class="inner-item">
-						<div class="description"></div>
-                        	<table class="table">
-		<caption>Prototype</caption>
-		<tbody>
-        			<tr>
-				<td class="type"><a href="http://php.net/manual/ja/class.exception.php#exception.props.message" class="fqsen" target="_blank">\Exception::$message</a></td>
-				<td class="desc"></td>
-				<td class="rest">inherit</td>
-			</tr>
-        		</tbody>
-	</table>
-                            					</div>
-				</li>
-            				<li class="structure-item">
-					<div class="attribute">
-						<span class="label label-default"></span>
-						<span class="label label-primary"></span>
-						<span class="label label-protected">protected</span>
-                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
-                                    					</div>
-					<h4 id="Doctrine\DBAL\Driver\AbstractDriverException::$code" tabindex="-1" class="structure-title">
-						<small>integer</small>
-						$code						<var></var>
-					</h4>
-					<div class="inner-item">
-						<div class="description"></div>
-                        	<table class="table">
-		<caption>Prototype</caption>
-		<tbody>
-        			<tr>
-				<td class="type"><a href="http://php.net/manual/ja/class.exception.php#exception.props.code" class="fqsen" target="_blank">\Exception::$code</a></td>
-				<td class="desc"></td>
-				<td class="rest">inherit</td>
-			</tr>
-        		</tbody>
-	</table>
-                            					</div>
-				</li>
-            				<li class="structure-item">
-					<div class="attribute">
-						<span class="label label-default"></span>
-						<span class="label label-primary"></span>
-						<span class="label label-protected">protected</span>
-                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
-                                    					</div>
-					<h4 id="Doctrine\DBAL\Driver\AbstractDriverException::$file" tabindex="-1" class="structure-title">
-						<small>NULL</small>
-						$file						<var> = null</var>
-					</h4>
-					<div class="inner-item">
-						<div class="description"></div>
-                        	<table class="table">
-		<caption>Prototype</caption>
-		<tbody>
-        			<tr>
-				<td class="type"><a href="http://php.net/manual/ja/class.exception.php#exception.props.file" class="fqsen" target="_blank">\Exception::$file</a></td>
-				<td class="desc"></td>
-				<td class="rest">inherit</td>
-			</tr>
-        		</tbody>
-	</table>
-                            					</div>
-				</li>
-            				<li class="structure-item">
-					<div class="attribute">
-						<span class="label label-default"></span>
-						<span class="label label-primary"></span>
-						<span class="label label-protected">protected</span>
-                        			<a href="#L-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
-                                    					</div>
-					<h4 id="Doctrine\DBAL\Driver\AbstractDriverException::$line" tabindex="-1" class="structure-title">
-						<small>NULL</small>
-						$line						<var> = null</var>
-					</h4>
-					<div class="inner-item">
-						<div class="description"></div>
-                        	<table class="table">
-		<caption>Prototype</caption>
-		<tbody>
-        			<tr>
-				<td class="type"><a href="http://php.net/manual/ja/class.exception.php#exception.props.line" class="fqsen" target="_blank">\Exception::$line</a></td>
-				<td class="desc"></td>
-				<td class="rest">inherit</td>
-			</tr>
-        		</tbody>
-	</table>
-                            					</div>
-				</li>
-            		</ul>
     
 	<h3>Methods</h3>
     		<ul>
@@ -237,84 +151,15 @@
 						<span class="label label-danger"></span>
 						<span class="label label-default"></span>
 						<span class="label label-default"></span>
-						<span class="label label-deprecated"></span>
+						<span class="label label-deprecated">deprecated </span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/doctrine/dbal/blob/2.10.4/lib/Doctrine/DBAL/Driver/AbstractDriverException.php#L28-L39" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/doctrine/dbal/blob/2.12.1/lib/Doctrine/DBAL/Driver/Exception.php#L14-L24" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
-					<h4 id="Doctrine\DBAL\Driver\AbstractDriverException::__construct()" tabindex="-1" class="structure-title ">
-                        __construct                        	<small>($message, $sqlState = null, $errorCode = null) : void</small>
-						</h4>
-					<div class="inner-item">
-						<div class="description"></div>
-                        	<table class="table">
-		<caption>Parameters</caption>
-		<tbody>
-        			<tr>
-				<td class="type">string</td>
-				<td class="rest">$message</td>
-				<td class="desc"><p>The driver error message.</p>
-</td>
-			</tr>
-        			<tr>
-				<td class="type">string<span class="type-separator"></span><wbr>null</td>
-				<td class="rest">$sqlState = null</td>
-				<td class="desc"><p>The SQLSTATE the driver is in at the time the error occurred, if any.</p>
-</td>
-			</tr>
-        			<tr>
-				<td class="type">int<span class="type-separator"></span><wbr>string<span class="type-separator"></span><wbr>null</td>
-				<td class="rest">$errorCode = null</td>
-				<td class="desc"><p>The driver specific error code if any.</p>
-</td>
-			</tr>
-        		</tbody>
-	</table>
-                            	<table class="table">
-		<caption>Return</caption>
-		<tbody>
-		<tr>
-			<td class="type">void</td>
-			<td class="desc"></td>
-			<td class="rest"></td>
-		</tr>
-		</tbody>
-	</table>
-                                                    	<table class="table">
-		<caption>Prototype</caption>
-		<tbody>
-        			<tr>
-				<td class="type"><a href="http://php.net/manual/ja/exception.construct.php" class="fqsen" target="_blank">\Exception::__construct()</a></td>
-				<td class="desc"></td>
-				<td class="rest">override</td>
-			</tr>
-        		</tbody>
-	</table>
-                            					</div>
-					<div class="attribute">
-						<span class="label label-default"></span>
-						<span class="label label-default"></span>
-					</div>
-					<div class="clearfix"></div>
-				</li>
-            				<li class="structure-item">
-					<div class="attribute">
-						<span class="label label-danger"></span>
-						<span class="label label-default"></span>
-						<span class="label label-magic"></span>
-						<span class="label label-danger"></span>
-						<span class="label label-default"></span>
-						<span class="label label-default"></span>
-						<span class="label label-deprecated"></span>
-						<span class="label label-public">public</span>
-                        			<a href="https://github.com/doctrine/dbal/blob/2.10.4/lib/Doctrine/DBAL/Driver/AbstractDriverException.php#L41-L47" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
-                                    					</div>
-					<h4 id="Doctrine\DBAL\Driver\AbstractDriverException::getErrorCode()" tabindex="-1" class="structure-title ">
+					<h4 id="Doctrine\DBAL\Driver\Exception::getErrorCode()" tabindex="-1" class="structure-title strike">
                         getErrorCode                        	<small>() : int<span class="type-separator"></span><wbr>string<span class="type-separator"></span><wbr>null</small>
 						</h4>
 					<div class="inner-item">
-						<div class="description"><p><tag_inheritdoc data-type='' data-description=''>Returns the driver specific error code if available.</p>
-<p>Returns null if no driver specific error code is available<br />
-for the error raised by the driver.</tag_inheritdoc></p>
+						<div class="description"><p>Returns the driver specific error code if available.</p>
 </div>
                         	<table class="table">
 		<caption>Parameters</caption>
@@ -331,17 +176,7 @@ for the error raised by the driver.</tag_inheritdoc></p>
 		</tr>
 		</tbody>
 	</table>
-                                                    	<table class="table">
-		<caption>Prototype</caption>
-		<tbody>
-        			<tr>
-				<td class="type"><a href="Doctrine-DBAL-Driver-DriverException$typespace.html#Doctrine\DBAL\Driver\DriverException::getErrorCode()" class="fqsen "><small>Doctrine\DBAL\Driver\</small><wbr>DriverException::getErrorCode()</a></td>
-				<td class="desc">Returns the driver specific error code if available.</td>
-				<td class="rest">implement</td>
-			</tr>
-        		</tbody>
-	</table>
-                            					</div>
+                                                                            					</div>
 					<div class="attribute">
 						<span class="label label-default"></span>
 						<span class="label label-default"></span>
@@ -358,14 +193,14 @@ for the error raised by the driver.</tag_inheritdoc></p>
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/doctrine/dbal/blob/2.10.4/lib/Doctrine/DBAL/Driver/AbstractDriverException.php#L49-L55" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/doctrine/dbal/blob/2.12.1/lib/Doctrine/DBAL/Driver/Exception.php#L26-L33" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
-					<h4 id="Doctrine\DBAL\Driver\AbstractDriverException::getSQLState()" tabindex="-1" class="structure-title ">
+					<h4 id="Doctrine\DBAL\Driver\Exception::getSQLState()" tabindex="-1" class="structure-title ">
                         getSQLState                        	<small>() : string<span class="type-separator"></span><wbr>null</small>
 						</h4>
 					<div class="inner-item">
-						<div class="description"><p><tag_inheritdoc data-type='' data-description=''>Returns the SQLSTATE the driver was in at the time the error occurred.</p>
-<p>Returns null if the driver does not provide a SQLSTATE for the error occurred.</tag_inheritdoc></p>
+						<div class="description"><p>Returns the SQLSTATE the driver was in at the time the error occurred.</p>
+<p>Returns null if the driver does not provide a SQLSTATE for the error occurred.</p>
 </div>
                         	<table class="table">
 		<caption>Parameters</caption>
@@ -382,17 +217,7 @@ for the error raised by the driver.</tag_inheritdoc></p>
 		</tr>
 		</tbody>
 	</table>
-                                                    	<table class="table">
-		<caption>Prototype</caption>
-		<tbody>
-        			<tr>
-				<td class="type"><a href="Doctrine-DBAL-Driver-DriverException$typespace.html#Doctrine\DBAL\Driver\DriverException::getSQLState()" class="fqsen "><small>Doctrine\DBAL\Driver\</small><wbr>DriverException::getSQLState()</a></td>
-				<td class="desc">Returns the SQLSTATE the driver was in at the time the error occurred.</td>
-				<td class="rest">implement</td>
-			</tr>
-        		</tbody>
-	</table>
-                            					</div>
+                                                                            					</div>
 					<div class="attribute">
 						<span class="label label-default"></span>
 						<span class="label label-default"></span>
@@ -411,56 +236,7 @@ for the error raised by the driver.</tag_inheritdoc></p>
 						<span class="label label-public">public</span>
                         			<a href="#L0-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
-					<h4 id="Doctrine\DBAL\Driver\AbstractDriverException::__wakeup()" tabindex="-1" class="structure-title ">
-                        __wakeup                        	<small>() : void</small>
-						</h4>
-					<div class="inner-item">
-						<div class="description"></div>
-                        	<table class="table">
-		<caption>Parameters</caption>
-		<tbody>
-        		</tbody>
-	</table>
-                            	<table class="table">
-		<caption>Return</caption>
-		<tbody>
-		<tr>
-			<td class="type">void</td>
-			<td class="desc"></td>
-			<td class="rest"></td>
-		</tr>
-		</tbody>
-	</table>
-                                                    	<table class="table">
-		<caption>Prototype</caption>
-		<tbody>
-        			<tr>
-				<td class="type"><a href="http://php.net/manual/ja/exception.wakeup.php" class="fqsen" target="_blank">\Exception::__wakeup()</a></td>
-				<td class="desc"></td>
-				<td class="rest">inherit</td>
-			</tr>
-        		</tbody>
-	</table>
-                            					</div>
-					<div class="attribute">
-						<span class="label label-default"></span>
-						<span class="label label-default"></span>
-					</div>
-					<div class="clearfix"></div>
-				</li>
-            				<li class="structure-item">
-					<div class="attribute">
-						<span class="label label-danger">final</span>
-						<span class="label label-default"></span>
-						<span class="label label-magic"></span>
-						<span class="label label-danger"></span>
-						<span class="label label-default"></span>
-						<span class="label label-default"></span>
-						<span class="label label-deprecated"></span>
-						<span class="label label-public">public</span>
-                        			<a href="#L0-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
-                                    					</div>
-					<h4 id="Doctrine\DBAL\Driver\AbstractDriverException::getMessage()" tabindex="-1" class="structure-title ">
+					<h4 id="Doctrine\DBAL\Driver\Exception::getMessage()" tabindex="-1" class="structure-title ">
                         getMessage                        	<small>() : void</small>
 						</h4>
 					<div class="inner-item">
@@ -484,7 +260,7 @@ for the error raised by the driver.</tag_inheritdoc></p>
 		<caption>Prototype</caption>
 		<tbody>
         			<tr>
-				<td class="type"><a href="http://php.net/manual/ja/exception.getmessage.php" class="fqsen" target="_blank">\Exception::getMessage()</a></td>
+				<td class="type"><a href="http://php.net/manual/ja/throwable.getmessage.php" class="fqsen" target="_blank">\Throwable::getMessage()</a></td>
 				<td class="desc"></td>
 				<td class="rest">inherit</td>
 			</tr>
@@ -499,7 +275,7 @@ for the error raised by the driver.</tag_inheritdoc></p>
 				</li>
             				<li class="structure-item">
 					<div class="attribute">
-						<span class="label label-danger">final</span>
+						<span class="label label-danger"></span>
 						<span class="label label-default"></span>
 						<span class="label label-magic"></span>
 						<span class="label label-danger"></span>
@@ -509,7 +285,7 @@ for the error raised by the driver.</tag_inheritdoc></p>
 						<span class="label label-public">public</span>
                         			<a href="#L0-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
-					<h4 id="Doctrine\DBAL\Driver\AbstractDriverException::getCode()" tabindex="-1" class="structure-title ">
+					<h4 id="Doctrine\DBAL\Driver\Exception::getCode()" tabindex="-1" class="structure-title ">
                         getCode                        	<small>() : void</small>
 						</h4>
 					<div class="inner-item">
@@ -533,7 +309,7 @@ for the error raised by the driver.</tag_inheritdoc></p>
 		<caption>Prototype</caption>
 		<tbody>
         			<tr>
-				<td class="type"><a href="http://php.net/manual/ja/exception.getcode.php" class="fqsen" target="_blank">\Exception::getCode()</a></td>
+				<td class="type"><a href="http://php.net/manual/ja/throwable.getcode.php" class="fqsen" target="_blank">\Throwable::getCode()</a></td>
 				<td class="desc"></td>
 				<td class="rest">inherit</td>
 			</tr>
@@ -548,7 +324,7 @@ for the error raised by the driver.</tag_inheritdoc></p>
 				</li>
             				<li class="structure-item">
 					<div class="attribute">
-						<span class="label label-danger">final</span>
+						<span class="label label-danger"></span>
 						<span class="label label-default"></span>
 						<span class="label label-magic"></span>
 						<span class="label label-danger"></span>
@@ -558,7 +334,7 @@ for the error raised by the driver.</tag_inheritdoc></p>
 						<span class="label label-public">public</span>
                         			<a href="#L0-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
-					<h4 id="Doctrine\DBAL\Driver\AbstractDriverException::getFile()" tabindex="-1" class="structure-title ">
+					<h4 id="Doctrine\DBAL\Driver\Exception::getFile()" tabindex="-1" class="structure-title ">
                         getFile                        	<small>() : void</small>
 						</h4>
 					<div class="inner-item">
@@ -582,7 +358,7 @@ for the error raised by the driver.</tag_inheritdoc></p>
 		<caption>Prototype</caption>
 		<tbody>
         			<tr>
-				<td class="type"><a href="http://php.net/manual/ja/exception.getfile.php" class="fqsen" target="_blank">\Exception::getFile()</a></td>
+				<td class="type"><a href="http://php.net/manual/ja/throwable.getfile.php" class="fqsen" target="_blank">\Throwable::getFile()</a></td>
 				<td class="desc"></td>
 				<td class="rest">inherit</td>
 			</tr>
@@ -597,7 +373,7 @@ for the error raised by the driver.</tag_inheritdoc></p>
 				</li>
             				<li class="structure-item">
 					<div class="attribute">
-						<span class="label label-danger">final</span>
+						<span class="label label-danger"></span>
 						<span class="label label-default"></span>
 						<span class="label label-magic"></span>
 						<span class="label label-danger"></span>
@@ -607,7 +383,7 @@ for the error raised by the driver.</tag_inheritdoc></p>
 						<span class="label label-public">public</span>
                         			<a href="#L0-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
-					<h4 id="Doctrine\DBAL\Driver\AbstractDriverException::getLine()" tabindex="-1" class="structure-title ">
+					<h4 id="Doctrine\DBAL\Driver\Exception::getLine()" tabindex="-1" class="structure-title ">
                         getLine                        	<small>() : void</small>
 						</h4>
 					<div class="inner-item">
@@ -631,7 +407,7 @@ for the error raised by the driver.</tag_inheritdoc></p>
 		<caption>Prototype</caption>
 		<tbody>
         			<tr>
-				<td class="type"><a href="http://php.net/manual/ja/exception.getline.php" class="fqsen" target="_blank">\Exception::getLine()</a></td>
+				<td class="type"><a href="http://php.net/manual/ja/throwable.getline.php" class="fqsen" target="_blank">\Throwable::getLine()</a></td>
 				<td class="desc"></td>
 				<td class="rest">inherit</td>
 			</tr>
@@ -646,7 +422,7 @@ for the error raised by the driver.</tag_inheritdoc></p>
 				</li>
             				<li class="structure-item">
 					<div class="attribute">
-						<span class="label label-danger">final</span>
+						<span class="label label-danger"></span>
 						<span class="label label-default"></span>
 						<span class="label label-magic"></span>
 						<span class="label label-danger"></span>
@@ -656,7 +432,7 @@ for the error raised by the driver.</tag_inheritdoc></p>
 						<span class="label label-public">public</span>
                         			<a href="#L0-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
-					<h4 id="Doctrine\DBAL\Driver\AbstractDriverException::getTrace()" tabindex="-1" class="structure-title ">
+					<h4 id="Doctrine\DBAL\Driver\Exception::getTrace()" tabindex="-1" class="structure-title ">
                         getTrace                        	<small>() : void</small>
 						</h4>
 					<div class="inner-item">
@@ -680,7 +456,7 @@ for the error raised by the driver.</tag_inheritdoc></p>
 		<caption>Prototype</caption>
 		<tbody>
         			<tr>
-				<td class="type"><a href="http://php.net/manual/ja/exception.gettrace.php" class="fqsen" target="_blank">\Exception::getTrace()</a></td>
+				<td class="type"><a href="http://php.net/manual/ja/throwable.gettrace.php" class="fqsen" target="_blank">\Throwable::getTrace()</a></td>
 				<td class="desc"></td>
 				<td class="rest">inherit</td>
 			</tr>
@@ -695,7 +471,7 @@ for the error raised by the driver.</tag_inheritdoc></p>
 				</li>
             				<li class="structure-item">
 					<div class="attribute">
-						<span class="label label-danger">final</span>
+						<span class="label label-danger"></span>
 						<span class="label label-default"></span>
 						<span class="label label-magic"></span>
 						<span class="label label-danger"></span>
@@ -705,7 +481,7 @@ for the error raised by the driver.</tag_inheritdoc></p>
 						<span class="label label-public">public</span>
                         			<a href="#L0-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
-					<h4 id="Doctrine\DBAL\Driver\AbstractDriverException::getPrevious()" tabindex="-1" class="structure-title ">
+					<h4 id="Doctrine\DBAL\Driver\Exception::getPrevious()" tabindex="-1" class="structure-title ">
                         getPrevious                        	<small>() : void</small>
 						</h4>
 					<div class="inner-item">
@@ -729,7 +505,7 @@ for the error raised by the driver.</tag_inheritdoc></p>
 		<caption>Prototype</caption>
 		<tbody>
         			<tr>
-				<td class="type"><a href="http://php.net/manual/ja/exception.getprevious.php" class="fqsen" target="_blank">\Exception::getPrevious()</a></td>
+				<td class="type"><a href="http://php.net/manual/ja/throwable.getprevious.php" class="fqsen" target="_blank">\Throwable::getPrevious()</a></td>
 				<td class="desc"></td>
 				<td class="rest">inherit</td>
 			</tr>
@@ -744,7 +520,7 @@ for the error raised by the driver.</tag_inheritdoc></p>
 				</li>
             				<li class="structure-item">
 					<div class="attribute">
-						<span class="label label-danger">final</span>
+						<span class="label label-danger"></span>
 						<span class="label label-default"></span>
 						<span class="label label-magic"></span>
 						<span class="label label-danger"></span>
@@ -754,7 +530,7 @@ for the error raised by the driver.</tag_inheritdoc></p>
 						<span class="label label-public">public</span>
                         			<a href="#L0-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
-					<h4 id="Doctrine\DBAL\Driver\AbstractDriverException::getTraceAsString()" tabindex="-1" class="structure-title ">
+					<h4 id="Doctrine\DBAL\Driver\Exception::getTraceAsString()" tabindex="-1" class="structure-title ">
                         getTraceAsString                        	<small>() : void</small>
 						</h4>
 					<div class="inner-item">
@@ -778,7 +554,7 @@ for the error raised by the driver.</tag_inheritdoc></p>
 		<caption>Prototype</caption>
 		<tbody>
         			<tr>
-				<td class="type"><a href="http://php.net/manual/ja/exception.gettraceasstring.php" class="fqsen" target="_blank">\Exception::getTraceAsString()</a></td>
+				<td class="type"><a href="http://php.net/manual/ja/throwable.gettraceasstring.php" class="fqsen" target="_blank">\Throwable::getTraceAsString()</a></td>
 				<td class="desc"></td>
 				<td class="rest">inherit</td>
 			</tr>
@@ -803,7 +579,7 @@ for the error raised by the driver.</tag_inheritdoc></p>
 						<span class="label label-public">public</span>
                         			<a href="#L0-L" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
-					<h4 id="Doctrine\DBAL\Driver\AbstractDriverException::__toString()" tabindex="-1" class="structure-title ">
+					<h4 id="Doctrine\DBAL\Driver\Exception::__toString()" tabindex="-1" class="structure-title ">
                         __toString                        	<small>() : void</small>
 						</h4>
 					<div class="inner-item">
@@ -827,7 +603,7 @@ for the error raised by the driver.</tag_inheritdoc></p>
 		<caption>Prototype</caption>
 		<tbody>
         			<tr>
-				<td class="type"><a href="http://php.net/manual/ja/exception.tostring.php" class="fqsen" target="_blank">\Exception::__toString()</a></td>
+				<td class="type"><a href="http://php.net/manual/ja/throwable.tostring.php" class="fqsen" target="_blank">\Throwable::__toString()</a></td>
 				<td class="desc"></td>
 				<td class="rest">inherit</td>
 			</tr>

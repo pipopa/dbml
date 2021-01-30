@@ -5,6 +5,37 @@
 namespace ryunosuke\dbml;
 
 # constants
+if (!defined("ryunosuke\\dbml\\JP_ERA")) {
+    /** 和暦 */
+    define("ryunosuke\\dbml\\JP_ERA", [
+        [
+            "name"  => "令和",
+            "abbr"  => "R",
+            "since" => 1556636400,
+        ],
+        [
+            "name"  => "平成",
+            "abbr"  => "H",
+            "since" => 600188400,
+        ],
+        [
+            "name"  => "昭和",
+            "abbr"  => "S",
+            "since" => -1357635600,
+        ],
+        [
+            "name"  => "大正",
+            "abbr"  => "T",
+            "since" => -1812186000,
+        ],
+        [
+            "name"  => "明治",
+            "abbr"  => "M",
+            "since" => -3216790800,
+        ],
+    ]);
+}
+
 if (!defined("ryunosuke\\dbml\\KEYWORDS")) {
     /** SQL キーワード（全 RDBMS ごちゃまぜ） */
     define("ryunosuke\\dbml\\KEYWORDS", [
@@ -967,8 +998,8 @@ if (!isset($excluded_functions["array_sprintf"]) && (!function_exists("ryunosuke
      * ```
      *
      * @param iterable $array 対象配列
-     * @param string|callable $format 書式文字列あるいはクロージャ
-     * @param string $glue 結合文字列。未指定時は implode しない
+     * @param string|callable|null $format 書式文字列あるいはクロージャ
+     * @param ?string $glue 結合文字列。未指定時は implode しない
      * @return array|string sprintf された配列
      */
     function array_sprintf($array, $format = null, $glue = null)
@@ -977,15 +1008,16 @@ if (!isset($excluded_functions["array_sprintf"]) && (!function_exists("ryunosuke
             $callback = func_user_func_array($format);
         }
         elseif ($format === null) {
-            $callback = function ($v, $k) { return vsprintf($k, is_array($v) ? $v : [$v]); };
+            $callback = function ($v, $k, $n) { return vsprintf($k, is_array($v) ? $v : [$v]); };
         }
         else {
-            $callback = function ($v, $k) use ($format) { return sprintf($format, $v, $k); };
+            $callback = function ($v, $k, $n) use ($format) { return sprintf($format, $v, $k); };
         }
 
         $result = [];
+        $n = 0;
         foreach ($array as $k => $v) {
-            $result[] = $callback($v, $k);
+            $result[] = $callback($v, $k, $n++);
         }
 
         if ($glue !== null) {
@@ -1111,8 +1143,9 @@ if (!isset($excluded_functions["array_get"]) && (!function_exists("ryunosuke\\db
 
         if ($key instanceof \Closure) {
             $result = [];
+            $n = 0;
             foreach ($array as $k => $v) {
-                if ($key($v, $k)) {
+                if ($key($v, $k, $n++)) {
                     if (func_num_args() === 2) {
                         return $v;
                     }
@@ -1341,8 +1374,9 @@ if (!isset($excluded_functions["array_unset"]) && (!function_exists("ryunosuke\\
 
         if ($key instanceof \Closure) {
             $result = [];
+            $n = 0;
             foreach ($array as $k => $v) {
-                if ($key($v, $k)) {
+                if ($key($v, $k, $n++)) {
                     $result[$k] = $v;
                     unset($array[$k]);
                 }
@@ -1454,8 +1488,9 @@ if (!isset($excluded_functions["array_find"]) && (!function_exists("ryunosuke\\d
     {
         $callback = func_user_func_array($callback);
 
+        $n = 0;
         foreach ($array as $k => $v) {
-            $result = $callback($v, $k);
+            $result = $callback($v, $k, $n++);
             if ($result) {
                 if ($is_key) {
                     return $k;
@@ -1550,8 +1585,9 @@ if (!isset($excluded_functions["array_map_key"]) && (!function_exists("ryunosuke
     {
         $callback = func_user_func_array($callback);
         $result = [];
+        $n = 0;
         foreach ($array as $k => $v) {
-            $k2 = $callback($k, $v);
+            $k2 = $callback($k, $v, $n++);
             if ($k2 !== null) {
                 $result[$k2] = $v;
             }
@@ -1570,6 +1606,7 @@ if (!isset($excluded_functions["array_maps"]) && (!function_exists("ryunosuke\\d
      * 指定したコールバックで複数回回してマップする。
      * `array_maps($array, $f, $g)` は `array_map($g, array_map($f, $array))` とほぼ等しい。
      * ただし、引数は順番が違う（可変引数のため）し、コールバックが要求するならキーも渡ってくる。
+     * さらに文字列関数で "..." から始まっているなら可変引数としてコールする。
      *
      * 少し変わった仕様として、コールバックに [$method => $args] を付けるとそれはメソッド呼び出しになる。
      * つまり各要素 $v に対して `$v->$method(...$args)` がマップ結果になる。
@@ -1581,6 +1618,8 @@ if (!isset($excluded_functions["array_maps"]) && (!function_exists("ryunosuke\\d
      * that(array_maps([1, 2, 3, 4, 5], rbind('pow', 3), 'dechex', 'strtoupper'))->isSame(['1', '8', '1B', '40', '7D']);
      * // キーも渡ってくる
      * that(array_maps(['a' => 'A', 'b' => 'B'], function($v, $k){return "$k:$v";}))->isSame(['a' => 'a:A', 'b' => 'b:B']);
+     * // ... で可変引数コール
+     * that(array_maps([[1, 3], [1, 5, 2]], '...range'))->isSame([[1, 2, 3], [1, 3, 5]]);
      * // メソッドコールもできる（引数不要なら `@method` でも同じ）
      * that(array_maps([new \Exception('a'), new \Exception('b')], ['getMessage' => []]))->isSame(['a', 'b']);
      * that(array_maps([new \Exception('a'), new \Exception('b')], '@getMessage'))->isSame(['a', 'b']);
@@ -1596,22 +1635,34 @@ if (!isset($excluded_functions["array_maps"]) && (!function_exists("ryunosuke\\d
         foreach ($callbacks as $callback) {
             if (is_string($callback) && $callback[0] === '@') {
                 $margs = [];
+                $vargs = false;
                 $callback = substr($callback, 1);
             }
             elseif (is_array($callback) && count($callback) === 1) {
                 $margs = reset($callback);
+                $vargs = false;
                 $callback = key($callback);
+            }
+            elseif (is_string($callback) && substr($callback, 0, 3) === '...') {
+                $margs = null;
+                $vargs = true;
+                $callback = substr($callback, 3);
             }
             else {
                 $margs = null;
+                $vargs = false;
                 $callback = func_user_func_array($callback);
             }
+            $n = 0;
             foreach ($result as $k => $v) {
                 if (isset($margs)) {
                     $result[$k] = ([$v, $callback])(...$margs);
                 }
+                elseif ($vargs) {
+                    $result[$k] = $callback(...$v);
+                }
                 else {
-                    $result[$k] = $callback($v, $k);
+                    $result[$k] = $callback($v, $k, $n++);
                 }
             }
         }
@@ -2059,7 +2110,7 @@ if (!isset($excluded_functions["array_all"]) && (!function_exists("ryunosuke\\db
      * ```
      *
      * @param iterable $array 対象配列
-     * @param callable $callback 評価クロージャ。 null なら値そのもので評価
+     * @param ?callable $callback 評価クロージャ。 null なら値そのもので評価
      * @param bool|mixed $default 空配列の場合のデフォルト値
      * @return bool 全要素が true なら true
      */
@@ -2071,8 +2122,9 @@ if (!isset($excluded_functions["array_all"]) && (!function_exists("ryunosuke\\db
 
         $callback = func_user_func_array($callback);
 
+        $n = 0;
         foreach ($array as $k => $v) {
-            if (!$callback($v, $k)) {
+            if (!$callback($v, $k, $n++)) {
                 return false;
             }
         }
@@ -2334,7 +2386,7 @@ if (!isset($excluded_functions["array_uncolumns"]) && (!function_exists("ryunosu
      * ```
      *
      * @param array $array 対象配列
-     * @param array $template 抽出要素とそのデフォルト値
+     * @param ?array $template 抽出要素とそのデフォルト値
      * @return array 新しい配列
      */
     function array_uncolumns($array, $template = null)
@@ -2654,6 +2706,199 @@ if (function_exists("ryunosuke\\dbml\\array_nest") && !defined("ryunosuke\\dbml\
     define("ryunosuke\\dbml\\array_nest", "ryunosuke\\dbml\\array_nest");
 }
 
+if (!isset($excluded_functions["date_timestamp"]) && (!function_exists("ryunosuke\\dbml\\date_timestamp") || (!false && (new \ReflectionFunction("ryunosuke\\dbml\\date_timestamp"))->isInternal()))) {
+    /**
+     * 日時文字列をよしなにタイムスタンプに変換する
+     *
+     * マイクロ秒にも対応している。つまり返り値は int か float になる。
+     * また、相対指定の +1 month の月末問題は起きないようにしてある。
+     *
+     * かなり適当に和暦にも対応している。
+     *
+     * Example:
+     * ```php
+     * // 普通の日時文字列
+     * that(date_timestamp('2014/12/24 12:34:56'))->isSame(strtotime('2014/12/24 12:34:56'));
+     * // 和暦
+     * that(date_timestamp('昭和31年12月24日 12時34分56秒'))->isSame(strtotime('1956/12/24 12:34:56'));
+     * // 相対指定
+     * that(date_timestamp('2012/01/31 +1 month'))->isSame(strtotime('2012/02/29'));
+     * that(date_timestamp('2012/03/31 -1 month'))->isSame(strtotime('2012/02/29'));
+     * // マイクロ秒
+     * that(date_timestamp('2014/12/24 12:34:56.789'))->isSame(1419392096.789);
+     * ```
+     *
+     * @param string|int|float $datetimedata 日時データ
+     * @return int|float|null タイムスタンプ。パース失敗時は null
+     */
+    function date_timestamp($datetimedata)
+    {
+        // 全角を含めた trim
+        $chars = "[\\x0-\x20\x7f\xc2\xa0\xe3\x80\x80]";
+        $datetimedata = preg_replace("/\A{$chars}++|{$chars}++\z/u", '', $datetimedata);
+
+        // 和暦を西暦に置換
+        $jpnames = array_merge(array_column(JP_ERA, 'name'), array_column(JP_ERA, 'abbr'));
+        $datetimedata = preg_replace_callback('/^(' . implode('|', $jpnames) . ')(\d{1,2}|元)/u', function ($matches) {
+            [, $era, $year] = $matches;
+            $eratime = array_find(JP_ERA, function ($v) use ($era) {
+                if (in_array($era, [$v['name'], $v['abbr']], true)) {
+                    return $v['since'];
+                }
+            }, false);
+            return idate('Y', $eratime) + ($year === '元' ? 1 : $year) - 1;
+        }, $datetimedata);
+
+        // 単位文字列を置換
+        $datetimedata = strtr($datetimedata, [
+            '　'  => ' ',
+            '西暦' => '',
+            '年'  => '-',
+            '月'  => '-',
+            '日'  => ' ',
+            '時'  => ':',
+            '分'  => ':',
+            '秒'  => '',
+        ]);
+        $datetimedata = trim($datetimedata, " \t\n\r\0\x0B:-");
+
+        // 数値4桁は年と解釈されるように
+        if (preg_match('/^[0-9]{4}$/', $datetimedata)) {
+            $datetimedata .= '-01-01';
+        }
+
+        // 数値系はタイムスタンプとみなす
+        if (ctype_digit("$datetimedata")) {
+            return (int) $datetimedata;
+        }
+        if (is_numeric($datetimedata)) {
+            return (float) $datetimedata;
+        }
+
+        // date_parse してみる
+        $parts = date_parse($datetimedata);
+        if (!$parts) {
+            // ドキュメントに「成功した場合に日付情報を含む配列、失敗した場合に FALSE を返します」とあるが、失敗する気配がない
+            return null; // @codeCoverageIgnore
+        }
+        if ($parts['error_count']) {
+            return null;
+        }
+
+        if (!checkdate($parts['month'], $parts['day'], $parts['year'])) {
+            return null;
+        }
+
+        if (isset($parts['relative'])) {
+            $relative = $parts['relative'];
+            $parts['year'] += $relative['year'];
+            $parts['month'] += $relative['month'];
+            // php の相対指定は割と腐っているので補正する（末日を超えても月は変わらないようにする）
+            if ($parts['month'] > 12) {
+                $parts['year'] += intdiv($parts['month'], 12);
+                $parts['month'] = $parts['month'] % 12;
+            }
+            if ($parts['month'] < 1) {
+                $parts['year'] += intdiv(-12 + $parts['month'], 12);
+                $parts['month'] = 12 + $parts['month'] % 12;
+            }
+            if (!checkdate($parts['month'], $parts['day'], $parts['year'])) {
+                $parts['day'] = idate('t', mktime(12, 12, 12, $parts['month'], 1, $parts['year']));
+            }
+            $parts['day'] += $relative['day'];
+            $parts['hour'] += $relative['hour'];
+            $parts['minute'] += $relative['minute'];
+            $parts['second'] += $relative['second'];
+        }
+
+        // ドキュメントに「引数が不正な場合、 この関数は FALSE を返します」とあるが、 date_parse の結果を与える分には失敗しないはず
+        $time = mktime($parts['hour'], $parts['minute'], $parts['second'], $parts['month'], $parts['day'], $parts['year']);
+        if ($parts['fraction']) {
+            // 1970 以前なら減算、以降なら加算じゃないと帳尻が合わなくなる
+            $time += $time >= 0 ? $parts['fraction'] : -$parts['fraction'];
+        }
+
+        return $time;
+    }
+}
+if (function_exists("ryunosuke\\dbml\\date_timestamp") && !defined("ryunosuke\\dbml\\date_timestamp")) {
+    define("ryunosuke\\dbml\\date_timestamp", "ryunosuke\\dbml\\date_timestamp");
+}
+
+if (!isset($excluded_functions["date_convert"]) && (!function_exists("ryunosuke\\dbml\\date_convert") || (!false && (new \ReflectionFunction("ryunosuke\\dbml\\date_convert"))->isInternal()))) {
+    /**
+     * 日時文字列をよしなに別のフォーマットに変換する
+     *
+     * マイクロ秒にも対応している。
+     * かなり適当に和暦にも対応している。
+     *
+     * Example:
+     * ```php
+     * // 和暦を Y/m/d H:i:s に変換
+     * that(date_convert('Y/m/d H:i:s', '昭和31年12月24日 12時34分56秒'))->isSame('1956/12/24 12:34:56');
+     * // 単純に「マイクロ秒が使える date」としても使える
+     * $now = 1234567890.123; // テストがしづらいので固定時刻にする
+     * that(date_convert('Y/m/d H:i:s.u', $now))->isSame('2009/02/14 08:31:30.123000');
+     * ```
+     *
+     * @param string $format フォーマット
+     * @param string|int|float|\DateTime|null $datetimedata 日時データ。省略時は microtime
+     * @return string 日時文字列
+     */
+    function date_convert($format, $datetimedata = null)
+    {
+        // 省略時は microtime
+        if ($datetimedata === null) {
+            $timestamp = microtime(true);
+        }
+        elseif ($datetimedata instanceof \DateTimeInterface) {
+            // @fixme DateTime オブジェクトって timestamp を float で得られないの？
+            $timestamp = (float) $datetimedata->format('U.u');
+        }
+        else {
+            $timestamp = date_timestamp($datetimedata);
+            if ($timestamp === null) {
+                throw new \InvalidArgumentException("parse failed '$datetimedata'");
+            }
+        }
+
+        $replace = function ($string, $char, $replace) {
+            $string = preg_replace('/(?<!\\\)' . $char . '/', '${1}' . $replace, $string);
+            return preg_replace('/\\\\' . $char . '/', $char, $string);
+        };
+
+        if (preg_match('/[JbKk]/', $format)) {
+            $era = array_find(JP_ERA, function ($v) use ($timestamp) {
+                if ($v['since'] <= $timestamp) {
+                    return $v;
+                }
+            }, false);
+            if ($era === false) {
+                throw new \InvalidArgumentException("notfound JP_ERA '$datetimedata'");
+            }
+
+            $y = idate('Y', $timestamp) - idate('Y', $era['since']) + 1;
+            $format = $replace($format, 'J', $era['name']);
+            $format = $replace($format, 'b', $era['abbr']);
+            $format = $replace($format, 'K', $y === 1 ? '元' : $y);
+            $format = $replace($format, 'k', $y);
+        }
+
+        $format = $replace($format, 'x', ['日', '月', '火', '水', '木', '金', '土'][idate('w', $timestamp)]);
+
+        if (is_float($timestamp)) {
+            // datetime パラメータが UNIX タイムスタンプ (例: 946684800) だったり、タイムゾーンを含んでいたり (例: 2010-01-28T15:00:00+02:00) する場合は、 timezone パラメータや現在のタイムゾーンは無視します
+            static $dtz = null;
+            $dtz = $dtz ?? new \DateTimeZone(date_default_timezone_get());
+            return \DateTime::createFromFormat('U.u', $timestamp)->setTimezone($dtz)->format($format);
+        }
+        return date($format, $timestamp);
+    }
+}
+if (function_exists("ryunosuke\\dbml\\date_convert") && !defined("ryunosuke\\dbml\\date_convert")) {
+    define("ryunosuke\\dbml\\date_convert", "ryunosuke\\dbml\\date_convert");
+}
+
 if (!isset($excluded_functions["date_fromto"]) && (!function_exists("ryunosuke\\dbml\\date_fromto") || (!false && (new \ReflectionFunction("ryunosuke\\dbml\\date_fromto"))->isInternal()))) {
     /**
      * 日時っぽい文字列とフォーマットを与えると取りうる範囲を返す
@@ -2890,7 +3135,7 @@ if (!isset($excluded_functions["delegate"]) && (!function_exists("ryunosuke\\dbm
      *
      * @param \Closure $invoker クロージャを実行するためのクロージャ（実処理）
      * @param callable $callable 最終的に実行したいクロージャ
-     * @param int $arity 引数の数
+     * @param ?int $arity 引数の数
      * @return callable $callable を実行するクロージャ
      */
     function delegate($invoker, $callable, $arity = null)
@@ -3845,7 +4090,7 @@ if (!isset($excluded_functions["quoteexplode"]) && (!function_exists("ryunosuke\
      *
      * @param string|array $delimiter 分割文字列
      * @param string $string 対象文字列
-     * @param int $limit 分割数。負数未対応
+     * @param ?int $limit 分割数。負数未対応
      * @param array|string $enclosures 囲い文字。 ["start" => "end"] で開始・終了が指定できる
      * @param string $escape エスケープ文字
      * @return array 分割された配列
@@ -4027,8 +4272,8 @@ if (!isset($excluded_functions["str_chop"]) && (!function_exists("ryunosuke\\dbm
      * ```
      *
      * @param string $string 対象文字列
-     * @param string $prefix 削ぎ落とす先頭文字列
-     * @param string $suffix 削ぎ落とす末尾文字列
+     * @param ?string $prefix 削ぎ落とす先頭文字列
+     * @param ?string $suffix 削ぎ落とす末尾文字列
      * @param bool $case_insensitivity 大文字小文字を無視するか
      * @return string 削ぎ落とした文字列
      */
@@ -4678,7 +4923,7 @@ if (!isset($excluded_functions["mb_substr_replace"]) && (!function_exists("ryuno
      * @param string $string 対象文字列
      * @param string $replacement 置換文字列
      * @param int $start 開始位置
-     * @param int $length 置換長
+     * @param ?int $length 置換長
      * @return string 置換した文字列
      */
     function mb_substr_replace($string, $replacement, $start, $length = null)
@@ -4741,13 +4986,13 @@ if (!isset($excluded_functions["evaluate"]) && (!function_exists("ryunosuke\\dbm
 
         try {
             if ($cachefile) {
-                return (static function () {
+                return ($dummy = static function () {
                     extract(func_get_arg(1));
                     return require func_get_arg(0);
                 })($cachefile, $contextvars);
             }
             else {
-                return (static function () {
+                return ($dummy = static function () {
                     extract(func_get_arg(1));
                     return eval(func_get_arg(0));
                 })($phpcode, $contextvars);
@@ -4809,7 +5054,7 @@ if (!isset($excluded_functions["optional"]) && (!function_exists("ryunosuke\\dbm
      * ```
      *
      * @param object|null $object オブジェクト
-     * @param string $expected 期待するクラス名。指定した場合は is_a される
+     * @param ?string $expected 期待するクラス名。指定した場合は is_a される
      * @return object $object がオブジェクトならそのまま返し、違うなら NullObject を返す
      */
     function optional($object, $expected = null)
@@ -4896,7 +5141,7 @@ if (!isset($excluded_functions["try_finally"]) && (!function_exists("ryunosuke\\
      * ```
      *
      * @param callable $try try ブロッククロージャ
-     * @param callable $finally finally ブロッククロージャ
+     * @param ?callable $finally finally ブロッククロージャ
      * @param array $variadic $try に渡る引数
      * @return \Exception|mixed 例外が飛ばなかったら $try ブロックの返り値、飛んだなら $catch の返り値（デフォルトで例外オブジェクト）
      */
@@ -4930,8 +5175,8 @@ if (!isset($excluded_functions["try_catch_finally"]) && (!function_exists("ryuno
      * ```
      *
      * @param callable $try try ブロッククロージャ
-     * @param callable $catch catch ブロッククロージャ
-     * @param callable $finally finally ブロッククロージャ
+     * @param ?callable $catch catch ブロッククロージャ
+     * @param ?callable $finally finally ブロッククロージャ
      * @param array $variadic $try に渡る引数
      * @return \Exception|mixed 例外が飛ばなかったら $try ブロックの返り値、飛んだなら $catch の返り値（デフォルトで例外オブジェクト）
      */
@@ -5018,7 +5263,7 @@ if (!isset($excluded_functions["cache"]) && (!function_exists("ryunosuke\\dbml\\
      *
      * @param string $key キャッシュのキー
      * @param callable $provider キャッシュがない場合にコールされる callable
-     * @param string $namespace 名前空間
+     * @param ?string $namespace 名前空間
      * @return mixed キャッシュ
      */
     function cache($key, $provider, $namespace = null)

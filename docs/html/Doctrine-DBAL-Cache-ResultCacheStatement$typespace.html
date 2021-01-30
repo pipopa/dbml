@@ -53,8 +53,8 @@
 		<span class="label label-warning"></span>
 		<span class="label label-info"></span>
 		<span class="label label-info">iterateable</span>
-		<span class="label label-deprecated"></span>
-        			<a href="https://github.com/doctrine/dbal/blob/2.10.4/lib/Doctrine/DBAL/Cache/ResultCacheStatement.php#L19-L214" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+		<span class="label label-deprecated">deprecated </span>
+        			<a href="https://github.com/doctrine/dbal/blob/2.12.1/lib/Doctrine/DBAL/Cache/ResultCacheStatement.php#L23-L344" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                     	</div>
 
 	<h2>class <span class="category-name">Doctrine\DBAL\Cache\ResultCacheStatement</span></h2>
@@ -80,12 +80,16 @@ This means that the memory usage for cached results might increase by using this
 				<td class="desc"></td>
 			</tr>
         			<tr>
-				<td class="type"><a href="http://php.net/manual/ja/class.traversable.php" class="fqsen" target="_blank">\Traversable</a></td>
-				<td class="desc"></td>
-			</tr>
-        			<tr>
 				<td class="type"><a href="Doctrine-DBAL-Driver-ResultStatement$typespace.html#Doctrine\DBAL\Driver\ResultStatement" class="fqsen "><small>Doctrine\DBAL\Driver\</small><wbr>ResultStatement</a></td>
 				<td class="desc">Interface for the reading part of a prepare statement only.</td>
+			</tr>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Driver-Result$typespace.html#Doctrine\DBAL\Driver\Result" class="fqsen "><small>Doctrine\DBAL\Driver\</small><wbr>Result</a></td>
+				<td class="desc">Driver-level result statement execution result.</td>
+			</tr>
+        			<tr>
+				<td class="type"><a href="http://php.net/manual/ja/class.traversable.php" class="fqsen" target="_blank">\Traversable</a></td>
+				<td class="desc"></td>
 			</tr>
         		</tbody>
 	</table>
@@ -109,7 +113,7 @@ This means that the memory usage for cached results might increase by using this
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/doctrine/dbal/blob/2.10.4/lib/Doctrine/DBAL/Cache/ResultCacheStatement.php#L62-L74" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/doctrine/dbal/blob/2.12.1/lib/Doctrine/DBAL/Cache/ResultCacheStatement.php#L61-L73" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="Doctrine\DBAL\Cache\ResultCacheStatement::__construct()" tabindex="-1" class="structure-title ">
                         __construct                        	<small>($stmt, $resultCache, $cacheKey, $realKey, $lifetime) : void</small>
@@ -171,11 +175,11 @@ This means that the memory usage for cached results might increase by using this
 						<span class="label label-danger"></span>
 						<span class="label label-default"></span>
 						<span class="label label-default"></span>
-						<span class="label label-deprecated"></span>
+						<span class="label label-deprecated">deprecated </span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/doctrine/dbal/blob/2.10.4/lib/Doctrine/DBAL/Cache/ResultCacheStatement.php#L76-L97" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/doctrine/dbal/blob/2.12.1/lib/Doctrine/DBAL/Cache/ResultCacheStatement.php#L75-L85" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
-					<h4 id="Doctrine\DBAL\Cache\ResultCacheStatement::closeCursor()" tabindex="-1" class="structure-title ">
+					<h4 id="Doctrine\DBAL\Cache\ResultCacheStatement::closeCursor()" tabindex="-1" class="structure-title strike">
                         closeCursor                        	<small>() : bool</small>
 						</h4>
 					<div class="inner-item">
@@ -224,13 +228,13 @@ This means that the memory usage for cached results might increase by using this
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/doctrine/dbal/blob/2.10.4/lib/Doctrine/DBAL/Cache/ResultCacheStatement.php#L99-L105" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/doctrine/dbal/blob/2.12.1/lib/Doctrine/DBAL/Cache/ResultCacheStatement.php#L87-L93" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="Doctrine\DBAL\Cache\ResultCacheStatement::columnCount()" tabindex="-1" class="structure-title ">
                         columnCount                        	<small>() : int</small>
 						</h4>
 					<div class="inner-item">
-						<div class="description"><p><tag_inheritdoc data-type='' data-description=''>Returns the number of columns in the result set</tag_inheritdoc></p>
+						<div class="description"><p><tag_inheritdoc data-type='' data-description=''>Returns the number of columns in the result</tag_inheritdoc></p>
 </div>
                         	<table class="table">
 		<caption>Parameters</caption>
@@ -242,9 +246,8 @@ This means that the memory usage for cached results might increase by using this
 		<tbody>
 		<tr>
 			<td class="type">int</td>
-			<td class="desc"><p>The number of columns in the result set represented</p>
-<pre><code>            by the PDOStatement object. If there is no result set,
-            this method should return 0.
+			<td class="desc"><p>The number of columns in the result. If the columns cannot be counted,</p>
+<pre><code>        this method must return 0.
 </code></pre>
 </td>
 			<td class="rest"></td>
@@ -255,8 +258,8 @@ This means that the memory usage for cached results might increase by using this
 		<caption>Prototype</caption>
 		<tbody>
         			<tr>
-				<td class="type"><a href="Doctrine-DBAL-Driver-ResultStatement$typespace.html#Doctrine\DBAL\Driver\ResultStatement::columnCount()" class="fqsen "><small>Doctrine\DBAL\Driver\</small><wbr>ResultStatement::columnCount()</a></td>
-				<td class="desc">Returns the number of columns in the result set</td>
+				<td class="type"><a href="Doctrine-DBAL-Driver-Result$typespace.html#Doctrine\DBAL\Driver\Result::columnCount()" class="fqsen "><small>Doctrine\DBAL\Driver\</small><wbr>Result::columnCount()</a></td>
+				<td class="desc">Returns the number of columns in the result</td>
 				<td class="rest">implement</td>
 			</tr>
         		</tbody>
@@ -276,11 +279,11 @@ This means that the memory usage for cached results might increase by using this
 						<span class="label label-danger"></span>
 						<span class="label label-default"></span>
 						<span class="label label-default"></span>
-						<span class="label label-deprecated"></span>
+						<span class="label label-deprecated">deprecated </span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/doctrine/dbal/blob/2.10.4/lib/Doctrine/DBAL/Cache/ResultCacheStatement.php#L107-L115" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/doctrine/dbal/blob/2.12.1/lib/Doctrine/DBAL/Cache/ResultCacheStatement.php#L95-L105" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
-					<h4 id="Doctrine\DBAL\Cache\ResultCacheStatement::setFetchMode()" tabindex="-1" class="structure-title ">
+					<h4 id="Doctrine\DBAL\Cache\ResultCacheStatement::setFetchMode()" tabindex="-1" class="structure-title strike">
                         setFetchMode                        	<small>($fetchMode, $arg2 = null, $arg3 = null) : bool</small>
 						</h4>
 					<div class="inner-item">
@@ -342,11 +345,11 @@ This means that the memory usage for cached results might increase by using this
 						<span class="label label-danger"></span>
 						<span class="label label-default"></span>
 						<span class="label label-default"></span>
-						<span class="label label-deprecated"></span>
+						<span class="label label-deprecated">deprecated </span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/doctrine/dbal/blob/2.10.4/lib/Doctrine/DBAL/Cache/ResultCacheStatement.php#L117-L125" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/doctrine/dbal/blob/2.12.1/lib/Doctrine/DBAL/Cache/ResultCacheStatement.php#L107-L117" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
-					<h4 id="Doctrine\DBAL\Cache\ResultCacheStatement::getIterator()" tabindex="-1" class="structure-title ">
+					<h4 id="Doctrine\DBAL\Cache\ResultCacheStatement::getIterator()" tabindex="-1" class="structure-title strike">
                         getIterator                        	<small>() : void</small>
 						</h4>
 					<div class="inner-item">
@@ -392,11 +395,11 @@ This means that the memory usage for cached results might increase by using this
 						<span class="label label-danger"></span>
 						<span class="label label-default"></span>
 						<span class="label label-default"></span>
-						<span class="label label-deprecated"></span>
+						<span class="label label-deprecated">deprecated </span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/doctrine/dbal/blob/2.10.4/lib/Doctrine/DBAL/Cache/ResultCacheStatement.php#L127-L165" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/doctrine/dbal/blob/2.12.1/lib/Doctrine/DBAL/Cache/ResultCacheStatement.php#L119-L159" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
-					<h4 id="Doctrine\DBAL\Cache\ResultCacheStatement::fetch()" tabindex="-1" class="structure-title ">
+					<h4 id="Doctrine\DBAL\Cache\ResultCacheStatement::fetch()" tabindex="-1" class="structure-title strike">
                         fetch                        	<small>($fetchMode = null, $cursorOrientation = PDO::FETCH_ORI_NEXT, $cursorOffset = 0) : mixed</small>
 						</h4>
 					<div class="inner-item">
@@ -481,11 +484,11 @@ This means that the memory usage for cached results might increase by using this
 						<span class="label label-danger"></span>
 						<span class="label label-default"></span>
 						<span class="label label-default"></span>
-						<span class="label label-deprecated"></span>
+						<span class="label label-deprecated">deprecated </span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/doctrine/dbal/blob/2.10.4/lib/Doctrine/DBAL/Cache/ResultCacheStatement.php#L167-L184" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/doctrine/dbal/blob/2.12.1/lib/Doctrine/DBAL/Cache/ResultCacheStatement.php#L161-L189" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
-					<h4 id="Doctrine\DBAL\Cache\ResultCacheStatement::fetchAll()" tabindex="-1" class="structure-title ">
+					<h4 id="Doctrine\DBAL\Cache\ResultCacheStatement::fetchAll()" tabindex="-1" class="structure-title strike">
                         fetchAll                        	<small>($fetchMode = null, $fetchArgument = null, $ctorArgs = null) : mixed[]</small>
 						</h4>
 					<div class="inner-item">
@@ -498,24 +501,24 @@ This means that the memory usage for cached results might increase by using this
 				<td class="type">int<span class="type-separator"></span><wbr>null</td>
 				<td class="rest">$fetchMode = null</td>
 				<td class="desc"><p>Controls how the next row will be returned to the caller.</p>
-<pre><code>                               The value must be one of the {@link FetchMode} constants,
-                               defaulting to {@link FetchMode::MIXED}.
+<pre><code>                                  The value must be one of the {@link FetchMode} constants,
+                                  defaulting to {@link FetchMode::MIXED}.
 </code></pre>
 </td>
 			</tr>
         			<tr>
-				<td class="type">int<span class="type-separator"></span><wbr>null</td>
+				<td class="type">int<span class="type-separator"></span><wbr>string<span class="type-separator"></span><wbr>null</td>
 				<td class="rest">$fetchArgument = null</td>
 				<td class="desc"><p>This argument has a different meaning depending on the value</p>
-<pre><code>                               of the $fetchMode parameter:
-                               * {@link FetchMode::COLUMN}:
-                                 Returns the indicated 0-indexed column.
-                               * {@link FetchMode::CUSTOM_OBJECT}:
-                                 Returns instances of the specified class, mapping the columns of each row
-                                 to named properties in the class.
-                               * {@link PDO::FETCH_FUNC}: Returns the results of calling
-                                 the specified function, using each row's
-                                 columns as parameters in the call.
+<pre><code>                                  of the $fetchMode parameter:
+                                  * {@link FetchMode::COLUMN}:
+                                    Returns the indicated 0-indexed column.
+                                  * {@link FetchMode::CUSTOM_OBJECT}:
+                                    Returns instances of the specified class, mapping the columns of each row
+                                    to named properties in the class.
+                                  * {@link PDO::FETCH_FUNC}: Returns the results of calling
+                                    the specified function, using each row's
+                                    columns as parameters in the call.
 </code></pre>
 </td>
 			</tr>
@@ -523,8 +526,8 @@ This means that the memory usage for cached results might increase by using this
 				<td class="type">mixed[]<span class="type-separator"></span><wbr>null</td>
 				<td class="rest">$ctorArgs = null</td>
 				<td class="desc"><p>Controls how the next row will be returned to the caller.</p>
-<pre><code>                               The value must be one of the {@link FetchMode} constants,
-                               defaulting to {@link FetchMode::MIXED}.
+<pre><code>                                  The value must be one of the {@link FetchMode} constants,
+                                  defaulting to {@link FetchMode::MIXED}.
 </code></pre>
 </td>
 			</tr>
@@ -565,11 +568,11 @@ This means that the memory usage for cached results might increase by using this
 						<span class="label label-danger"></span>
 						<span class="label label-default"></span>
 						<span class="label label-default"></span>
-						<span class="label label-deprecated"></span>
+						<span class="label label-deprecated">deprecated </span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/doctrine/dbal/blob/2.10.4/lib/Doctrine/DBAL/Cache/ResultCacheStatement.php#L186-L195" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/doctrine/dbal/blob/2.12.1/lib/Doctrine/DBAL/Cache/ResultCacheStatement.php#L191-L202" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
-					<h4 id="Doctrine\DBAL\Cache\ResultCacheStatement::fetchColumn()" tabindex="-1" class="structure-title ">
+					<h4 id="Doctrine\DBAL\Cache\ResultCacheStatement::fetchColumn()" tabindex="-1" class="structure-title strike">
                         fetchColumn                        	<small>($columnIndex = 0) : mixed<span class="type-separator"></span><wbr>false</small>
 						</h4>
 					<div class="inner-item">
@@ -626,7 +629,361 @@ This means that the memory usage for cached results might increase by using this
 						<span class="label label-default"></span>
 						<span class="label label-deprecated"></span>
 						<span class="label label-public">public</span>
-                        			<a href="https://github.com/doctrine/dbal/blob/2.10.4/lib/Doctrine/DBAL/Cache/ResultCacheStatement.php#L197-L213" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                        			<a href="https://github.com/doctrine/dbal/blob/2.12.1/lib/Doctrine/DBAL/Cache/ResultCacheStatement.php#L204-L216" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Cache\ResultCacheStatement::fetchNumeric()" tabindex="-1" class="structure-title ">
+                        fetchNumeric                        	<small>() : <a href="array&lt;int,mixed&gt;$typespace.html#array&lt;int,mixed&gt;" class="fqsen ">array&lt;int,mixed&gt;</a><span class="type-separator"></span><wbr>false</small>
+						</h4>
+					<div class="inner-item">
+						<div class="description"><p><tag_inheritdoc data-type='' data-description=''>Returns the next row of the result as a numeric array or FALSE if there are no more rows.</tag_inheritdoc></p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="array&lt;int,mixed&gt;$typespace.html#array&lt;int,mixed&gt;" class="fqsen ">array&lt;int,mixed&gt;</a><span class="type-separator"></span><wbr>false</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Throws</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Driver-Exception$typespace.html#Doctrine\DBAL\Driver\Exception" class="fqsen "><small>Doctrine\DBAL\Driver\</small><wbr>Exception</a></td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Driver-Result$typespace.html#Doctrine\DBAL\Driver\Result::fetchNumeric()" class="fqsen "><small>Doctrine\DBAL\Driver\</small><wbr>Result::fetchNumeric()</a></td>
+				<td class="desc">Returns the next row of the result as a numeric array or FALSE if there are no more rows.</td>
+				<td class="rest">implement</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/2.12.1/lib/Doctrine/DBAL/Cache/ResultCacheStatement.php#L218-L224" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Cache\ResultCacheStatement::fetchAssociative()" tabindex="-1" class="structure-title ">
+                        fetchAssociative                        	<small>() : <a href="array&lt;string,mixed&gt;$typespace.html#array&lt;string,mixed&gt;" class="fqsen ">array&lt;string,mixed&gt;</a><span class="type-separator"></span><wbr>false</small>
+						</h4>
+					<div class="inner-item">
+						<div class="description"><p><tag_inheritdoc data-type='' data-description=''>Returns the next row of the result as an associative array or FALSE if there are no more rows.</tag_inheritdoc></p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type"><a href="array&lt;string,mixed&gt;$typespace.html#array&lt;string,mixed&gt;" class="fqsen ">array&lt;string,mixed&gt;</a><span class="type-separator"></span><wbr>false</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Throws</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Driver-Exception$typespace.html#Doctrine\DBAL\Driver\Exception" class="fqsen "><small>Doctrine\DBAL\Driver\</small><wbr>Exception</a></td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Driver-Result$typespace.html#Doctrine\DBAL\Driver\Result::fetchAssociative()" class="fqsen "><small>Doctrine\DBAL\Driver\</small><wbr>Result::fetchAssociative()</a></td>
+				<td class="desc">Returns the next row of the result as an associative array or FALSE if there are no more rows.</td>
+				<td class="rest">implement</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/2.12.1/lib/Doctrine/DBAL/Cache/ResultCacheStatement.php#L226-L232" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Cache\ResultCacheStatement::fetchOne()" tabindex="-1" class="structure-title ">
+                        fetchOne                        	<small>() : mixed<span class="type-separator"></span><wbr>false</small>
+						</h4>
+					<div class="inner-item">
+						<div class="description"><p><tag_inheritdoc data-type='' data-description=''>Returns the first value of the next row of the result or FALSE if there are no more rows.</tag_inheritdoc></p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">mixed<span class="type-separator"></span><wbr>false</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Throws</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Driver-Exception$typespace.html#Doctrine\DBAL\Driver\Exception" class="fqsen "><small>Doctrine\DBAL\Driver\</small><wbr>Exception</a></td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Driver-Result$typespace.html#Doctrine\DBAL\Driver\Result::fetchOne()" class="fqsen "><small>Doctrine\DBAL\Driver\</small><wbr>Result::fetchOne()</a></td>
+				<td class="desc">Returns the first value of the next row of the result or FALSE if there are no more rows.</td>
+				<td class="rest">implement</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/2.12.1/lib/Doctrine/DBAL/Cache/ResultCacheStatement.php#L234-L250" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Cache\ResultCacheStatement::fetchAllNumeric()" tabindex="-1" class="structure-title ">
+                        fetchAllNumeric                        	<small>() : array</small>
+						</h4>
+					<div class="inner-item">
+						<div class="description"><p><tag_inheritdoc data-type='' data-description=''>Returns an array containing all of the result rows represented as numeric arrays.</tag_inheritdoc></p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">array</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Throws</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Driver-Exception$typespace.html#Doctrine\DBAL\Driver\Exception" class="fqsen "><small>Doctrine\DBAL\Driver\</small><wbr>Exception</a></td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Driver-Result$typespace.html#Doctrine\DBAL\Driver\Result::fetchAllNumeric()" class="fqsen "><small>Doctrine\DBAL\Driver\</small><wbr>Result::fetchAllNumeric()</a></td>
+				<td class="desc">Returns an array containing all of the result rows represented as numeric arrays.</td>
+				<td class="rest">implement</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/2.12.1/lib/Doctrine/DBAL/Cache/ResultCacheStatement.php#L252-L268" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Cache\ResultCacheStatement::fetchAllAssociative()" tabindex="-1" class="structure-title ">
+                        fetchAllAssociative                        	<small>() : array</small>
+						</h4>
+					<div class="inner-item">
+						<div class="description"><p><tag_inheritdoc data-type='' data-description=''>Returns an array containing all of the result rows represented as associative arrays.</tag_inheritdoc></p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">array</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Throws</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Driver-Exception$typespace.html#Doctrine\DBAL\Driver\Exception" class="fqsen "><small>Doctrine\DBAL\Driver\</small><wbr>Exception</a></td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Driver-Result$typespace.html#Doctrine\DBAL\Driver\Result::fetchAllAssociative()" class="fqsen "><small>Doctrine\DBAL\Driver\</small><wbr>Result::fetchAllAssociative()</a></td>
+				<td class="desc">Returns an array containing all of the result rows represented as associative arrays.</td>
+				<td class="rest">implement</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/2.12.1/lib/Doctrine/DBAL/Cache/ResultCacheStatement.php#L270-L276" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Cache\ResultCacheStatement::fetchFirstColumn()" tabindex="-1" class="structure-title ">
+                        fetchFirstColumn                        	<small>() : array</small>
+						</h4>
+					<div class="inner-item">
+						<div class="description"><p><tag_inheritdoc data-type='' data-description=''>Returns an array containing the values of the first column of the result.</tag_inheritdoc></p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">array</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Throws</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Driver-Exception$typespace.html#Doctrine\DBAL\Driver\Exception" class="fqsen "><small>Doctrine\DBAL\Driver\</small><wbr>Exception</a></td>
+				<td class="desc"></td>
+			</tr>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Driver-Result$typespace.html#Doctrine\DBAL\Driver\Result::fetchFirstColumn()" class="fqsen "><small>Doctrine\DBAL\Driver\</small><wbr>Result::fetchFirstColumn()</a></td>
+				<td class="desc">Returns an array containing the values of the first column of the result.</td>
+				<td class="rest">implement</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/2.12.1/lib/Doctrine/DBAL/Cache/ResultCacheStatement.php#L278-L294" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
                                     					</div>
 					<h4 id="Doctrine\DBAL\Cache\ResultCacheStatement::rowCount()" tabindex="-1" class="structure-title ">
                         rowCount                        	<small>() : int</small>
@@ -655,7 +1012,67 @@ relied on for portable applications.</p>
 		</tr>
 		</tbody>
 	</table>
-                                                                            					</div>
+                                                    	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Driver-Result$typespace.html#Doctrine\DBAL\Driver\Result::rowCount()" class="fqsen "><small>Doctrine\DBAL\Driver\</small><wbr>Result::rowCount()</a></td>
+				<td class="desc">Returns the number of rows affected by the DELETE, INSERT, or UPDATE statement that produced the result.</td>
+				<td class="rest">implement</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
+					<div class="attribute">
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+					</div>
+					<div class="clearfix"></div>
+				</li>
+            				<li class="structure-item">
+					<div class="attribute">
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-magic"></span>
+						<span class="label label-danger"></span>
+						<span class="label label-default"></span>
+						<span class="label label-default"></span>
+						<span class="label label-deprecated"></span>
+						<span class="label label-public">public</span>
+                        			<a href="https://github.com/doctrine/dbal/blob/2.12.1/lib/Doctrine/DBAL/Cache/ResultCacheStatement.php#L296-L299" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                                    					</div>
+					<h4 id="Doctrine\DBAL\Cache\ResultCacheStatement::free()" tabindex="-1" class="structure-title ">
+                        free                        	<small>() : void</small>
+						</h4>
+					<div class="inner-item">
+						<div class="description"><p>Discards the non-fetched portion of the result, enabling the originating statement to be executed again.</p>
+</div>
+                        	<table class="table">
+		<caption>Parameters</caption>
+		<tbody>
+        		</tbody>
+	</table>
+                            	<table class="table">
+		<caption>Return</caption>
+		<tbody>
+		<tr>
+			<td class="type">void</td>
+			<td class="desc"></td>
+			<td class="rest"></td>
+		</tr>
+		</tbody>
+	</table>
+                                                    	<table class="table">
+		<caption>Prototype</caption>
+		<tbody>
+        			<tr>
+				<td class="type"><a href="Doctrine-DBAL-Driver-Result$typespace.html#Doctrine\DBAL\Driver\Result::free()" class="fqsen "><small>Doctrine\DBAL\Driver\</small><wbr>Result::free()</a></td>
+				<td class="desc">Discards the non-fetched portion of the result, enabling the originating statement to be executed again.</td>
+				<td class="rest">implement</td>
+			</tr>
+        		</tbody>
+	</table>
+                            					</div>
 					<div class="attribute">
 						<span class="label label-default"></span>
 						<span class="label label-default"></span>
