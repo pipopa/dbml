@@ -22,6 +22,16 @@
 - phpstorm と相性が悪いのでマジックメソッドを撲滅したい
 - TableGateway の column/where などを個別メソッド化する（可変引数などに対応できていないので）
 
+## 2.0.7
+
+- [fixbug][TableGateway] 継承クラスで scopes にアクセスできない不具合を修正
+- [feature][TableGateway] paginate/sequence の委譲メソッドを追加
+- [feature][Database] 暖気運転を行う warmup メソッドを追加
+- [fixbug][QueryBuilder] トップレベル以外で仮想カラムが使われてしまう不具合を修正
+- [feature][QueryBuilder] before/after コールバックを実装
+- [feature][QueryBuilder] 配列時の取得方法を指定する arrayFetch オプションを追加
+- [feature][Logger] メタデータの出力機能を追加
+
 ## 2.0.6
 
 - [feature][QueryBuilder] with 句の対応
