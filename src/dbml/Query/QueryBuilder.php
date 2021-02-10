@@ -1036,7 +1036,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
             }
             // 仮想カラム（tablename.virtualname）@todo 何をしているか分からない
             $cond2 = $is_int ? $param : $cond;
-            if (is_string($cond2) && preg_match('#([a-z_][a-z0-9_]*)\.([a-z_][a-z0-9_]*)#ui', $cond2, $matches)) {
+            if (is_string($cond2) && preg_match('#([a-z_][a-z0-9_]*)\.([a-z_][a-z0-9_]*)#ui', $cond2, $matches) && count($keys) <= 1) {
                 $modifier = $matches[1];
                 $tablename = $froms[$modifier]['table'] ?? $modifier;
                 if ($this->database->getSchema()->hasTable($tablename)) {
