@@ -8,6 +8,8 @@ use ryunosuke\dbml\Generator\Yielder;
 use ryunosuke\dbml\Mixin\IteratorTrait;
 use ryunosuke\dbml\Mixin\OptionTrait;
 use ryunosuke\dbml\Query\Expression\TableDescriptor;
+use ryunosuke\dbml\Query\Pagination\Paginator;
+use ryunosuke\dbml\Query\Pagination\Sequencer;
 use ryunosuke\dbml\Query\QueryBuilder;
 use ryunosuke\dbml\Query\Statement;
 use ryunosuke\dbml\Utility\Adhoc;
@@ -2183,6 +2185,30 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
     }
 
     /**
+     * new Paginator へのプロキシメソッド
+     *
+     * 引数が与えられている場合は {@link Paginator::paginate()} も同時に行う。
+     *
+     * @inheritdoc QueryBuilder::paginate()
+     */
+    public function paginate($currentpage = null, $countperpage = null, $shownpage = null)
+    {
+        return $this->select()->paginate(...func_get_args());
+    }
+
+    /**
+     * new Sequencer へのプロキシメソッド
+     *
+     * 引数が与えられている場合は {@link Sequencer::sequence()} も同時に行う。
+     *
+     * @inheritdoc QueryBuilder::sequence()
+     */
+    public function sequence($condition, $count, $orderbyasc = true, $bidirection = true)
+    {
+        return $this->select()->sequence(...func_get_args());
+    }
+
+    /**
      * 分割して sequence してレコードジェネレータを返す
      *
      * Gateway 版の {@link QueryBuilder::chunk()} 。
@@ -2191,7 +2217,7 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
      */
     public function chunk($count, $column = null)
     {
-        return $this->select()->chunk($count, $column);
+        return $this->select()->chunk(...func_get_args());
     }
 
     /**

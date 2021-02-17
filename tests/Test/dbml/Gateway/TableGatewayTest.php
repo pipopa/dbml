@@ -1075,6 +1075,30 @@ AND ((flag=1))", "$gw");
      * @param TableGateway $gateway
      * @param Database $database
      */
+    function test_paginate($gateway, $database)
+    {
+        $pagenator = $gateway->where(['id >= 5'])->paginate(2, 2);
+
+        $this->assertEquals([7, 8], array_column($pagenator->getItems(), 'id'));
+    }
+
+    /**
+     * @dataProvider provideGateway
+     * @param TableGateway $gateway
+     * @param Database $database
+     */
+    function test_sequence($gateway, $database)
+    {
+        $sequencer = $gateway->where([])->sequence(['id' => 5], 2, false);
+
+        $this->assertEquals([4, 3], array_column($sequencer->getItems(), 'id'));
+    }
+
+    /**
+     * @dataProvider provideGateway
+     * @param TableGateway $gateway
+     * @param Database $database
+     */
     function test_chunk($gateway, $database)
     {
         $gateway = $gateway->where(['id >= 5']);
