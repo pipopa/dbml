@@ -1618,8 +1618,9 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
         $this->scopes[$name] = function (...$params) use ($scopes, $defargs) {
             $result = $defargs;
             foreach ($scopes as $scope => $args) {
-                if ($this->scopes[$scope] instanceof \Closure) {
-                    $alength = parameter_length($this->scopes[$scope], false, true);
+                $currents = $this->getScopes();
+                if ($currents[$scope] instanceof \Closure) {
+                    $alength = parameter_length($currents[$scope], false, true);
                     if (is_infinite($alength)) {
                         $alength = count($params);
                     }
@@ -1838,6 +1839,16 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
             return null;
         }
         return $name;
+    }
+
+    /**
+     * 定義されているすべてのスコープを返す
+     *
+     * @return array スコープ配列
+     */
+    public function getScopes()
+    {
+        return $this->scopes->getArrayCopy();
     }
 
     /**
