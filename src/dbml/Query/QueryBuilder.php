@@ -822,7 +822,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
         foreach ($columns as $key => $column) {
             // 仮想カラム
             if ($schema->hasTable($table) && is_string($column)) {
-                $vcolumn = $schema->getTableColumnExpression($table, $column, $this->database);
+                $vcolumn = $schema->getTableColumnExpression($table, $column, 'select', $this->database);
                 if ($vcolumn) {
                     $key = is_int($key) ? $column : $key;
                     // 仮想カラムは修飾子を付与するチャンスを与えなければ実質使い物にならない（エイリアスが動的だから）
@@ -1041,7 +1041,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
                 $tablename = $froms[$modifier]['table'] ?? $modifier;
                 if ($this->database->getSchema()->hasTable($tablename)) {
                     $vcolumns = array_filter($this->database->getSchema()->getTableColumns($tablename), function (Column $col) {
-                        return $col->hasCustomSchemaOption('expression');
+                        return $col->hasCustomSchemaOption('select');
                     });
                     if ($vcolumns) {
                         $newparam = $is_int ? [] : $param;
@@ -1056,7 +1056,7 @@ class QueryBuilder implements Queryable, \IteratorAggregate, \Countable
                                 }
                                 return '?';
                             }
-                            $vcol = $this->database->getSchema()->getTableColumnExpression($tablename, $vname, $this->database);
+                            $vcol = $this->database->getSchema()->getTableColumnExpression($tablename, $vname, 'select', $this->database);
                             if (is_string($vcol)) {
                                 return sprintf($vcol, $modifier);
                             }

@@ -340,24 +340,25 @@ class Schema
      *
      * @param string $table_name 取得したいテーブル名
      * @param string $column_name 取得したいカラム名
-     * @param mixed $arg 遅延カラムだった場合のコールバック引数
+     * @param string $type select or affect
+     * @param array $args 遅延カラムだった場合のコールバック引数
      * @return mixed カラム表現
      */
-    public function getTableColumnExpression($table_name, $column_name, $arg = null)
+    public function getTableColumnExpression($table_name, $column_name, $type, ...$args)
     {
         $column = $this->getTableColumns($table_name)[$column_name] ?? null;
         if ($column === null) {
             return null;
         }
-        if (!$column->hasCustomSchemaOption('expression')) {
+        if (!$column->hasCustomSchemaOption($type)) {
             return null;
         }
 
-        $expression = $column->getCustomSchemaOption('expression');
-        if ($column->hasCustomSchemaOption('lazy') && $column->getCustomSchemaOption('lazy')) {
-            $expression = $expression($arg);
+        $expression = $column->getCustomSchemaOption($type);
+        if ($type === 'select' && $column->hasCustomSchemaOption('lazy') && $column->getCustomSchemaOption('lazy')) {
+            $expression = $expression(...$args);
             $column->setCustomSchemaOption('lazy', false);
-            $column->setCustomSchemaOption('expression', $expression);
+            $column->setCustomSchemaOption($type, $expression);
         }
         return $expression;
     }

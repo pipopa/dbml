@@ -1336,14 +1336,20 @@ class Database
     private function _normalize($table, $row)
     {
         // これはメソッド冒頭に記述し、決して場所を移動しないこと
-        /** @var Column[] $columns */
-        $columns = array_filter($this->getSchema()->getTableColumns($table), function (Column $column) {
-            return !($column->getCustomSchemaOptions()['virtual'] ?? false);
-        });
+        $columns = $this->getSchema()->getTableColumns($table);
         $autocolumn = optional($this->getSchema()->getTableAutoIncrement($table))->getName();
 
         if ($row instanceof Entityable) {
             $row = $row->arrayize();
+        }
+
+        foreach ($columns as $cname => $column) {
+            if (array_key_exists($cname, $row) && ($vaffect = $this->getSchema()->getTableColumnExpression($table, $cname, 'affect'))) {
+                $row = $vaffect($row[$cname], $row) + $row;
+            }
+            if ($column->getCustomSchemaOptions()['virtual'] ?? null) {
+                unset($columns[$cname]);
+            }
         }
 
         if ($this->getUnsafeOption('preparing')) {
@@ -2180,12 +2186,13 @@ class Database
      *         'fullname2' => 'CONCAT(sei, mei)',
      *         // 姓・名の SQL 版（修飾子）
      *         'fullname3' => 'CONCAT(%1$s.sei, %1$s.mei)',
-     *         // 上記の例は実は簡易指定で本来は下記の配列を渡す（非配列を渡すと下記でいう expression が渡されたとみなす）
+     *         // 上記の例は実は簡易指定で本来は下記の配列を渡す（非配列を渡すと下記でいう select が渡されたとみなす）
      *         'misc'      => [
-     *             'expression' => null,  // 仮想カラムの実定義（文字列や Expression やクエリビルダなど全て使用できる）
-     *             'type'       => null,  // 仮想カラムの型
-     *             'lazy'       => false, // 遅延評価するか（後述）
-     *             'implicit'   => false, // !column などの一括取得に含めるか
+     *             'select'   => null,  // select 時の仮想カラムの定義（文字列や Expression やクエリビルダなど全て使用できる）
+     *             'affect'   => null,  // affect 時の仮想カラムの定義（実列名をキーとする連想配列を返すクロージャを指定する）
+     *             'type'     => null,  // 仮想カラムの型
+     *             'lazy'     => false, // 遅延評価するか（後述）
+     *             'implicit' => false, // !column などの一括取得に含めるか
      *         ],
      *         // null を渡すと仮想カラムの削除になる
      *         'deletedVcolumn' => null,
@@ -2203,7 +2210,7 @@ class Database
      * ]);
      * ```
      *
-     * 'fullname3' について補足すると、 expression が文字列であるとき、その実値は `sprintf($expression, 修飾子)` となる。
+     * 'fullname3' について補足すると、 select が文字列であるとき、その実値は `sprintf($select, 修飾子)` となる。
      * 仮想カラムはあらゆる箇所で使い回される想定なので、「その時のテーブル名・エイリアス（修飾子）」を決めることができない。
      * かと言って修飾子を付けないと曖昧なカラムエラーが出ることがある。
      * `%1$s` しておけば sprintf で「現在の修飾子」が埋め込まれるためある程度汎用的にできる。
@@ -2211,7 +2218,7 @@ class Database
      *
      * lazy で指定する遅延評価について、例えば TableA が TableB のサブクエリを仮想カラムに設定し、TableB も TableA のサブクエリを設定している場合、即時評価だと場合によっては循環参照になってしまう or 仮想カラムが定義されていない状態でクエリビルダが走ってしまう、という事が起きる。
      * そんな時、 lazy: true とすることで仮想カラムの評価を実行時に遅延することができる。
-     * また、Database を単一引数とするクロージャを expression に渡すと暗黙的に lazy: true とすることができる。
+     * また、Database を単一引数とするクロージャを select に渡すと暗黙的に lazy: true とすることができる。
      *
      * ```php
      * # 仮想カラムの遅延評価
@@ -2220,8 +2227,8 @@ class Database
      *         // このようにしないと $db->subselectArray('tableB') が即時評価され、 tableB の評価が始まってしまう（そのとき tableB に parent という仮想カラムはまだ生えていない）
      *         // つまり children の結果セットに parent が含まれることが無くなってしまう
      *         'children' => [
-     *             'lazy'       => true,
-     *             'expression' => function () use ($db) {
+     *             'lazy'   => true,
+     *             'select' => function () use ($db) {
      *                 return $db->subselectArray('tableB');
      *             },
      *         ],
@@ -2231,6 +2238,27 @@ class Database
      *         'parent' => function (Database $db) {
      *             return $db->subselectTuple('tableA');
      *         },
+     *     ],
+     * ]);
+     * ```
+     *
+     * affect にクロージャを指定すると insert/update 時にそのカラムが来た場合に他のカラム値に変換することができる。
+     *
+     * ```php
+     * # 仮想カラムの更新処理
+     * $db->overrideColumns([
+     *     'table_name' => [
+     *         'fullname' => [
+     *             // 仮想カラム更新時の処理（$value はその仮想カラムとして飛んできた値, $row は行全体）
+     *             'affect' => function ($value, $row) {
+     *                 // fullname が飛んできたらスペース区切りで姓・名に分割して登録する
+     *                 $parts = explode(' ', $value, 2);
+     *                 return [
+     *                     'sei' => $parts[0],
+     *                     'mei' => $parts[1],
+     *                 ];
+     *             },
+     *         ],
      *     ],
      * ]);
      * ```
@@ -2268,21 +2296,23 @@ class Database
             foreach ($columns as $cname => $def) {
                 if ($def !== null) {
                     if (!is_array($def)) {
-                        $def = ['expression' => $def];
+                        $def = ['select' => $def];
                     }
                     $def += [
-                        'lazy'       => false,
-                        'type'       => null,
-                        'expression' => null,
+                        'lazy'   => false,
+                        'type'   => null,
+                        'select' => null,
+                        'affect' => null,
                     ];
-                    if (is_array($def['expression'])) {
-                        $def['expression'] = $this->operator($def['expression']);
+                    $def['select'] = $def['select'] ?? $def['expression'] ?? null; // for compatible rename expression -> select
+                    if (is_array($def['select'])) {
+                        $def['select'] = $this->operator($def['select']);
                     }
-                    if (!isset($def['type']) && $def['expression'] instanceof TableGateway) {
+                    if (!isset($def['type']) && $def['select'] instanceof TableGateway) {
                         $def['type'] = 'array';
                     }
-                    if (!isset($def['type']) && $def['expression'] instanceof QueryBuilder) {
-                        $submethod = $def['expression']->getSubmethod();
+                    if (!isset($def['type']) && $def['select'] instanceof QueryBuilder) {
+                        $submethod = $def['select']->getSubmethod();
                         if (is_null($submethod)) {
                             $def['type'] = 'integer';
                         }
@@ -2293,11 +2323,11 @@ class Database
                             $def['type'] = 'array';
                         }
                     }
-                    if (!isset($def['type']) && $def['expression'] instanceof Queryable) {
+                    if (!isset($def['type']) && $def['select'] instanceof Queryable) {
                         $def['type'] = 'string';
                     }
-                    if (!isset($def['type']) && $def['expression'] instanceof \Closure) {
-                        $ref = new \ReflectionFunction($def['expression']);
+                    if (!isset($def['type']) && $def['select'] instanceof \Closure) {
+                        $ref = new \ReflectionFunction($def['select']);
                         $rtype = $ref->getReturnType();
                         if ($rtype instanceof \ReflectionNamedType) {
                             $typename = strtolower($rtype->getName());
@@ -2317,8 +2347,8 @@ class Database
                         }
                     }
 
-                    if ($def['expression'] instanceof \Closure) {
-                        $ref = new \ReflectionFunction($def['expression']);
+                    if ($def['select'] instanceof \Closure) {
+                        $ref = new \ReflectionFunction($def['select']);
                         $params = $ref->getParameters();
                         $rtype = isset($params[0]) ? $params[0]->getType() : null;
                         if ($rtype instanceof \ReflectionNamedType && is_a($rtype->getName(), Database::class, true)) {

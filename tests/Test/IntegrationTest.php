@@ -158,8 +158,7 @@ class IntegrationTest extends AbstractUnitTestCase
 
         $pk = $database->t_article->insertOrThrow([
             'article_id' => 9,
-            'title'      => 'dummy title',
-            'checks'     => [1, 2, 3],
+            'vaffect'    => 'dummy title:1:2:3',
         ]);
 
         $row = $database->t_article->as('A')->select([

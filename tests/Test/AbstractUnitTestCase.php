@@ -630,7 +630,7 @@ abstract class AbstractUnitTestCase extends TestCase
                     ],
                     'title2'        => 'UPPER(%s.title)',
                     'title3'        => [
-                        'expression' => static function ($v) {
+                        'select' => static function ($v) {
                             return "a {$v['title']} z";
                         },
                     ],
@@ -641,14 +641,23 @@ abstract class AbstractUnitTestCase extends TestCase
                         };
                     },
                     'title5'        => [
-                        'expression' => 'UPPER(%s.title)',
-                        'implicit'   => true,
+                        'select'   => 'UPPER(%s.title)',
+                        'implicit' => true,
                     ],
                     'checks'        => [
                         'type' => Type::getType('simple_array'),
                     ],
                     'comment_count' => [
-                        'expression' => $db->subcount('t_comment')
+                        'select' => $db->subcount('t_comment')
+                    ],
+                    'vaffect'       => [
+                        'affect' => function ($value, $row) {
+                            $parts = explode(':', $value);
+                            return [
+                                'title'  => array_shift($parts),
+                                'checks' => $parts,
+                            ];
+                        },
                     ],
                 ],
             ]);

@@ -293,18 +293,18 @@ class SchemaTest extends \ryunosuke\Test\AbstractUnitTestCase
 
         // 仮想カラムの追加
         $column = $schema->setTableColumn('metasample', 'dummy', [
-            'type'       => 'integer',
-            'expression' => 'NOW()',
-            'implicit'   => false,
-            'others'     => [
+            'type'     => 'integer',
+            'select'   => 'NOW()',
+            'implicit' => false,
+            'others'   => [
                 'hoge' => 'HOGE',
             ],
         ]);
         $this->assertEquals([
-            'virtual'    => true,
-            'expression' => 'NOW()',
-            'implicit'   => false,
-            'others'     => [
+            'virtual'  => true,
+            'select'   => 'NOW()',
+            'implicit' => false,
+            'others'   => [
                 'hoge' => 'HOGE',
             ],
         ], $column->getCustomSchemaOptions());
@@ -313,18 +313,18 @@ class SchemaTest extends \ryunosuke\Test\AbstractUnitTestCase
 
         // 仮想カラムの上書き
         $column = $schema->setTableColumn('metasample', 'dummy', [
-            'type'       => 'string',
-            'expression' => 'NOW()',
-            'implicit'   => true,
-            'others'     => [
+            'type'     => 'string',
+            'select'   => 'NOW()',
+            'implicit' => true,
+            'others'   => [
                 'fuga' => 'FUGA',
             ]
         ]);
         $this->assertEquals([
-            'virtual'    => true,
-            'expression' => 'NOW()',
-            'implicit'   => true,
-            'others'     => [
+            'virtual'  => true,
+            'select'   => 'NOW()',
+            'implicit' => true,
+            'others'   => [
                 'fuga' => 'FUGA',
             ],
         ], $column->getCustomSchemaOptions());
@@ -348,12 +348,12 @@ class SchemaTest extends \ryunosuke\Test\AbstractUnitTestCase
     function test_getTableColumnExpression($schema, $database)
     {
         $schema->setTableColumn('metasample', 'dummy', [
-            'lazy'       => true,
-            'expression' => function ($arg) { return strtoupper($arg); },
+            'lazy'   => true,
+            'select' => function ($arg) { return strtoupper($arg); },
         ]);
         $this->assertEquals(true, $schema->getTableColumns('metasample')['dummy']->getCustomSchemaOption('lazy')); // この時点では true
-        $this->assertEquals('HOGE', $schema->getTableColumnExpression('metasample', 'dummy', 'hoge'));
-        $this->assertEquals('HOGE', $schema->getTableColumnExpression('metasample', 'dummy', 'fuga')); // キャッシュされるのでコールバックされない
+        $this->assertEquals('HOGE', $schema->getTableColumnExpression('metasample', 'dummy', 'select', 'hoge'));
+        $this->assertEquals('HOGE', $schema->getTableColumnExpression('metasample', 'dummy', 'select', 'fuga')); // キャッシュされるのでコールバックされない
         $this->assertEquals(false, $schema->getTableColumns('metasample')['dummy']->getCustomSchemaOption('lazy')); // 呼ばれたので false
     }
 
