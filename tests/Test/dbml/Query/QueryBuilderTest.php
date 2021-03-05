@@ -2170,7 +2170,7 @@ SQL
         $builder->setNullsOrder(null);
         $this->assertStringContainsString('CASE WHEN cint IS NULL THEN 0 ELSE 1 END ASC, cint ASC', (string) $builder->orderBy('cint', true, 'min'));
         $this->assertStringContainsString('CASE WHEN cint IS NULL THEN 1 ELSE 0 END DESC, cint DESC', (string) $builder->orderBy(['cint' => [false, 'first']]));
-        $this->assertEquals([null, null, null, null, null, -4, -2, 0, 2, 4, ], $builder->orderBy('cint', true, 'min')->lists());
+        $this->assertEquals([null, null, null, null, null, -4, -2, 0, 2, 4], $builder->orderBy('cint', true, 'min')->lists());
         $this->assertEquals([null, null, null, null, null, 4, 2, 0, -2, -4], $builder->orderBy('cint', false, 'first')->lists());
 
         $builder->setNullsOrder('hoge');

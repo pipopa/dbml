@@ -226,7 +226,7 @@ class YielderTest extends \ryunosuke\Test\AbstractUnitTestCase
             $count++;
         }
         $this->assertEquals(100, $count);
-        $this->assertLessThan(5 * 1024 * 1024, memory_get_peak_usage() - $initial);
+        $this->assertLessThan(6 * 1024 * 1024, memory_get_peak_usage() - $initial);
 
         // fetchArray だと最大値が不穏
         gc_collect_cycles();
