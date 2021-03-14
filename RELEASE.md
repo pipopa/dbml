@@ -22,6 +22,10 @@
 - phpstorm と相性が悪いのでマジックメソッドを撲滅したい
 - TableGateway の column/where などを個別メソッド化する（可変引数などに対応できていないので）
 
+## 2.0.8
+
+- [feature] bump version
+
 ## 2.0.7
 
 - [fixbug][TableGateway] 継承クラスで scopes にアクセスできない不具合を修正
