@@ -500,14 +500,15 @@ AND ((flag=1))", "$gw");
             ];
         });
 
-        $gateway->bindScope('abc', [2 => 'C']);
-        $this->assertEquals(['a', 'b', 'C'], $gateway->getScopeParts('abc', 'a', 'b')['column']);
-        $gateway->bindScope('abc', [1 => 'B']);
-        $this->assertEquals(['a', 'B', 'C'], $gateway->getScopeParts('abc', 'a')['column']);
-        $gateway->bindScope('abc', [0 => 'A', 2 => 'X']);
-        $this->assertEquals(['a', 'b', 'X'], $gateway->getScopeParts('abc', 'a', 'b')['column']);
-        $this->assertEquals(['A', 'B', 'X'], $gateway->getScopeParts('abc')['column']);
+        $gateway->setOption('overrideBindScope', true);
+
+        $gateway->bindScope('abc', [2 => 'C1']);
+        $this->assertEquals(['a', 'b', 'C1'], $gateway->getScopeParts('abc', 'a', 'b')['column']);
+        $gateway->bindScope('abc', [1 => 'B', 2 => 'C2']);
+        $this->assertEquals(['a', 'B', 'C2'], $gateway->getScopeParts('abc', 'a')['column']);
+        $gateway->bindScope('abc', [0 => 'X', 1 => 'Y', 2 => 'Z']);
         $this->assertEquals(['a', 'b', 'c'], $gateway->getScopeParts('abc', 'a', 'b', 'c')['column']);
+        $this->assertEquals(['X', 'Y', 'Z'], $gateway->getScopeParts('abc')['column']);
 
         $gateway->addScope('xyz', 'now()');
         $this->assertException('scope must be closure', L($gateway)->bindScope('xyz', []));

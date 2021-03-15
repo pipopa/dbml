@@ -761,6 +761,8 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
             'defaultJoinMethod' => 'auto',
             // affect 系で無視するスコープ
             'ignoreAffectScope' => [], // for compatible. In the future the default will be ['']
+            // bindScope が上書きか累積か
+            'overrideBindScope' => false, // for compatible. In the future the default will be true or delete
         ];
     }
 
@@ -1679,7 +1681,21 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
             throw new \InvalidArgumentException("'$name' scope must be closure.");
         }
 
-        // invoke 付き class に置き換えるか、別フィールドで引数を保持した方がシンプルでは？
+        if ($this->getUnsafeOption('overrideBindScope')) {
+            $original_name = "binded\0\0$name";
+            if (!isset($this->scopes[$original_name])) {
+                $this->scopes[$original_name] = $this->scopes[$name];
+            }
+            $scope = $this->scopes[$original_name];
+            ksort($binding);
+            $this->scopes[$name] = function (...$args) use ($scope, $binding) {
+                return $scope(...($args + $binding));
+            };
+
+            return $this;
+        }
+
+        // @codeCoverageIgnoreStart
         $scope = $this->scopes[$name];
         $ref = reflect_callable($scope);
         $uses = $ref->getStaticVariables();
@@ -1692,6 +1708,7 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
         };
 
         return $this;
+        // @codeCoverageIgnoreEnd
     }
 
     /**
