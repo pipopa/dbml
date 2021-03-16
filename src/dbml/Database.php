@@ -5202,7 +5202,7 @@ class Database
     /**
      * BULK UPSERT 構文
      *
-     * 指定配列でバルクアップサートする（MySQL のみサポート）
+     * 指定配列でバルクアップサートする。
      *
      * `$insertData` だけを指定した場合は「与えられた配列を modify する」という直感的な動作になる。
      * 更新は行われないので実質的に「重複を無視した挿入」のように振舞う。
@@ -5247,6 +5247,11 @@ class Database
      */
     public function modifyArray($tableName, $insertData, $updateData = [], $chunk = 0)
     {
+        $cplatform = $this->getCompatiblePlatform();
+        if (!$cplatform->supportsBulkMerge()) {
+            throw new \DomainException($this->getPlatform()->getName() . ' is not support modifyArray.'); // @codeCoverageIgnore
+        }
+
         $tableName = $this->_preaffect($tableName, $insertData);
         if (is_array($tableName)) {
             [$tableName, $insertData] = first_keyvalue($tableName);
@@ -5267,7 +5272,9 @@ class Database
 
         $n = 0;
         $affected = [];
-        $template = "INSERT INTO $tableName (%s) VALUES %s ON DUPLICATE KEY UPDATE %s";
+        $merge = $cplatform->getMergeSyntax($this->getSchema()->getTablePrimaryKey($tableName)->getColumns());
+        $refer = $cplatform->getReferenceSyntax('%1$s');
+        $template = "INSERT INTO $tableName (%s) VALUES %s $merge %s";
         foreach ($insertData as $row) {
             if (!is_array($row)) {
                 throw new \InvalidArgumentException('$data\'s element must be array.');
@@ -5284,7 +5291,7 @@ class Database
             }
 
             if (!isset($updates)) {
-                $updates = array_sprintf($columns, '%1$s = VALUES(%1$s)', ', ');
+                $updates = array_sprintf($columns, '%1$s = ' . $refer, ', ');
             }
 
             $values[] = '(' . implode(', ', $set) . ')';
@@ -5307,8 +5314,11 @@ class Database
             return $chunk ? $affected : reset($affected);
         }
 
-        // カバレッジは sqlite だけで完結したい（mysql は毎回走らせてるので大丈夫でしょう）
-        return array_sum($affected); // @codeCoverageIgnore
+        if (!$cplatform->supportsIdentityAutoUpdate() && $this->getSchema()->getTableAutoIncrement($tableName) !== null) {
+            $this->resetAutoIncrement($tableName, null);
+        }
+
+        return array_sum($affected);
     }
 
     /**
@@ -6088,9 +6098,9 @@ class Database
      *
      * RDBMS で方言・効果がかなり激しい。
      *
-     * - sqlite：     存在しないので {@link upsert()} に委譲される
+     * - sqlite：     INSERT ～ ON CONFLICT(...) DO UPDATE が実行される
      * - mysql：      INSERT ～ ON DUPLICATE KEY が実行される
-     * - postgresql： INSERT ～ ON CONFLICT DO UPDATE が実行される
+     * - postgresql： INSERT ～ ON CONFLICT(...) DO UPDATE が実行される
      * - sqlserver：  MERGE があるが複雑すぎるので {@link upsert()} に委譲される
      *
      * ```php
@@ -6112,8 +6122,6 @@ class Database
      * @used-by modifyOrThrow()
      * @used-by modifyIgnore()
      * @used-by modifyConditionally()
-     *
-     * @codeCoverageIgnore カバレッジは sqlite だけで完結したい（mysql は毎回走らせてるので大丈夫でしょう）
      *
      * @param string|array $tableName テーブル名
      * @param mixed $insertData INSERT データ配列
@@ -6172,8 +6180,6 @@ class Database
         }
         $sets2 = $this->bindInto($updateData, $params);
 
-        $pkname = $schema->getTablePrimaryKey($tableName)->getName();
-
         $cplatform = $this->getCompatiblePlatform();
         $ignore = array_get($opt, 'ignore') ? $cplatform->getIgnoreSyntax() . ' ' : '';
         $sql = "INSERT {$ignore}INTO $tableName ";
@@ -6187,7 +6193,7 @@ class Database
         else {
             $sql .= "SET " . array_sprintf($sets1, '%2$s = %1$s', ', ');
         }
-        $sql .= ' ' . $this->getCompatiblePlatform()->getMergeSQL($sets2, $pkname);
+        $sql .= ' ' . $cplatform->getMergeSyntax(array_keys($pkcols)) . ' ' . array_sprintf($sets2, '%2$s = %1$s', ', ');
         $affected = $this->executeAffect($sql, $params);
         if (!is_int($affected)) {
             return $affected;
@@ -6195,6 +6201,10 @@ class Database
 
         if ($affected === 0 && array_get($opt, 'throw')) {
             throw new NonAffectedException('affected row is nothing.');
+        }
+
+        if (!$cplatform->supportsIdentityAutoUpdate() && $this->getSchema()->getTableAutoIncrement($tableName) !== null) {
+            $this->resetAutoIncrement($tableName, null);
         }
         if ($affected === 0 && array_get($opt, 'primary') === 2) {
             return [];
@@ -6365,13 +6375,17 @@ class Database
      * 自動採番列をリセットする
      *
      * @param string $tableName テーブル名
-     * @param int $seq 採番列の値
+     * @param ?int $seq 採番列の値（NULL を与えると最大値+1になる）
      */
     public function resetAutoIncrement($tableName, $seq = 1)
     {
         $autocolumn = $this->getSchema()->getTableAutoIncrement($tableName);
         if ($autocolumn === null) {
             throw new \UnexpectedValueException("table '$tableName' is not auto incremental.");
+        }
+
+        if ($seq === null) {
+            $seq = $this->max([$tableName => $autocolumn->getName()]) + 1;
         }
 
         $queries = $this->getCompatiblePlatform()->getResetSequenceExpression($tableName, $autocolumn->getName(), $seq);

@@ -71,6 +71,17 @@ class CompatiblePlatformTest extends \ryunosuke\Test\AbstractUnitTestCase
      * @param CompatiblePlatform $cplatform
      * @param AbstractPlatform $platform
      */
+    function test_supportsIdentityAutoUpdate($cplatform, $platform)
+    {
+        $expected = !$platform instanceof PostgreSqlPlatform;
+        $this->assertEquals($expected, $cplatform->supportsIdentityAutoUpdate());
+    }
+
+    /**
+     * @dataProvider providePlatform
+     * @param CompatiblePlatform $cplatform
+     * @param AbstractPlatform $platform
+     */
     function test_supportsInsertSet($cplatform, $platform)
     {
         $expected = $platform instanceof MySqlPlatform || $platform instanceof \ryunosuke\Test\Platforms\SqlitePlatform;
@@ -95,8 +106,19 @@ class CompatiblePlatformTest extends \ryunosuke\Test\AbstractUnitTestCase
      */
     function test_supportsMerge($cplatform, $platform)
     {
-        $expected = $platform instanceof MySqlPlatform || $platform instanceof PostgreSqlPlatform;
+        $expected = $platform instanceof SqlitePlatform || $platform instanceof MySqlPlatform || $platform instanceof PostgreSqlPlatform;
         $this->assertEquals($expected, $cplatform->supportsMerge());
+    }
+
+    /**
+     * @dataProvider providePlatform
+     * @param CompatiblePlatform $cplatform
+     * @param AbstractPlatform $platform
+     */
+    function test_supportsBulkMerge($cplatform, $platform)
+    {
+        $expected = $platform instanceof SqlitePlatform || $platform instanceof MySqlPlatform || $platform instanceof PostgreSqlPlatform;
+        $this->assertEquals($expected, $cplatform->supportsBulkMerge());
     }
 
     /**
@@ -290,25 +312,51 @@ class CompatiblePlatformTest extends \ryunosuke\Test\AbstractUnitTestCase
      * @param CompatiblePlatform $cplatform
      * @param AbstractPlatform $platform
      */
-    function test_getMergeSQL($cplatform, $platform)
+    function test_getMergeSyntax($cplatform, $platform)
     {
         $expected = false;
+        if ($platform instanceof SqlitePlatform) {
+            $expected = 'ON CONFLICT(col) DO UPDATE SET';
+        }
         if ($platform instanceof MySqlPlatform) {
-            $expected = 'ON DUPLICATE KEY UPDATE c1 = 3, c2 = 4';
+            $expected = 'ON DUPLICATE KEY UPDATE';
         }
         if ($platform instanceof PostgreSqlPlatform) {
-            $expected = 'ON CONFLICT ON CONSTRAINT PK DO UPDATE SET c1 = 3, c2 = 4';
+            $expected = 'ON CONFLICT(col) DO UPDATE SET';
         }
-        $this->assertEquals($expected, $cplatform->getMergeSQL(['c1' => 3, 'c2' => 4], 'PK'));
+        $this->assertEquals($expected, $cplatform->getMergeSyntax(['col']));
 
         $expected = false;
+        if ($platform instanceof SqlitePlatform) {
+            $expected = 'ON CONFLICT(col1,col2) DO UPDATE SET';
+        }
         if ($platform instanceof MySqlPlatform) {
-            $expected = 'ON DUPLICATE KEY UPDATE c1 = 3, c2 = 4';
+            $expected = 'ON DUPLICATE KEY UPDATE';
         }
         if ($platform instanceof PostgreSqlPlatform) {
-            $expected = 'ON CONFLICT ON CONSTRAINT (col1,col2) DO UPDATE SET c1 = 3, c2 = 4';
+            $expected = 'ON CONFLICT(col1,col2) DO UPDATE SET';
         }
-        $this->assertEquals($expected, $cplatform->getMergeSQL(['c1' => 3, 'c2' => 4], ['col1', 'col2']));
+        $this->assertEquals($expected, $cplatform->getMergeSyntax(['col1', 'col2']));
+    }
+
+    /**
+     * @dataProvider providePlatform
+     * @param CompatiblePlatform $cplatform
+     * @param AbstractPlatform $platform
+     */
+    function test_getReferenceSyntax($cplatform, $platform)
+    {
+        $expected = false;
+        if ($platform instanceof SqlitePlatform) {
+            $expected = 'excluded.name';
+        }
+        if ($platform instanceof MySqlPlatform) {
+            $expected = 'VALUES(name)';
+        }
+        if ($platform instanceof PostgreSqlPlatform) {
+            $expected = 'EXCLUDED.name';
+        }
+        $this->assertEquals($expected, $cplatform->getReferenceSyntax('name'));
     }
 
     /**
@@ -683,8 +731,14 @@ class CompatiblePlatformTest extends \ryunosuke\Test\AbstractUnitTestCase
         $this->assertEquals($expected, $cplatform->convertMergeData(['id' => 1], ['id' => 9]));
 
         $expected = ['id' => 1];
+        if ($platform instanceof SqlitePlatform) {
+            $expected = ['id' => new Expression('excluded.id')];
+        }
         if ($platform instanceof MySqlPlatform) {
             $expected = ['id' => new Expression('VALUES(id)')];
+        }
+        if ($platform instanceof PostgreSqlPlatform) {
+            $expected = ['id' => new Expression('EXCLUDED.id')];
         }
         $this->assertEquals($expected, $cplatform->convertMergeData(['id' => 1], []));
     }

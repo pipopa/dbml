@@ -7,6 +7,7 @@ use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Logging\DebugStack;
 use Doctrine\DBAL\Platforms\MySqlPlatform;
+use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
 use Doctrine\DBAL\Platforms\SqlitePlatform;
 use Doctrine\DBAL\Platforms\SQLServerPlatform;
 use Doctrine\DBAL\Schema;
@@ -249,7 +250,10 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
             $this->assertEquals(['id' => 'a'], $database->modifyIgnore('noauto', ['id' => 'a', 'name' => 'piyo']));
             $this->assertEquals([], $database->insertIgnore('noauto', ['id' => 'x']));
             $this->assertEquals([], $database->updateIgnore('noauto', ['id' => 'x'], ['id' => 'a']));
-            $this->assertEquals([], $database->modifyIgnore('noauto', ['id' => 'x'], ['id' => 'a']));
+            // insert しようとしてダメでさらに update しようとしてダメだった場合に無視できるのは mysql のみ（本当は方法があるのかもしれないが詳しくないのでわからない）
+            if ($database->getPlatform() instanceof MySqlPlatform) {
+                $this->assertEquals([], $database->modifyIgnore('noauto', ['id' => 'x'], ['id' => 'a']));
+            }
 
             $database->import([
                 'foreign_p' => [
@@ -3214,7 +3218,7 @@ INSERT INTO test (name) VALUES
      */
     function test_modifyArray($database)
     {
-        if (!$database->getPlatform() instanceof MySqlPlatform) {
+        if (!$database->getCompatiblePlatform()->supportsBulkMerge()) {
             return;
         }
 
@@ -3229,8 +3233,18 @@ INSERT INTO test (name) VALUES
 
         $affected = $database->modifyArray('test', $data);
 
-        // 4件変更・2件追加で計10affected のはず
-        $this->assertEquals(10, $affected);
+        // mysql は 4件変更・2件追加で計10affected, sqlite は単純に 6affected
+        $expected = null;
+        if ($database->getPlatform() instanceof MySqlPlatform) {
+            $expected = 10;
+        }
+        if ($database->getPlatform() instanceof SqlitePlatform) {
+            $expected = 6;
+        }
+        if ($database->getPlatform() instanceof PostgreSqlPlatform) {
+            $expected = 6;
+        }
+        $this->assertEquals($expected, $affected);
 
         // 実際に取得して変わっている/いないを確認
         $this->assertEquals([
@@ -3264,7 +3278,7 @@ INSERT INTO test (name) VALUES
      */
     function test_modifyArray_chunk($database)
     {
-        if (!$database->getPlatform() instanceof MySqlPlatform) {
+        if (!$database->getCompatiblePlatform()->supportsBulkMerge()) {
             return;
         }
 
@@ -3276,19 +3290,39 @@ INSERT INTO test (name) VALUES
                 ['id' => 2, 'name' => 'U2'],
                 ['id' => 93, 'name' => 'A1'],
             ], [], 1);
-            // 2件変更・1件追加で計5affected のはず
-            $this->assertEquals(5, $affected);
+            // mysql は 2件変更・1件追加で計5affected, sqlite は単純に 3affected
+            $expected = null;
+            if ($database->getPlatform() instanceof MySqlPlatform) {
+                $expected = 5;
+            }
+            if ($database->getPlatform() instanceof SqlitePlatform) {
+                $expected = 3;
+            }
+            if ($database->getPlatform() instanceof PostgreSqlPlatform) {
+                $expected = 3;
+            }
+            $this->assertEquals($expected, $affected);
             // 実際に取得して変わっている/いないを確認
             $this->assertEquals(['U1', 'U2', 'A1'], $database->selectLists('test.name', ['id' => [1, 2, 93]]));
 
-            // チャンク(2兼updateData)
+            // チャンク(2件updateData)
             $affected = $database->modifyArray('test', [
                 ['id' => 3, 'name' => 'U1'],
                 ['id' => 4, 'name' => 'U2'],
                 ['id' => 95, 'name' => 'A1'],
             ], ['name' => 'U'], 2);
-            // 2件変更・1件追加で計4affected のはず
-            $this->assertEquals(5, $affected);
+            // mysql は 2件変更・1件追加で計5affected, sqlite は単純に 3affected
+            $expected = null;
+            if ($database->getPlatform() instanceof MySqlPlatform) {
+                $expected = 5;
+            }
+            if ($database->getPlatform() instanceof SqlitePlatform) {
+                $expected = 3;
+            }
+            if ($database->getPlatform() instanceof PostgreSqlPlatform) {
+                $expected = 3;
+            }
+            $this->assertEquals($expected, $affected);
             // 実際に取得して変わっている/いないを確認
             $this->assertEquals(['U', 'U', 'A1'], $database->selectLists('test.name', ['id' => [3, 4, 95]]));
 
@@ -3299,20 +3333,29 @@ INSERT INTO test (name) VALUES
                 ['id' => 5, 'name' => 'U2'],
                 ['id' => 96, 'name' => 'A1'],
             ], [], 3);
-            // 2件変更・1件追加で計5affected のはず
-            $this->assertEquals(5, $affected);
+            // mysql は 2件変更・1件追加で計5affected, sqlite は単純に 4affected
+            $expected = null;
+            if ($database->getPlatform() instanceof MySqlPlatform) {
+                $expected = 5;
+            }
+            if ($database->getPlatform() instanceof SqlitePlatform) {
+                $expected = 4;
+            }
+            if ($database->getPlatform() instanceof PostgreSqlPlatform) {
+                $expected = 4;
+            }
+            $this->assertEquals($expected, $affected);
             // 実際に取得して変わっている/いないを確認
             $this->assertEquals(['U', 'U1', 'U2', 'A1'], $database->selectLists('test.name', ['id' => [3, 4, 5, 96]]));
         });
-        $this->assertEquals([
-            "INSERT INTO test (id, name) VALUES (1, 'U1') ON DUPLICATE KEY UPDATE id = VALUES(id), name = VALUES(name)",
-            "INSERT INTO test (id, name) VALUES (2, 'U2') ON DUPLICATE KEY UPDATE id = VALUES(id), name = VALUES(name)",
-            "INSERT INTO test (id, name) VALUES (93, 'A1') ON DUPLICATE KEY UPDATE id = VALUES(id), name = VALUES(name)",
-            "INSERT INTO test (id, name) VALUES (3, 'U1'), (4, 'U2') ON DUPLICATE KEY UPDATE name = 'U'",
-            "INSERT INTO test (id, name) VALUES (95, 'A1') ON DUPLICATE KEY UPDATE name = 'U'",
-            "INSERT INTO test (id, name) VALUES (3, 'U'), (4, 'U1'), (5, 'U2') ON DUPLICATE KEY UPDATE id = VALUES(id), name = VALUES(name)",
-            "INSERT INTO test (id, name) VALUES (96, 'A1') ON DUPLICATE KEY UPDATE id = VALUES(id), name = VALUES(name)",
-        ], array_values(preg_grep('#^INSERT#', $logs)));
+        $logs = implode("\n", array_values(preg_grep('#^INSERT#', $logs)));
+        $this->assertStringContainsString("INSERT INTO test (id, name) VALUES (1, 'U1') ON", $logs);
+        $this->assertStringContainsString("INSERT INTO test (id, name) VALUES (2, 'U2') ON", $logs);
+        $this->assertStringContainsString("INSERT INTO test (id, name) VALUES (93, 'A1') ON", $logs);
+        $this->assertStringContainsString("INSERT INTO test (id, name) VALUES (3, 'U1'), (4, 'U2') ON", $logs);
+        $this->assertStringContainsString("INSERT INTO test (id, name) VALUES (95, 'A1') ON", $logs);
+        $this->assertStringContainsString("INSERT INTO test (id, name) VALUES (3, 'U'), (4, 'U1'), (5, 'U2') ON", $logs);
+        $this->assertStringContainsString("INSERT INTO test (id, name) VALUES (96, 'A1') ON", $logs);
     }
 
     /**
@@ -3321,6 +3364,11 @@ INSERT INTO test (name) VALUES
      */
     function test_modifyArray_misc($database)
     {
+        if (!$database->getCompatiblePlatform()->supportsBulkMerge()) {
+            $this->assertException('is not support modifyArray', L($database)->modifyArray('test', []));
+            return;
+        }
+
         $this->assertException('must be array', L($database->dryrun())->modifyArray('test', ['dummy']));
         $this->assertException('columns are not match', L($database->dryrun())->modifyArray('test', [['id' => 1], ['name' => 2]]));
 
@@ -3333,6 +3381,9 @@ INSERT INTO test (name) VALUES
             ['id' => 991, 'name' => 'zzz'],
         ];
 
+        $merge = function ($columns) use ($database) { return $database->getCompatiblePlatform()->getMergeSyntax($columns); };
+        $refer = function ($column) use ($database) { return $database->getCompatiblePlatform()->getReferenceSyntax($column); };
+
         $affected = $database->dryrun()->modifyArray('test', $data);
         $this->assertStringIgnoreBreak("
 INSERT INTO test (id, name) VALUES
@@ -3342,7 +3393,7 @@ INSERT INTO test (id, name) VALUES
 ('4', (SELECT UPPER(name1) FROM test1 WHERE id = '4')),
 ('990', 'nothing'),
 ('991', 'zzz')
-ON DUPLICATE KEY UPDATE id = VALUES(id), name = VALUES(name)", $affected);
+{$merge(['id'])} id = {$refer('id')}, name = {$refer('name')}", $affected);
 
         $affected = $database->dryrun()->modifyArray('test', $data, ['name' => 'hoge']);
         $this->assertStringIgnoreBreak("
@@ -3353,7 +3404,7 @@ INSERT INTO test (id, name) VALUES
 ('4', (SELECT UPPER(name1) FROM test1 WHERE id = '4')),
 ('990', 'nothing'),
 ('991', 'zzz')
-ON DUPLICATE KEY UPDATE name = 'hoge'", $affected);
+{$merge(['id'])} name = 'hoge'", $affected);
 
         $affected = $database->dryrun()->modifyArray('test', $data, ['name' => 'hoge'], 4);
         $this->assertStringIgnoreBreak("
@@ -3362,14 +3413,14 @@ INSERT INTO test (id, name) VALUES
 ('2', UPPER('b')),
 ('3', UPPER('c')),
 ('4', (SELECT UPPER(name1) FROM test1 WHERE id = '4'))
-ON DUPLICATE KEY UPDATE name = 'hoge'", $affected[0]);
+{$merge(['id'])} name = 'hoge'", $affected[0]);
 
         $affected = $database->dryrun()->modifyArray('test', $data, ['name' => 'hoge'], 4);
         $this->assertStringIgnoreBreak("
 INSERT INTO test (id, name) VALUES
 ('990', 'nothing'),
 ('991', 'zzz')
-ON DUPLICATE KEY UPDATE name = 'hoge'", $affected[1]);
+{$merge(['id'])} name = 'hoge'", $affected[1]);
 
         $affected = $database->dryrun()->modifyArray('test', function () {
             foreach (['X', 'Y', 'Z'] as $n => $v) {
@@ -3381,7 +3432,7 @@ INSERT INTO test (id, name) VALUES
 ('1', 'X'),
 ('2', 'Y'),
 ('3', 'Z')
-ON DUPLICATE KEY UPDATE id = VALUES(id), name = VALUES(name)", $affected);
+{$merge(['id'])} id = {$refer('id')}, name = {$refer('name')}", $affected);
     }
 
     /**
@@ -5749,6 +5800,21 @@ anywhere.enable = 1
         // reset 55 してから insert すれば 55 になるはず
         $database->resetAutoIncrement('auto', 55);
         $this->assertEquals(['id' => 55], $database->insertOrThrow('auto', ['name' => 'hoge']));
+
+        // postgresql では modifyArray(on conflict による複数レコード挿入)でシーケンスが更新されない
+        if (!$database->getCompatiblePlatform()->supportsIdentityAutoUpdate()) {
+            $database->modifyArray('auto', [
+                ['id' => 60, 'name' => 'hoge'],
+                ['id' => 61, 'name' => 'fuga'],
+                ['id' => 62, 'name' => 'piyo'],
+            ]);
+        }
+        else {
+            $database->insert('auto', ['id' => 62, 'name' => 'hoge']);
+        }
+        // null を与えると最大値+1になる
+        $database->resetAutoIncrement('auto', null);
+        $this->assertEquals(['id' => 63], $database->insertOrThrow('auto', ['name' => 'hoge']));
 
         $this->assertException('is not auto incremental', L($database)->resetAutoIncrement('noauto', 1));
     }

@@ -68,6 +68,19 @@ class CompatiblePlatform /*extends AbstractPlatform*/
     }
 
     /**
+     * AUTO_INCREMENT な列を明示指定したあと、自動でシーケンスが更新されるか否かを返す
+     *
+     * @return bool AUTO_INCREMENT な列を明示指定したあと、自動でシーケンスが更新されるなら true
+     */
+    public function supportsIdentityAutoUpdate()
+    {
+        if ($this->platform instanceof PostgreSqlPlatform) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
      * INSERT SET 拡張構文が使えるか否かを返す
      *
      * @return bool INSERT SET 拡張構文が使えるなら true
@@ -104,6 +117,28 @@ class CompatiblePlatform /*extends AbstractPlatform*/
      */
     public function supportsMerge()
     {
+        if ($this->platform instanceof SqlitePlatform) {
+            return true;
+        }
+        if ($this->platform instanceof MySqlPlatform) {
+            return true;
+        }
+        if ($this->platform instanceof PostgreSqlPlatform) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * BULK MERGE が使えるか否かを返す
+     *
+     * @return bool BULK MERGE が使えるなら true
+     */
+    public function supportsBulkMerge()
+    {
+        if ($this->platform instanceof SqlitePlatform) {
+            return true;
+        }
         if ($this->platform instanceof MySqlPlatform) {
             return true;
         }
@@ -362,20 +397,41 @@ class CompatiblePlatform /*extends AbstractPlatform*/
     /**
      * MERGE 構文を返す
      *
-     * @param array $updateData UPDATE 時の配列
-     * @param string|array|null $constraint 一意制約
+     * @param array $columns 一意制約カラム
      * @return string|bool MERGE 構文に対応してるなら文字列、対応していないなら false
      */
-    public function getMergeSQL($updateData, $constraint = null)
+    public function getMergeSyntax($columns)
     {
+        if ($this->platform instanceof SqlitePlatform) {
+            $constraint = implode(',', $columns);
+            return "ON CONFLICT($constraint) DO UPDATE SET";
+        }
         if ($this->platform instanceof MySqlPlatform) {
-            $updateSql = array_sprintf($updateData, '%2$s = %1$s', ', ');
-            return "ON DUPLICATE KEY UPDATE $updateSql";
+            return "ON DUPLICATE KEY UPDATE";
         }
         if ($this->platform instanceof PostgreSqlPlatform) {
-            $updateSql = array_sprintf($updateData, '%2$s = %1$s', ', ');
-            $constraint = is_array($constraint) ? '(' . implode(',', $constraint) . ')' : $constraint;
-            return "ON CONFLICT ON CONSTRAINT $constraint DO UPDATE SET $updateSql";
+            $constraint = implode(',', $columns);
+            return "ON CONFLICT($constraint) DO UPDATE SET";
+        }
+        return false;
+    }
+
+    /**
+     * 参照構文（mysql における VALUES）を返す
+     *
+     * @param string $column 参照カラム名
+     * @return string|bool 参照構文、対応していないなら false
+     */
+    public function getReferenceSyntax($column)
+    {
+        if ($this->platform instanceof SqlitePlatform) {
+            return "excluded.$column";
+        }
+        if ($this->platform instanceof MySqlPlatform) {
+            return "VALUES($column)";
+        }
+        if ($this->platform instanceof PostgreSqlPlatform) {
+            return "EXCLUDED.$column";
         }
         return false;
     }
@@ -840,13 +896,11 @@ class CompatiblePlatform /*extends AbstractPlatform*/
             return $updateData;
         }
 
-        // 指定されていない場合は $insertData を返す。ただし、データが長大な場合、2重に bind されることになり無駄なので mysql は VALUES を使う
-        if ($this->platform instanceof MySqlPlatform) {
-            return array_each($insertData, function (&$carry, $v, $k) {
-                $carry[$k] = new Expression("VALUES($k)");
-            }, []);
-        }
-        return $insertData;
+        // 指定されていない場合は $insertData を返す。ただし、データが長大な場合、2重に bind されることになり無駄なので参照構文を使う
+        return array_each($insertData, function (&$carry, $v, $k) {
+            $reference = $this->getReferenceSyntax($k);
+            $carry[$k] = $reference === false ? $v : new Expression($this->getReferenceSyntax($k));
+        }, []);
     }
 
     /**

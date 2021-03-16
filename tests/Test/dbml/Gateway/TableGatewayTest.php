@@ -3,7 +3,6 @@
 namespace ryunosuke\Test\dbml\Gateway;
 
 use Doctrine\DBAL\Logging\DebugStack;
-use Doctrine\DBAL\Platforms\MySqlPlatform;
 use Doctrine\DBAL\Platforms\SQLServerPlatform;
 use ryunosuke\dbml\Entity\Entity;
 use ryunosuke\dbml\Exception\NonSelectedException;
@@ -1343,7 +1342,7 @@ AND ((flag=1))", "$gw");
         ], ['name' => 'XXX']);
         $this->assertEquals(['XXX', 'XXX'], $gateway->lists('name'));
 
-        if ($database->getPlatform() instanceof MySqlPlatform) {
+        if ($database->getCompatiblePlatform()->supportsMerge()) {
             $gateway->updateArray([
                 ['id' => 1, 'name' => 'xxx'],
                 ['id' => 2, 'name' => 'yyy'],
