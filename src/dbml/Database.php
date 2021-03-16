@@ -9,7 +9,6 @@ use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Event\Listeners\SQLSessionInit;
 use Doctrine\DBAL\Events;
 use Doctrine\DBAL\Logging\SQLLogger;
-use Doctrine\DBAL\Platforms;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Schema\AbstractAsset;
 use Doctrine\DBAL\Schema\Column;
@@ -5330,12 +5329,14 @@ class Database
      * また、可能な限りクエリを少なくかつ効率的に実行されるように構築されるので、テーブル定義や与えたデータによってはまったく構成の異なるクエリになる可能性がある（結果は同じになるが）。
      * 具体的には
      *
-     * - BULK UPSERT をサポートしている場合（MySql）： modifyArray + delete 的な動作（最も高速）
-     * - 与えたデータのカラムが共通の場合：            prepareModify + delete 的な動作（比較的高速）
-     * - 上記以外（MySql）：                         各行 modify + delete 的な動作（比較的低速）
-     * - 上記以外（MySql 以外）：                    各行 upsert + delete 的な動作（最も低速）
+     * - BULK MERGE をサポートしていてカラムが完全に共通の場合：     modifyArray(単一) + delete 的な動作（最も高速）
+     * - BULK MERGE をサポートしていてカラムがそれなりに共通の場合： modifyArray(複数) + delete 的な動作（比較的高速）
+     * - merge をサポートしていてカラムが完全に共通の場合：          prepareModify(単一) + delete 的な動作（標準速度）
+     * - merge をサポートしていてカラムがそれなりに共通の場合：      prepareModify(複数) + delete 的な動作（比較的低速）
+     * - merge をサポートしていてカラムがバラバラだった場合：        各行 modify + delete 的な動作（最も低速）
+     * - merge をサポートしていなくてカラムがバラバラだった場合：    各行 select + 各行 insert/update + delete 的な動作（最悪）
      *
-     * という動作になる。つまり実質的にはほぼ mysql 専用で、他の DBMS では動きをなんとかして模倣しているだけに過ぎない。
+     * という動作になる。
      *
      * ```php
      * # `['category' => 'misc']` の世界でレコードが3行になる。指定した3行が無ければ作成され、有るなら更新され、id 指定している 1,2,3 以外のレコードは削除される
@@ -5344,7 +5345,7 @@ class Database
      *     ['id' => 2, 'name' => 'fuga'],
      *     ['id' => 3, 'name' => 'piyo'],
      * ], ['category' => 'misc']);
-     * // mysql の場合
+     * // BULK MERGE をサポートしている場合、下記がカラムの種類ごとに発行される
      * // INSERT INTO table_name (id, name) VALUES
      * //   ('1', 'hoge'),
      * //   ('2', 'fuga'),
@@ -5354,7 +5355,14 @@ class Database
      * //   name = VALUES(name)
      * // DELETE FROM table_name WHERE (category = 'misc') AND (NOT (id IN ('1', '2', '3')))
      * //
-     * // mysql 以外の場合
+     * // merge をサポートしている場合、下記がカラムの種類ごとに発行される（merge は疑似クエリ）
+     * // [prepare] INSERT INTO table_name (id, name) VALUES (?, ?) ON UPDATE id = VALUES(id), name = VALUES(name)
+     * // [execute] INSERT INTO table_name (id, name) VALUES (1, 'hoge') ON UPDATE id = VALUES(id), name = VALUES(name)
+     * // [execute] INSERT INTO table_name (id, name) VALUES (2, 'fuga') ON UPDATE id = VALUES(id), name = VALUES(name)
+     * // [execute] INSERT INTO table_name (id, name) VALUES (3, 'piyo') ON UPDATE id = VALUES(id), name = VALUES(name)
+     * // DELETE FROM table_name WHERE (category = 'misc') AND (NOT (id IN ('1', '2', '3')))
+     * //
+     * // merge をサポートしていない場合、全行分 select して行が無ければ insert, 行が有れば update する
      * // SELECT EXISTS (SELECT * FROM table_name WHERE id = '1')
      * // UPDATE table_name SET name = 'hoge' WHERE id = '1'
      * // SELECT EXISTS (SELECT * FROM table_name WHERE id = '2')
@@ -5363,8 +5371,6 @@ class Database
      * // INSERT INTO table_name (id, name) VALUES ('3', 'piyo')
      * // DELETE FROM table_name WHERE (category = 'misc') AND (NOT (id IN ('1', '2', '3')))
      * ```
-     *
-     * @todo codeCoverageIgnore が点在してるのが気持ち悪いのでリファクタ
      *
      * @param string $tableName テーブル名
      * @param array $dataarray データ配列
@@ -5385,63 +5391,60 @@ class Database
             return [];
         }
 
-        // バルクできそうか判定
-        // @codeCoverageIgnoreStart
-        $bulkable = $this->getPlatform() instanceof Platforms\MySqlPlatform;
-        if ($bulkable) {
-            $first = array_keys(reset($dataarray));
-            foreach ($dataarray as $row) {
-                // カラムが異なるならバルク出来ない
-                if (array_keys($row) !== $first) {
-                    $bulkable = false;
-                    break;
-                }
-            }
-            // バルクできるなら（カラムが同じなら）プリペアド可能
-            if ($bulkable) {
-                $stmt = $this->prepareModify($tableName, $first);
-            }
-        }
-        // @codeCoverageIgnoreEnd
-
         // 主キー情報を漁っておく
         $pcols = $this->getSchema()->getTablePrimaryColumns($tableName);
         $autocolumn = optional($this->getSchema()->getTableAutoIncrement($tableName))->getName();
+        $primaries = array_map(function ($row) use ($pcols) { return array_intersect_key($row, $pcols); }, $dataarray);
 
-        $bulks = [];
-        $primaries = [];
+        // modifyArray や prepareModify が使えるか
+        $bulkable = $this->getCompatiblePlatform()->supportsBulkMerge();
+        $preparable = $this->getCompatiblePlatform()->supportsMerge() && !$this->isEmulationMode();
+
+        // カラムの種類でグルーピングする
+        $col_group = [];
         foreach ($dataarray as $n => $row) {
-            $pri = array_intersect_key($row, $pcols);
-            // バルクできそうなら貯めておく
-            // @codeCoverageIgnoreStart
-            if ($bulkable && ($autocolumn == null || isset($pri[$autocolumn])) && count($pri) === count($pcols)) {
-                $bulks[] = $row;
+            // prepare する可能性があるのでこの段階で normalize する必要がある
+            // prepare しなかった場合に2回呼ばれることになって無駄だがそもそもバラバラのカラムで呼ぶことをあまり想定していない
+            $row = $this->_normalize($tableName, $row);
+
+            $cols = array_keys($row);
+            $gid = implode('+', $cols);
+
+            $col_group[$gid]['cols'] = $cols;
+
+            // 主キーが含まれているならバルクできる
+            if ($bulkable && ($autocolumn === null || isset($primaries[$n][$autocolumn])) && count($primaries[$n]) === count($pcols)) {
+                $col_group[$gid]['bulks'][$n] = $row;
             }
-            // @codeCoverageIgnoreEnd
-            // だめそうなら個別更新
             else {
-                // @codeCoverageIgnoreStart
-                if (isset($stmt)) {
-                    $stmt->executeAffect($row);
-                }
-                else {
-                    $this->modify($tableName, $row);
-                }
-                // @codeCoverageIgnoreEnd
+                $col_group[$gid]['rows'][$n] = $row;
+            }
+        }
 
-                if ($autocolumn !== null && !isset($pri[$autocolumn])) {
-                    $pri[$autocolumn] = $this->getLastInsertId($tableName, $autocolumn);
+        foreach ($col_group as $gid => $group) {
+            if ($group['bulks'] ?? []) {
+                $this->modifyArray($tableName, $group['bulks']);
+            }
+            if ($group['rows'] ?? []) {
+                // 2件以上じゃないとプリペアの旨味が少ない
+                $stmt = null;
+                if ($preparable && count($group['rows']) > 1) {
+                    $stmt = $this->prepareModify($tableName, $group['cols']);
+                }
+                foreach ($group['rows'] as $n => $row) {
+                    if ($stmt) {
+                        $stmt->executeAffect($row);
+                    }
+                    else {
+                        $this->modify($tableName, $row);
+                    }
+
+                    if ($autocolumn !== null && !isset($primaries[$n][$autocolumn])) {
+                        $primaries[$n][$autocolumn] = $this->getLastInsertId($tableName, $autocolumn);
+                    }
                 }
             }
-            $primaries[$n] = $pri;
         }
-
-        // 主キー込みだった奴らを bulk upsert
-        // @codeCoverageIgnoreStart
-        if ($bulks) {
-            $this->modifyArray($tableName, $bulks);
-        }
-        // @codeCoverageIgnoreEnd
 
         // 更新外を削除（$cond を queryInto してるのは誤差レベルではなく速度に差が出るから）
         if ($identifier !== false) {

@@ -87,7 +87,7 @@ namespace ryunosuke\Test {
             if ($this->getPlatform() instanceof SQLServerPlatform && is_string($tableName) && strpos($tableName, ' ') === false && strpos($tableName, '.') === false && strpos($tableName, ',') === false) {
                 $tableName2 = $this->convertTableName($tableName);
                 $pcols = $this->getSchema()->getTablePrimaryColumns($tableName2);
-                $specified_id = count($pcols) === 1 && reset($pcols)->getAutoincrement() && array_key_exists(key($pcols), $data);
+                $specified_id = count($pcols) === 1 && reset($pcols)->getAutoincrement() && isset($data[key($pcols)]);
 
                 if ($specified_id) {
                     $this->getConnection()->exec($this->getCompatiblePlatform()->getIdentityInsertSQL($tableName2, true));

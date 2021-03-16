@@ -4468,24 +4468,37 @@ INSERT INTO test (id, name) VALUES
         $this->assertCount(4, $database->selectArray('multiprimary', ['mainid' => 2]));
 
         // バルク兼プリペアのテスト
-        if ($database->getCompatiblePlatform()->supportsMerge()) {
-            $max = $database->max('test.id');
+        $max = $database->max('test.id');
 
-            $primaries = $database->changeArray('test', [
-                ['id' => 1, 'name' => 'X'],
-                ['id' => null, 'name' => 'X'],
-            ], ['name' => 'X']);
-            // 与えた配列のとおりになっている（自動採番もされている）
-            $this->assertEquals([
-                ['id' => 1, 'name' => 'X'],
-                ['id' => $max + 1, 'name' => 'X'],
-            ], $database->selectArray('test.id,name', ['name' => 'X']));
-            // 主キーを返している（自動採番もされている）
-            $this->assertEquals([
-                ['id' => 1],
-                ['id' => $max + 1],
-            ], $primaries);
-        }
+        $primaries = $database->changeArray('test', [
+            // bulk
+            ['id' => 1, 'name' => 'changeArray:bulk1'],
+            ['id' => 2, 'name' => 'changeArray:bulk2'],
+            // prepare
+            ['id' => null, 'name' => 'changeArray:prepare1'],
+            ['id' => null, 'name' => 'changeArray:prepare2'],
+            // perrow
+            ['id' => null, 'name' => 'changeArray:perrow1'],
+            ['id' => null, 'name' => 'changeArray:perrow2', 'data' => 'misc'],
+        ], ['name' => 'X']);
+        // 与えた配列のとおりになっている（自動採番もされている）
+        $this->assertEquals([
+            ['id' => 1, 'name' => 'changeArray:bulk1'],
+            ['id' => 2, 'name' => 'changeArray:bulk2'],
+            ['id' => $max + 1, 'name' => 'changeArray:prepare1'],
+            ['id' => $max + 2, 'name' => 'changeArray:prepare2'],
+            ['id' => $max + 3, 'name' => 'changeArray:perrow1'],
+            ['id' => $max + 4, 'name' => 'changeArray:perrow2'],
+        ], $database->selectArray('test.id,name', ['name LIKE ?' => 'changeArray:%']));
+        // 主キーを返している（自動採番もされている）
+        $this->assertEquals([
+            ['id' => 1],
+            ['id' => 2],
+            ['id' => $max + 1],
+            ['id' => $max + 2],
+            ['id' => $max + 3],
+            ['id' => $max + 4],
+        ], $primaries);
     }
 
     /**
