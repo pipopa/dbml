@@ -534,6 +534,43 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
      * @dataProvider provideDatabase
      * @param Database $database
      */
+    function test_isEmulationMode($database)
+    {
+        $expected = [
+            'sqlite'     => [true, true],
+            'mysql'      => [false, true],
+            'postgresql' => [false, true],
+            'mssql'      => [true, true],
+        ];
+
+        try {
+            try {
+                $database->getPdo()->setAttribute(\PDO::ATTR_EMULATE_PREPARES, false);
+            }
+            catch (\Exception $e) {
+            }
+            $this->assertSame($expected[$database->getPlatform()->getName()][false], $database->isEmulationMode(true));
+
+            try {
+                $database->getPdo()->setAttribute(\PDO::ATTR_EMULATE_PREPARES, true);
+            }
+            catch (\Exception $e) {
+            }
+            $this->assertSame($expected[$database->getPlatform()->getName()][true], $database->isEmulationMode(true));
+        }
+        finally {
+            try {
+                $database->getPdo()->setAttribute(\PDO::ATTR_EMULATE_PREPARES, true);
+            }
+            catch (\Exception $e) {
+            }
+        }
+    }
+
+    /**
+     * @dataProvider provideDatabase
+     * @param Database $database
+     */
     function test_stackcontext($database)
     {
         // context はチェーンしないと設定が効かない

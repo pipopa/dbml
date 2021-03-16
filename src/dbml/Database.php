@@ -2076,6 +2076,22 @@ class Database
     }
 
     /**
+     * PDO の prepare がエミュレーションモードかを返す
+     *
+     * @return bool エミュレーションモードなら true
+     */
+    public function isEmulationMode()
+    {
+        // driver ごとにエミュレーションサポートが異なる上、全ては調べてられないので実際に取得してダメだったら true とする
+        try {
+            return !!$this->getPdo()->getAttribute(\PDO::ATTR_EMULATE_PREPARES);
+        }
+        catch (\PDOException $e) {
+            return true;
+        }
+    }
+
+    /**
      * {@link AbstractPlatform dbal のプラットフォーム}を取得する
      *
      * @return AbstractPlatform dbal プラットフォーム
