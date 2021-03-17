@@ -68,9 +68,9 @@
 						</h4>
 						<div class="inner-item">
 							<div class="description"><p>テーブル記法の実装クラス</p>
-<p>テーブル記法の概念については <tag_link data-kind='fqsen' data-type-category='type' data-type-fqsen='ryunosuke\dbml\' data-type-array='0' data-description='dbml'>dbml</tag_link> を参照。<br />
+<p>テーブル記法の概念については <tag_link data-kind='fqsen' data-type-category='type' data-type-fqsen='ryunosuke\dbml\' data-type-array='0' data-type-nullable='' data-description='dbml'>dbml</tag_link> を参照。<br />
 なお、内部的に使用されるだけで能動的に new したり活用されたりするようなクラスではない。</p>
-<p>下記に記法としての定義を記載する。組み合わせた場合の使用例は <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::column()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::column()'>ryunosuke\dbml\Query\QueryBuilder::column()</tag_link> を参照。</p>
+<p>下記に記法としての定義を記載する。組み合わせた場合の使用例は <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::column()' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Query\QueryBuilder::column()'>ryunosuke\dbml\Query\QueryBuilder::column()</tag_link> を参照。</p>
 <p><code>'(joinsign)tablename(pkval)@scope:fkeyname[condition]&lt;groupby&gt;+order-by#offset-limit AS Alias.col1, col2 AS C2'</code></p>
 <table>
 <thead>
@@ -271,8 +271,8 @@
 						<div class="inner-item">
 							<div class="description"><p>演算子を表すクラス</p>
 <p>内部的に使用されるだけで、明示的に使用する箇所はほとんど無い。<br />
-ただし、下記の演算子登録を使用する場合は <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\Expression\Operator::define()' data-type-array='0' data-description='ryunosuke\dbml\Query\Expression\Operator::define()'>ryunosuke\dbml\Query\Expression\Operator::define()</tag_link> で登録する必要がある。</p>
-<p>組み込みの演算子は下記。これらは何もしなくても <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::whereInto()' data-type-array='0' data-description='ryunosuke\dbml\Database::whereInto()'>ryunosuke\dbml\Database::whereInto()</tag_link> で使用することができる。</p>
+ただし、下記の演算子登録を使用する場合は <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\Expression\Operator::define()' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Query\Expression\Operator::define()'>ryunosuke\dbml\Query\Expression\Operator::define()</tag_link> で登録する必要がある。</p>
+<p>組み込みの演算子は下記。これらは何もしなくても <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::whereInto()' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Database::whereInto()'>ryunosuke\dbml\Database::whereInto()</tag_link> で使用することができる。</p>
 <table>
 <thead>
 <tr><th align="left">operator</th><th align="left">result</th><th align="left">説明</th></tr>

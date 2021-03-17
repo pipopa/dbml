@@ -133,7 +133,7 @@ foreach ($qb as $row) {
 echo count($qb); // t_article の件数を返す
 </code></pre>
 <h3>プリペアードステートメント</h3>
-<p>明示的に prepare のようなメソッドを呼ばない限り内部のプリペアードステートメントでは名前付きパラメータを一切使用しない（<tag_link data-kind='fqsen' data-type-category='class' data-type-fqsen='ryunosuke\dbml\Query\Statement' data-type-array='0' data-description='ryunosuke\dbml\Query\Statement'>ryunosuke\dbml\Query\Statement</tag_link> も参照）。<br />
+<p>明示的に prepare のようなメソッドを呼ばない限り内部のプリペアードステートメントでは名前付きパラメータを一切使用しない（<tag_link data-kind='fqsen' data-type-category='class' data-type-fqsen='ryunosuke\dbml\Query\Statement' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Query\Statement'>ryunosuke\dbml\Query\Statement</tag_link> も参照）。<br />
 prepare を呼ぶと現時点のパラメータで固定することができ、その上で <code>:name</code> のような名前付きパラメータに値を渡すことができる。</p>
 </div>
 						</div>
@@ -158,7 +158,7 @@ prepare を呼ぶと現時点のパラメータで固定することができ、
 						<div class="inner-item">
 							<div class="description"><p>Statement をラップして扱いやすくしたクラス</p>
 <p>主にプリペアドステートメントのために存在する。よってエミュレーションモードがオンだとほとんど意味を為さない。<br />
-が、 <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::insert()' data-type-array='0' data-description='ryunosuke\dbml\Database::insert()'>ryunosuke\dbml\Database::insert()</tag_link> や <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::update()' data-type-array='0' data-description='ryunosuke\dbml\Database::update()'>ryunosuke\dbml\Database::update()</tag_link> などはそれ自体にそれなりの付随処理があるので、使うことに意味がないわけではない。</p>
+が、 <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::insert()' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Database::insert()'>ryunosuke\dbml\Database::insert()</tag_link> や <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::update()' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Database::update()'>ryunosuke\dbml\Database::update()</tag_link> などはそれ自体にそれなりの付随処理があるので、使うことに意味がないわけではない。</p>
 <p>クエリビルダは疑問符プレースホルダが大量に埋め込まれる可能性があるので、全部パラメータにするのが大変。<br />
 ので、「prepare した時点で固定し、残り（名前付き）のみ後から指定する」という仕様になっている。</p>
 <pre><code class="language-php">$qb = $db-&gt;select('t_table.*', [':id', 'opt1' =&gt; 1, 'opt2' =&gt; 2])-&gt;prepare();

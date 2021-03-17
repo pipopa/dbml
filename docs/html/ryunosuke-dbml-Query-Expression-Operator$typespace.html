@@ -61,8 +61,8 @@
 
 	<div class="description"><p>演算子を表すクラス</p>
 <p>内部的に使用されるだけで、明示的に使用する箇所はほとんど無い。<br />
-ただし、下記の演算子登録を使用する場合は <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\Expression\Operator::define()' data-type-array='0' data-description='ryunosuke\dbml\Query\Expression\Operator::define()'>ryunosuke\dbml\Query\Expression\Operator::define()</tag_link> で登録する必要がある。</p>
-<p>組み込みの演算子は下記。これらは何もしなくても <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::whereInto()' data-type-array='0' data-description='ryunosuke\dbml\Database::whereInto()'>ryunosuke\dbml\Database::whereInto()</tag_link> で使用することができる。</p>
+ただし、下記の演算子登録を使用する場合は <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\Expression\Operator::define()' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Query\Expression\Operator::define()'>ryunosuke\dbml\Query\Expression\Operator::define()</tag_link> で登録する必要がある。</p>
+<p>組み込みの演算子は下記。これらは何もしなくても <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::whereInto()' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Database::whereInto()'>ryunosuke\dbml\Database::whereInto()</tag_link> で使用することができる。</p>
 <table>
 <thead>
 <tr><th align="left">operator</th><th align="left">result</th><th align="left">説明</th></tr>
@@ -513,7 +513,7 @@ $db-&gt;whereInto([
 <li>equal</li>
 <li>他多数（クラスの method を参照）</li>
 </ul>
-<p>これを利用すると <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::whereInto()' data-type-array='0' data-description='ryunosuke\dbml\Database::whereInto()'>ryunosuke\dbml\Database::whereInto()</tag_link> で演算子を指定せずシンプルな条件指定が出来るようになる（クラス冒頭を参照）。</p>
+<p>これを利用すると <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::whereInto()' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Database::whereInto()'>ryunosuke\dbml\Database::whereInto()</tag_link> で演算子を指定せずシンプルな条件指定が出来るようになる（クラス冒頭を参照）。</p>
 </div>
                         	<table class="table">
 		<caption>Parameters</caption>
@@ -724,7 +724,7 @@ $db-&gt;whereInto([
 </td>
 			</tr>
         			<tr>
-				<td class="type"><a href="?CompatiblePlatform$typespace.html#?CompatiblePlatform" class="fqsen ">?CompatiblePlatform</a></td>
+				<td class="type">?<a href="ryunosuke-dbml-Metadata-CompatiblePlatform$typespace.html#ryunosuke\dbml\Metadata\CompatiblePlatform" class="fqsen "><small>ryunosuke\dbml\Metadata\</small><wbr>CompatiblePlatform</a></td>
 				<td class="rest">$platform = null</td>
 				<td class="desc"><p>プラットフォーム</p>
 </td>
@@ -874,7 +874,7 @@ $db-&gt;whereInto([
 		<caption>Parameters</caption>
 		<tbody>
         			<tr>
-				<td class="type">array<span class="type-separator"></span><wbr><a href="?array$typespace.html#?array" class="fqsen ">?array</a></td>
+				<td class="type">?array</td>
 				<td class="rest">&amp;$params</td>
 				<td class="desc"><p>この引数にパラメータが追加される</p>
 </td>

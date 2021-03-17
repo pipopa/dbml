@@ -71,7 +71,7 @@ foreach ($qb as $row) {
 echo count($qb); // t_article の件数を返す
 </code></pre>
 <h3>プリペアードステートメント</h3>
-<p>明示的に prepare のようなメソッドを呼ばない限り内部のプリペアードステートメントでは名前付きパラメータを一切使用しない（<tag_link data-kind='fqsen' data-type-category='class' data-type-fqsen='ryunosuke\dbml\Query\Statement' data-type-array='0' data-description='ryunosuke\dbml\Query\Statement'>ryunosuke\dbml\Query\Statement</tag_link> も参照）。<br />
+<p>明示的に prepare のようなメソッドを呼ばない限り内部のプリペアードステートメントでは名前付きパラメータを一切使用しない（<tag_link data-kind='fqsen' data-type-category='class' data-type-fqsen='ryunosuke\dbml\Query\Statement' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Query\Statement'>ryunosuke\dbml\Query\Statement</tag_link> も参照）。<br />
 prepare を呼ぶと現時点のパラメータで固定することができ、その上で <code>:name</code> のような名前付きパラメータに値を渡すことができる。</p>
 </div>
 
@@ -567,12 +567,12 @@ $db-&gt;select('t_article A', [
 					<div class="inner-item">
 						<div class="description"><p>各種設定メソッドへのプロクシメソッド</p>
 <ul>
-<li>see <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::column()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::column()'>ryunosuke\dbml\Query\QueryBuilder::column()</tag_link></li>
-<li>see <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::where()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::where()'>ryunosuke\dbml\Query\QueryBuilder::where()</tag_link></li>
-<li>see <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::orderBy()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::orderBy()'>ryunosuke\dbml\Query\QueryBuilder::orderBy()</tag_link></li>
-<li>see <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::limit()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::limit()'>ryunosuke\dbml\Query\QueryBuilder::limit()</tag_link></li>
-<li>see <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::groupBy()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::groupBy()'>ryunosuke\dbml\Query\QueryBuilder::groupBy()</tag_link></li>
-<li>see <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::having()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::having()'>ryunosuke\dbml\Query\QueryBuilder::having()</tag_link></li>
+<li>see <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::column()' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Query\QueryBuilder::column()'>ryunosuke\dbml\Query\QueryBuilder::column()</tag_link></li>
+<li>see <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::where()' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Query\QueryBuilder::where()'>ryunosuke\dbml\Query\QueryBuilder::where()</tag_link></li>
+<li>see <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::orderBy()' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Query\QueryBuilder::orderBy()'>ryunosuke\dbml\Query\QueryBuilder::orderBy()</tag_link></li>
+<li>see <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::limit()' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Query\QueryBuilder::limit()'>ryunosuke\dbml\Query\QueryBuilder::limit()</tag_link></li>
+<li>see <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::groupBy()' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Query\QueryBuilder::groupBy()'>ryunosuke\dbml\Query\QueryBuilder::groupBy()</tag_link></li>
+<li>see <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::having()' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Query\QueryBuilder::having()'>ryunosuke\dbml\Query\QueryBuilder::having()</tag_link></li>
 </ul>
 </div>
                         	<table class="table">
@@ -887,12 +887,12 @@ $db-&gt;select('t_article A', [
 <tr><td align="right">5</td><td align="left"><code>"!"</code></td><td align="left">仮想カラムを含めたテーブルの全列を取得（これは「空文字カラム以外を全て」を意味するので結局全てのカラムが得られる、ということになる）</td></tr>
 <tr><td align="right">8</td><td align="left"><code>"..hoge"</code></td><td align="left">subselect 時において親のカラムを表す</td></tr>
 <tr><td align="right">10</td><td align="left"><code>"+prefix.column_name"</code></td><td align="left">JOIN 記号＋ドットを含む文字列は prefix テーブルと JOIN してそのカラムを取得</td></tr>
-<tr><td align="right">11</td><td align="left"><code>new Expression("NOW()")</code></td><td align="left"><tag_link data-kind='fqsen' data-type-category='class' data-type-fqsen='ryunosuke\dbml\Query\Expression\Expression' data-type-array='0' data-description='ryunosuke\dbml\Query\Expression\Expression'>ryunosuke\dbml\Query\Expression\Expression</tag_link> を与えると一切加工せずそのまま文字列を表す</td></tr>
-<tr><td align="right">12</td><td align="left"><code>"NOW()"</code></td><td align="left">上と同じ。 <code>()</code> を含む文字列は自動で <tag_link data-kind='fqsen' data-type-category='class' data-type-fqsen='ryunosuke\dbml\Query\Expression\Expression' data-type-array='0' data-description='ryunosuke\dbml\Query\Expression\Expression'>ryunosuke\dbml\Query\Expression\Expression</tag_link> 化される</td></tr>
+<tr><td align="right">11</td><td align="left"><code>new Expression("NOW()")</code></td><td align="left"><tag_link data-kind='fqsen' data-type-category='class' data-type-fqsen='ryunosuke\dbml\Query\Expression\Expression' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Query\Expression\Expression'>ryunosuke\dbml\Query\Expression\Expression</tag_link> を与えると一切加工せずそのまま文字列を表す</td></tr>
+<tr><td align="right">12</td><td align="left"><code>"NOW()"</code></td><td align="left">上と同じ。 <code>()</code> を含む文字列は自動で <tag_link data-kind='fqsen' data-type-category='class' data-type-fqsen='ryunosuke\dbml\Query\Expression\Expression' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Query\Expression\Expression'>ryunosuke\dbml\Query\Expression\Expression</tag_link> 化される</td></tr>
 <tr><td align="right">22</td><td align="left"><code>['alias' =&gt; function($row){}]</code></td><td align="left">キーが存在しないカラム指定のクロージャは行全体が渡ってくるコールバックになる</td></tr>
 <tr><td align="right">25</td><td align="left"><code>['cname' =&gt; function($cname){}]</code></td><td align="left">キーが存在するカラム指定のクロージャはカラム値が単一で渡ってくるコールバックになる</td></tr>
 <tr><td align="right">27</td><td align="left"><code>function(){return function($v){return $v;};}</code></td><td align="left">クロージャの亜種。クロージャを返すクロージャはそのままクロージャとして活きるのでメソッドのような扱いにできる</td></tr>
-<tr><td align="right">30</td><td align="left"><code>Gateway object</code></td><td align="left">Gateway の表すテーブルとの <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::subselect()' data-type-array='0' data-description='ryunosuke\dbml\Database::subselect()'>ryunosuke\dbml\Database::subselect()</tag_link> 相当の動作</td></tr>
+<tr><td align="right">30</td><td align="left"><code>Gateway object</code></td><td align="left">Gateway の表すテーブルとの <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::subselect()' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Database::subselect()'>ryunosuke\dbml\Database::subselect()</tag_link> 相当の動作</td></tr>
 <tr><td align="right">31</td><td align="left"><code>['+alias' =&gt; Gateway object]</code></td><td align="left">Gateway の表すテーブルとの JOIN を表す</td></tr>
 <tr><td align="right">50</td><td align="left"><code>'TableDescriptor'</code></td><td align="left">「テーブル名」を書く場所にはテーブル記法が使用できる（駆動表）</td></tr>
 <tr><td align="right">51</td><td align="left"><code>['+TableDescriptor' =&gt; ['*']]</code></td><td align="left">「テーブル名」を書く場所にはテーブル記法が使用できる（JOIN）</td></tr>
@@ -1084,7 +1084,7 @@ $qb-&gt;column([
                         addColumn                        	<small>($tableDescriptor, $parent = null, $defaultScoped = false) : <a href="ryunosuke-dbml-Query-QueryBuilder$typespace.html#ryunosuke\dbml\Query\QueryBuilder" class="fqsen "><small>ryunosuke\dbml\Query\</small><wbr>QueryBuilder</a></small>
 						</h4>
 					<div class="inner-item">
-						<div class="description"><p>[table =&gt; [col1, col2]] のような指定を出来るようにする（<tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::column()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::column()'>ryunosuke\dbml\Query\QueryBuilder::column()</tag_link> の追加版）</p>
+						<div class="description"><p>[table =&gt; [col1, col2]] のような指定を出来るようにする（<tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::column()' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Query\QueryBuilder::column()'>ryunosuke\dbml\Query\QueryBuilder::column()</tag_link> の追加版）</p>
 </div>
                         	<table class="table">
 		<caption>Parameters</caption>
@@ -1188,7 +1188,7 @@ $qb-&gt;column([
                         addSelect                        	<small>(...$selects) : <a href="ryunosuke-dbml-Query-QueryBuilder$typespace.html#ryunosuke\dbml\Query\QueryBuilder" class="fqsen "><small>ryunosuke\dbml\Query\</small><wbr>QueryBuilder</a></small>
 						</h4>
 					<div class="inner-item">
-						<div class="description"><p>select 列を設定する（<tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::select()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::select()'>ryunosuke\dbml\Query\QueryBuilder::select()</tag_link> の追加版）</p>
+						<div class="description"><p>select 列を設定する（<tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::select()' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Query\QueryBuilder::select()'>ryunosuke\dbml\Query\QueryBuilder::select()</tag_link> の追加版）</p>
 </div>
                         	<table class="table">
 		<caption>Parameters</caption>
@@ -1286,7 +1286,7 @@ $qb-&gt;column([
 						</h4>
 					<div class="inner-item">
 						<div class="description"><p>FROM 句（JOIN 込）を構成する</p>
-<p>結合タイプや結合条件をまとめて指定して FROM, JOIN を構成できるが、複雑極まりないので使用は非推奨（FROM 句の設定は <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::column()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::column()'>ryunosuke\dbml\Query\QueryBuilder::column()</tag_link> を使用すれば基本的に不要）。</p>
+<p>結合タイプや結合条件をまとめて指定して FROM, JOIN を構成できるが、複雑極まりないので使用は非推奨（FROM 句の設定は <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::column()' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Query\QueryBuilder::column()'>ryunosuke\dbml\Query\QueryBuilder::column()</tag_link> を使用すれば基本的に不要）。</p>
 </div>
                         	<table class="table">
 		<caption>Parameters</caption>
@@ -1298,13 +1298,13 @@ $qb-&gt;column([
 </td>
 			</tr>
         			<tr>
-				<td class="type"><a href="?string$typespace.html#?string" class="fqsen ">?string</a></td>
+				<td class="type">?string</td>
 				<td class="rest">$alias = null</td>
 				<td class="desc"><p>テーブルエイリアス</p>
 </td>
 			</tr>
         			<tr>
-				<td class="type"><a href="?string$typespace.html#?string" class="fqsen ">?string</a></td>
+				<td class="type">?string</td>
 				<td class="rest">$type = null</td>
 				<td class="desc"><p>INNER, LEFT などの JOIN タイプ</p>
 </td>
@@ -1312,17 +1312,17 @@ $qb-&gt;column([
         			<tr>
 				<td class="type">array<span class="type-separator"></span><wbr>string<span class="type-separator"></span><wbr>null</td>
 				<td class="rest">$condition = []</td>
-				<td class="desc"><p>結合条件。 <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::where()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::where()'>ryunosuke\dbml\Query\QueryBuilder::where()</tag_link> と同じ形式が使える</p>
+				<td class="desc"><p>結合条件。 <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::where()' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Query\QueryBuilder::where()'>ryunosuke\dbml\Query\QueryBuilder::where()</tag_link> と同じ形式が使える</p>
 </td>
 			</tr>
         			<tr>
-				<td class="type"><a href="?string$typespace.html#?string" class="fqsen ">?string</a></td>
+				<td class="type">?string</td>
 				<td class="rest">$fkeyname = null</td>
 				<td class="desc"><p>外部キー名</p>
 </td>
 			</tr>
         			<tr>
-				<td class="type"><a href="?string$typespace.html#?string" class="fqsen ">?string</a></td>
+				<td class="type">?string</td>
 				<td class="rest">$fromAlias = null</td>
 				<td class="desc"><p>結合させるテーブル。省略時は自動判別</p>
 </td>
@@ -1365,7 +1365,7 @@ $qb-&gt;column([
 					<div class="inner-item">
 						<div class="description"><p>結合タイプや結合条件、外部キーを指定して JOIN する</p>
 <p>実際は下記のようなエイリアスメソッドが定義されているのでそちらを使うことが多く、明示的に呼ぶことはほとんどない。<br />
-さらに単純な JOIN であれば <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::column()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::column()'>ryunosuke\dbml\Query\QueryBuilder::column()</tag_link> でも可能なため、ますます出番はない。</p>
+さらに単純な JOIN であれば <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::column()' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Query\QueryBuilder::column()'>ryunosuke\dbml\Query\QueryBuilder::column()</tag_link> でも可能なため、ますます出番はない。</p>
 <pre><code class="language-php"># 指定条件で ON して JOIN
 $qb-&gt;from('t_from')-&gt;innerJoinOn('t_join', ['hoge = fuga']);
 // SELECT  FROM t_from INNER JOIN t_join ON hoge = fuga
@@ -1398,17 +1398,17 @@ $qb-&gt;from('t_from')-&gt;innerJoinForeignOn('t_join', ['hoge = fuga'], 'Foreig
         			<tr>
 				<td class="type">string<span class="type-separator"></span><wbr>array</td>
 				<td class="rest">$on</td>
-				<td class="desc"><p>結合条件。 <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::where()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::where()'>ryunosuke\dbml\Query\QueryBuilder::where()</tag_link> と同じ形式が使える</p>
+				<td class="desc"><p>結合条件。 <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::where()' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Query\QueryBuilder::where()'>ryunosuke\dbml\Query\QueryBuilder::where()</tag_link> と同じ形式が使える</p>
 </td>
 			</tr>
         			<tr>
-				<td class="type"><a href="?string$typespace.html#?string" class="fqsen ">?string</a></td>
+				<td class="type">?string</td>
 				<td class="rest">$fkeyname = null</td>
 				<td class="desc"><p>外部キー名称。省略時は唯一の外部キーを使用（無かったり2個以上ある場合は例外）</p>
 </td>
 			</tr>
         			<tr>
-				<td class="type"><a href="?string$typespace.html#?string" class="fqsen ">?string</a></td>
+				<td class="type">?string</td>
 				<td class="rest">$from = null</td>
 				<td class="desc"><p>結合させるテーブル。省略時は自動判別</p>
 </td>
@@ -1449,7 +1449,7 @@ $qb-&gt;from('t_from')-&gt;innerJoinForeignOn('t_join', ['hoge = fuga'], 'Foreig
                         innerJoinOn                        	<small>($table, $on, $from = null) : <a href="ryunosuke-dbml-Query-QueryBuilder$typespace.html#ryunosuke\dbml\Query\QueryBuilder" class="fqsen "><small>ryunosuke\dbml\Query\</small><wbr>QueryBuilder</a></small>
 						</h4>
 					<div class="inner-item">
-						<div class="description"><p>結合方法が INNER で結合条件指定の <tag_link data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::join()' data-type-array='0' data-description='join()'>join()</tag_link></p>
+						<div class="description"><p>結合方法が INNER で結合条件指定の <tag_link data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::join()' data-type-array='0' data-type-nullable='' data-description='join()'>join()</tag_link></p>
 </div>
                         	<table class="table">
 		<caption>Parameters</caption>
@@ -1463,11 +1463,11 @@ $qb-&gt;from('t_from')-&gt;innerJoinForeignOn('t_join', ['hoge = fuga'], 'Foreig
         			<tr>
 				<td class="type">string<span class="type-separator"></span><wbr>array</td>
 				<td class="rest">$on</td>
-				<td class="desc"><p>結合条件。 <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::where()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::where()'>ryunosuke\dbml\Query\QueryBuilder::where()</tag_link> と同じ形式が使える</p>
+				<td class="desc"><p>結合条件。 <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::where()' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Query\QueryBuilder::where()'>ryunosuke\dbml\Query\QueryBuilder::where()</tag_link> と同じ形式が使える</p>
 </td>
 			</tr>
         			<tr>
-				<td class="type"><a href="?string$typespace.html#?string" class="fqsen ">?string</a></td>
+				<td class="type">?string</td>
 				<td class="rest">$from = null</td>
 				<td class="desc"><p>結合させるテーブル。省略時は自動判別</p>
 </td>
@@ -1507,7 +1507,7 @@ $qb-&gt;from('t_from')-&gt;innerJoinForeignOn('t_join', ['hoge = fuga'], 'Foreig
                         leftJoinOn                        	<small>($table, $on, $from = null) : <a href="ryunosuke-dbml-Query-QueryBuilder$typespace.html#ryunosuke\dbml\Query\QueryBuilder" class="fqsen "><small>ryunosuke\dbml\Query\</small><wbr>QueryBuilder</a></small>
 						</h4>
 					<div class="inner-item">
-						<div class="description"><p>結合方法が LEFT で結合条件指定の <tag_link data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::join()' data-type-array='0' data-description='join()'>join()</tag_link></p>
+						<div class="description"><p>結合方法が LEFT で結合条件指定の <tag_link data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::join()' data-type-array='0' data-type-nullable='' data-description='join()'>join()</tag_link></p>
 </div>
                         	<table class="table">
 		<caption>Parameters</caption>
@@ -1521,11 +1521,11 @@ $qb-&gt;from('t_from')-&gt;innerJoinForeignOn('t_join', ['hoge = fuga'], 'Foreig
         			<tr>
 				<td class="type">string<span class="type-separator"></span><wbr>array</td>
 				<td class="rest">$on</td>
-				<td class="desc"><p>結合条件。 <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::where()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::where()'>ryunosuke\dbml\Query\QueryBuilder::where()</tag_link> と同じ形式が使える</p>
+				<td class="desc"><p>結合条件。 <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::where()' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Query\QueryBuilder::where()'>ryunosuke\dbml\Query\QueryBuilder::where()</tag_link> と同じ形式が使える</p>
 </td>
 			</tr>
         			<tr>
-				<td class="type"><a href="?string$typespace.html#?string" class="fqsen ">?string</a></td>
+				<td class="type">?string</td>
 				<td class="rest">$from = null</td>
 				<td class="desc"><p>結合させるテーブル。省略時は自動判別</p>
 </td>
@@ -1565,7 +1565,7 @@ $qb-&gt;from('t_from')-&gt;innerJoinForeignOn('t_join', ['hoge = fuga'], 'Foreig
                         rightJoinOn                        	<small>($table, $on, $from = null) : <a href="ryunosuke-dbml-Query-QueryBuilder$typespace.html#ryunosuke\dbml\Query\QueryBuilder" class="fqsen "><small>ryunosuke\dbml\Query\</small><wbr>QueryBuilder</a></small>
 						</h4>
 					<div class="inner-item">
-						<div class="description"><p>結合方法が RIGHT で結合条件指定の <tag_link data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::join()' data-type-array='0' data-description='join()'>join()</tag_link></p>
+						<div class="description"><p>結合方法が RIGHT で結合条件指定の <tag_link data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::join()' data-type-array='0' data-type-nullable='' data-description='join()'>join()</tag_link></p>
 </div>
                         	<table class="table">
 		<caption>Parameters</caption>
@@ -1579,11 +1579,11 @@ $qb-&gt;from('t_from')-&gt;innerJoinForeignOn('t_join', ['hoge = fuga'], 'Foreig
         			<tr>
 				<td class="type">string<span class="type-separator"></span><wbr>array</td>
 				<td class="rest">$on</td>
-				<td class="desc"><p>結合条件。 <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::where()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::where()'>ryunosuke\dbml\Query\QueryBuilder::where()</tag_link> と同じ形式が使える</p>
+				<td class="desc"><p>結合条件。 <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::where()' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Query\QueryBuilder::where()'>ryunosuke\dbml\Query\QueryBuilder::where()</tag_link> と同じ形式が使える</p>
 </td>
 			</tr>
         			<tr>
-				<td class="type"><a href="?string$typespace.html#?string" class="fqsen ">?string</a></td>
+				<td class="type">?string</td>
 				<td class="rest">$from = null</td>
 				<td class="desc"><p>結合させるテーブル。省略時は自動判別</p>
 </td>
@@ -1623,7 +1623,7 @@ $qb-&gt;from('t_from')-&gt;innerJoinForeignOn('t_join', ['hoge = fuga'], 'Foreig
                         autoJoinForeign                        	<small>($table, $fkeyname = null, $from = null) : <a href="ryunosuke-dbml-Query-QueryBuilder$typespace.html#ryunosuke\dbml\Query\QueryBuilder" class="fqsen "><small>ryunosuke\dbml\Query\</small><wbr>QueryBuilder</a></small>
 						</h4>
 					<div class="inner-item">
-						<div class="description"><p>結合方法が AUTO で外部キー指定の <tag_link data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::join()' data-type-array='0' data-description='join()'>join()</tag_link></p>
+						<div class="description"><p>結合方法が AUTO で外部キー指定の <tag_link data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::join()' data-type-array='0' data-type-nullable='' data-description='join()'>join()</tag_link></p>
 </div>
                         	<table class="table">
 		<caption>Parameters</caption>
@@ -1635,13 +1635,13 @@ $qb-&gt;from('t_from')-&gt;innerJoinForeignOn('t_join', ['hoge = fuga'], 'Foreig
 </td>
 			</tr>
         			<tr>
-				<td class="type"><a href="?string$typespace.html#?string" class="fqsen ">?string</a></td>
+				<td class="type">?string</td>
 				<td class="rest">$fkeyname = null</td>
 				<td class="desc"><p>外部キー名称。省略時は唯一の外部キーを使用（無かったり2個以上ある場合は例外）</p>
 </td>
 			</tr>
         			<tr>
-				<td class="type"><a href="?string$typespace.html#?string" class="fqsen ">?string</a></td>
+				<td class="type">?string</td>
 				<td class="rest">$from = null</td>
 				<td class="desc"><p>結合させるテーブル。省略時は自動判別</p>
 </td>
@@ -1681,7 +1681,7 @@ $qb-&gt;from('t_from')-&gt;innerJoinForeignOn('t_join', ['hoge = fuga'], 'Foreig
                         innerJoinForeign                        	<small>($table, $fkeyname = null, $from = null) : <a href="ryunosuke-dbml-Query-QueryBuilder$typespace.html#ryunosuke\dbml\Query\QueryBuilder" class="fqsen "><small>ryunosuke\dbml\Query\</small><wbr>QueryBuilder</a></small>
 						</h4>
 					<div class="inner-item">
-						<div class="description"><p>結合方法が INNER で外部キー指定の <tag_link data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::join()' data-type-array='0' data-description='join()'>join()</tag_link></p>
+						<div class="description"><p>結合方法が INNER で外部キー指定の <tag_link data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::join()' data-type-array='0' data-type-nullable='' data-description='join()'>join()</tag_link></p>
 </div>
                         	<table class="table">
 		<caption>Parameters</caption>
@@ -1693,13 +1693,13 @@ $qb-&gt;from('t_from')-&gt;innerJoinForeignOn('t_join', ['hoge = fuga'], 'Foreig
 </td>
 			</tr>
         			<tr>
-				<td class="type"><a href="?string$typespace.html#?string" class="fqsen ">?string</a></td>
+				<td class="type">?string</td>
 				<td class="rest">$fkeyname = null</td>
 				<td class="desc"><p>外部キー名称。省略時は唯一の外部キーを使用（無かったり2個以上ある場合は例外）</p>
 </td>
 			</tr>
         			<tr>
-				<td class="type"><a href="?string$typespace.html#?string" class="fqsen ">?string</a></td>
+				<td class="type">?string</td>
 				<td class="rest">$from = null</td>
 				<td class="desc"><p>結合させるテーブル。省略時は自動判別</p>
 </td>
@@ -1739,7 +1739,7 @@ $qb-&gt;from('t_from')-&gt;innerJoinForeignOn('t_join', ['hoge = fuga'], 'Foreig
                         leftJoinForeign                        	<small>($table, $fkeyname = null, $from = null) : <a href="ryunosuke-dbml-Query-QueryBuilder$typespace.html#ryunosuke\dbml\Query\QueryBuilder" class="fqsen "><small>ryunosuke\dbml\Query\</small><wbr>QueryBuilder</a></small>
 						</h4>
 					<div class="inner-item">
-						<div class="description"><p>結合方法が LEFT で外部キー指定の <tag_link data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::join()' data-type-array='0' data-description='join()'>join()</tag_link></p>
+						<div class="description"><p>結合方法が LEFT で外部キー指定の <tag_link data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::join()' data-type-array='0' data-type-nullable='' data-description='join()'>join()</tag_link></p>
 </div>
                         	<table class="table">
 		<caption>Parameters</caption>
@@ -1751,13 +1751,13 @@ $qb-&gt;from('t_from')-&gt;innerJoinForeignOn('t_join', ['hoge = fuga'], 'Foreig
 </td>
 			</tr>
         			<tr>
-				<td class="type"><a href="?string$typespace.html#?string" class="fqsen ">?string</a></td>
+				<td class="type">?string</td>
 				<td class="rest">$fkeyname = null</td>
 				<td class="desc"><p>外部キー名称。省略時は唯一の外部キーを使用（無かったり2個以上ある場合は例外）</p>
 </td>
 			</tr>
         			<tr>
-				<td class="type"><a href="?string$typespace.html#?string" class="fqsen ">?string</a></td>
+				<td class="type">?string</td>
 				<td class="rest">$from = null</td>
 				<td class="desc"><p>結合させるテーブル。省略時は自動判別</p>
 </td>
@@ -1797,7 +1797,7 @@ $qb-&gt;from('t_from')-&gt;innerJoinForeignOn('t_join', ['hoge = fuga'], 'Foreig
                         rightJoinForeign                        	<small>($table, $fkeyname = null, $from = null) : <a href="ryunosuke-dbml-Query-QueryBuilder$typespace.html#ryunosuke\dbml\Query\QueryBuilder" class="fqsen "><small>ryunosuke\dbml\Query\</small><wbr>QueryBuilder</a></small>
 						</h4>
 					<div class="inner-item">
-						<div class="description"><p>結合方法が RIGHT で外部キー指定の <tag_link data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::join()' data-type-array='0' data-description='join()'>join()</tag_link></p>
+						<div class="description"><p>結合方法が RIGHT で外部キー指定の <tag_link data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::join()' data-type-array='0' data-type-nullable='' data-description='join()'>join()</tag_link></p>
 </div>
                         	<table class="table">
 		<caption>Parameters</caption>
@@ -1809,13 +1809,13 @@ $qb-&gt;from('t_from')-&gt;innerJoinForeignOn('t_join', ['hoge = fuga'], 'Foreig
 </td>
 			</tr>
         			<tr>
-				<td class="type"><a href="?string$typespace.html#?string" class="fqsen ">?string</a></td>
+				<td class="type">?string</td>
 				<td class="rest">$fkeyname = null</td>
 				<td class="desc"><p>外部キー名称。省略時は唯一の外部キーを使用（無かったり2個以上ある場合は例外）</p>
 </td>
 			</tr>
         			<tr>
-				<td class="type"><a href="?string$typespace.html#?string" class="fqsen ">?string</a></td>
+				<td class="type">?string</td>
 				<td class="rest">$from = null</td>
 				<td class="desc"><p>結合させるテーブル。省略時は自動判別</p>
 </td>
@@ -1855,7 +1855,7 @@ $qb-&gt;from('t_from')-&gt;innerJoinForeignOn('t_join', ['hoge = fuga'], 'Foreig
                         autoJoinForeignOn                        	<small>($table, $on, $fkeyname = null, $from = null) : <a href="ryunosuke-dbml-Query-QueryBuilder$typespace.html#ryunosuke\dbml\Query\QueryBuilder" class="fqsen "><small>ryunosuke\dbml\Query\</small><wbr>QueryBuilder</a></small>
 						</h4>
 					<div class="inner-item">
-						<div class="description"><p>結合方法が AUTO で結合条件・外部キー指定の <tag_link data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::join()' data-type-array='0' data-description='join()'>join()</tag_link></p>
+						<div class="description"><p>結合方法が AUTO で結合条件・外部キー指定の <tag_link data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::join()' data-type-array='0' data-type-nullable='' data-description='join()'>join()</tag_link></p>
 </div>
                         	<table class="table">
 		<caption>Parameters</caption>
@@ -1869,17 +1869,17 @@ $qb-&gt;from('t_from')-&gt;innerJoinForeignOn('t_join', ['hoge = fuga'], 'Foreig
         			<tr>
 				<td class="type">string<span class="type-separator"></span><wbr>array</td>
 				<td class="rest">$on</td>
-				<td class="desc"><p>結合条件。 <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::where()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::where()'>ryunosuke\dbml\Query\QueryBuilder::where()</tag_link> と同じ形式が使える</p>
+				<td class="desc"><p>結合条件。 <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::where()' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Query\QueryBuilder::where()'>ryunosuke\dbml\Query\QueryBuilder::where()</tag_link> と同じ形式が使える</p>
 </td>
 			</tr>
         			<tr>
-				<td class="type"><a href="?string$typespace.html#?string" class="fqsen ">?string</a></td>
+				<td class="type">?string</td>
 				<td class="rest">$fkeyname = null</td>
 				<td class="desc"><p>外部キー名称。省略時は唯一の外部キーを使用（無かったり2個以上ある場合は例外）</p>
 </td>
 			</tr>
         			<tr>
-				<td class="type"><a href="?string$typespace.html#?string" class="fqsen ">?string</a></td>
+				<td class="type">?string</td>
 				<td class="rest">$from = null</td>
 				<td class="desc"><p>結合させるテーブル。省略時は自動判別</p>
 </td>
@@ -1919,7 +1919,7 @@ $qb-&gt;from('t_from')-&gt;innerJoinForeignOn('t_join', ['hoge = fuga'], 'Foreig
                         innerJoinForeignOn                        	<small>($table, $on, $fkeyname = null, $from = null) : <a href="ryunosuke-dbml-Query-QueryBuilder$typespace.html#ryunosuke\dbml\Query\QueryBuilder" class="fqsen "><small>ryunosuke\dbml\Query\</small><wbr>QueryBuilder</a></small>
 						</h4>
 					<div class="inner-item">
-						<div class="description"><p>結合方法が INNER で結合条件・外部キー指定の <tag_link data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::join()' data-type-array='0' data-description='join()'>join()</tag_link></p>
+						<div class="description"><p>結合方法が INNER で結合条件・外部キー指定の <tag_link data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::join()' data-type-array='0' data-type-nullable='' data-description='join()'>join()</tag_link></p>
 </div>
                         	<table class="table">
 		<caption>Parameters</caption>
@@ -1933,17 +1933,17 @@ $qb-&gt;from('t_from')-&gt;innerJoinForeignOn('t_join', ['hoge = fuga'], 'Foreig
         			<tr>
 				<td class="type">string<span class="type-separator"></span><wbr>array</td>
 				<td class="rest">$on</td>
-				<td class="desc"><p>結合条件。 <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::where()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::where()'>ryunosuke\dbml\Query\QueryBuilder::where()</tag_link> と同じ形式が使える</p>
+				<td class="desc"><p>結合条件。 <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::where()' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Query\QueryBuilder::where()'>ryunosuke\dbml\Query\QueryBuilder::where()</tag_link> と同じ形式が使える</p>
 </td>
 			</tr>
         			<tr>
-				<td class="type"><a href="?string$typespace.html#?string" class="fqsen ">?string</a></td>
+				<td class="type">?string</td>
 				<td class="rest">$fkeyname = null</td>
 				<td class="desc"><p>外部キー名称。省略時は唯一の外部キーを使用（無かったり2個以上ある場合は例外）</p>
 </td>
 			</tr>
         			<tr>
-				<td class="type"><a href="?string$typespace.html#?string" class="fqsen ">?string</a></td>
+				<td class="type">?string</td>
 				<td class="rest">$from = null</td>
 				<td class="desc"><p>結合させるテーブル。省略時は自動判別</p>
 </td>
@@ -1983,7 +1983,7 @@ $qb-&gt;from('t_from')-&gt;innerJoinForeignOn('t_join', ['hoge = fuga'], 'Foreig
                         leftJoinForeignOn                        	<small>($table, $on, $fkeyname = null, $from = null) : <a href="ryunosuke-dbml-Query-QueryBuilder$typespace.html#ryunosuke\dbml\Query\QueryBuilder" class="fqsen "><small>ryunosuke\dbml\Query\</small><wbr>QueryBuilder</a></small>
 						</h4>
 					<div class="inner-item">
-						<div class="description"><p>結合方法が LEFT で結合条件・外部キー指定の <tag_link data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::join()' data-type-array='0' data-description='join()'>join()</tag_link></p>
+						<div class="description"><p>結合方法が LEFT で結合条件・外部キー指定の <tag_link data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::join()' data-type-array='0' data-type-nullable='' data-description='join()'>join()</tag_link></p>
 </div>
                         	<table class="table">
 		<caption>Parameters</caption>
@@ -1997,17 +1997,17 @@ $qb-&gt;from('t_from')-&gt;innerJoinForeignOn('t_join', ['hoge = fuga'], 'Foreig
         			<tr>
 				<td class="type">string<span class="type-separator"></span><wbr>array</td>
 				<td class="rest">$on</td>
-				<td class="desc"><p>結合条件。 <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::where()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::where()'>ryunosuke\dbml\Query\QueryBuilder::where()</tag_link> と同じ形式が使える</p>
+				<td class="desc"><p>結合条件。 <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::where()' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Query\QueryBuilder::where()'>ryunosuke\dbml\Query\QueryBuilder::where()</tag_link> と同じ形式が使える</p>
 </td>
 			</tr>
         			<tr>
-				<td class="type"><a href="?string$typespace.html#?string" class="fqsen ">?string</a></td>
+				<td class="type">?string</td>
 				<td class="rest">$fkeyname = null</td>
 				<td class="desc"><p>外部キー名称。省略時は唯一の外部キーを使用（無かったり2個以上ある場合は例外）</p>
 </td>
 			</tr>
         			<tr>
-				<td class="type"><a href="?string$typespace.html#?string" class="fqsen ">?string</a></td>
+				<td class="type">?string</td>
 				<td class="rest">$from = null</td>
 				<td class="desc"><p>結合させるテーブル。省略時は自動判別</p>
 </td>
@@ -2047,7 +2047,7 @@ $qb-&gt;from('t_from')-&gt;innerJoinForeignOn('t_join', ['hoge = fuga'], 'Foreig
                         rightJoinForeignOn                        	<small>($table, $on, $fkeyname = null, $from = null) : <a href="ryunosuke-dbml-Query-QueryBuilder$typespace.html#ryunosuke\dbml\Query\QueryBuilder" class="fqsen "><small>ryunosuke\dbml\Query\</small><wbr>QueryBuilder</a></small>
 						</h4>
 					<div class="inner-item">
-						<div class="description"><p>結合方法が RIGHT で結合条件・外部キー指定の <tag_link data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::join()' data-type-array='0' data-description='join()'>join()</tag_link></p>
+						<div class="description"><p>結合方法が RIGHT で結合条件・外部キー指定の <tag_link data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::join()' data-type-array='0' data-type-nullable='' data-description='join()'>join()</tag_link></p>
 </div>
                         	<table class="table">
 		<caption>Parameters</caption>
@@ -2061,17 +2061,17 @@ $qb-&gt;from('t_from')-&gt;innerJoinForeignOn('t_join', ['hoge = fuga'], 'Foreig
         			<tr>
 				<td class="type">string<span class="type-separator"></span><wbr>array</td>
 				<td class="rest">$on</td>
-				<td class="desc"><p>結合条件。 <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::where()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::where()'>ryunosuke\dbml\Query\QueryBuilder::where()</tag_link> と同じ形式が使える</p>
+				<td class="desc"><p>結合条件。 <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::where()' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Query\QueryBuilder::where()'>ryunosuke\dbml\Query\QueryBuilder::where()</tag_link> と同じ形式が使える</p>
 </td>
 			</tr>
         			<tr>
-				<td class="type"><a href="?string$typespace.html#?string" class="fqsen ">?string</a></td>
+				<td class="type">?string</td>
 				<td class="rest">$fkeyname = null</td>
 				<td class="desc"><p>外部キー名称。省略時は唯一の外部キーを使用（無かったり2個以上ある場合は例外）</p>
 </td>
 			</tr>
         			<tr>
-				<td class="type"><a href="?string$typespace.html#?string" class="fqsen ">?string</a></td>
+				<td class="type">?string</td>
 				<td class="rest">$from = null</td>
 				<td class="desc"><p>結合させるテーブル。省略時は自動判別</p>
 </td>
@@ -2184,7 +2184,7 @@ $db-&gt;select([
 						</h4>
 					<div class="inner-item">
 						<div class="description"><p>引数内では AND、引数間では OR する where（クリア版）</p>
-<p>基本は <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::whereInto()' data-type-array='0' data-description='ryunosuke\dbml\Database::whereInto()'>ryunosuke\dbml\Database::whereInto()</tag_link> の where 記法と同じ。加えて下記の記法が使用できる。</p>
+<p>基本は <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::whereInto()' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Database::whereInto()'>ryunosuke\dbml\Database::whereInto()</tag_link> の where 記法と同じ。加えて下記の記法が使用できる。</p>
 <table>
 <thead>
 <tr><th align="right">No</th><th align="left">where</th><th align="left">説明</th></tr>
@@ -2194,7 +2194,7 @@ $db-&gt;select([
 <tr><td align="right">31</td><td align="left"><code>['C' =&gt; 'childwhere']</code></td><td align="left">サブビルダの名前をキーにして配列を渡すと「その子供ビルダの where」を意味する</td></tr>
 <tr><td align="right">32</td><td align="left"><code>['C/childwhere']</code></td><td align="left">サブビルダの名前を "/" で区切ると「その子供ビルダの where」を意味する</td></tr>
 <tr><td align="right">33</td><td align="left"><code>['*.delete_flg' =&gt; 1]</code></td><td align="left">テーブル部分に <code>*</code> を指定すると「あらゆるテーブルのそのカラム」を意味する</td></tr>
-<tr><td align="right">34</td><td align="left"><code>['*' =&gt; "hoge"]</code></td><td align="left"><code>*</code> を指定すると「よしなに検索」となる。<tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::anywhere()' data-type-array='0' data-description='ryunosuke\dbml\Database::anywhere()'>ryunosuke\dbml\Database::anywhere()</tag_link> も参照</td></tr>
+<tr><td align="right">34</td><td align="left"><code>['*' =&gt; "hoge"]</code></td><td align="left"><code>*</code> を指定すると「よしなに検索」となる。<tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::anywhere()' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Database::anywhere()'>ryunosuke\dbml\Database::anywhere()</tag_link> も参照</td></tr>
 </tbody>
 </table>
 <pre><code class="language-php"># 引数配列内では AND、引数間では OR される
@@ -2273,7 +2273,7 @@ $qb-&gt;column('table1 t1, table2 t2, table3 t3')-&gt;where(['t2.*' =&gt; 'hoge'
 						</h4>
 					<div class="inner-item">
 						<div class="description"><p>NOT つきで引数内では AND、引数間では OR する where（クリア版）</p>
-<p>NOT が付くこと以外は <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::where()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::where()'>ryunosuke\dbml\Query\QueryBuilder::where()</tag_link> と同じ。</p>
+<p>NOT が付くこと以外は <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::where()' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Query\QueryBuilder::where()'>ryunosuke\dbml\Query\QueryBuilder::where()</tag_link> と同じ。</p>
 </div>
                         	<table class="table">
 		<caption>Parameters</caption>
@@ -2320,8 +2320,8 @@ $qb-&gt;column('table1 t1, table2 t2, table3 t3')-&gt;where(['t2.*' =&gt; 'hoge'
                         andWhere                        	<small>(...$predicates) : <a href="ryunosuke-dbml-Query-QueryBuilder$typespace.html#ryunosuke\dbml\Query\QueryBuilder" class="fqsen "><small>ryunosuke\dbml\Query\</small><wbr>QueryBuilder</a></small>
 						</h4>
 					<div class="inner-item">
-						<div class="description"><p>引数内では AND、引数間では OR する（<tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::where()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::where()'>ryunosuke\dbml\Query\QueryBuilder::where()</tag_link> の追加版）</p>
-<p>クリアされずに追加されること以外は <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::where()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::where()'>ryunosuke\dbml\Query\QueryBuilder::where()</tag_link> と同じ。</p>
+						<div class="description"><p>引数内では AND、引数間では OR する（<tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::where()' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Query\QueryBuilder::where()'>ryunosuke\dbml\Query\QueryBuilder::where()</tag_link> の追加版）</p>
+<p>クリアされずに追加されること以外は <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::where()' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Query\QueryBuilder::where()'>ryunosuke\dbml\Query\QueryBuilder::where()</tag_link> と同じ。</p>
 </div>
                         	<table class="table">
 		<caption>Parameters</caption>
@@ -2368,8 +2368,8 @@ $qb-&gt;column('table1 t1, table2 t2, table3 t3')-&gt;where(['t2.*' =&gt; 'hoge'
                         andNotWhere                        	<small>(...$predicates) : <a href="ryunosuke-dbml-Query-QueryBuilder$typespace.html#ryunosuke\dbml\Query\QueryBuilder" class="fqsen "><small>ryunosuke\dbml\Query\</small><wbr>QueryBuilder</a></small>
 						</h4>
 					<div class="inner-item">
-						<div class="description"><p>NOT つきで引数内では AND、引数間では OR する（<tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::notWhere()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::notWhere()'>ryunosuke\dbml\Query\QueryBuilder::notWhere()</tag_link> の追加版）</p>
-<p>クリアされずに追加されること以外は <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::notWhere()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::notWhere()'>ryunosuke\dbml\Query\QueryBuilder::notWhere()</tag_link> と同じ。</p>
+						<div class="description"><p>NOT つきで引数内では AND、引数間では OR する（<tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::notWhere()' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Query\QueryBuilder::notWhere()'>ryunosuke\dbml\Query\QueryBuilder::notWhere()</tag_link> の追加版）</p>
+<p>クリアされずに追加されること以外は <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::notWhere()' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Query\QueryBuilder::notWhere()'>ryunosuke\dbml\Query\QueryBuilder::notWhere()</tag_link> と同じ。</p>
 </div>
                         	<table class="table">
 		<caption>Parameters</caption>
@@ -2416,7 +2416,7 @@ $qb-&gt;column('table1 t1, table2 t2, table3 t3')-&gt;where(['t2.*' =&gt; 'hoge'
                         groupBy                        	<small>(...$groupBy) : <a href="ryunosuke-dbml-Query-QueryBuilder$typespace.html#ryunosuke\dbml\Query\QueryBuilder" class="fqsen "><small>ryunosuke\dbml\Query\</small><wbr>QueryBuilder</a></small>
 						</h4>
 					<div class="inner-item">
-						<div class="description"><p>[table =&gt; array(col1, col2)] のように指定できるように拡張した <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::groupBy()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::groupBy()'>ryunosuke\dbml\Query\QueryBuilder::groupBy()</tag_link>（クリア版）</p>
+						<div class="description"><p>[table =&gt; array(col1, col2)] のように指定できるように拡張した <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::groupBy()' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Query\QueryBuilder::groupBy()'>ryunosuke\dbml\Query\QueryBuilder::groupBy()</tag_link>（クリア版）</p>
 <pre><code class="language-php"> # シンプルにカラムを指定
 $qb-&gt;groupBy('id1');          // GROUP BY id1
 $qb-&gt;groupBy('id1', 'id2');   // GROUP BY id1, id2
@@ -2484,7 +2484,7 @@ $qb-&gt;column('t_parent P/t_child C')-&gt;groupBy([
                         addGroupBy                        	<small>(...$groupBy) : <a href="ryunosuke-dbml-Query-QueryBuilder$typespace.html#ryunosuke\dbml\Query\QueryBuilder" class="fqsen "><small>ryunosuke\dbml\Query\</small><wbr>QueryBuilder</a></small>
 						</h4>
 					<div class="inner-item">
-						<div class="description"><p>[table =&gt; [col1, col2]] のように指定できるように拡張した <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::groupBy()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::groupBy()'>ryunosuke\dbml\Query\QueryBuilder::groupBy()</tag_link>（追加版）</p>
+						<div class="description"><p>[table =&gt; [col1, col2]] のように指定できるように拡張した <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::groupBy()' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Query\QueryBuilder::groupBy()'>ryunosuke\dbml\Query\QueryBuilder::groupBy()</tag_link>（追加版）</p>
 </div>
                         	<table class="table">
 		<caption>Parameters</caption>
@@ -2532,7 +2532,7 @@ $qb-&gt;column('t_parent P/t_child C')-&gt;groupBy([
 						</h4>
 					<div class="inner-item">
 						<div class="description"><p>引数内では AND、引数間では OR する having（クリア版）</p>
-<p>WHERE ではなく HAVING である点を除いて引数体系などは <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::where()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::where()'>ryunosuke\dbml\Query\QueryBuilder::where()</tag_link> と同じ。</p>
+<p>WHERE ではなく HAVING である点を除いて引数体系などは <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::where()' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Query\QueryBuilder::where()'>ryunosuke\dbml\Query\QueryBuilder::where()</tag_link> と同じ。</p>
 </div>
                         	<table class="table">
 		<caption>Parameters</caption>
@@ -2580,7 +2580,7 @@ $qb-&gt;column('t_parent P/t_child C')-&gt;groupBy([
 						</h4>
 					<div class="inner-item">
 						<div class="description"><p>NOT つきで引数内では AND、引数間では OR する having（クリア版）</p>
-<p>NOT が付くこと以外は <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::having()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::having()'>ryunosuke\dbml\Query\QueryBuilder::having()</tag_link> と同じ。</p>
+<p>NOT が付くこと以外は <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::having()' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Query\QueryBuilder::having()'>ryunosuke\dbml\Query\QueryBuilder::having()</tag_link> と同じ。</p>
 </div>
                         	<table class="table">
 		<caption>Parameters</caption>
@@ -2627,8 +2627,8 @@ $qb-&gt;column('t_parent P/t_child C')-&gt;groupBy([
                         andHaving                        	<small>(...$predicates) : <a href="ryunosuke-dbml-Query-QueryBuilder$typespace.html#ryunosuke\dbml\Query\QueryBuilder" class="fqsen "><small>ryunosuke\dbml\Query\</small><wbr>QueryBuilder</a></small>
 						</h4>
 					<div class="inner-item">
-						<div class="description"><p>引数内では AND、引数間では OR する（<tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::having()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::having()'>ryunosuke\dbml\Query\QueryBuilder::having()</tag_link> の追加版）</p>
-<p>クリアされずに追加されること以外は <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::having()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::having()'>ryunosuke\dbml\Query\QueryBuilder::having()</tag_link> と同じ。</p>
+						<div class="description"><p>引数内では AND、引数間では OR する（<tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::having()' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Query\QueryBuilder::having()'>ryunosuke\dbml\Query\QueryBuilder::having()</tag_link> の追加版）</p>
+<p>クリアされずに追加されること以外は <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::having()' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Query\QueryBuilder::having()'>ryunosuke\dbml\Query\QueryBuilder::having()</tag_link> と同じ。</p>
 </div>
                         	<table class="table">
 		<caption>Parameters</caption>
@@ -2675,8 +2675,8 @@ $qb-&gt;column('t_parent P/t_child C')-&gt;groupBy([
                         andNotHaving                        	<small>(...$predicates) : <a href="ryunosuke-dbml-Query-QueryBuilder$typespace.html#ryunosuke\dbml\Query\QueryBuilder" class="fqsen "><small>ryunosuke\dbml\Query\</small><wbr>QueryBuilder</a></small>
 						</h4>
 					<div class="inner-item">
-						<div class="description"><p>NOT つきで引数内では AND、引数間では OR する（<tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::notHaving()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::notHaving()'>ryunosuke\dbml\Query\QueryBuilder::notHaving()</tag_link> の追加版）</p>
-<p>クリアされずに追加されること以外は <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::notHaving()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::notHaving()'>ryunosuke\dbml\Query\QueryBuilder::notHaving()</tag_link> と同じ。</p>
+						<div class="description"><p>NOT つきで引数内では AND、引数間では OR する（<tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::notHaving()' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Query\QueryBuilder::notHaving()'>ryunosuke\dbml\Query\QueryBuilder::notHaving()</tag_link> の追加版）</p>
+<p>クリアされずに追加されること以外は <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::notHaving()' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Query\QueryBuilder::notHaving()'>ryunosuke\dbml\Query\QueryBuilder::notHaving()</tag_link> と同じ。</p>
 </div>
                         	<table class="table">
 		<caption>Parameters</caption>
@@ -2793,7 +2793,7 @@ $qb-&gt;orderBy([
 </td>
 			</tr>
         			<tr>
-				<td class="type"><a href="?string$typespace.html#?string" class="fqsen ">?string</a></td>
+				<td class="type">?string</td>
 				<td class="rest">$nullsOrder = null</td>
 				<td class="desc"><p>null/min/max/first/last</p>
 </td>
@@ -2834,7 +2834,7 @@ $qb-&gt;orderBy([
                         addOrderBy                        	<small>($sort, $order = null, $nullsOrder = null) : <a href="ryunosuke-dbml-Query-QueryBuilder$typespace.html#ryunosuke\dbml\Query\QueryBuilder" class="fqsen "><small>ryunosuke\dbml\Query\</small><wbr>QueryBuilder</a></small>
 						</h4>
 					<div class="inner-item">
-						<div class="description"><p>[col =&gt; ASC] のように指定できるように拡張した <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::orderBy()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::orderBy()'>ryunosuke\dbml\Query\QueryBuilder::orderBy()</tag_link>（追加版）</p>
+						<div class="description"><p>[col =&gt; ASC] のように指定できるように拡張した <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::orderBy()' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Query\QueryBuilder::orderBy()'>ryunosuke\dbml\Query\QueryBuilder::orderBy()</tag_link>（追加版）</p>
 </div>
                         	<table class="table">
 		<caption>Parameters</caption>
@@ -2852,7 +2852,7 @@ $qb-&gt;orderBy([
 </td>
 			</tr>
         			<tr>
-				<td class="type"><a href="?string$typespace.html#?string" class="fqsen ">?string</a></td>
+				<td class="type">?string</td>
 				<td class="rest">$nullsOrder = null</td>
 				<td class="desc"><p>null/min/max/first/last</p>
 </td>
@@ -3054,7 +3054,7 @@ $qb-&gt;column('t_parent P/t_child C')-&gt;limit([
 </td>
 			</tr>
         			<tr>
-				<td class="type"><a href="?int$typespace.html#?int" class="fqsen ">?int</a></td>
+				<td class="type">?int</td>
 				<td class="rest">$offset = null</td>
 				<td class="desc"><p>オフセット。オプショナル</p>
 </td>
@@ -3096,10 +3096,10 @@ $qb-&gt;column('t_parent P/t_child C')-&gt;limit([
 						</h4>
 					<div class="inner-item">
 						<div class="description"><p>ページ単位として LIMIT OFFSET する</p>
-<p>できることは <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::limit()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::limit()'>ryunosuke\dbml\Query\QueryBuilder::limit()</tag_link> と同じ。指定の仕方が異なるだけ。<br />
+<p>できることは <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::limit()' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Query\QueryBuilder::limit()'>ryunosuke\dbml\Query\QueryBuilder::limit()</tag_link> と同じ。指定の仕方が異なるだけ。<br />
 limit() は LIMIT, OFFSET をダイレクトに指定するが、こちらは一定の単位（ページ）で設定する。<br />
 「LIMIT ありきで、それを元に OFFSET する」とも言える。</p>
-<p>※ <tag_link data-kind='fqsen' data-type-category='class' data-type-fqsen='ryunosuke\dbml\Query\Pagination\Paginator' data-type-array='0' data-description='ryunosuke\dbml\Query\Pagination\Paginator'>ryunosuke\dbml\Query\Pagination\Paginator</tag_link> は全く関係ない</p>
+<p>※ <tag_link data-kind='fqsen' data-type-category='class' data-type-fqsen='ryunosuke\dbml\Query\Pagination\Paginator' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Query\Pagination\Paginator'>ryunosuke\dbml\Query\Pagination\Paginator</tag_link> は全く関係ない</p>
 <pre><code class="language-php"># 10 件ごと 5 ページ目を設定
 $qb-&gt;page(5, 10);        // LIMIT 10 OFFSET 50
 
@@ -3117,7 +3117,7 @@ $qb-&gt;limit(10)-&gt;page(5); // LIMIT 10 OFFSET 50
 </td>
 			</tr>
         			<tr>
-				<td class="type"><a href="?int$typespace.html#?int" class="fqsen ">?int</a></td>
+				<td class="type">?int</td>
 				<td class="rest">$limit = null</td>
 				<td class="desc"><p>1ページの単位。省略時は現在の limit が使用される</p>
 </td>
@@ -3292,7 +3292,7 @@ echo $qb;
 						</h4>
 					<div class="inner-item">
 						<div class="description"><p>UNION ALL する</p>
-<p>ALL で UNION される以外は <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::union()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::union()'>ryunosuke\dbml\Query\QueryBuilder::union()</tag_link> と全く同じ。</p>
+<p>ALL で UNION される以外は <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::union()' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Query\QueryBuilder::union()'>ryunosuke\dbml\Query\QueryBuilder::union()</tag_link> と全く同じ。</p>
 </div>
                         	<table class="table">
 		<caption>Parameters</caption>
@@ -3478,7 +3478,7 @@ $qb-&gt;column('t_article')-&gt;where(['status' =&gt; 'active'])-&gt;countize();
 						</h4>
 					<div class="inner-item">
 						<div class="description"><p>new Paginator へのプロキシメソッド</p>
-<p>引数が与えられている場合は <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\Pagination\Paginator::paginate()' data-type-array='0' data-description='ryunosuke\dbml\Query\Pagination\Paginator::paginate()'>ryunosuke\dbml\Query\Pagination\Paginator::paginate()</tag_link> も同時に行う。</p>
+<p>引数が与えられている場合は <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\Pagination\Paginator::paginate()' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Query\Pagination\Paginator::paginate()'>ryunosuke\dbml\Query\Pagination\Paginator::paginate()</tag_link> も同時に行う。</p>
 </div>
                         	<table class="table">
 		<caption>Parameters</caption>
@@ -3496,7 +3496,7 @@ $qb-&gt;column('t_article')-&gt;where(['status' =&gt; 'active'])-&gt;countize();
 </td>
 			</tr>
         			<tr>
-				<td class="type"><a href="?int$typespace.html#?int" class="fqsen ">?int</a></td>
+				<td class="type">?int</td>
 				<td class="rest">$shownpage = null</td>
 				<td class="desc"><p>表示するページ数。奇数が望ましい。省略時全ページ表示</p>
 </td>
@@ -3538,7 +3538,7 @@ $qb-&gt;column('t_article')-&gt;where(['status' =&gt; 'active'])-&gt;countize();
 						</h4>
 					<div class="inner-item">
 						<div class="description"><p>new Sequencer へのプロキシメソッド</p>
-<p>引数が与えられている場合は <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\Pagination\Sequencer::sequence()' data-type-array='0' data-description='ryunosuke\dbml\Query\Pagination\Sequencer::sequence()'>ryunosuke\dbml\Query\Pagination\Sequencer::sequence()</tag_link> も同時に行う。</p>
+<p>引数が与えられている場合は <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\Pagination\Sequencer::sequence()' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Query\Pagination\Sequencer::sequence()'>ryunosuke\dbml\Query\Pagination\Sequencer::sequence()</tag_link> も同時に行う。</p>
 </div>
                         	<table class="table">
 		<caption>Parameters</caption>
@@ -3632,7 +3632,7 @@ foreach ($qb-&gt;where(['status' =&gt; 'active'])-&gt;chunk(100) as $row) {
 </td>
 			</tr>
         			<tr>
-				<td class="type"><a href="?string$typespace.html#?string" class="fqsen ">?string</a></td>
+				<td class="type">?string</td>
 				<td class="rest">$column = null</td>
 				<td class="desc"><p>基準カラム。省略時は AUTO_INCREMENT な主キー。 '-' プレフィックスを付けると降順になる</p>
 </td>
@@ -3766,7 +3766,7 @@ $qb-&gt;neighbor(['id' =&gt; 99999], 2);
 		<caption>Parameters</caption>
 		<tbody>
         			<tr>
-				<td class="type"><a href="http://php.net/manual/ja/class.closure.php" class="fqsen" target="_blank">\Closure</a><span class="type-separator"></span><wbr>null</td>
+				<td class="type">?<a href="http://php.net/manual/ja/class.closure.php" class="fqsen" target="_blank">\Closure</a><span class="type-separator"></span><wbr><a href="http://php.net/manual/ja/class.closure.php" class="fqsen" target="_blank">\Closure</a><span class="type-separator"></span><wbr>null</td>
 				<td class="rest">$callback = null</td>
 				<td class="desc"><p>コールバック</p>
 </td>
@@ -3807,13 +3807,13 @@ $qb-&gt;neighbor(['id' =&gt; 99999], 2);
 						</h4>
 					<div class="inner-item">
 						<div class="description"><p>fectch 後の処理を登録</p>
-<p>タイミング以外の仕様は <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::before()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::before()'>ryunosuke\dbml\Query\QueryBuilder::before()</tag_link> と同じ。</p>
+<p>タイミング以外の仕様は <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::before()' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Query\QueryBuilder::before()'>ryunosuke\dbml\Query\QueryBuilder::before()</tag_link> と同じ。</p>
 </div>
                         	<table class="table">
 		<caption>Parameters</caption>
 		<tbody>
         			<tr>
-				<td class="type"><a href="http://php.net/manual/ja/class.closure.php" class="fqsen" target="_blank">\Closure</a><span class="type-separator"></span><wbr>null</td>
+				<td class="type">?<a href="http://php.net/manual/ja/class.closure.php" class="fqsen" target="_blank">\Closure</a><span class="type-separator"></span><wbr><a href="http://php.net/manual/ja/class.closure.php" class="fqsen" target="_blank">\Closure</a><span class="type-separator"></span><wbr>null</td>
 				<td class="rest">$callback = null</td>
 				<td class="desc"><p>コールバック</p>
 </td>
@@ -3939,7 +3939,7 @@ $qb-&gt;column('t_article')-&gt;wrap('A', 'B', 'hoge')-&gt;wrap('C', 'D', 'hoge'
 </td>
 			</tr>
         			<tr>
-				<td class="type"><a href="?string$typespace.html#?string" class="fqsen ">?string</a></td>
+				<td class="type">?string</td>
 				<td class="rest">$name = null</td>
 				<td class="desc"><p>ラップした登録名</p>
 </td>
@@ -3981,7 +3981,7 @@ $qb-&gt;column('t_article')-&gt;wrap('A', 'B', 'hoge')-&gt;wrap('C', 'D', 'hoge'
 						</h4>
 					<div class="inner-item">
 						<div class="description"><p>EXISTS でラップして返す</p>
-<p><tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::wrap()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::wrap()'>ryunosuke\dbml\Query\QueryBuilder::wrap()</tag_link> の特化メソッド。</p>
+<p><tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::wrap()' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Query\QueryBuilder::wrap()'>ryunosuke\dbml\Query\QueryBuilder::wrap()</tag_link> の特化メソッド。</p>
 </div>
                         	<table class="table">
 		<caption>Parameters</caption>
@@ -4023,7 +4023,7 @@ $qb-&gt;column('t_article')-&gt;wrap('A', 'B', 'hoge')-&gt;wrap('C', 'D', 'hoge'
 						</h4>
 					<div class="inner-item">
 						<div class="description"><p>NOT EXISTS でラップして返す</p>
-<p><tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::wrap()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::wrap()'>ryunosuke\dbml\Query\QueryBuilder::wrap()</tag_link> の特化メソッド。</p>
+<p><tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::wrap()' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Query\QueryBuilder::wrap()'>ryunosuke\dbml\Query\QueryBuilder::wrap()</tag_link> の特化メソッド。</p>
 </div>
                         	<table class="table">
 		<caption>Parameters</caption>
@@ -4065,7 +4065,7 @@ $qb-&gt;column('t_article')-&gt;wrap('A', 'B', 'hoge')-&gt;wrap('C', 'D', 'hoge'
 						</h4>
 					<div class="inner-item">
 						<div class="description"><p>集約関数化する</p>
-<p><tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::aggregate()' data-type-array='0' data-description='ryunosuke\dbml\Database::aggregate()'>ryunosuke\dbml\Database::aggregate()</tag_link> のためのヘルパーメソッドで、明示的には呼ばれないし呼ばない。</p>
+<p><tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::aggregate()' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Database::aggregate()'>ryunosuke\dbml\Database::aggregate()</tag_link> のためのヘルパーメソッドで、明示的には呼ばれないし呼ばない。</p>
 </div>
                         	<table class="table">
 		<caption>Parameters</caption>
@@ -4121,7 +4121,7 @@ $qb-&gt;column('t_article')-&gt;wrap('A', 'B', 'hoge')-&gt;wrap('C', 'D', 'hoge'
 						<div class="description"><p>ヒント句を追加する</p>
 <p>第2引数で紐づくテーブルを指定できるが、省略すると（その時点の）駆動表と紐づく。</p>
 <p>RDBMS の方言は吸収しないのでダイレクトに与える必要がある。<br />
-（一応 <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Metadata\CompatiblePlatform::getIndexHintSQL()' data-type-array='0' data-description='ryunosuke\dbml\Metadata\CompatiblePlatform::getIndexHintSQL()'>ryunosuke\dbml\Metadata\CompatiblePlatform::getIndexHintSQL()</tag_link> に実装がある）。</p>
+（一応 <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Metadata\CompatiblePlatform::getIndexHintSQL()' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Metadata\CompatiblePlatform::getIndexHintSQL()'>ryunosuke\dbml\Metadata\CompatiblePlatform::getIndexHintSQL()</tag_link> に実装がある）。</p>
 <pre><code class="language-php">// SELECT * FROM tablename FORCE INDEX (PRIMARY)
 $qb-&gt;column('tablename')-&gt;hint('FORCE INDEX (PRIMARY)');
 </code></pre>
@@ -4136,7 +4136,7 @@ $qb-&gt;column('tablename')-&gt;hint('FORCE INDEX (PRIMARY)');
 </td>
 			</tr>
         			<tr>
-				<td class="type"><a href="?string$typespace.html#?string" class="fqsen ">?string</a></td>
+				<td class="type">?string</td>
 				<td class="rest">$talias = null</td>
 				<td class="desc"><p>ヒント句を結びつけるテーブル or エイリアス</p>
 </td>
@@ -4190,7 +4190,7 @@ $qb-&gt;column('t_article')-&gt;lockInShare();
 		<caption>Parameters</caption>
 		<tbody>
         			<tr>
-				<td class="type"><a href="?string$typespace.html#?string" class="fqsen ">?string</a></td>
+				<td class="type">?string</td>
 				<td class="rest">$lockoption = null</td>
 				<td class="desc"><p>ロックオプション</p>
 </td>
@@ -4248,7 +4248,7 @@ $qb-&gt;column('t_article')-&gt;lockForUpdate('SKIP LOCKED');
 		<caption>Parameters</caption>
 		<tbody>
         			<tr>
-				<td class="type"><a href="?string$typespace.html#?string" class="fqsen ">?string</a></td>
+				<td class="type">?string</td>
 				<td class="rest">$lockoption = null</td>
 				<td class="desc"><p>ロックオプション</p>
 </td>
@@ -4290,7 +4290,7 @@ $qb-&gt;column('t_article')-&gt;lockForUpdate('SKIP LOCKED');
 						</h4>
 					<div class="inner-item">
 						<div class="description"><p>ロックを解除する</p>
-<p><tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::lockInShare()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::lockInShare()'>ryunosuke\dbml\Query\QueryBuilder::lockInShare()</tag_link> や <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::lockForUpdate()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::lockForUpdate()'>ryunosuke\dbml\Query\QueryBuilder::lockForUpdate()</tag_link> で追加したロック構文を解除する。</p>
+<p><tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::lockInShare()' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Query\QueryBuilder::lockInShare()'>ryunosuke\dbml\Query\QueryBuilder::lockInShare()</tag_link> や <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::lockForUpdate()' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Query\QueryBuilder::lockForUpdate()'>ryunosuke\dbml\Query\QueryBuilder::lockForUpdate()</tag_link> で追加したロック構文を解除する。</p>
 <pre><code class="language-php">$qb-&gt;column('t_article');
 
 # 排他ロック
@@ -4408,7 +4408,7 @@ $qb-&gt;getSubbuilder('children')-&gt;where(['delete_time' =&gt; 0])-&gt;orderBy
 		<caption>Parameters</caption>
 		<tbody>
         			<tr>
-				<td class="type"><a href="?string$typespace.html#?string" class="fqsen ">?string</a></td>
+				<td class="type">?string</td>
 				<td class="rest">$name = null</td>
 				<td class="desc"><p>キー。省略すると単一ではなく全サブクエリビルダを配列で返す</p>
 </td>
@@ -4450,7 +4450,7 @@ $qb-&gt;getSubbuilder('children')-&gt;where(['delete_time' =&gt; 0])-&gt;orderBy
 						</h4>
 					<div class="inner-item">
 						<div class="description"><p>FROM 句(from,join)を返す</p>
-<p><tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::getQueryPart()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::getQueryPart()'>ryunosuke\dbml\Query\QueryBuilder::getQueryPart()</tag_link> でも得られるが、 FROM は JOIN も兼ねており、ややこしい構造になっているのでそれを補正しつつシンプルな構造で返す。</p>
+<p><tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::getQueryPart()' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Query\QueryBuilder::getQueryPart()'>ryunosuke\dbml\Query\QueryBuilder::getQueryPart()</tag_link> でも得られるが、 FROM は JOIN も兼ねており、ややこしい構造になっているのでそれを補正しつつシンプルな構造で返す。</p>
 <pre><code class="language-php">$qb-&gt;column('t_article A + t_comment C');
 $qb-&gt;getFromPart();
 // result:
@@ -4666,7 +4666,7 @@ $qb-&gt;resetQueryPart('orderBy');
 					<div class="inner-item">
 						<div class="description"><p>現在のビルダの状態で固定して prepare する</p>
 <p>「preparedStatement を返す」のではなく「prepare 状態にするだけ」なのに注意。<br />
-preparedStatement は <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::getPreparedStatement()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::getPreparedStatement()'>ryunosuke\dbml\Query\QueryBuilder::getPreparedStatement()</tag_link> で取得する。</p>
+preparedStatement は <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::getPreparedStatement()' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Query\QueryBuilder::getPreparedStatement()'>ryunosuke\dbml\Query\QueryBuilder::getPreparedStatement()</tag_link> で取得する。</p>
 <pre><code class="language-php">$qb-&gt;column('t_article', ['state' =&gt; 'active', 'id = :id']);
 # 現在の状態で prepare する
 $qb-&gt;prepare();
@@ -4718,7 +4718,7 @@ $stmt-&gt;executeSelect(['id' =&gt; 2]); // SELECT t_article.* FROM t_article WH
 						</h4>
 					<div class="inner-item">
 						<div class="description"><p>prepare したステートメントを返す</p>
-<p><tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::prepare()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::prepare()'>ryunosuke\dbml\Query\QueryBuilder::prepare()</tag_link> の例も参照。</p>
+<p><tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::prepare()' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Query\QueryBuilder::prepare()'>ryunosuke\dbml\Query\QueryBuilder::prepare()</tag_link> の例も参照。</p>
 </div>
                         	<table class="table">
 		<caption>Parameters</caption>
@@ -4894,7 +4894,7 @@ $stmt-&gt;executeSelect(['id' =&gt; 2]); // SELECT t_article.* FROM t_article WH
 		<caption>Parameters</caption>
 		<tbody>
         			<tr>
-				<td class="type">array<span class="type-separator"></span><wbr><a href="?array$typespace.html#?array" class="fqsen ">?array</a></td>
+				<td class="type">?array</td>
 				<td class="rest">&amp;$params</td>
 				<td class="desc"><p>この引数にパラメータが追加される</p>
 </td>
@@ -5232,7 +5232,7 @@ $stmt-&gt;executeSelect(['id' =&gt; 2]); // SELECT t_article.* FROM t_article WH
                         setAutoOrder                        	<small>($bool) : <a href="ryunosuke-dbml-Query-QueryBuilder$typespace.html#ryunosuke\dbml\Query\QueryBuilder" class="fqsen "><small>ryunosuke\dbml\Query\</small><wbr>QueryBuilder</a></small>
 						</h4>
 					<div class="inner-item">
-						<div class="description"><p>自動で主キー順にするか（<tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::detectAutoOrder()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::detectAutoOrder()'>ryunosuke\dbml\Query\QueryBuilder::detectAutoOrder()</tag_link> を参照）</p>
+						<div class="description"><p>自動で主キー順にするか（<tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::detectAutoOrder()' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Query\QueryBuilder::detectAutoOrder()'>ryunosuke\dbml\Query\QueryBuilder::detectAutoOrder()</tag_link> を参照）</p>
 </div>
                         	<table class="table">
 		<caption>Parameters</caption>
@@ -5844,7 +5844,7 @@ $db-&gt;selectArray([
                         array                        	<small>($params = []) : <a href="ryunosuke-dbml-Query-QueryBuilder$typespace.html#ryunosuke\dbml\Query\QueryBuilder" class="fqsen "><small>ryunosuke\dbml\Query\</small><wbr>QueryBuilder</a><span class="type-separator"></span><wbr>array<span class="type-separator"></span><wbr><a href="ryunosuke-dbml-Entity-Entityable$typespace.html#ryunosuke\dbml\Entity\Entityable" class="fqsen "><small>ryunosuke\dbml\Entity\</small><wbr>Entityable</a>[]</small>
 						</h4>
 					<div class="inner-item">
-						<div class="description"><p>自身が保持しているクエリでレコードの配列を返す（<tag_link data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::fetchArray()' data-type-array='0' data-description='ryunosuke\dbml\Database::fetchArray()'>ryunosuke\dbml\Database::fetchArray()</tag_link> 参照）</p>
+						<div class="description"><p>自身が保持しているクエリでレコードの配列を返す（<tag_link data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::fetchArray()' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Database::fetchArray()'>ryunosuke\dbml\Database::fetchArray()</tag_link> 参照）</p>
 </div>
                         	<table class="table">
 		<caption>Parameters</caption>
@@ -5890,7 +5890,7 @@ $db-&gt;selectArray([
                         assoc                        	<small>($params = []) : <a href="ryunosuke-dbml-Query-QueryBuilder$typespace.html#ryunosuke\dbml\Query\QueryBuilder" class="fqsen "><small>ryunosuke\dbml\Query\</small><wbr>QueryBuilder</a><span class="type-separator"></span><wbr>array<span class="type-separator"></span><wbr><a href="ryunosuke-dbml-Entity-Entityable$typespace.html#ryunosuke\dbml\Entity\Entityable" class="fqsen "><small>ryunosuke\dbml\Entity\</small><wbr>Entityable</a>[]</small>
 						</h4>
 					<div class="inner-item">
-						<div class="description"><p>自身が保持しているクエリでレコードの連想配列を返す（<tag_link data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::fetchAssoc()' data-type-array='0' data-description='ryunosuke\dbml\Database::fetchAssoc()'>ryunosuke\dbml\Database::fetchAssoc()</tag_link> 参照）</p>
+						<div class="description"><p>自身が保持しているクエリでレコードの連想配列を返す（<tag_link data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::fetchAssoc()' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Database::fetchAssoc()'>ryunosuke\dbml\Database::fetchAssoc()</tag_link> 参照）</p>
 </div>
                         	<table class="table">
 		<caption>Parameters</caption>
@@ -5936,7 +5936,7 @@ $db-&gt;selectArray([
                         lists                        	<small>($params = []) : <a href="ryunosuke-dbml-Query-QueryBuilder$typespace.html#ryunosuke\dbml\Query\QueryBuilder" class="fqsen "><small>ryunosuke\dbml\Query\</small><wbr>QueryBuilder</a><span class="type-separator"></span><wbr>array</small>
 						</h4>
 					<div class="inner-item">
-						<div class="description"><p>自身が保持しているクエリでレコード[1列目]の配列を返す（<tag_link data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::fetchLists()' data-type-array='0' data-description='ryunosuke\dbml\Database::fetchLists()'>ryunosuke\dbml\Database::fetchLists()</tag_link> 参照）</p>
+						<div class="description"><p>自身が保持しているクエリでレコード[1列目]の配列を返す（<tag_link data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::fetchLists()' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Database::fetchLists()'>ryunosuke\dbml\Database::fetchLists()</tag_link> 参照）</p>
 </div>
                         	<table class="table">
 		<caption>Parameters</caption>
@@ -5982,7 +5982,7 @@ $db-&gt;selectArray([
                         pairs                        	<small>($params = []) : <a href="ryunosuke-dbml-Query-QueryBuilder$typespace.html#ryunosuke\dbml\Query\QueryBuilder" class="fqsen "><small>ryunosuke\dbml\Query\</small><wbr>QueryBuilder</a><span class="type-separator"></span><wbr>array</small>
 						</h4>
 					<div class="inner-item">
-						<div class="description"><p>自身が保持しているクエリでレコード[1列目=&gt;2列目]の連想配列を返す（<tag_link data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::fetchPairs()' data-type-array='0' data-description='ryunosuke\dbml\Database::fetchPairs()'>ryunosuke\dbml\Database::fetchPairs()</tag_link> 参照）</p>
+						<div class="description"><p>自身が保持しているクエリでレコード[1列目=&gt;2列目]の連想配列を返す（<tag_link data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::fetchPairs()' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Database::fetchPairs()'>ryunosuke\dbml\Database::fetchPairs()</tag_link> 参照）</p>
 </div>
                         	<table class="table">
 		<caption>Parameters</caption>
@@ -6028,7 +6028,7 @@ $db-&gt;selectArray([
                         tuple                        	<small>($params = []) : <a href="ryunosuke-dbml-Query-QueryBuilder$typespace.html#ryunosuke\dbml\Query\QueryBuilder" class="fqsen "><small>ryunosuke\dbml\Query\</small><wbr>QueryBuilder</a><span class="type-separator"></span><wbr>array<span class="type-separator"></span><wbr><a href="ryunosuke-dbml-Entity-Entityable$typespace.html#ryunosuke\dbml\Entity\Entityable" class="fqsen "><small>ryunosuke\dbml\Entity\</small><wbr>Entityable</a><span class="type-separator"></span><wbr>false</small>
 						</h4>
 					<div class="inner-item">
-						<div class="description"><p>自身が保持しているクエリでレコードを返す（<tag_link data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::fetchTuple()' data-type-array='0' data-description='ryunosuke\dbml\Database::fetchTuple()'>ryunosuke\dbml\Database::fetchTuple()</tag_link> 参照）</p>
+						<div class="description"><p>自身が保持しているクエリでレコードを返す（<tag_link data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::fetchTuple()' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Database::fetchTuple()'>ryunosuke\dbml\Database::fetchTuple()</tag_link> 参照）</p>
 </div>
                         	<table class="table">
 		<caption>Parameters</caption>
@@ -6074,7 +6074,7 @@ $db-&gt;selectArray([
                         value                        	<small>($params = []) : <a href="ryunosuke-dbml-Query-QueryBuilder$typespace.html#ryunosuke\dbml\Query\QueryBuilder" class="fqsen "><small>ryunosuke\dbml\Query\</small><wbr>QueryBuilder</a><span class="type-separator"></span><wbr>mixed</small>
 						</h4>
 					<div class="inner-item">
-						<div class="description"><p>自身が保持しているクエリでレコード[1列目]を返す（<tag_link data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::fetchValue()' data-type-array='0' data-description='ryunosuke\dbml\Database::fetchValue()'>ryunosuke\dbml\Database::fetchValue()</tag_link> 参照）</p>
+						<div class="description"><p>自身が保持しているクエリでレコード[1列目]を返す（<tag_link data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::fetchValue()' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Database::fetchValue()'>ryunosuke\dbml\Database::fetchValue()</tag_link> 参照）</p>
 </div>
                         	<table class="table">
 		<caption>Parameters</caption>

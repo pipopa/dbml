@@ -17,6 +17,9 @@ namespace PHPSTORM_META {
             'child_id'      => 'int',
             'parent_id'     => 'int',
             'child_name'    => 'string',
+            'grand_id'      => 'int',
+            'grand1_name'   => 'string',
+            'grand2_name'   => 'string',
             'parent_name'   => 'string',
             'summary'       => 'string',
             'pid'           => 'int',
@@ -58,6 +61,7 @@ namespace PHPSTORM_META {
             'title4'        => 'int',
             'title5'        => 'int',
             'comment_count' => 'array',
+            'vaffect'       => 'int',
         ])
     );
     override(new \ryunosuke\Test\Entity\Comment,

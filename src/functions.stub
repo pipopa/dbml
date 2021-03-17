@@ -702,6 +702,41 @@ if (function_exists("ryunosuke\\dbml\\arrayize") && !defined("ryunosuke\\dbml\\a
     define("ryunosuke\\dbml\\arrayize", "ryunosuke\\dbml\\arrayize");
 }
 
+if (!isset($excluded_functions["is_indexarray"]) && (!function_exists("ryunosuke\\dbml\\is_indexarray") || (!false && (new \ReflectionFunction("ryunosuke\\dbml\\is_indexarray"))->isInternal()))) {
+    /**
+     * 配列が数値配列か調べる
+     *
+     * 空の配列も数値配列とみなす。
+     * さらにいわゆる「連番配列」ではなく「キーが数値のみか？」で判定する。
+     *
+     * つまり、 is_hasharray とは排他的ではない。
+     *
+     * Example:
+     * ```php
+     * that(is_indexarray([]))->isTrue();
+     * that(is_indexarray([1, 2, 3]))->isTrue();
+     * that(is_indexarray(['x' => 'X']))->isFalse();
+     * // 抜け番があっても true になる（これは is_hasharray も true になる）
+     * that(is_indexarray([1 => 1, 2 => 2, 3 => 3]))->isTrue();
+     * ```
+     *
+     * @param array $array 調べる配列
+     * @return bool 数値配列なら true
+     */
+    function is_indexarray($array)
+    {
+        foreach ($array as $k => $dummy) {
+            if (!is_int($k)) {
+                return false;
+            }
+        }
+        return true;
+    }
+}
+if (function_exists("ryunosuke\\dbml\\is_indexarray") && !defined("ryunosuke\\dbml\\is_indexarray")) {
+    define("ryunosuke\\dbml\\is_indexarray", "ryunosuke\\dbml\\is_indexarray");
+}
+
 if (!isset($excluded_functions["is_hasharray"]) && (!function_exists("ryunosuke\\dbml\\is_hasharray") || (!false && (new \ReflectionFunction("ryunosuke\\dbml\\is_hasharray"))->isInternal()))) {
     /**
      * 配列が連想配列か調べる

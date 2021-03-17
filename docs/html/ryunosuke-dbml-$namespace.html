@@ -51,12 +51,12 @@
 		<div class="description"><p>特定のクラスに依存しない全体仕様を以下に記す。</p>
 <h3>データベーススキーマ</h3>
 <p>まず大前提として<strong>別スキーマへのクエリは一切サポートしない</strong>。<br />
-ただし、 <tag_link data-kind='fqsen' data-type-category='class' data-type-fqsen='ryunosuke\dbml\Gateway\TableGateway' data-type-array='0' data-description='ryunosuke\dbml\Gateway\TableGateway'>ryunosuke\dbml\Gateway\TableGateway</tag_link> や <tag_link data-kind='fqsen' data-type-category='class' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder'>ryunosuke\dbml\Query\QueryBuilder</tag_link> の話であり、 <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::fetchArray()' data-type-array='0' data-description='ryunosuke\dbml\Database::fetchArray()'>ryunosuke\dbml\Database::fetchArray()</tag_link> などで直接クエリを投げる場合はこの限りではない。</p>
+ただし、 <tag_link data-kind='fqsen' data-type-category='class' data-type-fqsen='ryunosuke\dbml\Gateway\TableGateway' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Gateway\TableGateway'>ryunosuke\dbml\Gateway\TableGateway</tag_link> や <tag_link data-kind='fqsen' data-type-category='class' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Query\QueryBuilder'>ryunosuke\dbml\Query\QueryBuilder</tag_link> の話であり、 <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::fetchArray()' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Database::fetchArray()'>ryunosuke\dbml\Database::fetchArray()</tag_link> などで直接クエリを投げる場合はこの限りではない。</p>
 <p>スキーマ情報はキャッシュに保存される。<br />
-このキャッシュは <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::__construct()' data-type-array='0' data-description='ryunosuke\dbml\Database::__construct()'>ryunosuke\dbml\Database::__construct()</tag_link> のオプションで指定する。<br />
+このキャッシュは <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::__construct()' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Database::__construct()'>ryunosuke\dbml\Database::__construct()</tag_link> のオプションで指定する。<br />
 結構な勢いでスキーマを漁るので、何らかの永続キャッシュ（FilesystemCache や ApcuCache など）を使用したほうが良い。</p>
 <h3>テーブル記法</h3>
-<p>各クラスの各メソッドで引数名が <code>$tableDescriptor</code> となっているものは下記の記法を受け入れる（<tag_link data-kind='fqsen' data-type-category='class' data-type-fqsen='ryunosuke\dbml\Query\Expression\TableDescriptor' data-type-array='0' data-description='ryunosuke\dbml\Query\Expression\TableDescriptor'>ryunosuke\dbml\Query\Expression\TableDescriptor</tag_link> から抜粋）。</p>
+<p>各クラスの各メソッドで引数名が <code>$tableDescriptor</code> となっているものは下記の記法を受け入れる（<tag_link data-kind='fqsen' data-type-category='class' data-type-fqsen='ryunosuke\dbml\Query\Expression\TableDescriptor' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Query\Expression\TableDescriptor'>ryunosuke\dbml\Query\Expression\TableDescriptor</tag_link> から抜粋）。</p>
 <ul>
 <li>base: <code>'(joinsign)tablename(pkval)@scope:fkeyname[condition]&lt;groupby&gt;+order-by#offset-limit AS Alias.col1, col2 AS C2'</code></li>
 </ul>
@@ -256,7 +256,7 @@ $db-&gt;t_article-&gt;as('A')-&gt;scope('latest')-&gt;column([
 // 2つとも右記と同じ: $db-&gt;selectArray('t_article@latest[delete_flg=0] AS A.article_id/t_comment AS C.comment');
 </code></pre>
 <p>ここまで来ると文字列ではなくほぼ php 構文になるのでかなり直感的になる。<br />
-テーブル記法については <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::column()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::column()'>ryunosuke\dbml\Query\QueryBuilder::column()</tag_link> や <tag_link data-kind='fqsen' data-type-category='class' data-type-fqsen='ryunosuke\dbml\Query\Expression\TableDescriptor' data-type-array='0' data-description='ryunosuke\dbml\Query\Expression\TableDescriptor'>ryunosuke\dbml\Query\Expression\TableDescriptor</tag_link> にも記載があるのでそちらも参照。</p>
+テーブル記法については <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::column()' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Query\QueryBuilder::column()'>ryunosuke\dbml\Query\QueryBuilder::column()</tag_link> や <tag_link data-kind='fqsen' data-type-category='class' data-type-fqsen='ryunosuke\dbml\Query\Expression\TableDescriptor' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Query\Expression\TableDescriptor'>ryunosuke\dbml\Query\Expression\TableDescriptor</tag_link> にも記載があるのでそちらも参照。</p>
 <h3>テーブル名 ⇔ エンティティ名の自動変換</h3>
 <pre><code class="language-php">$db = new Database($connection, [
     // テーブル名 &lt;=&gt; エンティティの変換を行うクロージャを指定する
@@ -300,7 +300,7 @@ $db-&gt;insert('t_article', $dataarray);
 <tbody>
 <tr><td align="left">t_article で select すると キーが Article で返ってくる</td><td align="left">単に返ってくるキーの違いであり、 自動でエンティティ化したりはしない。エンティティで欲しい場合は常に <code>cast()</code> を呼ぶ</td></tr>
 <tr><td align="left">t_ancestor.*** で取得する子供列がエンティティ名になる</td><td align="left">上記の派生。テーブル名を指定できない以上、エンティティで返すしかないため</td></tr>
-<tr><td align="left"><code>$qb-&gt;cast(null)</code> するとエンティティインスタンスを返す</td><td align="left"><tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::cast()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::cast()'>ryunosuke\dbml\Query\QueryBuilder::cast()</tag_link> を参照</td></tr>
+<tr><td align="left"><code>$qb-&gt;cast(null)</code> するとエンティティインスタンスを返す</td><td align="left"><tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::cast()' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Query\QueryBuilder::cast()'>ryunosuke\dbml\Query\QueryBuilder::cast()</tag_link> を参照</td></tr>
 <tr><td align="left"><code>$db-&gt;Article</code> が取得可能になる</td><td align="left"><code>Article</code> にあたるものは本来テーブル名だが、エンティティ名でも TableGateway が取得できるようになる</td></tr>
 </tbody>
 </table>
@@ -398,12 +398,12 @@ $db-&gt;insert('t_article', [
 これについては Gateway や Entity を利用して順次改善していく見込み。<br />
 （例えば Gateway のスコープに型情報を持たせたり、エンティティのフィールドの型でワイヤリングしたりなど）。</p>
 <h3>仮想カラム</h3>
-<p><tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::overrideColumns()' data-type-array='0' data-description='ryunosuke\dbml\Database::overrideColumns()'>ryunosuke\dbml\Database::overrideColumns()</tag_link> で「あたかもテーブルにあるかのように振る舞うカラム」を定義できる。</p>
+<p><tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::overrideColumns()' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Database::overrideColumns()'>ryunosuke\dbml\Database::overrideColumns()</tag_link> で「あたかもテーブルにあるかのように振る舞うカラム」を定義できる。</p>
 <p>ありがちな例だが「姓」「名」を持つテーブルに対して <code>overrideColumns(['usertable' =&gt; ['fullname' =&gt; new Expression('CONCAT(sei, mei)')]]);</code> すると、あたかもフルネームカラムがあるように振る舞わせることができる。<br />
 使用例などはメソッドを参照。</p>
 <p>原則として仮想カラムを引っ張るためには明示的な指定が必要で、 <code>*</code> や <code>!ignore</code> で引っ張ったとしても取得列に含まれることはない。<br />
 ただし追加するときに <code>implicit</code> を true にすると取得列に含まれるようになる（それでも <code>*</code> は不可）。<br />
-仮想カラムを含めた全てを取得したい場合は '!' とする（<tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::column()' data-type-array='0' data-description='ryunosuke\dbml\Query\QueryBuilder::column()'>ryunosuke\dbml\Query\QueryBuilder::column()</tag_link> を参照）。</p>
+仮想カラムを含めた全てを取得したい場合は '!' とする（<tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Query\QueryBuilder::column()' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Query\QueryBuilder::column()'>ryunosuke\dbml\Query\QueryBuilder::column()</tag_link> を参照）。</p>
 <p>明示使用の場合でも今のところ select, where, having でのみ使用可能。<br />
 orderBy は select に含めて指定すれば実現できるし、having も mysql であれば（設定次第で）直接式を指定することができるので、実質的には select, where でのみの使用となることが多いはず。</p>
 </div>
@@ -526,7 +526,7 @@ orderBy は select に含めて指定すれば実現できるし、having も my
 							<span class="label label-info"></span>
 							<span class="label label-info"></span>
 							<span class="label label-deprecated"></span>
-                            			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Database.php#L45-L6367" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
+                            			<a href="https://github.com/arima-ryunosuke/dbml/blob/master/src/dbml/Database.php#L45-L6633" class="source-link glyphicon glyphicon-new-window" target="_blank"></a>
             						</div>
 						<h4 id="ryunosuke\dbml\Database" tabindex="-1" class="structure-title ">
 							<a href="ryunosuke-dbml-Database$typespace.html#ryunosuke\dbml\Database">Database</a>
@@ -561,7 +561,7 @@ $db = new \ryunosuke\dbml\Database($dbconfig, []);
 </code></pre>
 <p>このようにして作成する。要するにコンストラクタの引数に \Doctrine\DBAL\DriverManager::getConnection と同じ配列を渡す。<br />
 要素を配列にした場合はそれぞれ個別の指定として扱われる。</p>
-<p>詳細は<tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::__construct()' data-type-array='0' data-description='コンストラクタ'>コンストラクタ</tag_link>を参照</p>
+<p>詳細は<tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::__construct()' data-type-array='0' data-type-nullable='' data-description='コンストラクタ'>コンストラクタ</tag_link>を参照</p>
 <h3>コネクション（マスター/スレーブ）</h3>
 <p>上記のようにマスター/スレーブ構成用に接続を分けることができる。<br />
 マスターは更新系クエリ、スレーブは参照系クエリという風に自動で使い分けられる。<br />
@@ -588,7 +588,7 @@ ForUpdate を付与すると SELECT クエリに排他ロック構文が付与�
 <tbody>
 <tr><td align="left">insert などの行追加系</td><td align="left">affected row が 0 の時に例外を投げる。更に戻り値として主キー配列を返す</td></tr>
 <tr><td align="left">update, delete などの行作用系</td><td align="left">affected row が 0 の時に例外を投げる。更に戻り値として<strong>可能な限り</strong>主キー配列を返す（後述）</td></tr>
-<tr><td align="left">upsert などの行置換系</td><td align="left">affected row が 0 の時に例外を投げる。更に戻り値として<strong>追加/更新した行の</strong>主キー配列を返す（<tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::upsert()' data-type-array='0' data-description='ryunosuke\dbml\Database::upsert()'>ryunosuke\dbml\Database::upsert()</tag_link>参照）</td></tr>
+<tr><td align="left">upsert などの行置換系</td><td align="left">affected row が 0 の時に例外を投げる。更に戻り値として<strong>追加/更新した行の</strong>主キー配列を返す（<tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::upsert()' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Database::upsert()'>ryunosuke\dbml\Database::upsert()</tag_link>参照）</td></tr>
 <tr><td align="left">fetchArray, fetchLists などの複数行を返す系</td><td align="left">フェッチ行数が 0 の時に例外を投げる</td></tr>
 <tr><td align="left">fetchTuple などの単一行を返す系</td><td align="left">行が見つからなかった時に例外を投げる</td></tr>
 <tr><td align="left">fetchValue などのスカラー値を返す系</td><td align="left">行が見つからなかった時に例外を投げる。 PostgreSQL の場合やカラムキャストが有効な場合は注意</td></tr>
@@ -607,7 +607,7 @@ RDBMS に動作は異なるが、 <code>INSERT IGNORE</code> のようなクエ�
 最も多いユースケースとしては「行がないなら insert」だろう。</p>
 <h3>エスケープ</h3>
 <p>識別子のエスケープは一切面倒をみない。外部入力を識別子にしたい（テーブル・カラムを外部指定するとか）場合は自前でエスケープすること。<br />
-値のエスケープに関しては基本的には安全側に倒しているが、 <tag_link data-kind='fqsen' data-type-category='class' data-type-fqsen='ryunosuke\dbml\Query\Expression\Expression' data-type-array='0' data-description='ryunosuke\dbml\Query\Expression\Expression'>ryunosuke\dbml\Query\Expression\Expression</tag_link> を使用する場合はその前提が崩れる事がある（ <code>()</code> を含むエントリは自動で Expression 化されるので同じ）。<br />
+値のエスケープに関しては基本的には安全側に倒しているが、 <tag_link data-kind='fqsen' data-type-category='class' data-type-fqsen='ryunosuke\dbml\Query\Expression\Expression' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Query\Expression\Expression'>ryunosuke\dbml\Query\Expression\Expression</tag_link> を使用する場合はその前提が崩れる事がある（ <code>()</code> を含むエントリは自動で Expression 化されるので同じ）。<br />
 原則的に外部入力を Expression 化したり、値以外の入力として使用するのは全く推奨できない。</p>
 </div>
 						</div>

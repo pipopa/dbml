@@ -61,7 +61,7 @@
 
 	<div class="description"><p>Statement をラップして扱いやすくしたクラス</p>
 <p>主にプリペアドステートメントのために存在する。よってエミュレーションモードがオンだとほとんど意味を為さない。<br />
-が、 <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::insert()' data-type-array='0' data-description='ryunosuke\dbml\Database::insert()'>ryunosuke\dbml\Database::insert()</tag_link> や <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::update()' data-type-array='0' data-description='ryunosuke\dbml\Database::update()'>ryunosuke\dbml\Database::update()</tag_link> などはそれ自体にそれなりの付随処理があるので、使うことに意味がないわけではない。</p>
+が、 <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::insert()' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Database::insert()'>ryunosuke\dbml\Database::insert()</tag_link> や <tag_link data-kind='fqsen' data-type-category='method' data-type-fqsen='ryunosuke\dbml\Database::update()' data-type-array='0' data-type-nullable='' data-description='ryunosuke\dbml\Database::update()'>ryunosuke\dbml\Database::update()</tag_link> などはそれ自体にそれなりの付随処理があるので、使うことに意味がないわけではない。</p>
 <p>クエリビルダは疑問符プレースホルダが大量に埋め込まれる可能性があるので、全部パラメータにするのが大変。<br />
 ので、「prepare した時点で固定し、残り（名前付き）のみ後から指定する」という仕様になっている。</p>
 <pre><code class="language-php">$qb = $db-&gt;select('t_table.*', [':id', 'opt1' =&gt; 1, 'opt2' =&gt; 2])-&gt;prepare();
@@ -176,7 +176,7 @@ $qb-&gt;array(['id' =&gt; 102]); // SELECT t_table.* FROM t_table WHERE id = 102
 </td>
 			</tr>
         			<tr>
-				<td class="type"><a href="Doctrine-DBAL-Connection$typespace.html#Doctrine\DBAL\Connection" class="fqsen "><small>Doctrine\DBAL\</small><wbr>Connection</a><span class="type-separator"></span><wbr><a href="?Connection$typespace.html#?Connection" class="fqsen ">?Connection</a></td>
+				<td class="type">?<a href="Doctrine-DBAL-Connection$typespace.html#Doctrine\DBAL\Connection" class="fqsen "><small>Doctrine\DBAL\</small><wbr>Connection</a></td>
 				<td class="rest">$connection = null</td>
 				<td class="desc"><p>コネクション</p>
 </td>
@@ -229,7 +229,7 @@ $qb-&gt;array(['id' =&gt; 102]); // SELECT t_table.* FROM t_table WHERE id = 102
 </td>
 			</tr>
         			<tr>
-				<td class="type"><a href="Doctrine-DBAL-Connection$typespace.html#Doctrine\DBAL\Connection" class="fqsen "><small>Doctrine\DBAL\</small><wbr>Connection</a><span class="type-separator"></span><wbr><a href="?Connection$typespace.html#?Connection" class="fqsen ">?Connection</a></td>
+				<td class="type">?<a href="Doctrine-DBAL-Connection$typespace.html#Doctrine\DBAL\Connection" class="fqsen "><small>Doctrine\DBAL\</small><wbr>Connection</a></td>
 				<td class="rest">$connection = null</td>
 				<td class="desc"><p>コネクション</p>
 </td>
@@ -282,7 +282,7 @@ $qb-&gt;array(['id' =&gt; 102]); // SELECT t_table.* FROM t_table WHERE id = 102
 </td>
 			</tr>
         			<tr>
-				<td class="type"><a href="Doctrine-DBAL-Connection$typespace.html#Doctrine\DBAL\Connection" class="fqsen "><small>Doctrine\DBAL\</small><wbr>Connection</a><span class="type-separator"></span><wbr><a href="?Connection$typespace.html#?Connection" class="fqsen ">?Connection</a></td>
+				<td class="type">?<a href="Doctrine-DBAL-Connection$typespace.html#Doctrine\DBAL\Connection" class="fqsen "><small>Doctrine\DBAL\</small><wbr>Connection</a></td>
 				<td class="rest">$connection = null</td>
 				<td class="desc"><p>コネクション</p>
 </td>
@@ -335,7 +335,7 @@ $qb-&gt;array(['id' =&gt; 102]); // SELECT t_table.* FROM t_table WHERE id = 102
 </td>
 			</tr>
         			<tr>
-				<td class="type"><a href="Doctrine-DBAL-Connection$typespace.html#Doctrine\DBAL\Connection" class="fqsen "><small>Doctrine\DBAL\</small><wbr>Connection</a><span class="type-separator"></span><wbr><a href="?Connection$typespace.html#?Connection" class="fqsen ">?Connection</a></td>
+				<td class="type">?<a href="Doctrine-DBAL-Connection$typespace.html#Doctrine\DBAL\Connection" class="fqsen "><small>Doctrine\DBAL\</small><wbr>Connection</a></td>
 				<td class="rest">$connection = null</td>
 				<td class="desc"><p>コネクション</p>
 </td>
@@ -485,7 +485,7 @@ $qb-&gt;array(['id' =&gt; 102]); // SELECT t_table.* FROM t_table WHERE id = 102
 		<caption>Parameters</caption>
 		<tbody>
         			<tr>
-				<td class="type">array<span class="type-separator"></span><wbr><a href="?array$typespace.html#?array" class="fqsen ">?array</a></td>
+				<td class="type">?array</td>
 				<td class="rest">&amp;$params</td>
 				<td class="desc"><p>この引数にパラメータが追加される</p>
 </td>

@@ -29,6 +29,10 @@ namespace ryunosuke\Test\dbml\Annotation;
  * @method   \ryunosuke\dbml\Gateway\TableGateway g_ancestor($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
  * @property \ryunosuke\dbml\Gateway\TableGateway $g_child
  * @method   \ryunosuke\dbml\Gateway\TableGateway g_child($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
+ * @property \ryunosuke\dbml\Gateway\TableGateway $g_grand1
+ * @method   \ryunosuke\dbml\Gateway\TableGateway g_grand1($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
+ * @property \ryunosuke\dbml\Gateway\TableGateway $g_grand2
+ * @method   \ryunosuke\dbml\Gateway\TableGateway g_grand2($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
  * @property \ryunosuke\dbml\Gateway\TableGateway $g_parent
  * @method   \ryunosuke\dbml\Gateway\TableGateway g_parent($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
  * @property \ryunosuke\dbml\Gateway\TableGateway $horizontal1
@@ -95,6 +99,10 @@ trait Database{}
  * @method   $this g_ancestor($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
  * @property \ryunosuke\dbml\Gateway\TableGateway $g_child
  * @method   $this g_child($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
+ * @property \ryunosuke\dbml\Gateway\TableGateway $g_grand1
+ * @method   $this g_grand1($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
+ * @property \ryunosuke\dbml\Gateway\TableGateway $g_grand2
+ * @method   $this g_grand2($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
  * @property \ryunosuke\dbml\Gateway\TableGateway $g_parent
  * @method   $this g_parent($tableDescriptor = [], $where = [], $orderBy = [], $limit = [], $groupBy = [], $having = [])
  * @property \ryunosuke\dbml\Gateway\TableGateway $horizontal1
@@ -189,6 +197,7 @@ trait CommentTableGateway{}
  * @property int $title4
  * @property int $title5
  * @property array|string $comment_count
+ * @property int $vaffect
  */
 trait ArticleEntity{}
 
