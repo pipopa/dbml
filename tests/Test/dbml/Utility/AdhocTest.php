@@ -2,6 +2,8 @@
 
 namespace ryunosuke\Test\dbml\Utility;
 
+use Doctrine\Common\Cache\ArrayCache;
+use Roave\DoctrineSimpleCache\SimpleCacheAdapter;
 use ryunosuke\dbml\Utility\Adhoc;
 
 class AdhocTest extends \ryunosuke\Test\AbstractUnitTestCase
@@ -121,5 +123,21 @@ class AdhocTest extends \ryunosuke\Test\AbstractUnitTestCase
         $e = self::getDummyDatabase()->raw('column');
         $this->assertEquals(['T.c' => $e], Adhoc::modifier('T', ['c' => $e]));
         $this->assertEquals(['c' => [$e]], Adhoc::modifier('T', ['c' => [$e]]));
+    }
+
+    function test_cacheGetOrSet()
+    {
+        $cache = new SimpleCacheAdapter(new ArrayCache());
+
+        $called = 0;
+        $provider = function () use (&$called) {
+            return ++$called;
+        };
+        $this->assertEquals(1, Adhoc::cacheGetOrSet($cache, 'hoge', $provider));
+        $this->assertEquals(1, $called);
+        $this->assertEquals(1, Adhoc::cacheGetOrSet($cache, 'hoge', $provider));
+        $this->assertEquals(1, $called);
+        $this->assertEquals(2, Adhoc::cacheGetOrSet($cache, 'fuga', $provider));
+        $this->assertEquals(2, $called);
     }
 }

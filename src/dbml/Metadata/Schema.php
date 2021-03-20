@@ -2,7 +2,6 @@
 
 namespace ryunosuke\dbml\Metadata;
 
-use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\DBAL\Schema\AbstractSchemaManager;
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\ForeignKeyConstraint;
@@ -11,6 +10,8 @@ use Doctrine\DBAL\Schema\SchemaException;
 use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Schema\View;
 use Doctrine\DBAL\Types\Type;
+use Psr\SimpleCache\CacheInterface;
+use ryunosuke\dbml\Utility\Adhoc;
 use function ryunosuke\dbml\array_each;
 use function ryunosuke\dbml\array_nest;
 use function ryunosuke\dbml\array_pickup;
@@ -44,7 +45,7 @@ class Schema
     /** @var AbstractSchemaManager */
     private $schemaManger;
 
-    /** @var CacheProvider */
+    /** @var CacheInterface */
     private $cache;
 
     /** @var string[] */
@@ -63,13 +64,16 @@ class Schema
     private $foreignKeys = [], $lazyForeignKeys = [];
 
     /** @var array */
-    private $relations = [];
+    private $foreignColumns = [];
+
+    /** @var string */
+    private $foreignCacheId = '%s-%s-%s';
 
     /**
      * コンストラクタ
      *
      * @param AbstractSchemaManager $schemaManger スキーママネージャ
-     * @param CacheProvider|null $cache キャッシュプロバイダ
+     * @param CacheInterface $cache キャッシュプロバイダ
      */
     public function __construct(AbstractSchemaManager $schemaManger, $cache)
     {
@@ -77,15 +81,16 @@ class Schema
         $this->cache = $cache;
     }
 
-    private function _cache($id, $provider)
+    private function _invalidateForeignCache(ForeignKeyConstraint $fkey)
     {
-        $data = $this->cache->fetch($id);
-        if ($data === false) {
-            $data = $provider();
-            $this->cache->save($id, $data);
-        }
-
-        return $data;
+        $cacheids = [
+            sprintf($this->foreignCacheId, $fkey->getLocalTableName(), $fkey->getForeignTableName(), $fkey->getName()),
+            sprintf($this->foreignCacheId, $fkey->getForeignTableName(), $fkey->getLocalTableName(), $fkey->getName()),
+            sprintf($this->foreignCacheId, $fkey->getLocalTableName(), $fkey->getForeignTableName(), ''),
+            sprintf($this->foreignCacheId, $fkey->getForeignTableName(), $fkey->getLocalTableName(), ''),
+        ];
+        array_unset($this->foreignColumns, $cacheids);
+        $this->cache->deleteMultiple($cacheids);
     }
 
     /**
@@ -99,9 +104,9 @@ class Schema
         $this->tableColumnMetadata = [];
         $this->foreignKeys = [];
         $this->lazyForeignKeys = [];
-        $this->relations = [];
+        $this->foreignColumns = [];
 
-        $this->cache->flushAll();
+        $this->cache->clear();
     }
 
     /**
@@ -196,7 +201,7 @@ class Schema
     public function getTableNames()
     {
         if (!$this->tableNames) {
-            $this->tableNames = $this->_cache('@table_names.pson', function () {
+            $this->tableNames = Adhoc::cacheGetOrSet($this->cache, 'Schema-table_names', function () {
                 $table_names = $this->schemaManger->listTableNames();
 
                 $paths = array_fill_keys($this->schemaManger->getSchemaSearchPaths(), '');
@@ -226,7 +231,7 @@ class Schema
                 throw SchemaException::tableDoesNotExist($table_name);
             }
 
-            $this->tables[$table_name] = $this->_cache("$table_name.pson", function () use ($table_name) {
+            $this->tables[$table_name] = Adhoc::cacheGetOrSet($this->cache, "Table-$table_name", function () use ($table_name) {
                 return $this->schemaManger->listTableDetails($table_name);
             });
         }
@@ -311,7 +316,7 @@ class Schema
             $table = $this->getTable($table_name);
 
             if (!isset($this->tableColumnMetadata[$tid])) {
-                $this->tableColumnMetadata[$tid] = $this->_cache("$tid-metaoption.pson", function () use ($table, $parse_ini) {
+                $this->tableColumnMetadata[$tid] = Adhoc::cacheGetOrSet($this->cache, "$tid-metaoption", function () use ($table, $parse_ini) {
                     // for compatible
                     return $parse_ini($table->hasOption('comment') ? $table->getOption('comment') : '');
                 });
@@ -321,7 +326,7 @@ class Schema
                 if (!$table->hasColumn($column_name)) {
                     throw SchemaException::columnDoesNotExist($column_name, $table_name);
                 }
-                $this->tableColumnMetadata[$cid] = $this->_cache("$cid-metaoption.pson", function () use ($table, $column_name, $parse_ini) {
+                $this->tableColumnMetadata[$cid] = Adhoc::cacheGetOrSet($this->cache, "$cid-metaoption", function () use ($table, $column_name, $parse_ini) {
                     // for compatible
                     return $parse_ini($table->getColumn($column_name)->getComment());
                 });
@@ -488,53 +493,59 @@ class Schema
             return [];
         }
 
-        $fkeys = [];
-        $fkeys += $this->getForeignKeys($table_name1, $table_name2);
-        $fkeys += $this->getForeignKeys($table_name2, $table_name1);
-        $fcount = count($fkeys);
+        $cacheid = sprintf($this->foreignCacheId, $table_name1, $table_name2, $fkeyname);
+        if (!isset($this->foreignColumns[$cacheid])) {
+            $this->foreignColumns[$cacheid] = Adhoc::cacheGetOrSet($this->cache, $cacheid, function () use ($table_name1, $table_name2, $fkeyname) {
+                $fkeys = [];
+                $fkeys += $this->getForeignKeys($table_name1, $table_name2);
+                $fkeys += $this->getForeignKeys($table_name2, $table_name1);
+                $fcount = count($fkeys);
 
-        // 外部キーがなくても中間テーブルを介した関連があるかもしれない
-        if ($fcount === 0) {
-            $ikeys = $this->getIndirectlyColumns($table_name1, $table_name2);
-            if ($ikeys) {
-                $direction = false;
-                return $ikeys;
-            }
-            $ikeys = $this->getIndirectlyColumns($table_name2, $table_name1);
-            if ($ikeys) {
-                $direction = true;
-                return array_flip($ikeys);
-            }
-            return [];
+                // 外部キーがなくても中間テーブルを介した関連があるかもしれない
+                if ($fcount === 0) {
+                    $ikeys = $this->getIndirectlyColumns($table_name1, $table_name2);
+                    if ($ikeys) {
+                        return ['direction' => false, 'columns' => $ikeys];
+                    }
+                    $ikeys = $this->getIndirectlyColumns($table_name2, $table_name1);
+                    if ($ikeys) {
+                        return ['direction' => true, 'columns' => array_flip($ikeys)];
+                    }
+                    return ['direction' => null, 'columns' => []];
+                }
+
+                // キー指定がないなら唯一のものを、あるならそれを取得
+                $fkey = null;
+                if ($fkeyname === null) {
+                    if ($fcount >= 2) {
+                        throw new \UnexpectedValueException('ambiguous foreign keys ' . implode(', ', array_keys($fkeys)) . '.');
+                    }
+                    $fkey = reset($fkeys);
+                }
+                else {
+                    if (!isset($fkeys[$fkeyname])) {
+                        throw new \UnexpectedValueException("foreign key '$fkeyname' is not exists between $table_name1<->$table_name2 .");
+                    }
+                    $fkey = $fkeys[$fkeyname];
+                }
+
+                // 外部キーカラムを順序に応じてセットして返す
+                if ($fkey->getForeignTableName() === $table_name1) {
+                    $direction = false;
+                    $keys = $fkey->getLocalColumns();
+                    $vals = $fkey->getForeignColumns();
+                }
+                else {
+                    $direction = true;
+                    $keys = $fkey->getForeignColumns();
+                    $vals = $fkey->getLocalColumns();
+                }
+                return ['direction' => $direction, 'columns' => array_combine($keys, $vals)];
+            });
         }
 
-        // キー指定がないなら唯一のものを、あるならそれを取得
-        $fkey = null;
-        if ($fkeyname === null) {
-            if ($fcount >= 2) {
-                throw new \UnexpectedValueException('ambiguous foreign keys ' . implode(', ', array_keys($fkeys)) . '.');
-            }
-            $fkey = reset($fkeys);
-        }
-        else {
-            if (!isset($fkeys[$fkeyname])) {
-                throw new \UnexpectedValueException("foreign key '$fkeyname' is not exists between $table_name1<->$table_name2 .");
-            }
-            $fkey = $fkeys[$fkeyname];
-        }
-
-        // 外部キーカラムを順序に応じてセットして返す
-        if ($fkey->getForeignTableName() === $table_name1) {
-            $direction = false;
-            $keys = $fkey->getLocalColumns();
-            $vals = $fkey->getForeignColumns();
-        }
-        else {
-            $direction = true;
-            $keys = $fkey->getForeignColumns();
-            $vals = $fkey->getLocalColumns();
-        }
-        return array_combine($keys, $vals);
+        $direction = $this->foreignColumns[$cacheid]['direction'];
+        return $this->foreignColumns[$cacheid]['columns'];
     }
 
     /**
@@ -599,11 +610,11 @@ class Schema
             }
         }
 
-        // テーブル自体に追加すると本来の外部キーと混ざってしまって判別が困難になるのでキャッシュのみ追加する
-        // $this->getTable()->addForeignKeyConstraint();
-
         // キャッシュしてそれを返す
-        return $this->foreignKeys[$lTable][$fkey->getName()] = $fkey;
+        $this->foreignKeys[$lTable][$fkey->getName()] = $fkey;
+        $this->_invalidateForeignCache($fkey);
+
+        return $fkey;
     }
 
     /**
@@ -653,11 +664,9 @@ class Schema
             throw new \InvalidArgumentException('matched foreign key is not found.');
         }
 
-        // テーブル自体から削除すると本来の外部キーと混ざってしまって判別が困難になるのでキャッシュのみ削除する
-        // $this->getTable()->removeForeignKey();
-
         // 再キャッシュすれば「なにを無視するか」を覚えておく必要がない
         $this->foreignKeys[$lTable] = $fkeys;
+        $this->_invalidateForeignCache($fkey);
 
         return $deleted;
     }
@@ -672,21 +681,15 @@ class Schema
      */
     public function getRelation()
     {
-        if (!$this->relations) {
-            $this->relations = $this->_cache('@relations.pson', function () {
-                return array_each($this->getForeignKeys(), function (&$carry, ForeignKeyConstraint $fkey) {
-                    $ltable = $fkey->getLocalTableName();
-                    $ftable = $fkey->getForeignTableName();
-                    $lcolumns = $fkey->getLocalColumns();
-                    $fcolumns = $fkey->getForeignColumns();
-                    foreach ($fcolumns as $n => $fcolumn) {
-                        $carry[$ltable][$lcolumns[$n]][$ftable][$fcolumn] = $fkey->getName();
-                    }
-                }, []);
-            });
-        }
-
-        return $this->relations;
+        return array_each($this->getForeignKeys(), function (&$carry, ForeignKeyConstraint $fkey) {
+            $ltable = $fkey->getLocalTableName();
+            $ftable = $fkey->getForeignTableName();
+            $lcolumns = $fkey->getLocalColumns();
+            $fcolumns = $fkey->getForeignColumns();
+            foreach ($fcolumns as $n => $fcolumn) {
+                $carry[$ltable][$lcolumns[$n]][$ftable][$fcolumn] = $fkey->getName();
+            }
+        }, []);
     }
 
     /**

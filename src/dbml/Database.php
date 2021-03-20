@@ -16,6 +16,7 @@ use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\ForeignKeyConstraint;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Types\Types;
+use Roave\DoctrineSimpleCache\SimpleCacheAdapter;
 use ryunosuke\dbml\Entity\Entity;
 use ryunosuke\dbml\Entity\Entityable;
 use ryunosuke\dbml\Exception\NonAffectedException;
@@ -640,7 +641,7 @@ class Database
     {
         $default_options = [
             // キャッシュオブジェクト
-            'cacheProvider'        => new ArrayCache(),
+            'cacheProvider'        => new SimpleCacheAdapter(new ArrayCache()),
             // 初期化後の SQL コマンド（mysql@PDO でいう MYSQL_ATTR_INIT_COMMAND）
             'initCommand'          => null,
             // テーブル名 => Entity クラス名のコンバータ
@@ -856,6 +857,11 @@ class Database
 
         $this->setDefault($options);
 
+        // for compatible
+        if ($this->getUnsafeOption('cacheProvider') instanceof CacheProvider) {
+            $this->setOption('cacheProvider', new SimpleCacheAdapter($this->getUnsafeOption('cacheProvider')));
+        }
+
         foreach ($this->getConnections() as $con) {
             $commands = (array) $this->getUnsafeOption('initCommand');
             foreach ($commands as $command) {
@@ -1058,10 +1064,7 @@ class Database
 
     private function _tableMap()
     {
-        /** @var CacheProvider $cacher */
-        $cacher = $this->getUnsafeOption('cacheProvider');
-        $maps = $cacher->fetch('@tableMap');
-        if ($maps === false) {
+        $maps = Adhoc::cacheGetOrSet($this->getUnsafeOption('cacheProvider'), 'Database-tableMap', function () {
             $maps = [
                 'entityClass'  => [],
                 'gatewayClass' => [],
@@ -1101,8 +1104,8 @@ class Database
                     $maps['TtoE'][$tablename][] = $entityname;
                 }
             }
-            $cacher->save('@tableMap', $maps);
-        }
+            return $maps;
+        });
 
         return $maps;
     }
@@ -6077,7 +6080,7 @@ class Database
         $opt = func_num_args() === 4 ? func_get_arg(3) : [];
 
         if (!$this->getCompatiblePlatform()->supportsMerge()) {
-            return $this->upsert($tableName, $insertData, $updateData ?: null, $opt);
+            return $this->upsert($tableName, $insertData, $updateData ?: null, $opt); // @codeCoverageIgnore
         }
 
         $tableName = $this->_preaffect($tableName, $insertData);

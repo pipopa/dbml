@@ -2,7 +2,6 @@
 
 namespace ryunosuke\Test\dbml;
 
-use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Common\Cache\FilesystemCache;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
@@ -13,6 +12,7 @@ use Doctrine\DBAL\Platforms\SQLServerPlatform;
 use Doctrine\DBAL\Schema;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Types\Types;
+use Psr\SimpleCache\CacheInterface;
 use ryunosuke\dbml\Entity\Entity;
 use ryunosuke\dbml\Exception\NonAffectedException;
 use ryunosuke\dbml\Exception\NonSelectedException;
@@ -873,11 +873,11 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
      */
     function test_entity_mapper($database)
     {
-        /** @var CacheProvider $cacher */
+        /** @var CacheInterface $cacher */
         $cacher = $database->getOption('cacheProvider');
 
         // 前処理
-        $cacher->delete('@tableMap');
+        $cacher->delete('Database-tableMap');
         $backup = $database->getOption('tableMapper');
         $tableMap = self::forcedCallize($database, '_tableMap');
 
@@ -919,7 +919,7 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
         ], $tableMap());
 
         // 後処理
-        $cacher->delete('@tableMap');
+        $cacher->delete('Database-tableMap');
         $database->setOption('tableMapper', $backup);
     }
 
@@ -4338,7 +4338,7 @@ ON DUPLICATE KEY UPDATE id = VALUES(id), name = VALUES(name)", $affected);
      * @dataProvider provideDatabase
      * @param Database $database
      */
-    function test_modify_misc2($database)
+    function test_modify_misc($database)
     {
         $database->setConvertEmptyToNull(true);
 

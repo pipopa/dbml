@@ -10,6 +10,7 @@ use Doctrine\DBAL\Schema\SchemaException;
 use Doctrine\DBAL\Schema\Table;
 use Doctrine\DBAL\Schema\View;
 use Doctrine\DBAL\Types\Type;
+use Roave\DoctrineSimpleCache\SimpleCacheAdapter;
 use ryunosuke\dbml\Metadata\Schema;
 use ryunosuke\Test\Database;
 
@@ -577,7 +578,7 @@ class SchemaTest extends \ryunosuke\Test\AbstractUnitTestCase
             ]
         ));
 
-        $schema = new Schema(self::getDummyDatabase()->getConnection()->getSchemaManager(), new VoidCache());
+        $schema = new Schema(self::getDummyDatabase()->getConnection()->getSchemaManager(), new SimpleCacheAdapter(new VoidCache()));
 
         // 2つの経路がある
         $this->assertEquals([
