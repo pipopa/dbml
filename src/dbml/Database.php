@@ -489,6 +489,24 @@ use ryunosuke\dbml\Utility\Adhoc;
  *     <@uses Database::replace()> の例外送出版
  * }
  *
+ * @method array                  insertSelectIgnore($tableName, $sql, $columns = [], iterable $params = []) {
+ *     IGNORE 付き <@uses Database::insertSelect()>
+ * }
+ * @method array                  insertArrayIgnore($tableName, $data, $chunk = 0) {
+ *     IGNORE 付き <@uses Database::insertArray()>
+ * }
+ * @method array                  updateArrayIgnore($tableName, $data, $identifier = []) {
+ *     IGNORE 付き <@uses Database::updateArray()>
+ * }
+ * @method array                  modifyArrayIgnore($tableName, $insertData, $updateData = [], $chunk = 0) {
+ *     IGNORE 付き <@uses Database::modifyArray()>
+ * }
+ * @method array                  changeArrayIgnore($tableName, $dataarray, $identifier) {
+ *     IGNORE 付き <@uses Database::changeArray()>
+ * }
+ * @method array                  saveIgnore($tableName, $data) {
+ *     IGNORE 付き <@uses Database::save()>
+ * }
  * @method array                  insertIgnore($tableName, $data) {
  *     IGNORE 付き <@uses Database::insert()>
  * }
@@ -1013,7 +1031,7 @@ class Database
             return $this->$method(...$arguments);
         }
         // affect～Ignore 系
-        if (preg_match('/^(insert|update|delete|remove|destroy|modify)Ignore$/ui', $name, $matches)) {
+        if (preg_match('/^(insertSelect|insertArray|updateArray|modifyArray|changeArray|save|insert|update|delete|remove|destroy|modify)Ignore$/ui', $name, $matches)) {
             $method = strtolower($matches[1]);
             Adhoc::reargument($arguments, [$this, $method], []);
             $arguments[] = ['primary' => 2, 'ignore' => true];
@@ -5052,6 +5070,8 @@ class Database
      * // INSERT INTO t_destination SELECT * FROM t_source
      * ```
      *
+     * @used-by insertSelectIgnore()
+     *
      * @param string $tableName テーブル名
      * @param string|QueryBuilder $sql SELECT クエリ
      * @param array $columns カラム定義
@@ -5060,11 +5080,15 @@ class Database
      */
     public function insertSelect($tableName, $sql, $columns = [], iterable $params = [])
     {
+        // 隠し引数 $opt
+        $opt = func_num_args() === 5 ? func_get_arg(4) : [];
+
         $tableName = $this->convertTableName($tableName);
 
         $query = $this->_builderToSql($sql, $params);
 
-        $sql = "INSERT INTO $tableName " . concat('(', implode(', ', $columns), ') ') . $query;
+        $ignore = array_get($opt, 'ignore') ? $this->getCompatiblePlatform()->getIgnoreSyntax() . ' ' : '';
+        $sql = "INSERT {$ignore}INTO $tableName " . concat('(', implode(', ', $columns), ') ') . $query;
 
         return $this->executeAffect($sql, $params);
     }
@@ -5088,6 +5112,8 @@ class Database
      * // INSERT INTO t_table (colA, colB) VALUES ('1', UPPER('b')), ('2', UPPER('b'))
      * ```
      *
+     * @used-by insertArrayIgnore()
+     *
      * @param string $tableName テーブル名
      * @param array|callable|\Generator $data カラムデータ配列あるいは Generator
      * @param int $chunk 分割 insert する場合はそのチャンクサイズ
@@ -5095,6 +5121,9 @@ class Database
      */
     public function insertArray($tableName, $data, $chunk = 0)
     {
+        // 隠し引数 $opt
+        $opt = func_num_args() === 4 ? func_get_arg(3) : [];
+
         $tableName = $this->_preaffect($tableName, $data);
         if (is_array($tableName)) {
             [$tableName, $data] = first_keyvalue($tableName);
@@ -5107,7 +5136,8 @@ class Database
 
         $n = 0;
         $affected = [];
-        $template = "INSERT INTO $tableName (%s) VALUES %s";
+        $ignore = array_get($opt, 'ignore') ? $this->getCompatiblePlatform()->getIgnoreSyntax() . ' ' : '';
+        $template = "INSERT {$ignore}INTO $tableName (%s) VALUES %s";
         foreach ($data as $row) {
             if (!is_array($row)) {
                 throw new \InvalidArgumentException('$data\'s element must be array.');
@@ -5169,6 +5199,8 @@ class Database
      * `$data` の引数配列に含めた主キーは WHERE 句に必ず追加される。
      * したがって $identifier を指定するのは「`status_cd = 50` のもののみ」などといった「前提となるような条件」を書く。
      *
+     * @used-by updateArrayIgnore()
+     *
      * @param string $tableName テーブル名
      * @param array|callable|\Generator $data カラムデータあるいは Generator あるいは Generator を返す callable
      * @param array|mixed $identifier 束縛条件
@@ -5176,6 +5208,9 @@ class Database
      */
     public function updateArray($tableName, $data, $identifier = [])
     {
+        // 隠し引数 $opt
+        $opt = func_num_args() === 4 ? func_get_arg(3) : [];
+
         $tableName = $this->_preaffect($tableName, $data);
         if (is_array($tableName)) {
             [$tableName, $data] = first_keyvalue($tableName);
@@ -5195,7 +5230,8 @@ class Database
         $condition[] = $this->getCompatiblePlatform()->getPrimaryCondition(array_uncolumns($pkcols), $tableName);
         $criteria = $this->whereInto($condition, $params);
 
-        return $this->executeAffect("UPDATE $tableName SET $sets" . ' WHERE ' . implode(' AND ', Adhoc::wrapParentheses($criteria)), $params);
+        $ignore = array_get($opt, 'ignore') ? $this->getCompatiblePlatform()->getIgnoreSyntax() . ' ' : '';
+        return $this->executeAffect("UPDATE {$ignore}$tableName SET $sets" . ' WHERE ' . implode(' AND ', Adhoc::wrapParentheses($criteria)), $params);
     }
 
     /**
@@ -5238,6 +5274,8 @@ class Database
      * //   name = VALUES(name)
      * ```
      *
+     * @used-by modifyArrayIgnore()
+     *
      * @param string $tableName テーブル名
      * @param array|callable|\Generator $insertData カラムデータあるいは Generator
      * @param array $updateData カラムデータあるいは Generator
@@ -5246,6 +5284,9 @@ class Database
      */
     public function modifyArray($tableName, $insertData, $updateData = [], $chunk = 0)
     {
+        // 隠し引数 $opt
+        $opt = func_num_args() === 5 ? func_get_arg(4) : [];
+
         $cplatform = $this->getCompatiblePlatform();
         if (!$cplatform->supportsBulkMerge()) {
             throw new \DomainException($this->getPlatform()->getName() . ' is not support modifyArray.'); // @codeCoverageIgnore
@@ -5273,7 +5314,8 @@ class Database
         $affected = [];
         $merge = $cplatform->getMergeSyntax($this->getSchema()->getTablePrimaryKey($tableName)->getColumns());
         $refer = $cplatform->getReferenceSyntax('%1$s');
-        $template = "INSERT INTO $tableName (%s) VALUES %s $merge %s";
+        $ignore = array_get($opt, 'ignore') ? $cplatform->getIgnoreSyntax() . ' ' : '';
+        $template = "INSERT {$ignore}INTO $tableName (%s) VALUES %s $merge %s";
         foreach ($insertData as $row) {
             if (!is_array($row)) {
                 throw new \InvalidArgumentException('$data\'s element must be array.');
@@ -5372,6 +5414,8 @@ class Database
      * // DELETE FROM table_name WHERE (category = 'misc') AND (NOT (id IN ('1', '2', '3')))
      * ```
      *
+     * @used-by changeArrayIgnore()
+     *
      * @param string $tableName テーブル名
      * @param array $dataarray データ配列
      * @param array|mixed $identifier 束縛条件。 false を与えると DELETE 文自体を発行しない（速度向上と安全担保）
@@ -5379,6 +5423,9 @@ class Database
      */
     public function changeArray($tableName, $dataarray, $identifier)
     {
+        // 隠し引数 $opt
+        $opt = func_num_args() === 4 ? func_get_arg(3) : [];
+
         $whereconds = arrayize($identifier);
 
         $tableName = $this->convertTableName($tableName);
@@ -5423,20 +5470,20 @@ class Database
 
         foreach ($col_group as $gid => $group) {
             if ($group['bulks'] ?? []) {
-                $this->modifyArray($tableName, $group['bulks']);
+                $this->modifyArray($tableName, $group['bulks'], ...[[], 0, $opt]);
             }
             if ($group['rows'] ?? []) {
                 // 2件以上じゃないとプリペアの旨味が少ない
                 $stmt = null;
                 if ($preparable && count($group['rows']) > 1) {
-                    $stmt = $this->prepareModify($tableName, $group['cols']);
+                    $stmt = $this->prepareModify($tableName, $group['cols'], ...[[], $opt]);
                 }
                 foreach ($group['rows'] as $n => $row) {
                     if ($stmt) {
                         $stmt->executeAffect($row);
                     }
                     else {
-                        $this->modify($tableName, $row);
+                        $this->modify($tableName, $row, ...[[], $opt]);
                     }
 
                     if ($autocolumn !== null && !isset($primaries[$n][$autocolumn])) {
@@ -5596,7 +5643,7 @@ class Database
             }
 
             // changeArray すれば主キーが得られる。主キーが得られれば外部キーに設定できるし返り値用に整形できる
-            $primaries[$tname] = $this->changeArray($tname, $rows, $parents ?: false);
+            $primaries[$tname] = $this->changeArray($tname, $rows, $parents ?: false, $opt);
             foreach ($primaries[$tname] as $id => $pkval) {
                 array_put($result, $pkval, preg_split($SEPARATOR_REGEX, $id));
             }

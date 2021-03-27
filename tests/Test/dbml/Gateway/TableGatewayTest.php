@@ -1372,6 +1372,49 @@ AND ((flag=1))", "$gw");
 
             $this->assertEquals(['id' => '11'], $gateway->updateIgnore(['name' => 'fuga'], ['id' => 11]));
             $this->assertEquals([], $gateway->updateIgnore(['name' => 'hoge'], ['id' => -1]));
+
+            $this->assertEquals(['id' => '11'], $gateway->saveIgnore(['id' => 11]));
+
+            // array 系
+            $gateway = $database->noauto;
+            $gateway->truncate();
+            $gateway->insert(['id' => 1, 'name' => '']);
+            $gateway->insert(['id' => 2, 'name' => '']);
+            $this->assertEquals(0, $gateway->insertSelectIgnore('select 1 union select 2', ['id']));
+            $this->assertEquals(0, $gateway->insertArrayIgnore([
+                ['id' => 1, 'name' => ''],
+                ['id' => 2, 'name' => ''],
+            ]));
+            $this->assertEquals(0, $gateway->updateArrayIgnore([
+                ['id' => 1, 'name' => null],
+                ['id' => 2, 'name' => null],
+            ]));
+            $this->assertEquals(0, $gateway->modifyArrayIgnore([
+                ['id' => 1, 'name' => null],
+                ['id' => 2, 'name' => null],
+            ]));
+            $this->assertEquals([
+                [],
+                [],
+            ], $gateway->changeArrayIgnore([
+                ['name' => null],
+                ['name' => null],
+            ], false));
+
+            $database->import([
+                'foreign_p' => [
+                    [
+                        'id'         => 1,
+                        'name'       => 'P1',
+                        'foreign_c1' => [],
+                    ],
+                    [
+                        'id'         => 2,
+                        'name'       => 'P2',
+                        'foreign_c1' => [['seq' => 1, 'name' => 'C']],
+                    ],
+                ],
+            ]);
         }
     }
 

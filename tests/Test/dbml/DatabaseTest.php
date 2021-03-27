@@ -255,6 +255,31 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
                 $this->assertEquals([], $database->modifyIgnore('noauto', ['id' => 'x'], ['id' => 'a']));
             }
 
+            // array 系
+            $database->truncate('noauto');
+            $database->insert('noauto', ['id' => 1, 'name' => '']);
+            $database->insert('noauto', ['id' => 2, 'name' => '']);
+            $this->assertEquals(0, $database->insertSelectIgnore('noauto', 'select 1 union select 2', ['id']));
+            $this->assertEquals(0, $database->insertArrayIgnore('noauto', [
+                ['id' => 1, 'name' => ''],
+                ['id' => 2, 'name' => ''],
+            ]));
+            $this->assertEquals(0, $database->updateArrayIgnore('noauto', [
+                ['id' => 1, 'name' => null],
+                ['id' => 2, 'name' => null],
+            ]));
+            $this->assertEquals(0, $database->modifyArrayIgnore('noauto', [
+                ['id' => 1, 'name' => null],
+                ['id' => 2, 'name' => null],
+            ]));
+            $this->assertEquals([
+                [],
+                [],
+            ], $database->changeArrayIgnore('noauto', [
+                ['name' => null],
+                ['name' => null],
+            ], false));
+
             $database->import([
                 'foreign_p' => [
                     [

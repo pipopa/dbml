@@ -600,22 +600,6 @@ use function ryunosuke\dbml\try_finally;
  *     駆動表を省略できる <@uses Database::selectAvg()>
  * }
  *
- * @method array                  insertSelect($sql, $columns = [], iterable $params = []) {
- *     駆動表を省略できる <@uses Database::insertSelect()>
- * }
- * @method array                  insertArray($data, $chunk = 0) {
- *     駆動表を省略できる <@uses Database::insertArray()>
- * }
- * @method array                  updateArray($data, $identifier = []) {
- *     駆動表を省略できる <@uses Database::updateArray()>
- * }
- * @method array                  modifyArray($insertData, $updateData = [], $chunk = 0) {
- *     駆動表を省略できる <@uses Database::modifyArray()>
- * }
- * @method array                  changeArray($dataarray, $identifier) {
- *     駆動表を省略できる <@uses Database::changeArray()>
- * }
- *
  * @method array                  insertOrThrow($data) {
  *     <@uses TableGateway::insert()> の例外送出版
  * }
@@ -644,6 +628,24 @@ use function ryunosuke\dbml\try_finally;
  *     <@uses TableGateway::replace()> の例外送出版
  * }
  *
+ * @method array                  insertSelectIgnore($sql, $columns = [], iterable $params = []) {
+ *     駆動表を省略できる <@uses Database::insertSelectIgnore()>
+ * }
+ * @method array                  insertArrayIgnore($data, $chunk = 0) {
+ *     駆動表を省略できる <@uses Database::insertArrayIgnore()>
+ * }
+ * @method array                  updateArrayIgnore($data, $identifier = []) {
+ *     駆動表を省略できる <@uses Database::updateArrayIgnore()>
+ * }
+ * @method array                  modifyArrayIgnore($insertData, $updateData = [], $chunk = 0) {
+ *     駆動表を省略できる <@uses Database::modifyArrayIgnore()>
+ * }
+ * @method array                  changeArrayIgnore($dataarray, $identifier) {
+ *     駆動表を省略できる <@uses Database::changeArrayIgnore()>
+ * }
+ * @method array                  saveIgnore($data) {
+ *     駆動表を省略できる <@uses Database::saveIgnore()>
+ * }
  * @method array                  insertIgnore($data) {
  *     駆動表を省略できる <@uses Database::insertIgnore()>
  * }
@@ -938,12 +940,6 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
             return $this->$method($this->database->$name(...$arguments));
         }
 
-        // affect 複数系
-        if (preg_match('/^(insertSelect|insertArray|updateArray|modifyArray|changeArray)$/ui', $name, $matches)) {
-            $this->resetResult();
-            $method = strtolower($matches[1]);
-            return $this->database->$method($this->tableName, ...$arguments);
-        }
         // prepare～affect 系
         if (preg_match('/^prepare(.+)/ui', $name, $matches)) {
             $method = strtolower($matches[1]);
@@ -958,7 +954,7 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
             return $this->$method(...$arguments);
         }
         // affect～Ignore 系
-        if (preg_match('/^(insert|update|delete|remove|destroy|modify)Ignore$/ui', $name, $matches)) {
+        if (preg_match('/^(insertSelect|insertArray|updateArray|modifyArray|changeArray|save|insert|update|delete|remove|destroy|modify)Ignore$/ui', $name, $matches)) {
             $method = strtolower($matches[1]);
             Adhoc::reargument($arguments, [$this, $method], []);
             $arguments[] = ['primary' => 2, 'ignore' => true];
@@ -2271,6 +2267,61 @@ class TableGateway implements \ArrayAccess, \IteratorAggregate, \Countable
     {
         $sp = $this->getScopeParams([], $wheres);
         return $this->database->gather($this->tableName, $sp['where'], $other_wheres, $parentive);
+    }
+
+    /**
+     * 駆動表を省略できる <@uses Database::insertSelect()>
+     *
+     * @inheritdoc Database::insertSelect()
+     */
+    public function insertSelect($sql, $columns = [], iterable $params = [])
+    {
+        $this->resetResult();
+        return $this->database->insertSelect($this->tableName, $sql, $columns, $params, ...array_slice(func_get_args(), 3));
+    }
+
+    /**
+     * 駆動表を省略できる <@uses Database::insertArray()>
+     *
+     * @inheritdoc Database::insertArray()
+     */
+    public function insertArray($data, $chunk = 0)
+    {
+        $this->resetResult();
+        return $this->database->insertArray($this->tableName, $data, $chunk, ...array_slice(func_get_args(), 2));
+    }
+
+    /**
+     * 駆動表を省略できる <@uses Database::updateArray()>
+     *
+     * @inheritdoc Database::updateArray()
+     */
+    public function updateArray($data, $identifier = [])
+    {
+        $this->resetResult();
+        return $this->database->updateArray($this->tableName, $data, $identifier, ...array_slice(func_get_args(), 2));
+    }
+
+    /**
+     * 駆動表を省略できる <@uses Database::modifyArray()>
+     *
+     * @inheritdoc Database::modifyArray()
+     */
+    public function modifyArray($insertData, $updateData = [], $chunk = 0)
+    {
+        $this->resetResult();
+        return $this->database->modifyArray($this->tableName, $insertData, $updateData, $chunk, ...array_slice(func_get_args(), 3));
+    }
+
+    /**
+     * 駆動表を省略できる <@uses Database::changeArray()>
+     *
+     * @inheritdoc Database::changeArray()
+     */
+    public function changeArray($dataarray, $identifier)
+    {
+        $this->resetResult();
+        return $this->database->changeArray($this->tableName, $dataarray, $identifier, ...array_slice(func_get_args(), 2));
     }
 
     /**
