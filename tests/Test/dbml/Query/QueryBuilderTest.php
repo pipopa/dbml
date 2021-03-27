@@ -497,7 +497,7 @@ GREATEST(1,2,3) FROM test1', $builder);
      */
     function test_column_sub($builder)
     {
-        $builder->column('t_article A.*, article_id/t_comment C.comment, t_comment.*');
+        $builder->reset()->column('t_article A.*, article_id/t_comment C.comment, t_comment.*');
         $this->assertEquals([
             'A.*',
             'A.article_id',
@@ -516,6 +516,15 @@ GREATEST(1,2,3) FROM test1', $builder);
             't_comment.*',
             Alias::forge(Database::AUTO_PARENT_KEY, 't_comment.article_id'),
         ], $builder->getSubbuilder('Comment')->getQueryPart('select'));
+
+        $builder->reset()->column([
+            't_comment' => [
+                't_article' => [],
+            ]
+        ]);
+        $this->assertEquals([
+            Alias::forge(Database::AUTO_PARENT_KEY, 't_article.article_id'),
+        ], $builder->getSubbuilder('Article')->getQueryPart('select'));
     }
 
     /**
@@ -2389,12 +2398,14 @@ SELECT test.* FROM test", $builder);
             'test' => [
                 'id'   => 123,
                 'name' => new Expression('CONCAT(name, ?)', ['hoge']),
+                'data' => 'data',
             ],
         ]);
         $colval = $builder->getColval();
         $this->assertEquals([
             'test.id'   => new Expression(123),
             'test.name' => new Expression('CONCAT(name, ?)', ['hoge']),
+            'test.data' => 'data',
         ], $colval);
 
         $builder->set(['data' => 'hoge'] + $colval);
@@ -2402,6 +2413,7 @@ SELECT test.* FROM test", $builder);
             'data'      => new Expression('?', ['hoge']),
             'test.id'   => new Expression(123),
             'test.name' => new Expression('CONCAT(name, ?)', ['hoge']),
+            'test.data' => new Expression('?', ['data']),
         ], $builder->getQueryPart('colval'));
     }
 
@@ -2886,6 +2898,57 @@ SQL
                 ],
             ]);
         });
+    }
+
+    /**
+     * @dataProvider provideQueryBuilder
+     * @param QueryBuilder $builder
+     * @param Database $database
+     */
+    function test_subquery_refparent($builder, $database)
+    {
+        $database->insert('foreign_p', ['id' => 1, 'name' => 'name1']);
+        $database->insert('foreign_c1', ['id' => 1, 'seq' => 1, 'name' => 'c1name11']);
+        $database->insert('foreign_c1', ['id' => 1, 'seq' => 2, 'name' => 'c1name12']);
+        $database->insert('foreign_c2', ['cid' => 1, 'seq' => 1, 'name' => 'c2name11']);
+        $database->insert('foreign_c2', ['cid' => 1, 'seq' => 2, 'name' => 'c2name12']);
+
+        $builder->column([
+            'foreign_p P' => [
+                'pid'           => 'id',
+                'foreign_c1 C1' => [
+                    '*',
+                    '..pid',
+                    'ppname1' => '..name',
+                ],
+                'C2'            => $database->subselectTuple([
+                    'foreign_c2' => [
+                        '*',
+                        '..pid',
+                        'ppname2' => '..name',
+                    ]
+                ], ['seq' => 1]),
+            ]
+        ]);
+
+        $rows = $builder->postselect([
+            ['pid' => 1, 'name' => 'hoge', Database::AUTO_PRIMARY_KEY . 'c1' => 1, Database::AUTO_PRIMARY_KEY . 'c2' => 1],
+        ]);
+        $this->assertEquals([
+            [
+                'pid'  => 1,
+                'name' => 'hoge',
+                'C1'   => [
+                    1 => ['id' => 1, 'seq' => 1, 'name' => 'c1name11', 'pid' => 1, 'ppname1' => 'hoge'],
+                    2 => ['id' => 1, 'seq' => 2, 'name' => 'c1name12', 'pid' => 1, 'ppname1' => 'hoge'],
+                ],
+                'C2'   => ['cid' => 1, 'seq' => 1, 'name' => 'c2name11', 'pid' => 1, 'ppname2' => 'hoge'],
+            ],
+        ], $rows);
+
+        $this->assertException('reference undefined parent column', L($builder)->postselect([
+            ['xxxpid' => 1, Database::AUTO_PRIMARY_KEY . 'c1' => 1, Database::AUTO_PRIMARY_KEY . 'c2' => 1],
+        ]));
     }
 
     /**
@@ -3609,6 +3672,9 @@ INNER JOIN t_leaf ON (t_leaf.leaf_root_id = t_root.root_id) AND (t_leaf.leaf_roo
     {
         $builder->reset()->column('foreign_p P')->setSubmethod(true)->setSubwhere('foreign_c1', 'C');
         $this->assertQuery('EXISTS (SELECT * FROM foreign_p P WHERE P.id = C.id)', $builder);
+
+        $builder->reset()->column(['foreign_p P' => []])->setSubmethod('query')->setSubwhere('foreign_c1', 'C');
+        $this->assertQuery('SELECT P.id FROM foreign_p P WHERE P.id = C.id', $builder);
 
         $builder->reset()->column('foreign_p P')->setSubwhere('foreign_c1', 'C');
         $this->assertQuery('NOT EXISTS (SELECT * FROM foreign_p P WHERE P.id = C.id)', $builder->notExists());

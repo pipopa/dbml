@@ -874,4 +874,23 @@ abstract class AbstractUnitTestCase extends TestCase
         $refprop->setValue($object, $value);
         return $current;
     }
+
+    public static function scopeManager(callable $initializer)
+    {
+        return new class($initializer) {
+            private $finalizer;
+
+            public function __construct($initializer)
+            {
+                $this->finalizer = $initializer();
+            }
+
+            public function __destruct()
+            {
+                ($this->finalizer)();
+                unset($this->finalizer);
+                gc_collect_cycles();
+            }
+        };
+    }
 }

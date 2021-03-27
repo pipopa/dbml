@@ -1701,8 +1701,7 @@ class Database
                 $gateway[] = sprintf(" * @method   %s %s", '$this', $name) . "($args1)";
             }
             if ($ename !== $tname) {
-                $gateways["{$ename}TableGateway"] = [
-                    " * @mixin TableGateway
+                $gateways["{$ename}TableGateway"] = " * @mixin TableGateway
  * @method array|\\{$eclass}[]     array($args1)
  * @method array|\\{$eclass}[]     assoc($args1)
  * @method array|\\{$eclass}|false tuple($args1)
@@ -1718,8 +1717,7 @@ class Database
  * @method array|\\{$eclass}[]     arrayOrThrow($args1)
  * @method array|\\{$eclass}[]     assocOrThrow($args1)
  * @method array|\\{$eclass}       tupleOrThrow($args1)
- * @method array|\\{$eclass}       findOrThrow($args2)",
-                ];
+ * @method array|\\{$eclass}       findOrThrow($args2)";
                 $entities["{$ename}Entity"] = array_map(function (Column $column) {
                     $typename = $column->getType()->getName();
                     $typenames = static::$typeMap[$typename] ?? [$typename];
@@ -1729,7 +1727,7 @@ class Database
         }
 
         $gen = function ($comments, $name) {
-            $comments = implode("\n", $comments);
+            $comments = implode("\n", (array) $comments);
             return "/**\n$comments\n */\ntrait $name{}\n";
         };
         $namespace = $namespace ? "\nnamespace $namespace;\n" : '';
@@ -5291,7 +5289,7 @@ class Database
 
         $cplatform = $this->getCompatiblePlatform();
         if (!$cplatform->supportsBulkMerge()) {
-            throw new \DomainException($this->getPlatform()->getName() . ' is not support modifyArray.'); // @codeCoverageIgnore
+            throw new \DomainException($this->getPlatform()->getName() . ' is not support modifyArray.');
         }
 
         $tableName = $this->_preaffect($tableName, $insertData);
@@ -6336,7 +6334,7 @@ class Database
         $opt = func_num_args() === 4 ? func_get_arg(3) : [];
 
         if (!$this->getCompatiblePlatform()->supportsMerge()) {
-            return $this->upsert($tableName, $insertData, $updateData ?: null, $opt); // @codeCoverageIgnore
+            return $this->upsert($tableName, $insertData, $updateData ?: null, $opt);
         }
 
         $tableName = $this->_preaffect($tableName, $insertData);

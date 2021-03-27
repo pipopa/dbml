@@ -95,6 +95,10 @@ class TableDescriptorTest extends \ryunosuke\Test\AbstractUnitTestCase
             'test1'  => [],
             '+test2' => [],
         ])));
+        $this->assertEquals(['test1', 'test2'], array_map($of, TableDescriptor::forge($database, [
+            'test1' => [],
+            TableDescriptor::forge($database, 'test2')[0],
+        ])));
         $this->assertEquals(['test', null], array_map($of, TableDescriptor::forge($database, [
             null,
             'test',

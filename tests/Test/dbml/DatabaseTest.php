@@ -223,6 +223,9 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
         $ex = new NonAffectedException('affected row is nothing');
         if ($database->getCompatiblePlatform()->supportsIgnore()) {
             $this->assertException($ex, L($database)->insert('test', ['id' => 9, 'name' => 'hoge'], ['throw' => true, 'ignore' => true]));
+            if ($database->getPlatform() instanceof SqlitePlatform) {
+                $this->assertException($ex, L($database)->modify('test', ['id' => 9, 'name' => null], [], ['throw' => true, 'ignore' => true]));
+            }
         }
         $this->assertException($ex, L($database)->updateOrThrow('test', ['name' => 'd'], ['id' => -1]));
         $this->assertException($ex, L($database)->deleteOrThrow('test', ['id' => -1]));
@@ -1975,6 +1978,15 @@ class DatabaseTest extends \ryunosuke\Test\AbstractUnitTestCase
 (EXISTS (SELECT * FROM test2 WHERE (id = '1') AND (name2 = 'fuga'))) and
 'dummy' and
 (select 1)", $database->queryInto($where[0], $params));
+
+        $params = [];
+        $where = $database->whereInto([
+            '?' => [$database->selectExists('test1', ['id' => 1]), 0],
+        ], $params);
+
+        $this->assertEquals(['(EXISTS (SELECT * FROM test1 WHERE id = ?)) = ?'], $where);
+        $this->assertEquals([1, 0], $params);
+        $this->assertStringIgnoreBreak("(EXISTS (SELECT * FROM test1 WHERE id = '1')) = '0'", $database->queryInto($where[0], $params));
     }
 
     /**
@@ -3658,9 +3670,44 @@ INSERT INTO test (name) VALUES
     function test_modifyArray_misc($database)
     {
         if (!$database->getCompatiblePlatform()->supportsBulkMerge()) {
-            $this->assertException('is not support modifyArray', L($database)->modifyArray('test', []));
             return;
         }
+
+        $manager = $this->scopeManager(function () use ($database) {
+            $cplatform = $database->getCompatiblePlatform();
+            $cache = $this->forcedRead($database, 'cache');
+            $cache['compatiblePlatform'] = new class($cplatform->getWrappedPlatform()) extends CompatiblePlatform {
+                public function supportsIdentityAutoUpdate() { return false; }
+            };
+            $this->forcedWrite($database, 'cache', $cache);
+            return function () use ($database, $cache, $cplatform) {
+                $cache['compatiblePlatform'] = $cplatform;
+                $this->forcedWrite($database, 'cache', $cache);
+            };
+        });
+
+        $pk = $database->modifyArray('test', [
+            ['id' => 98, 'name' => 'xx'],
+            ['id' => 99, 'name' => 'yy']
+        ]);
+        $this->assertEquals(2, $pk);
+        unset($manager);
+
+        $manager = $this->scopeManager(function () use ($database) {
+            $cplatform = $database->getCompatiblePlatform();
+            $cache = $this->forcedRead($database, 'cache');
+            $cache['compatiblePlatform'] = new class($cplatform->getWrappedPlatform()) extends CompatiblePlatform {
+                public function supportsBulkMerge() { return false; }
+            };
+            $this->forcedWrite($database, 'cache', $cache);
+            return function () use ($database, $cache, $cplatform) {
+                $cache['compatiblePlatform'] = $cplatform;
+                $this->forcedWrite($database, 'cache', $cache);
+            };
+        });
+
+        $this->assertException('is not support modifyArray', L($database)->modifyArray('test', []));
+        unset($manager);
 
         $this->assertException('must be array', L($database->dryrun())->modifyArray('test', ['dummy']));
         $this->assertException('columns are not match', L($database->dryrun())->modifyArray('test', [['id' => 1], ['name' => 2]]));
@@ -4638,6 +4685,11 @@ INSERT INTO test (id, name) VALUES
         $database->modify('test', ['id' => $id, 'name' => 'repN', 'data' => 'repD'], ['name' => 'upN', 'data' => 'upD']);
         $this->assertEquals(['name' => 'upN', 'data' => 'upD'], $database->selectTuple('test.name,data', ['id' => $id]));
 
+        if ($database->getCompatiblePlatform()->supportsIdentityUpdate()) {
+            $database->modify(['test' => ['id', 'name']], [$id, 'repN2'], [$id, 'repN3']);
+            $this->assertEquals(['name' => 'repN3', 'data' => 'upD'], $database->selectTuple('test.name,data', ['id' => $id]));
+        }
+
         // modifyAutoSelect
 
         $manager = $this->scopeManager(function () use ($database) {
@@ -4730,6 +4782,13 @@ INSERT INTO test (id, name) VALUES
      */
     function test_modify_misc($database)
     {
+        $manager = $this->scopeManager(function () use ($database) {
+            return function () use ($database) {
+                $database->setConvertEmptyToNull(true);
+                $database->setInsertSet(false);
+            };
+        });
+
         $database->setConvertEmptyToNull(true);
 
         $database->delete('nullable');
@@ -4751,7 +4810,45 @@ INSERT INTO test (id, name) VALUES
             $database->executeAffect("SET @@SESSION.sql_mode := '$mode'");
         }
 
-        $database->setConvertEmptyToNull(true);
+        $database->setInsertSet(true);
+        if ($database->getCompatiblePlatform()->supportsInsertSet()) {
+            $sql = $database->dryrun()->modifyOrThrow('test', ['name' => 'zz']);
+            $this->assertContains("INSERT INTO test SET name = 'zz' ", $sql);
+        }
+        unset($manager);
+
+        $manager = $this->scopeManager(function () use ($database) {
+            $cplatform = $database->getCompatiblePlatform();
+            $cache = $this->forcedRead($database, 'cache');
+            $cache['compatiblePlatform'] = new class($cplatform->getWrappedPlatform()) extends CompatiblePlatform {
+                public function supportsIdentityAutoUpdate() { return false; }
+            };
+            $this->forcedWrite($database, 'cache', $cache);
+            return function () use ($database, $cache, $cplatform) {
+                $cache['compatiblePlatform'] = $cplatform;
+                $this->forcedWrite($database, 'cache', $cache);
+            };
+        });
+
+        $pk = $database->modifyOrThrow('test', ['id' => 99, 'name' => 'xx']);
+        $this->assertEquals(['id' => 99], $pk);
+        unset($manager);
+
+        $manager = $this->scopeManager(function () use ($database) {
+            $cplatform = $database->getCompatiblePlatform();
+            $cache = $this->forcedRead($database, 'cache');
+            $cache['compatiblePlatform'] = new class($cplatform->getWrappedPlatform()) extends CompatiblePlatform {
+                public function supportsMerge() { return false; }
+            };
+            $this->forcedWrite($database, 'cache', $cache);
+            return function () use ($database, $cache, $cplatform) {
+                $cache['compatiblePlatform'] = $cplatform;
+                $this->forcedWrite($database, 'cache', $cache);
+            };
+        });
+
+        $this->assertEquals(1, $database->modify('test', ['id' => 100, 'name' => 'z']));
+        unset($manager);
     }
 
     /**
@@ -4970,6 +5067,42 @@ INSERT INTO test (id, name) VALUES
             $database->insert('test', ['id' => 1], ['ignore' => true]);
             $database->update('test', ['id' => 1], ['id' => 2], ['ignore' => true]);
         }
+    }
+
+    /**
+     * @dataProvider provideDatabase
+     * @param Database $database
+     */
+    function test_affect_vcolumn($database)
+    {
+        $database->overrideColumns([
+            'test' => [
+                'vname' => [
+                    'select' => function (Database $database) {
+                        return 'LOWER(name)';
+                    },
+                    'affect' => function ($value, $row) {
+                        return [
+                            'name' => strtoupper($value),
+                        ];
+                    },
+                ],
+            ],
+        ]);
+
+        $pk = $database->insertOrThrow('test', ['vname' => 'hoge']);
+        $this->assertEquals('HOGE', $database->selectValue('test.name', $pk));
+        $this->assertEquals('hoge', $database->selectValue('test.vname', $pk));
+
+        $database->update('test', ['vname' => 'fuga'], $pk);
+        $this->assertEquals('FUGA', $database->selectValue('test.name', $pk));
+        $this->assertEquals('fuga', $database->selectValue('test.vname', $pk));
+
+        $database->overrideColumns([
+            'test' => [
+                'vname' => null,
+            ],
+        ]);
     }
 
     /**

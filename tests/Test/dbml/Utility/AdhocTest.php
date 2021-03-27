@@ -113,6 +113,7 @@ class AdhocTest extends \ryunosuke\Test\AbstractUnitTestCase
         $this->assertEquals(['!T.c' => 'column'], Adhoc::modifier('T', ['!c' => 'column']));
         $this->assertEquals(['T.c' => 'column'], Adhoc::modifier('T', ['c' => 'column']));
         $this->assertEquals(['!T.c' => 'column'], Adhoc::modifier('T', ['!c' => 'column']));
+        $this->assertEquals(['T.a' => 'columnA', ['T.b' => 'columnB']], Adhoc::modifier('T', ['a' => 'columnA', ['b' => 'columnB']]));
 
         $qb = self::getDummyDatabase()->subexists('t', ['id' => 1]);
         $this->assertEquals(['c' => $qb], Adhoc::modifier('T', ['c' => $qb]));

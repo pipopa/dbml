@@ -282,7 +282,7 @@ AND ((flag=1))", "$gw");
                 'calias' => $column,
             ])->where([
                 'id <> ?' => $notid,
-            ]);
+            ])->limit([1 => 10]);
         });
 
         // 何もしなくてもデフォルトスコープが適用されるはず
@@ -310,9 +310,11 @@ AND ((flag=1))", "$gw");
         $this->assertEquals([-1, 'a'], $select->getParams());
 
         // スコーピングが適用されるはず
-        $select = $gateway->as('T')->scope('this', 'col1')->select('col2', ['name' => 'a']);
-        $this->assertEquals('SELECT NOW(), T.col1 AS calias, T.col2 FROM test T WHERE (T.id <> ?) AND (T.name = ?)', $select);
-        $this->assertEquals([-1, 'a'], $select->getParams());
+        if (!$database->getCompatiblePlatform()->getWrappedPlatform() instanceof SQLServerPlatform) {
+            $select = $gateway->as('T')->scope('this', 'col1')->select('col2', ['name' => 'a']);
+            $this->assertEquals('SELECT NOW(), T.col1 AS calias, T.col2 FROM test T WHERE (T.id <> ?) AND (T.name = ?) LIMIT 10 OFFSET 1', $select);
+            $this->assertEquals([-1, 'a'], $select->getParams());
+        }
 
         // 本体には一切影響がないはず
         $this->assertEquals(['' => []], self::forcedRead($gateway, 'activeScopes'));
@@ -1077,7 +1079,7 @@ AND ((flag=1))", "$gw");
         $this->assertEquals("SELECT * FROM multiunique M WHERE ((M.uc1 = 's1') AND (M.uc2 = 't1')) OR ((M.uc1 = 's2') AND (M.uc2 = 't2'))", (string) $multiunique->as('M')->uk(['s1', 't1'], ['s2', 't2']));
 
         // 数が一致しないなら例外
-        $this->assertException('not match unique index', L($multiunique)->uk([1, 2, 3]));
+        $this->assertException('not match unique index', L($multiunique)->uk(1, 2, [3, 4]));
 
         // 型が一致しないなら例外
         $this->assertException('not match unique index', L($multiunique)->uk(1.2));
