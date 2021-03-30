@@ -4638,7 +4638,14 @@ INSERT INTO test (id, name) VALUES
         $database->modify('test', ['id' => $id, 'name' => 'repN', 'data' => 'repD'], ['name' => 'upN', 'data' => 'upD']);
         $this->assertEquals(['name' => 'upN', 'data' => 'upD'], $database->selectTuple('test.name,data', ['id' => $id]));
 
-        // mysql の strict モード
+        // modifyAutoSelect
+
+        $manager = $this->scopeManager(function () use ($database) {
+            $database->setOption('modifyAutoSelect', true);
+            return function () use ($database) {
+                $database->setOption('modifyAutoSelect', false);
+            };
+        });
 
         $database->modify('t_article', ['article_id' => 9, 'title' => 'newN', 'checks' => 'newC']);
         $this->assertEquals(['title' => 'newN', 'checks' => 'newC'], $database->selectTuple('t_article.title,checks', ['article_id' => 9]));
@@ -4647,6 +4654,8 @@ INSERT INTO test (id, name) VALUES
         $this->assertEquals(['title' => 'repN', 'checks' => 'newC'], $database->selectTuple('t_article.title,checks', ['article_id' => 9]));
 
         $this->assertException(new \InvalidArgumentException('is not supported Q'), L($database)->modify('test.name', ['X' => 'Y']));
+
+        unset($manager);
     }
 
     /**

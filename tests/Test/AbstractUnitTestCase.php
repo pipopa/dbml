@@ -433,7 +433,8 @@ abstract class AbstractUnitTestCase extends TestCase
         return self::$databases ?: self::$databases = array_map(function ($v) {
             return [
                 new Database($v[0], [
-                    'tableMapper' => static function ($tablename) {
+                    'modifyAutoSelect' => false,
+                    'tableMapper'      => static function ($tablename) {
                         if ($tablename === 't_article') {
                             return [
                                 'Article' => [

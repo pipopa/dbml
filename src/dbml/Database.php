@@ -669,6 +669,8 @@ class Database
             'filterNoExistsColumn' => true,
             // insert 時などに NULLABLE NUMERIC カラムは 空文字を null として扱うか否か
             'convertEmptyToNull'   => true,
+            // modify 時にエラーとならないようにレコードを select するか否か
+            'modifyAutoSelect'     => true, // for compatible
             // 埋め込み条件の yaml パーサ
             'yamlParser'           => function ($yaml) { return \ryunosuke\dbml\paml_import($yaml)[0]; },
             // DB型で自動キャストする型設定。select,affect 要素を持つ（多少無駄になるがサンプルも兼ねて冗長に記述してある）
@@ -6356,16 +6358,19 @@ class Database
         $updateData = $this->_normalize($tableName, $updateData);
         $updateData = $this->getCompatiblePlatform()->convertMergeData($insertData, $updateData);
 
-        // mysql の strict モードだと insert 時点で default value エラーが出るので抑制する
         $schema = $this->getSchema();
         $pkcols = $schema->getTablePrimaryColumns($tableName);
-        $pkvals = array_intersect_key($insertData, $pkcols);
-        if (array_all($pkvals, function ($v) { return $v !== null; }, false)) {
-            $required = array_filter(array_diff_key($schema->getTableColumns($tableName), $pkcols), function (Column $column) use ($insertData) {
-                return $column->getNotnull() && $column->getDefault() === null && !array_key_exists($column->getName(), $insertData);
-            });
-            if ($required) {
-                $insertData += array_intersect_key($this->selectTuple($tableName, $pkvals) ?: [], $required);
+
+        // mysql の strict モードだと insert 時点で default value エラーが出るので抑制する
+        if ($this->getUnsafeOption('modifyAutoSelect')) {
+            $pkvals = array_intersect_key($insertData, $pkcols);
+            if (array_all($pkvals, function ($v) { return $v !== null; }, false)) {
+                $required = array_filter(array_diff_key($schema->getTableColumns($tableName), $pkcols), function (Column $column) use ($insertData) {
+                    return $column->getNotnull() && $column->getDefault() === null && !array_key_exists($column->getName(), $insertData);
+                });
+                if ($required) {
+                    $insertData += array_intersect_key($this->selectTuple($tableName, $pkvals) ?: [], $required);
+                }
             }
         }
 
