@@ -22,6 +22,17 @@
 - phpstorm と相性が悪いのでマジックメソッドを撲滅したい
 - TableGateway の column/where などを個別メソッド化する（可変引数などに対応できていないので）
 
+## 2.0.9
+
+- [feature][Database] IGNORE シンタックスが使えるメソッドに ～Ignore を用意
+- [feature][Database] save の実装
+- [feature][Database] changeArray のリファクタ
+- [feature][Database] sqlite と postgresql の merge を実装
+- [feature][Database] isEmulationMode を追加
+- [feature][Database] 仮想カラムの更新機能
+- [change][Database] modify でエラーにならないように insert する機能の廃止
+- [change][TableGateway] bindScope は引数が累積するのではなくオリジナルの上書きとする
+
 ## 2.0.8
 
 - [feature] bump version
